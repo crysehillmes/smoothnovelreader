@@ -1,0 +1,76 @@
+<resources>
+    <style name="LoadChapterContentProgressBar" parent="SmoothProgressBar">
+        <item name="spb_stroke_separator_length">0dp</item>
+        <item name="spb_sections_count">4</item>
+        <item name="spb_stroke_width">3dp</item>
+        <item name="spb_mirror_mode">false</item>
+        <item name="spb_speed">1.5</item>
+        <item name="spb_interpolator">spb_interpolator_acceleratedecelerate</item>
+        <item name="spb_colors">@array/gplus_colors</item>
+        <item name="spb_progressiveStart_activated">false</item>
+    </style>
+
+    <integer-array name="gplus_colors">
+        <item>@color/refresh_progress_1</item>
+        <item>@color/refresh_progress_2</item>
+        <item>@color/refresh_progress_3</item>
+        <item>@color/refresh_progress_4</item>
+    </integer-array>
+
+    <style name="DialogNoAnimation">
+        <item name="android:windowEnterAnimation">@anim/animation_empty</item>
+        <item name="android:windowExitAnimation">@anim/animation_empty</item>
+    </style>
+
+    <style name="TransparentActivity" parent="Theme.AppCompat">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="DialogFadeAnimation">
+        <item name="android:windowEnterAnimation">@anim/animation_empty</item>
+        <item name="android:windowExitAnimation">@anim/animation_fade_out</item>
+    </style>
+
+    <style name="FadeTransitionDialogStyle" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowAnimationStyle">@style/DialogFadeAnimation</item>
+    </style>
+
+    <style name="SmoothPreferenceListHeader" parent="@android:style/Widget.TextView">
+        <item name="android:textSize">14.0sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/theme_accent_2</item>
+        <item name="android:paddingLeft">8.0dip</item>
+        <item name="android:paddingTop">16.0dip</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">0.0dip</item>
+    </style>
+
+    <style name="TextBody">
+        <item name="android:textSize">@dimen/text_size_body2</item>
+        <item name="android:textColor">?attr/smooth_theme_text_color_body1</item>
+        <item name="android:lineSpacingMultiplier">1.1</item>
+        <!--<item name="android:textAlignment">textStart</item>-->
+        <item name="android:layout_gravity">start</item>
+    </style>
+
+    <style name="NovelDetailSectionHeader">
+        <item name="android:textSize">@dimen/text_size_title</item>
+        <item name="android:textColor">@color/primary_color</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:background">@drawable/novel_detail_section_separator</item>
+    </style>
+
+    <style name="FrameworkRoot.Widget.ListView.DropDown" parent="Widget.AppCompat.Light.ListView.DropDown" />
+    <style name="FrameworkRoot.Widget.PopupMenu" parent="Widget.AppCompat.Light.PopupMenu" />
+
+    <style name="Widget.Smooth.PopupMenu" parent="FrameworkRoot.Widget.PopupMenu">
+        <item name="android:dropDownSelector">?android:selectableItemBackground</item>
+    </style>
+
+    <style name="Widget.Smooth.ListView.DropDown" parent="FrameworkRoot.Widget.ListView.DropDown">
+        <item name="android:listSelector">?android:selectableItemBackground</item>
+        <item name="android:divider">@null</item>
+        <item name="android:dividerHeight">0dp</item>
+    </style>
+</resources>

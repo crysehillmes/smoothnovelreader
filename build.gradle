@@ -1,0 +1,130 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'http://download.crashlytics.com/maven' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'me.tatarka:gradle-retrolambda:2.4.1'
+        classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+
+/*
+ * Gets the version name from the latest Git tag
+ */
+def getGitCommitCount = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-list', 'HEAD', '--count'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+/*
+ * Gets the short hash from the current commit
+ */
+def gitCurrentShortHash = { ->
+    return 'git rev-parse --short HEAD'.execute().text.trim()
+}
+
+/*
+ * Gets the branch name Git
+ */
+def gitCurrentBranch = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+/*
+ * Generate version status from branch name
+ * release-* -> RC
+ * master -> (Relase)
+ * beta-* -> Beta
+ * else -> Dev
+ */
+def getBranchPrefix = { ->
+    def branchName = gitCurrentBranch()
+    if(branchName.startsWith("master")) {
+        return "master"
+    } else if (branchName.startsWith("develop")) {
+        return "develop"
+    } else if (branchName.startsWith("feature")) {
+        return "feature"
+    } else if (branchName.startsWith("release")) {
+        return "release"
+    } else if (branchName.startsWith("hotfix")) {
+        return "hotfix"
+    } else if (branchName.startsWith("support")) {
+        return "support"
+    } else {
+        throw new GradleException('Not a pre-defined branch.')
+    }
+}
+
+def getLatestRelateReleaseTag = { ->
+    def commonMergeBaseCommit = 'git merge-base HEAD master'.execute().text.trim()
+    def releaseTagDescribe = ('git describe --tags --abbrev=0 --contains ' + commonMergeBaseCommit).execute().text.trim()
+    def endIndex = releaseTagDescribe.indexOf("^")
+    if(endIndex > 0)
+        return releaseTagDescribe.substring(0, endIndex)
+    else
+        return releaseTagDescribe
+}
+
+def getRCOrdinal = { ->
+
+    def parentCommitHash = 'git merge-base HEAD develop'.execute().text.trim()
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-list', parentCommitHash + '..HEAD', '--count'
+        standardOutput = stdout
+    }
+    return (stdout.toString().trim().toInteger() + 1)
+}
+
+/*
+ * Generate version name
+ */
+def generateVersionName = { ->
+    def versionTag = getLatestRelateReleaseTag()
+    def branchType = getBranchPrefix();
+    if(branchType.equalsIgnoreCase("master")) {
+        return versionTag
+    } else if(branchType.equalsIgnoreCase("release")) {
+        return versionTag + '-rc' + getRCOrdinal()
+    } else {
+        return versionTag + '-dev+' + gitCurrentShortHash()
+    }
+}
+
+def generateVersionCode = { ->
+    def tagName = getLatestRelateReleaseTag();
+    def (major, minor, patch) = tagName.tokenize('.')
+    return major.toInteger() * 10000 + minor.toInteger() * 100 + patch.toInteger()
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { url 'http://download.crashlytics.com/maven' }
+        jcenter()
+        maven {
+            url 'http://dl.bintray.com/amulyakhare/maven'
+        }
+    }
+    ext.appVersionCode = generateVersionCode()
+    ext.appVersionName = generateVersionName()
+    ext.appMinSdkVersion = 17
+    ext.appTargetSdkVersion = 21
+}

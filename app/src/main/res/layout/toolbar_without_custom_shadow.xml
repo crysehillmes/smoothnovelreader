@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_awesome_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="?colorPrimary"
+        android:minHeight="?actionBarSize"
+        app:elevation="@dimen/novel_detail_max_header_elevation"
+        android:elevation="@dimen/novel_detail_max_header_elevation"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
+        app:contentInsetStart="72dp"
+        app:contentInsetLeft="72dp"
+        app:contentInsetEnd="0dp"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+</FrameLayout>

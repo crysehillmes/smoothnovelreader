@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_bottomsheet_chapter_prev" android:title="@string/bottom_sheet_item_chapter_prev" android:icon="@drawable/ic_menu_chapter_previous"/>
+    <item android:id="@+id/menu_bottomsheet_reload" android:title="@string/bottom_sheet_item_reload" android:icon="@drawable/ic_menu_reload"/>
+    <item android:id="@+id/menu_bottomsheet_chapter_next" android:title="@string/bottom_sheet_item_chapter_next" android:icon="@drawable/ic_menu_chapter_next"/>
+    <item android:id="@+id/menu_bottomsheet_changesrc" android:title="@string/bottom_sheet_item_change_src" android:icon="@drawable/ic_menu_change_src"/>
+    <item android:id="@+id/menu_bottomsheet_nightmode" android:title="@string/bottom_sheet_item_night_mode" android:icon="@drawable/ic_menu_night_mode"/>
+    <item android:id="@+id/menu_bottomsheet_reading_settings" android:title="@string/bottom_sheet_item_reading_settings" android:icon="@drawable/ic_menu_reading_settings"/>
+</menu>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="actionbar_text_color">#FFFFFFFF</color>
+
+    <color name="refresh_progress_1">@color/theme_accent_2</color>
+    <color name="refresh_progress_2">@color/theme_accent_1</color>
+    <color name="refresh_progress_3">@color/theme_primary_dark</color>
+    <color name="refresh_progress_4">@color/theme_primary_light</color>
+
+    <color name="theme_primary_dark">@color/md_indigo_700</color>
+    <color name="theme_primary_light">@color/md_indigo_300</color>
+    <color name="theme_accent_1">@color/md_light_blue_A400</color>
+    <color name="theme_accent_2">@color/md_pink_500</color>
+
+
+    <color name="gray">#666666</color>
+    <color name="gray_shadow">#cccccc</color>
+    <color name="grey_background">#eeeeee</color>
+    <color name="black">#000000</color>
+    <color name="background_user_navigation_drawer">#161F29</color>
+
+    <color name="aqua">#009688</color>
+
+    <color name="primary_color">@color/md_indigo_500</color>
+    <color name="primary_color_dark">@color/md_indigo_700</color>
+    <color name="primary_translucent_color">#663f51b5</color>
+    <color name="primary_translucent_33_color">#333f51b5</color>
+    <color name="accent_color">@color/md_pink_200</color>
+    <color name="status_bar_tint_color">@color/md_indigo_700</color>
+    <color name="accent_translucent_33_color">#33f48fb1</color>
+
+    <color name="theme_bg_color">#FFE8E8E8</color>
+    <color name="theme_navigation_drawer_bg">@color/grey_background</color>
+    <color name="theme_read_bg_color">@color/theme_bg_color</color>
+
+
+
+    <color name="icon_color">#8A000000</color><!-- 54% transparency-->
+
+    <color name="black_54_percent">#8A000000</color>
+    <color name="black_87_percent">#DE000000</color>
+
+    <color name="text_color_primary">#DE000000</color><!-- 87% transparency-->
+    <color name="text_color_secondary">#8A000000</color><!-- 54% transparency-->
+    <color name="text_color_tint">#42000000</color><!-- 26% transparency-->
+    <color name="text_color_divider">#1F000000</color><!-- 12% transparency-->
+
+
+    <color name="text_color_display4">@color/black_54_percent</color><!-- 54% -->
+    <color name="text_color_display3">@color/black_54_percent</color><!-- 54% -->
+    <color name="text_color_display2">@color/black_54_percent</color><!-- 54% -->
+    <color name="text_color_display1">@color/black_54_percent</color><!-- 54% -->
+    <color name="text_color_headline">@color/black_87_percent</color><!-- 87% -->
+    <color name="text_color_title">@color/black_87_percent</color><!-- 87% -->
+    <color name="text_color_subhead">@color/black_87_percent</color><!-- 87% -->
+    <color name="text_color_body2">@color/black_87_percent</color><!-- 87% -->
+    <color name="text_color_body1">@color/black_87_percent</color><!-- 87% -->
+    <color name="text_color_caption">@color/black_54_percent</color><!-- 54% -->
+    <color name="text_color_menu">@color/black_87_percent</color><!-- 87% -->
+    <color name="text_color_button">@color/black_87_percent</color><!-- 87% -->
+
+
+
+    <color name="theme_bg_color_white">@android:color/background_dark</color>
+    <color name="theme_navigation_drawer_bg_white">#222222</color>
+    <color name="theme_read_bg_color_white">@color/theme_bg_color_white</color>
+
+    <color name="icon_color_white">#8AFFFFFF</color><!-- 54% transparency-->
+    <color name="white_54_percent">#8AFFFFFF</color>
+    <color name="white_87_percent">#DEFFFFFF</color>
+
+    <color name="text_color_primary_white">#DEFFFFFF</color><!-- 87% transparency-->
+    <color name="text_color_secondary_white">#8AFFFFFF</color><!-- 54% transparency-->
+    <color name="text_color_tint_white">#42FFFFFF</color><!-- 26% transparency-->
+    <color name="text_color_divider_white">#1FFFFFFF</color><!-- 12% transparency-->
+
+    
+    <color name="text_color_display4_white">@color/white_54_percent</color><!-- 54% -->
+    <color name="text_color_display3_white">@color/white_54_percent</color><!-- 54% -->
+    <color name="text_color_display2_white">@color/white_54_percent</color><!-- 54% -->
+    <color name="text_color_display1_white">@color/white_54_percent</color><!-- 54% -->
+    <color name="text_color_headline_white">@color/white_87_percent</color><!-- 87% -->
+    <color name="text_color_title_white">@color/white_87_percent</color><!-- 87% -->
+    <color name="text_color_subhead_white">@color/white_87_percent</color><!-- 87% -->
+    <color name="text_color_body2_white">@color/white_87_percent</color><!-- 87% -->
+    <color name="text_color_body1_white">@color/white_87_percent</color><!-- 87% -->
+    <color name="text_color_caption_white">@color/white_54_percent</color><!-- 54% -->
+    <color name="text_color_menu_white">@color/white_87_percent</color><!-- 87% -->
+    <color name="text_color_button_white">@color/white_87_percent</color><!-- 87% -->
+
+
+    <color name="bottom_menu_bg_color">#FFFAFAFA</color>
+    <color name="bottom_menu_bg_color_white">#FF050505</color>
+
+
+    <color name="list_dropdown_foreground_normal">#ff333333</color>
+    <color name="list_dropdown_divider_color">#92a3a3a3</color>
+
+
+    <color name="searchview_bg_solid">@color/primary_color</color>
+    <color name="searchview_bg_solid_alpha">#E33f51b5</color>
+    <color name="searchview_bg_solid_dark">#000000</color>
+    <color name="searchview_bg_solid_dark_alpha">#E3000000</color>
+    <color name="textColorDark">#ff1e1e1e</color>
+    <color name="textColorDarkAlpha">#991e1e1e</color>
+
+
+   <color name="colorful_bg_1">#FFDAA89F</color>
+   <color name="colorful_bg_2">#FF658AFF</color>
+   <color name="colorful_bg_3">#FF25A8F9</color>
+   <color name="colorful_bg_4">#FFE1D04D</color>
+   <color name="colorful_bg_5">#FF65CC9C</color>
+   <color name="colorful_bg_6">#FFC4CB80</color>
+   <color name="colorful_bg_7">#FFB5513F</color>
+   <color name="colorful_bg_8">#FFF4A903</color>
+   <color name="colorful_bg_9">#FF631EE9</color>
+   <color name="colorful_bg_10">#FF646464</color>
+   <color name="colorful_bg_11">#FF2F8B55</color>
+   <color name="colorful_bg_12">#FFD66733</color>
+   <color name="colorful_bg_13">#FFD18802</color>
+   <color name="colorful_bg_14">#FF8F8300</color>
+   <color name="colorful_bg_15">#FF2132B9</color>
+   <color name="colorful_bg_16">#FFC6562A</color>
+   <color name="colorful_bg_17">#FF0B57C3</color>
+   <color name="colorful_bg_18">#FF485579</color>
+   <color name="colorful_bg_19">#FF4F900D</color>
+   <color name="colorful_bg_20">#FF1943CE</color>
+   <color name="colorful_bg_21">#FFAA248E</color>
+   <color name="colorful_bg_22">#FFB73A67</color>
+   <color name="colorful_bg_23">#FF8B7D60</color>
+   <color name="colorful_bg_24">#FF7B8900</color>
+</resources>

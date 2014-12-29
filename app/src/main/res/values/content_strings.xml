@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="novel_categorys_array">
+        <item>都市</item>
+        <item>玄幻</item>
+        <item>仙侠</item>
+        <item>武侠</item>
+        <item>言情</item>
+        <item>穿越</item>
+        <item>网游</item>
+        <item>奇幻</item>
+        <item>科幻</item>
+        <item>悬疑</item>
+        <item>青春</item>
+        <item>校园</item>
+        <item>军事</item>
+        <item>历史</item>
+        <item>同人</item>
+        <item>经典</item>
+        <item>畅销</item>
+        <item>其他</item>
+    </string-array>
+
+    <string name="novel_category_by_leadrole">主角身份</string>
+    <string-array name="novel_category_by_leadrole_array">
+        <item>少年</item>
+        <item>学生</item>
+        <item>帝王</item>
+        <item>恶魔</item>
+        <item>王爷</item>
+        <item>总裁</item>
+        <item>王妃</item>
+        <item>军人</item>
+        <item>明星</item>
+        <item>皇后</item>
+        <item>法师</item>
+        <item>孤儿</item>
+        <item>特种兵</item>
+        <item>混混</item>
+        <item>校花</item>
+        <item>主上</item>
+        <item>丧尸</item>
+        <item>战士</item>
+        <item>校草</item>
+        <item>丫鬟</item>
+        <item>枭雄</item>
+        <item>侦探</item>
+        <item>女佣</item>
+        <item>保镖</item>
+        <item>救世主</item>
+        <item>上司</item>
+        <item>娇妻</item>
+        <item>郡主</item>
+        <item>道士</item>
+        <item>少妇</item>
+        <item>前妻</item>
+        <item>宫女</item>
+        <item>空姐</item>
+    </string-array>
+
+
+    <string name="novel_category_by_leading_charater">主角特征</string>
+    <string-array name="novel_category_by_leading_charater_array">
+        <item>强者</item>
+        <item>美男</item>
+        <item>风流</item>
+        <item>冷漠</item>
+        <item>妖孽</item>
+        <item>女强</item>
+        <item>坚强</item>
+        <item>冷血</item>
+        <item>铁血</item>
+        <item>专情</item>
+        <item>妖娆</item>
+        <item>流氓</item>
+        <item>张扬</item>
+        <item>小人物</item>
+        <item>深沉</item>
+        <item>灰姑娘</item>
+        <item>女尊</item>
+        <item>强势</item>
+        <item>纨绔</item>
+        <item>调皮</item>
+        <item>精英</item>
+        <item>剩女</item>
+        <item>睿智</item>
+        <item>美少女</item>
+        <item>宅女</item>
+        <item>聪慧</item>
+        <item>傲娇</item>
+        <item>小女人</item>
+    </string-array>
+
+    <string name="novel_category_by_leading_relationship">主角关系</string>
+    <string-array name="novel_category_by_leading_relationship_array">
+        <item>情有独钟</item>
+        <item>欢喜冤家</item>
+        <item>天作之合</item>
+        <item>不伦之恋</item>
+        <item>暧昧</item>
+        <item>情人</item>
+        <item>宠溺</item>
+        <item>暗恋</item>
+        <item>破镜重圆</item>
+        <item>一见钟情</item>
+        <item>一对一</item>
+        <item>一女多男</item>
+        <item>大团圆</item>
+        <item>白头到老</item>
+        <item>一男多女</item>
+    </string-array>
+
+    <string name="novel_category_by_class">流派特征</string>
+    <string-array name="novel_category_by_class_array">
+        <item>升级流</item>
+        <item>修真流</item>
+        <item>生活流</item>
+        <item>综漫</item>
+        <item>空间流</item>
+        <item>竞技流</item>
+        <item>变身流</item>
+        <item>种田文</item>
+        <item>召唤文</item>
+        <item>娱乐流</item>
+        <item>萌系</item>
+        <item>系统流</item>
+        <item>军旅</item>
+        <item>位面流</item>
+        <item>无限流</item>
+        <item>猥琐流</item>
+        <item>高干</item>
+        <item>机甲流</item>
+        <item>兑换流</item>
+        <item>数据流</item>
+    </string-array>
+
+    <string name="novel_category_by_background">故事背景</string>
+    <string-array name="novel_category_by_background_array">
+        <item>异界</item>
+        <item>架空</item>
+        <item>魔法世界</item>
+        <item>东方</item>
+        <item>乱世</item>
+        <item>末世</item>
+        <item>仙魔界</item>
+        <item>乡村</item>
+        <item>火影</item>
+        <item>官场</item>
+        <item>清朝</item>
+        <item>唐朝</item>
+        <item>宋朝</item>
+        <item>元明</item>
+        <item>民国</item>
+        <item>星际</item>
+        <item>九州</item>
+        <item>蜀山</item>
+        <item>抗战</item>
+        <item>海贼王</item>
+        <item>dnf</item>
+        <item>英雄联盟</item>
+    </string-array>
+
+    <string name="novel_category_by_storyline">故事情节</string>
+    <string-array name="novel_category_by_storyline_array">
+        <item>生存挣扎</item>
+        <item>复仇</item>
+        <item>修炼成长</item>
+        <item>权谋</item>
+        <item>守护羁绊</item>
+        <item>塑造传奇</item>
+        <item>爱恨情仇</item>
+        <item>丹药法宝</item>
+        <item>阴差阳错</item>
+        <item>背叛</item>
+        <item>从零开始</item>
+        <item>婚姻生子</item>
+        <item>逆天改命</item>
+        <item>探险</item>
+        <item>商战</item>
+        <item>契约</item>
+        <item>盗墓</item>
+        <item>艳遇</item>
+        <item>失忆</item>
+        <item>女扮男装</item>
+        <item>性别转换</item>
+        <item>同居</item>
+        <item>创世</item>
+        <item>灭世</item>
+        <item>禁忌</item>
+        <item>替身</item>
+        <item>封神</item>
+        <item>养成</item>
+        <item>伦理</item>
+        <item>反穿越</item>
+        <item>群体穿越</item>
+    </string-array>
+
+    <string name="novel_category_by_writing_style">文笔风格</string>
+    <string-array name="novel_category_by_writing_style_array">
+        <item>热血</item>
+        <item>虐爱</item>
+        <item>搞笑</item>
+        <item>爽文</item>
+        <item>yy</item>
+        <item>轻松</item>
+        <item>纯爱</item>
+        <item>励志</item>
+        <item>梦幻</item>
+        <item>狗血</item>
+        <item>种马</item>
+    </string-array>
+
+    <string name="novel_category_by_word_count">字数</string>
+    <string-array name="novel_category_by_word_count_array">
+        <item>30万字</item>
+        <item>50万字</item>
+        <item>100万字</item>
+        <item>200万字</item>
+        <item>200万以上</item>
+    </string-array>
+</resources>

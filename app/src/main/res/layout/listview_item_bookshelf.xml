@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?><!-- A CardView that contains a TextView -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listview_item_content_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/listview_item_novel_image_imageview"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/listview_item_novel_title_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?attr/smooth_theme_text_color_primary"
+            android:textSize="@dimen/text_size_subhead">
+
+        </TextView>
+
+        <TextView
+            android:id="@+id/listview_item_novel_info1_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?attr/smooth_theme_text_color_secondary"
+            android:textSize="@dimen/text_size_body1">
+
+        </TextView>
+
+        <TextView
+            android:id="@+id/listview_item_novel_info2_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?attr/smooth_theme_text_color_secondary"
+            android:textSize="@dimen/text_size_body1">
+
+        </TextView>
+
+        <!--<TextView
+            android:id="@+id/listview_item_novel_info3_textview"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:textSize="@dimen/text_size_body1"
+            android:textColor="@color/secondary_text_color"
+            android:ellipsize="end"
+            android:maxLines="1">
+
+        </TextView>-->
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/listview_item_novel_unread_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="16dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/accent_color"
+        android:textSize="@dimen/text_size_caption" />
+</RelativeLayout>

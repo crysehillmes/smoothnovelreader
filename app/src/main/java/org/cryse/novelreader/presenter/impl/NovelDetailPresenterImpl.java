@@ -1,0 +1,147 @@
+package org.cryse.novelreader.presenter.impl;
+
+import org.cryse.novelreader.logic.NovelDataService;
+import org.cryse.novelreader.model.NovelDetailModel;
+import org.cryse.novelreader.model.NovelModel;
+import org.cryse.novelreader.presenter.NovelDetailPresenter;
+import org.cryse.novelreader.util.ToastType;
+import org.cryse.novelreader.view.NovelDetailView;
+import org.cryse.novelreader.util.SubscriptionUtils;
+import org.cryse.novelreader.util.ToastUtil;
+import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
+
+import javax.inject.Inject;
+
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import timber.log.Timber;
+
+public class NovelDetailPresenterImpl implements NovelDetailPresenter {
+    private static final String LOG_TAG = NovelDetailPresenterImpl.class.getSimpleName();
+    private NovelDetailView mView;
+    private Subscription mLoadDetailSubscription;
+    private Subscription mCheckFavoriteStatusSubscription;
+    private Subscription mAddFavoriteSubscription;
+    private NovelDataService dataService;
+    private ToastUtil mToastUtil;
+    private AndroidDisplay mDisplay;
+    @Inject
+    public NovelDetailPresenterImpl(NovelDataService dataService, AndroidDisplay display, ToastUtil toastUtil) {
+        this.dataService = dataService;
+        this.mDisplay = display;
+        this.mToastUtil = toastUtil;
+        this.mView = new EmptyNovelDetailView();
+    }
+
+    @Override
+    public void bindView(NovelDetailView view) {
+        this.mView = view;
+    }
+
+    @Override
+    public void unbindView() {
+        bindView(new EmptyNovelDetailView());
+    }
+
+    @Override
+    public void destroy() {
+        SubscriptionUtils.checkAndUnsubscribe(mLoadDetailSubscription);
+        SubscriptionUtils.checkAndUnsubscribe(mCheckFavoriteStatusSubscription);
+        SubscriptionUtils.checkAndUnsubscribe(mAddFavoriteSubscription);
+
+    }
+
+    @Override
+     public void loadNovelDetail(NovelModel novelModel) {
+        SubscriptionUtils.checkAndUnsubscribe(mLoadDetailSubscription);
+        mLoadDetailSubscription = dataService.getNovelDetail(novelModel.getId(), novelModel.getSrc())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        result -> {
+                            mView.showNovelDetail(result);
+                        },
+                        error -> {
+                            mView.setLoading(false);
+                            Timber.e(error, error.getMessage(), LOG_TAG);
+                            mToastUtil.showExceptionToast(mView, error);
+                        },
+                        () -> {
+                            mView.setLoading(false);
+                            Timber.d("loadNovelDetail completed!", LOG_TAG);
+                        }
+                );
+    }
+
+    @Override
+    public void checkNovelFavoriteStatus(NovelModel novelModel) {
+        SubscriptionUtils.checkAndUnsubscribe(mCheckFavoriteStatusSubscription);
+        mCheckFavoriteStatusSubscription = dataService.isFavorite(novelModel.getId())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        result -> {
+                            mView.setFavoriteButtonStatus(result);
+                        },
+                        error -> {
+                            Timber.e(error, error.getMessage(), LOG_TAG);
+                        },
+                        () -> {
+                            Timber.d("checkNovelFavoriteStatus completed!", LOG_TAG);
+                        }
+                );
+    }
+
+    @Override
+    public void addOrRemoveFavorite(NovelModel novelModel, boolean isAdd) {
+        SubscriptionUtils.checkAndUnsubscribe(mAddFavoriteSubscription);
+        Observable<Void> observable = isAdd ? dataService.addToFavorite(novelModel) : dataService.removeFromFavorite(novelModel.getId());
+        mAddFavoriteSubscription = observable.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        result -> {
+                        },
+                        error -> {
+                            Timber.e(error, error.getMessage(), LOG_TAG);
+                        },
+                        () -> {
+                            Timber.d("addOrRemoveFavorite completed!", LOG_TAG);
+                        }
+                );
+    }
+
+    @Override
+    public void startReading(NovelModel novelModel) {
+        mDisplay.showNovelChapterList(mView, novelModel);
+    }
+
+    private class EmptyNovelDetailView implements NovelDetailView {
+
+        @Override
+        public void showNovelDetail(NovelDetailModel novelDetail) {
+
+        }
+
+        @Override
+        public void setFavoriteButtonStatus(boolean isFavorited) {
+
+        }
+
+        @Override
+        public void setLoading(Boolean isLoading) {
+
+        }
+
+        @Override
+        public Boolean isLoading() {
+            return null;
+        }
+
+        @Override
+        public void showToast(String text, ToastType toastType) {
+
+        }
+    }
+}

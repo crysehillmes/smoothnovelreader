@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/settings_category_dispaly_title">
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="is_night_mode"
+            android:summary="@string/settings_item_is_night_mode_summary"
+            android:title="@string/settings_item_is_night_mode_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="grayscale_in_night_mode"
+            android:summary="@string/settings_item_gray_scale_in_night_mode_summary"
+            android:title="@string/settings_item_gray_scale_in_night_mode_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="show_cover_img"
+            android:summary="@string/settings_item_show_cover_img_summary"
+            android:title="@string/settings_item_show_cover_img_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_category_reading_title">
+
+        <ListPreference
+            android:key="scroll_mode"
+            android:defaultValue="0"
+            android:dialogTitle="@string/settings_item_font_size_dialog_title"
+            android:entries="@array/scroll_mode_string_entries"
+            android:entryValues="@array/scroll_mode_value_entries"
+            android:summary="@string/settings_item_scroll_mode_summary"
+            android:title="@string/settings_item_scroll_mode_title" />
+
+        <ListPreference
+            android:key="read_font_size"
+            android:defaultValue="16"
+            android:dialogTitle="@string/settings_item_font_size_dialog_title"
+            android:entries="@array/readview_font_size_entries"
+            android:entryValues="@array/readview_font_size_entries"
+            android:summary="@string/settings_item_font_size_summary"
+            android:title="@string/settings_item_font_size_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_category_other_title">
+        <Preference
+            android:title="@string/settings_item_about_title">
+            <intent
+                android:targetPackage="org.cryse.novelreader"
+                android:targetClass="org.cryse.novelreader.ui.SettingsActivity" >
+                <extra android:name="type" android:value="about" />
+                </intent>
+        </Preference>
+    </PreferenceCategory>
+</PreferenceScreen>

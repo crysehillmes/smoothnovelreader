@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:background="?android:selectableItemBackground">
+    <TextView
+        android:id="@+id/listview_item_novel_chapters_item_chapter_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/smooth_theme_text_color_subhead"
+        android:textSize="@dimen/text_size_subhead"
+        android:ellipsize="end"
+        android:maxLines="1"/>
+</LinearLayout>

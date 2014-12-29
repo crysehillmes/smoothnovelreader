@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?><!-- A CardView that contains a TextView -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="1dp">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="true"
+            app:cardBackgroundColor="?attr/smooth_theme_card_bg_color">
+            <org.cryse.widget.FixedAspectRatioImageView
+                android:id="@+id/listview_item_novel_image_imageview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                app:far_height_weight="4"
+                app:far_width_weight="3"
+                app:far_fixed_orientation="horizontal" />
+        </android.support.v7.widget.CardView>
+
+        <TextView
+            android:id="@+id/listview_item_novel_title_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="?attr/smooth_theme_text_color_primary"
+            android:textSize="@dimen/text_size_subhead"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp">
+
+        </TextView>
+
+        <TextView
+            android:id="@+id/listview_item_novel_info1_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?attr/smooth_theme_text_color_secondary"
+            android:textSize="@dimen/text_size_body1"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp">
+
+        </TextView>
+
+        <TextView
+            android:id="@+id/listview_item_novel_info2_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?attr/smooth_theme_text_color_secondary"
+            android:textSize="@dimen/text_size_body1"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="8dp">
+
+        </TextView>
+    </LinearLayout>
+</FrameLayout>

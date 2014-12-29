@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_chapter_read_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/smooth_theme_read_bg_drawable"
+    android:clipChildren="false"
+    android:orientation="vertical">
+
+    <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
+        android:id="@+id/activity_chapter_read_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:indeterminate="true"
+        app:spb_speed="1.5"
+        style="@style/LoadChapterContentProgressBar"
+        android:visibility="invisible"/>
+
+    <FrameLayout
+        android:id="@+id/activity_read_view_widget_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/activity_chapter_read_progressbar"
+        android:layout_above="@+id/activity_chapter_read_status_layout">
+
+        </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/activity_chapter_read_status_layout"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            android:id="@+id/activity_chapter_read_status_page_pos_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:textColor="?attr/smooth_theme_text_color_secondary"
+            android:textSize="@dimen/text_size_bottom_status" />
+
+        <TextView
+            android:id="@+id/activity_chapter_read_status_current_chapter_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:textColor="?attr/smooth_theme_text_color_secondary"
+            android:textSize="@dimen/text_size_bottom_status" />
+
+        <TextView
+            android:id="@+id/activity_chapter_read_status_chapter_pos_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:textColor="?attr/smooth_theme_text_color_secondary"
+            android:textSize="@dimen/text_size_bottom_status" />
+    </RelativeLayout>
+</RelativeLayout>

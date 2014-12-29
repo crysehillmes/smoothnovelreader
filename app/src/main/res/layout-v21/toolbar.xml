@@ -1,0 +1,17 @@
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/my_awesome_toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?actionBarSize"
+    android:background="?colorPrimary"
+    android:minHeight="?actionBarSize"
+    android:elevation="@dimen/toolbar_elevation"
+    android:paddingTop="0dp"
+    android:paddingBottom="0dp"
+    app:contentInsetStart="72dp"
+    app:contentInsetLeft="72dp"
+    app:contentInsetEnd="0dp"
+    android:layout_marginBottom="@dimen/toolbar_shadow_height"
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />

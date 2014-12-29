@@ -1,0 +1,109 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- Per the design guidelines, navigation drawers should be between 240dp and 320dp:
+         https://developer.android.com/design/patterns/navigation-drawer.html -->
+    <dimen name="navigation_drawer_width">288dp</dimen>
+
+<!--    <dimen name="default_small_padding">8dp</dimen>
+
+    <dimen name="font_extra_large">32.0sp</dimen>
+    <dimen name="font_big">26.0sp</dimen>
+    <dimen name="font_large">22.0sp</dimen>
+    <dimen name="font_normal">20.0sp</dimen>
+    <dimen name="font_medium">18.0sp</dimen>
+    <dimen name="font_small">16.0sp</dimen>
+    <dimen name="font_extra_small">15.0sp</dimen>
+    <dimen name="font_tiny">14.0sp</dimen>
+    <dimen name="font_supertiny">12.0sp</dimen>
+
+    <dimen name="padding1">2.0dip</dimen>
+    <dimen name="padding2">5.0dip</dimen>
+    <dimen name="padding3">10.0dip</dimen>
+    <dimen name="padding4">15.0dip</dimen>
+    <dimen name="padding5">20.0dip</dimen>
+    <dimen name="padding6">25.0dip</dimen>
+    <dimen name="padding7">30.0dip</dimen>
+    <dimen name="padding8">35.0dip</dimen>
+    <dimen name="padding9">40.0dip</dimen>
+    <dimen name="padding10">45.0dip</dimen>
+    <dimen name="padding11">50.0dip</dimen>-->
+
+    <dimen name="text_size_read_view_14">14sp</dimen>
+    <dimen name="text_size_read_view_16">16sp</dimen>
+    <dimen name="text_size_read_view_18">18sp</dimen>
+    <dimen name="text_size_read_view_20">20sp</dimen>
+    <dimen name="text_size_read_view_22">22sp</dimen>
+    <dimen name="text_size_read_view_24">24sp</dimen>
+
+    <dimen name="read_textview_padding">6.0dp</dimen>
+    <dimen name="text_size_bottom_status">9.0sp</dimen>
+
+    <!-- body content -->
+    <dimen name="element_spacing_normal">8dp</dimen>
+    <dimen name="content_padding_normal">16dp</dimen>
+
+    <dimen name="text_size_display4">112sp</dimen><!-- Light -->
+    <dimen name="text_size_display3">56sp</dimen><!-- Regular -->
+    <dimen name="text_size_display2">45sp</dimen><!-- Regular -->
+    <dimen name="text_size_display1">34sp</dimen><!-- Regular -->
+    <dimen name="text_size_headline">24sp</dimen><!-- Regular -->
+    <dimen name="text_size_title">20sp</dimen><!-- Medium -->
+    <dimen name="text_size_subhead">16sp</dimen><!-- Regular -->
+    <dimen name="text_size_body2">14sp</dimen><!-- Medium -->
+    <dimen name="text_size_body1">14sp</dimen><!-- Regular -->
+    <dimen name="text_size_caption">12sp</dimen><!-- Regular -->
+    <dimen name="text_size_menu">14sp</dimen><!-- Medium -->
+    <dimen name="text_size_button">14sp</dimen><!-- MEDIUM(ALL CAPS) -->
+
+
+    <!-- Line wrapping only applies to Body, Subhead, Headline, and the smaller Display styles. -->
+    <dimen name="line_height_display2">48pt</dimen>
+    <dimen name="line_height_display1">40pt</dimen>
+    <dimen name="line_height_headline">32pt</dimen>
+    <dimen name="line_height_subhead2">28pt</dimen>
+    <dimen name="line_height_subhead1">24pt</dimen>
+    <dimen name="line_height_body2">24pt</dimen>
+    <dimen name="line_height_body1">20pt</dimen>
+
+
+    <dimen name="text_size_large">18sp</dimen>
+
+    <dimen name="keyline_1">16dp</dimen>
+    <dimen name="keyline_1_minus_8dp">8dp</dimen>
+    <dimen name="keyline_2">72dp</dimen>
+    <dimen name="keyline_2_minus_16dp">56dp</dimen>
+    <dimen name="keyline_2_session_detail">@dimen/keyline_2</dimen>
+
+
+    <dimen name="add_to_button_height">56dp</dimen> <!-- including padding -->
+    <dimen name="add_to_button_height_no_padding">40dp</dimen>
+    <dimen name="detail_progress_height">56dp</dimen> <!-- including padding -->
+
+    <dimen name="fab_elevation">10dp</dimen>
+    <dimen name="novel_detail_max_header_elevation">@dimen/toolbar_elevation</dimen>
+    <dimen name="tag_color_dot_size">12dp</dimen>
+
+    <dimen name="novel_details_floating_width">500dp</dimen>
+    <dimen name="novel_details_floating_height">650dp</dimen>
+    <dimen name="novel_details_extra_space_bottom">48dp</dimen>
+
+
+    <dimen name="spinner_dropdown_item_padding_normal">16dp</dimen>
+    <dimen name="spinner_dropdown_item_padding_indented">16dp</dimen>
+    <dimen name="spinner_dropdown_item_width">240dp</dimen>
+    <dimen name="spinner_dropdown_item_height">48dp</dimen>
+    <dimen name="spinner_spinner_width">200dp</dimen>
+    <dimen name="spinner_left_padding">4dp</dimen>
+
+    <dimen name="swipe_progress_bar_height">8dp</dimen>
+
+
+    <dimen name="toolbar_shadow_height">8.0dip</dimen>
+
+    <dimen name="toolbar_elevation">8dp</dimen>
+    <dimen name="content_default_elevation">2dp</dimen>
+    <dimen name="navigation_drawer_elevation">12dp</dimen>
+</resources>

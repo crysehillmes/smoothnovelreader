@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="FrameworkRoot.Light" parent="Theme.AppCompat.Light.NoActionBar" />
+    <style name="FrameworkRoot.Light.ActionButton.Overflow" parent="Widget.AppCompat.ActionButton.Overflow" />
+    <style name="FrameworkRoot.Light.Spinner" parent="Widget.AppCompat.Spinner" />
+
+
+    <style name="SmoothTheme.Light" parent="FrameworkRoot.Light">
+        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorPrimaryDark">@color/primary_color_dark</item>
+        <item name="colorAccent">@color/accent_color</item>
+
+        <item name="actionBarInsetStart">@dimen/keyline_2_minus_16dp</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <!--<item name="android:windowContentOverlay">@null</item>-->
+        <!--<item name="android:popupMenuStyle">@style/Widget.Smooth.PopupMenu</item>
+        <item name="android:listPopupWindowStyle">@style/Widget.Smooth.PopupMenu</item>
+        <item name="android:dropDownListViewStyle">@style/Widget.Smooth.ListView.DropDown</item>-->
+
+        <item name="smooth_theme_translucent_color">@color/primary_translucent_color</item>
+        <item name="smooth_theme_bg_color">@color/theme_bg_color</item>
+        <item name="smooth_theme_detail_bg_color">#FFFFFF</item>
+        <item name="smooth_theme_card_bg_color">#FFFFFF</item>
+        <item name="smooth_theme_actionbar_text_color">@color/actionbar_text_color</item>
+
+        <item name="smooth_theme_navigation_drawer_text_color">@color/black</item>
+        <item name="smooth_theme_navigation_drawer_icon_color">@color/gray</item>
+        <item name="smooth_theme_navigation_drawer_bg_color">@color/theme_navigation_drawer_bg</item>
+
+        <item name="smooth_theme_read_bg_drawable">@color/theme_read_bg_color</item>
+        <item name="smooth_theme_read_text_color">#FF000000</item>
+
+        <item name="smooth_theme_spinner_text_color">@drawable/spinner_text_color_light</item>
+
+        <item name="smooth_theme_icon">@color/icon_color</item><!-- 87% -->
+        <item name="smooth_theme_text_color_primary">@color/text_color_primary</item><!-- 87% -->
+        <item name="smooth_theme_text_color_secondary">@color/text_color_secondary</item><!-- 54% -->
+        <item name="smooth_theme_text_color_tint">@color/text_color_tint</item><!-- 26% -->
+        <item name="smooth_theme_text_color_divider">@color/text_color_divider</item><!-- 12% -->
+
+        <item name="smooth_theme_text_color_display4">@color/text_color_display4</item><!-- 54% -->
+        <item name="smooth_theme_text_color_display3">@color/text_color_display3</item><!-- 54% -->
+        <item name="smooth_theme_text_color_display2">@color/text_color_display2</item><!-- 54% -->
+        <item name="smooth_theme_text_color_display1">@color/text_color_display1</item><!-- 54% -->
+        <item name="smooth_theme_text_color_headline">@color/text_color_headline</item><!-- 87% -->
+        <item name="smooth_theme_text_color_title">@color/text_color_title</item><!-- 87% -->
+        <item name="smooth_theme_text_color_subhead">@color/text_color_subhead</item><!-- 87% -->
+        <item name="smooth_theme_text_color_body2">@color/text_color_body2</item><!-- 87% -->
+        <item name="smooth_theme_text_color_body1">@color/text_color_body1</item><!-- 87% -->
+        <item name="smooth_theme_text_color_caption">@color/text_color_caption</item><!-- 54% -->
+        <item name="smooth_theme_text_color_menu">@color/text_color_menu</item><!-- 87% -->
+        <item name="smooth_theme_text_color_button">@color/text_color_button</item><!-- 87% -->
+
+        <item name="smooth_theme_bottom_menu_bg">@color/bottom_menu_bg_color</item>
+        <item name="smooth_theme_detail_tag_chip_bg">@drawable/detail_tag_chip_bg_light</item>
+
+
+        <item name="android:listSeparatorTextViewStyle">@style/SmoothPreferenceListHeader</item>
+        <item name="smooth_theme_spinner_style">@style/SmoothTheme.Light.Spinner</item>
+        <item name="smooth_theme_spinner_foreground">@color/spinner_dropdown_foreground_color_light</item>
+        <item name="smooth_theme_search_bg">@drawable/white_card</item>
+        <item name="smooth_theme_search_close">@drawable/ic_action_close</item>
+    </style>
+
+    <style name="SmoothTheme.Light.Spinner" parent="FrameworkRoot.Light.Spinner">
+        <item name="android:dropDownWidth">wrap_content</item>
+        <item name="android:background">?android:selectableItemBackground</item>
+        <item name="android:dropDownSelector">?android:selectableItemBackground</item>
+        <item name="android:divider">@null</item>
+        <item name="android:dividerHeight">0dp</item>
+        <item name="overlapAnchor">true</item>
+        <item name="android:overlapAnchor">true</item>
+    </style>
+</resources>

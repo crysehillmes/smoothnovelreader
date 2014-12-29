@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/settings_category_author_title">
+        <Preference
+            android:summary="@string/settings_item_author_name_value"
+            android:title="@string/settings_item_author_name_title" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://plus.google.com/+CryseHillmes"/>
+        </Preference>
+        <Preference
+            android:summary="@string/settings_item_email_address_value"
+            android:title="@string/settings_item_email_address_title">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="mailto:tyk5555@hotmail.com"/>
+        </Preference>
+        <Preference
+            android:summary="@string/settings_item_author_blog_site_value"
+            android:title="@string/settings_item_author_blog_site">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://www.cryse.org" />
+        </Preference>
+        <Preference
+            android:key="prefs_about_version"
+            android:summary=""
+            android:title="@string/settings_item_version">
+        </Preference>
+    </PreferenceCategory>
+</PreferenceScreen>

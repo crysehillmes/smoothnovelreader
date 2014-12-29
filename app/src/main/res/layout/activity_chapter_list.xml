@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:superlistview="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.quentindommerc.superlistview.SuperListview
+        android:id="@+id/novel_chapter_list_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?actionBarSize"
+        superlistview:superlv__empty="@layout/layout_empty_view"
+        superlistview:superlv__listClipToPadding="false"
+        superlistview:superlv__listDivider="@android:color/transparent"
+        superlistview:superlv__listDividerHeight="0dp"
+        superlistview:superlv__listPadding="2dp"
+        superlistview:superlv__moreProgress="@layout/layout_more_progress"
+        superlistview:superlv__scrollbarStyle="outsideOverlay" />
+
+    <include
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top" />
+</FrameLayout>

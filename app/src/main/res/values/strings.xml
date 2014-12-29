@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">品阅看书</string>
+
+    <string name="navigation_drawer_open">打开导航菜单</string>
+    <string name="navigation_drawer_close">关闭导航菜单</string>
+
+
+    <!-- DrawerItem text-->
+    <string name="drawer_bookshelf">我的书架</string>
+    <string name="drawer_category">在线分类</string>
+    <string name="drawer_rank">热门排行榜</string>
+    <string name="drawer_settings">设置</string>
+
+
+    <!-- Dialog text -->
+    <string name="dialog_exit_title">确定退出%1$s?</string>
+    <string name="dialog_exit_content"></string>
+    <string name="dialog_exit_confirm">退出</string>
+    <string name="dialog_exit_cancel">继续阅读</string>
+
+    <string name="dialog_button_start_read">开始阅读</string>
+    <string name="dialog_button_add_favorite">加入书架</string>
+
+    <string name="dialog_choose">选择</string>
+
+    <!-- Book introduction format -->
+    <string name="format_follower_count">%1$d 人在追</string>
+    <string name="format_last_read_chapter">最后阅读: %1$s</string>
+    <string name="format_latest_chapter">最新章节: %1$s</string>
+    <string name="current_none">暂无</string>
+    <string name="reading_not_start">还未阅读</string>
+
+    <!-- Content description -->
+    <string name="placeholder_lorem_ipsum">placeholder</string>
+    <string name="default_content_description">图片</string>
+    <string name="remove_from_bookshelf_description">移除收藏</string>
+    <string name="add_to_bookshelf_description">添加收藏</string>
+
+    <!-- ActionBar MenuItem -->
+    <string name="action_last_read_chapter">最后阅读</string>
+    <string name="action_refresh_contentlist">刷新目录</string>
+    <string name="action_refresh">刷新目录</string>
+    <string name="action_novel_detail">小说详情</string>
+    <string name="action_bar_search_tip">搜索</string>
+    <string name="action_bar_add_novel_tip">添加小说</string>
+    <string name="action_remove_from_bookshelf">移除</string>
+    <string name="action_change_theme">切换主题</string>
+
+    <!-- Contextual ActionBar Title -->
+    <string name="cab_selection_count">选中 %1$d 项</string>
+
+    <!-- Toast text -->
+    <string name="toast_network_error">网络不太通畅哦</string>
+    <string name="toast_network_no_connection">好像没有网络连接</string>
+    <string name="toast_generic_error">好像出错啦</string>
+    <string name="toast_chapter_content_lost">这一章找不到啦，重新加载试试</string>
+    <string name="toast_chapter_list_loading">正在更新目录，请稍等…</string>
+
+    <!-- Search text -->
+    <string name="searchbox_hint">搜索书名或作者名</string>
+    <string name="search_prompt_no_result_title">未搜索到结果</string>
+    <string name="search_prompt_no_result_subtitle">换个关键词试试</string>
+    <string name="search_hint">搜索书名或作者名</string>
+    <string name="search_label">小说</string>
+
+
+    <!-- EmptyView text -->
+    <string name="empty_view_no_book_on_shelf_prompt">书架还是空的，去找几本书吧</string>
+    <string name="empty_view_prompt">这里是空的，刷新一下吧</string>
+    <string name="empty_view_searchview">输入书名或作者名搜索</string>
+
+
+    <string name="settings_item_scroll_mode_title">翻页模式</string>
+    <string name="settings_item_scroll_mode_summary">选择您喜欢的翻页模式,请手动重新打开阅读页面 </string>
+    <string name="settings_item_scroll_mode_dialog_title">选择翻页模式</string>
+    <string-array name="scroll_mode_string_entries">
+        <item>纵向翻页(FlipBoard模式)</item>
+        <item>横向翻页(FlipBoard模式)</item>
+        <item>横向滑动</item>
+    </string-array>
+    <string-array name="scroll_mode_value_entries">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="readview_font_size_entries">
+        <item>14</item>
+        <item>16</item>
+        <item>18</item>
+        <item>20</item>
+        <item>22</item>
+        <item>24</item>
+        <item>26</item>
+    </string-array>
+
+    <!-- Spinner label and value section-->
+
+
+    <string-array name="novel_rank_categorys_array">
+        <item>热门排行榜</item>
+        <item>连载排行榜</item>
+        <item>完结排行榜</item>
+        <item>上升最快榜</item>
+        <item>男生爱看</item>
+        <item>女生爱看</item>
+        <item>起点点击榜</item>
+        <item>17k点击榜</item>
+        <item>逐浪点击榜</item>
+        <item>纵横点击榜</item>
+        <item>红袖点击榜</item>
+    </string-array>
+
+    <string-array name="novel_rank_category_values_array">
+        <item>total</item>
+        <item>serial</item>
+        <item>end</item>
+        <item>upfast</item>
+        <item>boy</item>
+        <item>girl</item>
+        <item>qidian</item>
+        <item>17k</item>
+        <item>zhulang</item>
+        <item>zongheng</item>
+        <item>hongxiu</item>
+    </string-array>
+
+
+    <!-- PlaceHolder -->
+    <string name="placeholder_novel_details_title">What\'s New in Android Developer Tools</string>
+    <string name="placeholder_novel_details_subtitle">Trevor Johns and Roman Nurik</string>
+    <string name="add_fab_novel">Add to bookshelf</string>
+
+    <!-- Novel detail -->
+    <string name="novel_details_a11y_novel_added">小说已添加至书架</string>
+    <string name="novel_details_a11y_novel_removed">小说已从书架中移除</string>
+    <string name="novel_detail_achieve_header">排行榜成就</string>
+    <string name="novel_detail_abstract_header">状态</string>
+
+    <string name="novel_detail_status_fomat">状态\u3000\u3000：%1$s</string>
+    <string name="novel_detail_chapter_count_fomat">章节数\u3000：%1$d 章</string>
+    <string name="novel_detail_latest_chapter_fomat">最新章节：%1$s</string>
+
+    <string name="novel_detail_achieve_rank_fomat">第%1$s名</string>
+    <string name="novel_detail_achieve_date_fomat">%1$s年%2$s月</string>
+
+    <!-- Read bottom sheet -->
+    <string name="bottom_sheet_title">阅读设置</string>
+    <string name="bottom_sheet_item_change_src">更换来源</string>
+    <string name="bottom_sheet_item_chapter_next">下一章</string>
+    <string name="bottom_sheet_item_chapter_prev">上一章</string>
+    <string name="bottom_sheet_item_night_mode">夜间模式</string>
+    <string name="bottom_sheet_item_reading_settings">阅读设置</string>
+    <string name="bottom_sheet_item_daylight_mode">日间模式</string>
+    <string name="bottom_sheet_item_font_size">文字大小</string>
+    <string name="bottom_sheet_item_page_curl_mode">@string/settings_item_scroll_mode_title</string>
+    <string name="bottom_sheet_item_reload">重新加载</string>
+
+    <!-- Settings section -->
+    <string name="settings_category_dispaly_title">显示</string>
+    <string name="settings_category_reading_title">阅读</string>
+    <string name="settings_item_is_night_mode_title">夜间模式</string>
+    <string name="settings_item_is_night_mode_summary">夜间使用较低的亮度，减少双眼的疲劳</string>
+    <string name="settings_item_show_cover_img_title">封面图片</string>
+    <string name="settings_item_show_cover_img_summary">是否显示小说封面图片</string>
+    <string name="settings_item_gray_scale_in_night_mode_title">黑白封面</string>
+    <string name="settings_item_gray_scale_in_night_mode_summary">在夜间使用黑白的小说封面以降低亮度</string>
+    <string name="settings_item_font_size_title">文字大小</string>
+    <string name="settings_item_font_size_summary">设置阅读页面字体大小</string>
+    <string name="settings_item_font_size_dialog_title">选择字体大小</string>
+
+    <string name="settings_category_other_title">其他</string>
+    <string name="settings_item_about_title">关于</string>
+
+    <!-- About -->
+    <string name="settings_about_activity_title">关于</string>
+    <string name="settings_category_author_title">关于</string>
+    <string name="settings_item_author_name_value">Cryse Hillmes</string>
+    <string name="settings_item_author_name_title">作者</string>
+    <string name="settings_item_email_address_value">tyk5555@hotmail.com</string>
+    <string name="settings_item_email_address_title">联系作者</string>
+    <string name="settings_item_author_blog_site_value">http://www.cryse.org</string>
+    <string name="settings_item_author_blog_site">作者网站</string>
+    <string name="settings_item_version">版本</string>
+</resources>

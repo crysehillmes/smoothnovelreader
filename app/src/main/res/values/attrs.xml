@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BaseTheme">
+        <attr name="actionBarIconColor" format="color" />
+        <attr name="actionBarInsetStart" format="dimension" />
+        <attr name="spinnerBarInsetStart" format="dimension" />
+        <attr name="popupItemBackground" format="reference" />
+        <attr name="photoItemForeground" format="reference" />
+        <attr name="photoItemForegroundBorderless" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="FixedAspectRatioAttr">
+        <attr name="far_fixed_orientation" format="enum">
+            <enum name="vertical" value="0" />
+            <enum name="horizontal" value="1" />
+        </attr>
+        <attr name="far_height_weight" format="integer"/>
+        <attr name="far_width_weight" format="integer"/>
+    </declare-styleable>
+
+    <declare-styleable name="LetterImageViewAttr">
+        <attr name="liv_oval" format="boolean"/>
+        <attr name="liv_textColor" format="color"/>
+        <attr name="liv_textPadding" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="FlipViewController">
+        <attr name="orientation" format="enum">
+            <enum name="vertical" value="0" />
+            <enum name="horizontal" value="1" />
+        </attr>
+
+        <attr name="animationBitmapFormat" format="enum">
+            <enum name="ARGB_8888" value="0" />
+            <enum name="ARGB_4444" value="1" />
+            <enum name="RGB_565" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="ThemeAttributes">
+        <attr name="isFloatingWindow" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="BottomSheetItemAttributes">
+        <attr name="bsi_textColor" format="reference|color" />
+        <attr name="bsi_text" format="string" />
+        <attr name="bsi_icon" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="FloatingActionButton">
+        <attr name="fab_drawable" format="integer"/>
+        <attr name="fab_color" format="color"/>
+        <attr name="fab_shadowRadius" format="float"/>
+        <attr name="fab_shadowDx" format="float"/>
+        <attr name="fab_shadowDy" format="float"/>
+        <attr name="fab_shadowColor" format="integer"/>
+    </declare-styleable>
+
+    <declare-styleable name="RippleView">
+        <attr name="rippleColor" format="color" />
+        <attr name="alphaFactor" format="float" />
+        <attr name="hover" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="superrecyclerview">
+        <attr name='srv_columns' format="integer|reference"/>
+        <attr name="srv_listSelector" format="reference"/>
+        <attr name="srv_empty" format="reference"/>
+        <attr name="srv_moreProgress" format="reference"/>
+        <attr name="srv_progress" format="reference"/>
+        <attr name="srv_listDivider" format="reference"/>
+        <attr name="srv_listDividerHeight" format="dimension"/>
+        <attr name="srv_listClipToPadding" format="boolean"/>
+        <attr name="srv_listPadding" format="dimension"/>
+        <attr name="srv_listPaddingTop" format="dimension"/>
+        <attr name="srv_listPaddingBottom" format="dimension"/>
+        <attr name="srv_listPaddingLeft" format="dimension"/>
+        <attr name="srv_listPaddingRight" format="dimension"/>
+        <attr name="srv_scrollbarStyle">
+            <flag name="insideOverlay" value="0x0"/>
+            <flag name="insideInset" value="0x01000000"/>
+            <flag name="outsideOverlay" value="0x02000000"/>
+            <flag name="outsideInset" value="0x03000000"/>
+        </attr>
+
+        <!-- Layout to build a superList. Default values are  @layout/widget_superrecyclerview for a list and
+         @layout/view_progress_gridview for a grid-->
+        <attr name="srv_mainLayoutID" format="reference"/>
+    </declare-styleable>
+</resources>
