@@ -1,6 +1,7 @@
 package org.cryse.novelreader.ui;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +31,8 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class NovelChapterListActivity extends AbstractThemeableActivity implements NovelChaptersView{
     @Inject
@@ -159,6 +162,9 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
             case R.id.menu_item_change_theme:
                 setNightMode(!isNightMode());
                 return true;
+            case R.id.menu_item_chapters_offline_cache:
+                chaptersOfflineCache();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -232,5 +238,38 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     private void refreshChapters() {
         mListView.getSwipeToRefresh().setRefreshing(true);
         getPresenter().loadChapters(mNovel, true);
+    }
+
+    private void chaptersOfflineCache() {
+        final int[] resultCount = {0, 0};
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMax(mNovelChapterList.size());
+        progressDialog.setProgress(0);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        getPresenter().preloadChapterContents(mNovel, mNovelChapterList).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        result -> {
+                            // onNext
+                            progressDialog.incrementProgressBy(1);
+                            progressDialog.setMessage(getResources().getString(R.string.novel_chapter_contents_cache_progress, resultCount[0] + resultCount[1], mNovelChapterList.size()));
+                            if(result)
+                                resultCount[0]++;
+                            else
+                                resultCount[1]++;
+                        },
+                        error -> {
+                            // onError
+                            progressDialog.dismiss();
+                            ToastProxy.showToast(this, getString(R.string.toast_generic_error), ToastType.TOAST_INFO);
+                        },
+                        () -> {
+                            // onComplete
+                            progressDialog.dismiss();
+                            ToastProxy.showToast(this, getResources().getString(R.string.toast_chapter_contents_cache, resultCount[0], resultCount[1]), ToastType.TOAST_INFO);
+                        }
+                );
     }
 }

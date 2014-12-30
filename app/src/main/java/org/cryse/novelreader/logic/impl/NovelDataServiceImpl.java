@@ -185,6 +185,27 @@ public class NovelDataServiceImpl implements NovelDataService {
         });
     }
 
+    public Observable<Boolean> preloadChapterContents(NovelModel novel, List<NovelChapterModel> chapterModels) {
+        return Observable.create((Subscriber<? super Boolean> subscriber) -> {
+            try{
+                if(isFavoriteSync(novel.getId())) {
+                    for(NovelChapterModel chapterModel : chapterModels) {
+                        NovelChapterContentModel chapterContentModel = loadChapterContentFromWeb(novel.getId(), chapterModel.getSecondId(), chapterModel.getSrc());
+                        if(chapterContentModel != null) {
+                            updateChapterContentInDB(chapterModel.getSecondId(), chapterModel.getSrc(), chapterContentModel);
+                            subscriber.onNext(true);
+                        } else {
+                            subscriber.onNext(false);
+                        }
+                    }
+                    subscriber.onCompleted();
+                }
+            } catch (Exception ex) {
+                subscriber.onError(ex);
+            }
+        });
+    }
+
     @Override
     public Observable<NovelChapterContentModel> getChapterContent(final NovelChapterModel novelChapter, boolean forceUpdate) {
         return Observable.create((Subscriber<? super NovelChapterContentModel> subscriber) -> {
