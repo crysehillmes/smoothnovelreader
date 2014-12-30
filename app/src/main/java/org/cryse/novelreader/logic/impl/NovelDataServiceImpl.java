@@ -162,19 +162,18 @@ public class NovelDataServiceImpl implements NovelDataService {
                     if(forceUpdate || novel.getLatestUpdateCount() != 0) {
                         chapterList = loadChaptersFromWeb(novel.getId(), novel.getSrc());
                         updateChapterListInDB(novel.getId(), chapterList);
-                        subscriber.onNext(chapterList);
-                        subscriber.onCompleted();
-
+                        chapterList = loadChaptersFromDB(novel.getId());
                     } else {
                         //无需更新章节
                         chapterList = loadChaptersFromDB(novel.getId());
                         if(chapterList.size() == 0) {
                             chapterList = loadChaptersFromWeb(novel.getId(), novel.getSrc());
                             updateChapterListInDB(novel.getId(), chapterList);
+                            chapterList = loadChaptersFromDB(novel.getId());
                         }
-                        subscriber.onNext(chapterList);
-                        subscriber.onCompleted();
                     }
+                    subscriber.onNext(chapterList);
+                    subscriber.onCompleted();
                 } else {
                     chapterList = loadChaptersFromWeb(novel.getId(), novel.getSrc());
                     subscriber.onNext(chapterList);
@@ -389,8 +388,8 @@ public class NovelDataServiceImpl implements NovelDataService {
     }
 
     private List<NovelChapterModel> loadChaptersFromDB(String id) {
-        QueryBuilder<NovelChapterModel> queryBuilder = novelChapterModelDao.queryBuilder().where(NovelChapterModelDao.Properties.Id.eq(id)).orderAsc(NovelChapterModelDao.Properties.ChapterIndex);
-        List<NovelChapterModel> chapters = queryBuilder.list();
+        //QueryBuilder<NovelChapterModel> queryBuilder = novelChapterModelDao.queryBuilder().where(NovelChapterModelDao.Properties.Id.eq(id)).orderAsc(NovelChapterModelDao.Properties.ChapterIndex);
+        List<NovelChapterModel> chapters = novelChapterModelDao.deepQueryList(id);//queryBuilder.list();
         //Collections.sort(chapters);
         return chapters;
     }

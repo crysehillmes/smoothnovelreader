@@ -124,6 +124,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     protected void onResume() {
         super.onResume();
         getPresenter().checkLastReadState(mNovel.getId());
+        getPresenter().loadChapters(mNovel);
     }
 
     @Override
