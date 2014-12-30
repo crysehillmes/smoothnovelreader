@@ -1,8 +1,11 @@
 package org.cryse.novelreader.ui;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -240,35 +243,52 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         getPresenter().loadChapters(mNovel, true);
     }
 
+    boolean isCaching = false;
+    NotificationCompat.Builder mBuilder;
     private void chaptersOfflineCache() {
+
+        if(isCaching) return;
+        int chapterCount = mNovelChapterList.size();
         final int[] resultCount = {0, 0};
-        ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setIndeterminate(false);
-        progressDialog.setMax(mNovelChapterList.size());
-        progressDialog.setProgress(0);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+        NotificationManager mNotifyManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mBuilder = new NotificationCompat.Builder(this);
+        mBuilder.setContentTitle("缓存章节")
+                .setContentText("")
+                .setSmallIcon(R.drawable.ic_action_go_bottom);
+        mBuilder.setProgress(chapterCount, 0, false);
+        int id = 110;
+        isCaching = true;
         getPresenter().preloadChapterContents(mNovel, mNovelChapterList).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
                             // onNext
-                            progressDialog.incrementProgressBy(1);
-                            progressDialog.setMessage(getResources().getString(R.string.novel_chapter_contents_cache_progress, resultCount[0] + resultCount[1], mNovelChapterList.size()));
                             if(result)
                                 resultCount[0]++;
                             else
                                 resultCount[1]++;
+                            mBuilder.setProgress(chapterCount, resultCount[0] + resultCount[1], false);
+                            mBuilder.setContentText(getResources().getString(R.string.novel_chapter_contents_cache_progress, resultCount[0] + resultCount[1], mNovelChapterList.size()));
+                            mNotifyManager.notify(id, mBuilder.build());
                         },
                         error -> {
                             // onError
-                            progressDialog.dismiss();
+                            mBuilder.setContentText("Download failed")
+                                    // Removes the progress bar
+                                    .setProgress(0,0,false);
                             ToastProxy.showToast(this, getString(R.string.toast_generic_error), ToastType.TOAST_INFO);
+                            mNotifyManager.notify(id, mBuilder.build());
+                            isCaching = false;
                         },
                         () -> {
                             // onComplete
-                            progressDialog.dismiss();
+                            mBuilder.setContentText("Download failed")
+                                    // Removes the progress bar
+                                    .setProgress(0,0,false);
                             ToastProxy.showToast(this, getResources().getString(R.string.toast_chapter_contents_cache, resultCount[0], resultCount[1]), ToastType.TOAST_INFO);
+                            mNotifyManager.notify(id, mBuilder.build());
+                            isCaching = false;
                         }
                 );
     }
