@@ -135,7 +135,7 @@
     <string name="placeholder_novel_details_subtitle">Trevor Johns and Roman Nurik</string>
     <string name="add_fab_novel">Add to bookshelf</string>
 
-    <string name="novel_chapter_contents_cache_progress">已缓存了 %1$d 章， 共 %2$d 章。</string>
+    <string name="novel_chapter_contents_cache_progress">已缓存 %1$d 章， 共 %2$d 章。</string>
 
     <!-- Novel detail -->
     <string name="novel_details_a11y_novel_added">小说已添加至书架</string>

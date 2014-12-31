@@ -3,8 +3,12 @@ package org.cryse.novelreader.ui;
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +17,7 @@ import android.widget.TextView;
 
 import com.quentindommerc.superlistview.SuperListview;
 
+import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.util.ColorUtils;
 
 import org.cryse.novelreader.R;
@@ -52,6 +57,8 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     NovelChapterListAdapter mChapterListAdapter;
     private MenuItem mMenuItemLastRead;
+    ServiceConnection mBackgroundServiceConnection;
+    private ChapterContentsCacheService.ChapterContentsCacheBinder mServiceBinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +76,18 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         initListView();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle(mNovel.getTitle());
+
+        mBackgroundServiceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                mServiceBinder = (ChapterContentsCacheService.ChapterContentsCacheBinder) service;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mServiceBinder = null;
+            }
+        };
     }
 
     @SuppressLint("ResourceAsColor")
@@ -118,12 +137,15 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     protected void onStart() {
         super.onStart();
         getPresenter().bindView(this);
+        Intent service = new Intent(this.getApplicationContext(), ChapterContentsCacheService.class);
+        this.bindService(service, mBackgroundServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         getPresenter().unbindView();
+        this.unbindService(mBackgroundServiceConnection);
     }
 
     @Override
@@ -243,53 +265,9 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         getPresenter().loadChapters(mNovel, true);
     }
 
-    boolean isCaching = false;
-    NotificationCompat.Builder mBuilder;
     private void chaptersOfflineCache() {
-
-        if(isCaching) return;
-        int chapterCount = mNovelChapterList.size();
-        final int[] resultCount = {0, 0};
-        NotificationManager mNotifyManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setContentTitle("缓存章节")
-                .setContentText("")
-                .setSmallIcon(R.drawable.ic_action_go_bottom);
-        mBuilder.setProgress(chapterCount, 0, false);
-        int id = 110;
-        isCaching = true;
-        getPresenter().preloadChapterContents(mNovel, mNovelChapterList).subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result -> {
-                            // onNext
-                            if(result)
-                                resultCount[0]++;
-                            else
-                                resultCount[1]++;
-                            mBuilder.setProgress(chapterCount, resultCount[0] + resultCount[1], false);
-                            mBuilder.setContentText(getResources().getString(R.string.novel_chapter_contents_cache_progress, resultCount[0] + resultCount[1], mNovelChapterList.size()));
-                            mNotifyManager.notify(id, mBuilder.build());
-                        },
-                        error -> {
-                            // onError
-                            mBuilder.setContentText("Download failed")
-                                    // Removes the progress bar
-                                    .setProgress(0,0,false);
-                            ToastProxy.showToast(this, getString(R.string.toast_generic_error), ToastType.TOAST_INFO);
-                            mNotifyManager.notify(id, mBuilder.build());
-                            isCaching = false;
-                        },
-                        () -> {
-                            // onComplete
-                            mBuilder.setContentText("Download failed")
-                                    // Removes the progress bar
-                                    .setProgress(0,0,false);
-                            ToastProxy.showToast(this, getResources().getString(R.string.toast_chapter_contents_cache, resultCount[0], resultCount[1]), ToastType.TOAST_INFO);
-                            mNotifyManager.notify(id, mBuilder.build());
-                            isCaching = false;
-                        }
-                );
+        if(mServiceBinder != null && !mServiceBinder.isCaching()) {
+            mServiceBinder.chaptersOfflineCache(mNovel, mNovelChapterList);
+        }
     }
 }
