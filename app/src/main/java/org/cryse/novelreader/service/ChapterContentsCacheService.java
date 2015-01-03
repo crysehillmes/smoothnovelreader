@@ -95,7 +95,7 @@ public class ChapterContentsCacheService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("ChapterContentsCacheService", "onStartCommand");
-        if(intent.hasExtra("type")) {
+        if(intent != null && intent.hasExtra("type")) {
             if("cancel_cache".compareTo(intent.getStringExtra("type")) == 0) {
                 Log.d("ChapterContentsCacheService", "cancel_cache");
                 stopThreadSignal = true;
@@ -148,7 +148,7 @@ public class ChapterContentsCacheService extends Service {
                                 failureCount++;
                             }
                         } catch (Exception ex) {
-                            ToastProxy.showToast(ChapterContentsCacheService.this, getString(R.string.toast_generic_error), ToastType.TOAST_INFO);
+                            failureCount++;
                         } finally {
                             mBuilder.setProgress(chapterCount, index, false);
                             mBuilder.setContentText(getResources().getString(R.string.novel_chapter_contents_cache_progress, index, chapterCount));
@@ -160,7 +160,6 @@ public class ChapterContentsCacheService extends Service {
                 mNotifyManager.cancel(CACHING_NOTIFICATION_ID);
                 stopForeground(true);
 
-                // TODO: 新的结束Notification没有显示出来。
                 mBuilder = new NotificationCompat.Builder(ChapterContentsCacheService.this);
                 mBuilder.setContentTitle(getResources().getString(R.string.notification_chapter_contents_cache_title_finish, novel.getTitle()))
                         .setContentText(getResources().getString(R.string.notification_chapter_contents_cache_content, successCount, failureCount, chapterCount - successCount - failureCount))
