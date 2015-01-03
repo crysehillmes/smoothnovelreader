@@ -1,6 +1,10 @@
 package org.cryse.novelreader.ui.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +14,8 @@ import android.widget.TextView;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.model.NovelChapterModel;
+import org.cryse.novelreader.util.ColorUtils;
+import org.cryse.novelreader.util.UIUtils;
 
 import java.util.List;
 
@@ -21,6 +27,9 @@ public class NovelChapterListAdapter extends BaseAdapter{
     private List<NovelChapterModel> mContentList = null;
     private LayoutInflater mInflater = null;
     private Handler mHandler;
+    private int mTagColorDotSize;
+    private int mTagColorDotPadding;
+    private int mCachedColor;
     public View getFirstItemView() {
         return mFirstItemView;
     }
@@ -41,6 +50,9 @@ public class NovelChapterListAdapter extends BaseAdapter{
         this.mContentList = novelContents;
         mInflater = LayoutInflater.from(this.mContext);
         mHandler = new Handler();
+        mTagColorDotSize = UIUtils.dp2px(mContext, 12f);
+        mTagColorDotPadding = UIUtils.dp2px(mContext, 4f);
+        mCachedColor = ColorUtils.getColorFromAttr(context, R.attr.colorPrimary);
     }
 
     @Override
@@ -85,6 +97,18 @@ public class NovelChapterListAdapter extends BaseAdapter{
         }
         NovelChapterModel item = mContentList.get(position);
 
+        ShapeDrawable colorDrawable = new ShapeDrawable(new OvalShape());
+        colorDrawable.setIntrinsicWidth(mTagColorDotSize);
+        colorDrawable.setIntrinsicHeight(mTagColorDotSize);
+        colorDrawable.getPaint().setStyle(Paint.Style.FILL);
+        viewHolder.mNovelChapterTitleTextView.setCompoundDrawablesWithIntrinsicBounds(colorDrawable,
+                null, null, null);
+        viewHolder.mNovelChapterTitleTextView.setCompoundDrawablePadding(mTagColorDotPadding);
+        colorDrawable.getPaint().setColor(
+                item.isCached() ?
+                        mCachedColor :
+                        Color.TRANSPARENT
+        );
         viewHolder.mNovelChapterTitleTextView.setText(item.getTitle());
         //TextPaint tp = viewHolder.mNovelTitleTextView .getPaint();
         //tp.setFakeBoldText(true);
