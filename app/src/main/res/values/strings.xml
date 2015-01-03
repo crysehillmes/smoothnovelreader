@@ -58,6 +58,7 @@
     <string name="toast_generic_error">好像出错啦</string>
     <string name="toast_chapter_content_lost">这一章找不到啦，重新加载试试</string>
     <string name="toast_chapter_list_loading">正在更新目录，请稍等…</string>
+    <string name="toast_chapter_contents_caching">已有一本小说正在缓存中…</string>
     <string name="notification_chapter_contents_cache_title">正在缓存《%1$s》章节</string>
     <string name="notification_chapter_contents_cache_title_finish">完成缓存《%1$s》</string>
     <string name="notification_chapter_contents_cache_content">缓存了 %1$d 章， %2$d 章缓存失败, %3$d 章未缓存。</string>
