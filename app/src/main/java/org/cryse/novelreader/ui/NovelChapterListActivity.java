@@ -1,15 +1,12 @@
 package org.cryse.novelreader.ui;
 
 import android.annotation.SuppressLint;
-import android.app.NotificationManager;
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,8 +36,6 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class NovelChapterListActivity extends AbstractThemeableActivity implements NovelChaptersView{
     @Inject
@@ -211,7 +206,6 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        //mNovel = savedInstanceState.getParcelable(DataContract.NOVEL_OBJECT_NAME);
         super.onRestoreInstanceState(savedInstanceState);
     }
 

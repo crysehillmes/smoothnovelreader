@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,30 +25,15 @@ public class NovelChapterListAdapter extends BaseAdapter{
     private Context mContext = null;
     private List<NovelChapterModel> mContentList = null;
     private LayoutInflater mInflater = null;
-    private Handler mHandler;
     private int mTagColorDotSize;
     private int mTagColorDotPadding;
     private int mCachedColor;
-    public View getFirstItemView() {
-        return mFirstItemView;
-    }
 
-    private View mFirstItemView = null;
-    public int getmGroupSize() {
-        return mGroupSize;
-    }
-
-    public void setmGroupSize(int mGroupSize) {
-        this.mGroupSize = mGroupSize;
-    }
-
-    private int mGroupSize = 10;
     public NovelChapterListAdapter(Context context,
                                    List<NovelChapterModel> novelContents) {
         this.mContext = context;
         this.mContentList = novelContents;
         mInflater = LayoutInflater.from(this.mContext);
-        mHandler = new Handler();
         mTagColorDotSize = UIUtils.dp2px(mContext, 12f);
         mTagColorDotPadding = UIUtils.dp2px(mContext, 4f);
         mCachedColor = ColorUtils.getColorFromAttr(context, R.attr.colorPrimary);
@@ -87,9 +71,6 @@ public class NovelChapterListAdapter extends BaseAdapter{
             convertView = mInflater.inflate(R.layout.listview_item_novel_chapter, null);
             viewHolder = new NovelIntroItemViewHolder(convertView);
             convertView.setTag(viewHolder);
-            if(position == 0) {
-                mFirstItemView = convertView;
-            }
         }
         else
         {
@@ -110,8 +91,6 @@ public class NovelChapterListAdapter extends BaseAdapter{
                         Color.TRANSPARENT
         );
         viewHolder.mNovelChapterTitleTextView.setText(item.getTitle());
-        //TextPaint tp = viewHolder.mNovelTitleTextView .getPaint();
-        //tp.setFakeBoldText(true);
 
         return convertView;
     }
