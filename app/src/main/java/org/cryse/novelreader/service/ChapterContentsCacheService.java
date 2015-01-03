@@ -2,12 +2,14 @@ package org.cryse.novelreader.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
@@ -52,7 +54,7 @@ public class ChapterContentsCacheService extends Service {
     static final int CACHING_NOTIFICATION_ID = 110;
     NotificationCompat.Builder mBuilder;
     boolean isCaching = false;
-    Notification mNotification;
+    boolean stopThreadSignal = false;
     Thread mWorkingThread;
     @Override
     public void onCreate() {
@@ -60,7 +62,6 @@ public class ChapterContentsCacheService extends Service {
         ((SmoothReaderApplication)getApplication()).inject(this);
         mNotifyManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mBuilder = new NotificationCompat.Builder(ChapterContentsCacheService.this);
     }
 
     @Override
@@ -91,17 +92,35 @@ public class ChapterContentsCacheService extends Service {
         daoSession.clear();
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("ChapterContentsCacheService", "onStartCommand");
+        if(intent.hasExtra("type")) {
+            if("cancel_cache".compareTo(intent.getStringExtra("type")) == 0) {
+                Log.d("ChapterContentsCacheService", "cancel_cache");
+                stopThreadSignal = true;
+            }
+        }
+        return super.onStartCommand(intent, flags, startId);
+    }
+
     private void preloadChapterContents(NovelModel novel, final List<NovelChapterModel> chapterModels) {
         if(isCaching) return;
-        int chapterCount = chapterModels.size();
 
-        mBuilder.setContentTitle("正在缓存《" + novel.getTitle() + "》章节")
+        int chapterCount = chapterModels.size();
+        Intent cancelCacheIntent = new Intent(this, ChapterContentsCacheService.class);
+        cancelCacheIntent.putExtra("type", "cancel_cache");
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, cancelCacheIntent, 0);        mBuilder = new NotificationCompat.Builder(ChapterContentsCacheService.this);
+        mBuilder.setContentTitle(getResources().getString(R.string.notification_chapter_contents_cache_title, novel.getTitle()))
                 .setContentText("")
-                .setSmallIcon(R.drawable.ic_launcher);
-        mBuilder.setProgress(chapterCount, 0, false);
-        mNotification = mBuilder.build();
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setOngoing(true);
+        mBuilder.addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cache_title), pendingIntent);
+
         isCaching = true;
-        startForeground(CACHING_NOTIFICATION_ID, mNotification);
+
+        startForeground(CACHING_NOTIFICATION_ID, mBuilder.build());
+
         mWorkingThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -111,6 +130,10 @@ public class ChapterContentsCacheService extends Service {
                 items.addAll(chapterModels);
                 if (isFavoriteSync(novel.getId())) {
                     for (NovelChapterModel chapterModel : items) {
+                        if(stopThreadSignal) {
+                            stopThreadSignal = false;
+                            break;
+                        }
                         try {
                             index++;
                             if (chapterModel.isCached()) {
@@ -134,8 +157,20 @@ public class ChapterContentsCacheService extends Service {
                     }
 
                 }
+                mNotifyManager.cancel(CACHING_NOTIFICATION_ID);
                 stopForeground(true);
-                ToastProxy.showToast(ChapterContentsCacheService.this, getResources().getString(R.string.toast_chapter_contents_cache, successCount, failureCount), ToastType.TOAST_INFO);
+
+                // TODO: 新的结束Notification没有显示出来。
+                mBuilder = new NotificationCompat.Builder(ChapterContentsCacheService.this);
+                mBuilder.setContentTitle(getResources().getString(R.string.notification_chapter_contents_cache_title_finish, novel.getTitle()))
+                        .setContentText(getResources().getString(R.string.notification_chapter_contents_cache_content, successCount, failureCount, chapterCount - successCount - failureCount))
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setAutoCancel(true);
+                //startForeground(CACHING_NOTIFICATION_ID, mBuilder.build());
+                mNotifyManager.notify(CACHING_NOTIFICATION_ID, mBuilder.build());
+
+                //stopForeground(true);
+                isCaching = false;
             }
         });
         mWorkingThread.start();
