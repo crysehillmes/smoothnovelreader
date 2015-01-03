@@ -1,6 +1,5 @@
 package org.cryse.novelreader.service;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -9,7 +8,6 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
@@ -22,8 +20,6 @@ import org.cryse.novelreader.model.NovelChapterModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.source.NovelSource;
 import org.cryse.novelreader.util.NovelTextFilter;
-import org.cryse.novelreader.util.ToastProxy;
-import org.cryse.novelreader.util.ToastType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +50,7 @@ public class ChapterContentsCacheService extends Service {
     static final int CACHING_NOTIFICATION_ID = 110;
     NotificationCompat.Builder mBuilder;
     boolean isCaching = false;
+    NovelModel mCurrentNovelModel;
     boolean stopThreadSignal = false;
     Thread mWorkingThread;
     @Override
@@ -94,10 +91,8 @@ public class ChapterContentsCacheService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("ChapterContentsCacheService", "onStartCommand");
         if(intent != null && intent.hasExtra("type")) {
             if("cancel_cache".compareTo(intent.getStringExtra("type")) == 0) {
-                Log.d("ChapterContentsCacheService", "cancel_cache");
                 stopThreadSignal = true;
             }
         }
@@ -106,7 +101,7 @@ public class ChapterContentsCacheService extends Service {
 
     private void preloadChapterContents(NovelModel novel, final List<NovelChapterModel> chapterModels) {
         if(isCaching) return;
-
+        mCurrentNovelModel = novel;
         int chapterCount = chapterModels.size();
         Intent cancelCacheIntent = new Intent(this, ChapterContentsCacheService.class);
         cancelCacheIntent.putExtra("type", "cancel_cache");
@@ -142,6 +137,7 @@ public class ChapterContentsCacheService extends Service {
                             }
                             NovelChapterContentModel chapterContentModel = loadChapterContentFromWeb(novel.getId(), chapterModel.getSecondId(), chapterModel.getSrc());
                             if (chapterContentModel != null) {
+                                chapterContentModel.setContent(novelTextFilter.filter(chapterContentModel.getContent()));
                                 updateChapterContentInDB(chapterModel.getSecondId(), chapterModel.getSrc(), chapterContentModel);
                                 successCount++;
                             } else {
@@ -179,6 +175,11 @@ public class ChapterContentsCacheService extends Service {
         public boolean isCaching() {
             return isCaching;
         }
+
+        public NovelModel getCurrentCachingNovel() {
+            return mCurrentNovelModel;
+        }
+
         public void chaptersOfflineCache(NovelModel novelModel, List<NovelChapterModel> novelChapterModels) {
             preloadChapterContents(novelModel, novelChapterModels);
         }
