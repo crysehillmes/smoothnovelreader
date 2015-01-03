@@ -15,7 +15,7 @@
         android:title="@string/action_refresh_contentlist"/>
     <item
         android:id="@+id/menu_item_chapters_offline_cache"
-        android:icon="@drawable/ic_action_refresh"
+        android:icon="@drawable/ic_action_chapter_cache"
         app:showAsAction="ifRoom"
         android:title="@string/action_offline_chapters_cache"/>
     <item
