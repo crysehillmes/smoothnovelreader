@@ -87,4 +87,8 @@
          @layout/view_progress_gridview for a grid-->
         <attr name="srv_mainLayoutID" format="reference"/>
     </declare-styleable>
+
+    <declare-styleable name="ScrimInsetsView">
+        <attr name="insetForeground" format="reference|color" />
+    </declare-styleable>
 </resources>

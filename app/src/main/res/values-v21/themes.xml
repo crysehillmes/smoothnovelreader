@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="FrameworkRoot.Light" parent="Theme.AppCompat.Light.NoActionBar" >
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+    <style name="FrameworkRoot.Dark" parent="Theme.AppCompat.NoActionBar" >
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+</resources>

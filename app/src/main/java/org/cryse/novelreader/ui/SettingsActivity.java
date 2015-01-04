@@ -3,13 +3,13 @@ package org.cryse.novelreader.ui;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
-import org.cryse.novelreader.util.UIUtils;
+import org.cryse.novelreader.util.ColorUtils;
 
 public class SettingsActivity extends AbstractThemeableActivity {
     @Override
@@ -19,6 +19,8 @@ public class SettingsActivity extends AbstractThemeableActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            getWindow().setStatusBarColor(ColorUtils.getColorFromAttr(this, R.attr.colorPrimaryDark));
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction =
                 fragmentManager.beginTransaction();

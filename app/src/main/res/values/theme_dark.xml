@@ -27,6 +27,7 @@
         <item name="smooth_theme_navigation_drawer_text_color">@android:color/white</item>
         <item name="smooth_theme_navigation_drawer_icon_color">@android:color/white</item>
         <item name="smooth_theme_navigation_drawer_bg_color">@color/theme_navigation_drawer_bg_white</item>
+        <item name="smooth_theme_navigation_drawer_top_drawable">@drawable/drawer_top_image_dark</item>
 
         <item name="smooth_theme_read_bg_drawable">@color/theme_read_bg_color_white</item>
         <item name="smooth_theme_read_text_color">@color/text_color_secondary_white</item>

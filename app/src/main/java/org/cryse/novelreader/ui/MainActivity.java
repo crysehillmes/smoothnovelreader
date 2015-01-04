@@ -19,11 +19,13 @@ import com.afollestad.materialdialogs.Theme;
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
+import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
 import org.cryse.novelreader.util.navidrawer.NavigationDrawerItem;
 import org.cryse.novelreader.util.navidrawer.NavigationDrawerView;
 import org.cryse.novelreader.util.navidrawer.NavigationType;
+import org.cryse.widget.ScrimInsetsFrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,14 +44,11 @@ public class MainActivity extends AbstractThemeableActivity {
      */
     private CharSequence mTitle;
 
-    @InjectView(R.id.activity_main_rootlayout)
-    RelativeLayout mRootLayout;
-
     @InjectView(R.id.navigationDrawerListViewWrapper)
     NavigationDrawerView mNavigationDrawerListViewWrapper;
 
     @InjectView(R.id.linearDrawer)
-    LinearLayout mLinearDrawerLayout;
+    ScrimInsetsFrameLayout mDrawerLayoutContainer;
 
     @InjectView(R.id.drawerLayout)
     DrawerLayout mDrawerLayout;
@@ -63,9 +62,6 @@ public class MainActivity extends AbstractThemeableActivity {
 
     @Inject
     AndroidDisplay mDisplay;
-
-    @Inject
-    SmoothReaderApplication application;
 
     private int mCurrentSelectedPosition;
 
@@ -127,6 +123,7 @@ public class MainActivity extends AbstractThemeableActivity {
         });
         //Attach the DrawerListener
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.setStatusBarBackgroundColor(ColorUtils.getColorFromAttr(this, R.attr.colorPrimaryDark));
         mDisplay.attach(this, mDrawerToggle);
 
         if(savedInstanceState != null) {
@@ -139,7 +136,6 @@ public class MainActivity extends AbstractThemeableActivity {
         }
 
         selectItem(mCurrentSelectedPosition);
-        UIUtils.setInsets(this, mLinearDrawerLayout, false);
     }
 
     @Override
@@ -160,15 +156,15 @@ public class MainActivity extends AbstractThemeableActivity {
     }
 
     public boolean isDrawerOpened() {
-        if(mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mLinearDrawerLayout)) {
+        if(mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mDrawerLayoutContainer)) {
             return true;
         }
         return false;
     }
 
     public void closeDrawer() {
-        if (mLinearDrawerLayout != null) {
-            mDrawerLayout.closeDrawer(mLinearDrawerLayout);
+        if (mDrawerLayoutContainer != null) {
+            mDrawerLayout.closeDrawer(mDrawerLayoutContainer);
         }
     }
 
@@ -183,7 +179,7 @@ public class MainActivity extends AbstractThemeableActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (mDrawerLayout != null && !mDrawerLayout.isDrawerOpen(mLinearDrawerLayout)) {
+        if (mDrawerLayout != null && !mDrawerLayout.isDrawerOpen(mDrawerLayoutContainer)) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
@@ -203,10 +199,10 @@ public class MainActivity extends AbstractThemeableActivity {
         switch (id) {
             case android.R.id.home:
                 if (mDrawerLayout != null) {
-                    if (mDrawerLayout.isDrawerOpen(mLinearDrawerLayout)) {
-                        mDrawerLayout.closeDrawer(mLinearDrawerLayout);
+                    if (mDrawerLayout.isDrawerOpen(mDrawerLayoutContainer)) {
+                        mDrawerLayout.closeDrawer(mDrawerLayoutContainer);
                     } else {
-                        mDrawerLayout.openDrawer(mLinearDrawerLayout);
+                        mDrawerLayout.openDrawer(mDrawerLayoutContainer);
                     }
                 }
                 break;
@@ -224,18 +220,8 @@ public class MainActivity extends AbstractThemeableActivity {
                 navigationItems.get(position).setSelected(true);
 
                 mCurrentSelectedPosition = position;
-                /*NavigationDrawerItem item = navigationItems.get(mCurrentSelectedPosition);
-                if(item.isShowTitle()) {
-                    mTitle = item.getItemName();
-                    getSupportActionBar().setTitle(item.getItemName());
-                } else {
-                    mTitle = "";
-                    getSupportActionBar().setTitle("");
-                }*/
             }
         }
-
-        //closeDrawer();
     }
 
     @Override
@@ -283,7 +269,7 @@ public class MainActivity extends AbstractThemeableActivity {
 
     @OnItemClick(R.id.leftDrawerListView)
     public void onItemClick(int position, long id) {
-        if (mDrawerLayout.isDrawerOpen(mLinearDrawerLayout)) {
+        if (mDrawerLayout.isDrawerOpen(mDrawerLayoutContainer)) {
             //mHandler.postDelayed(() -> mDrawerLayout.closeDrawer(mLinearDrawerLayout), 300);
             if(position != mCurrentSelectedPosition) {
                 selectItem(position);
