@@ -2,12 +2,14 @@ package org.cryse.novelreader.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.readystatesoftware.systembartint.BuildConfig;
 
 import org.cryse.novelreader.modules.ModulesList;
+import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.util.store.HashTableRunTimeStore;
 import org.cryse.novelreader.util.RunTimeStore;
 import org.cryse.novelreader.util.analytics.AnalyticsHelper;
@@ -47,6 +49,9 @@ public class SmoothReaderApplication extends Application {
 
         mRunTimeStore = new HashTableRunTimeStore();
         mAndroidDisplay = new AndroidDisplay(mRunTimeStore);
+
+        Intent chapterContentCacheServiceIntent = new Intent(this, ChapterContentsCacheService.class);
+        startService(chapterContentCacheServiceIntent);
     }
 
 

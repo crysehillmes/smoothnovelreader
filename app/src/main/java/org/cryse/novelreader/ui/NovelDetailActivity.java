@@ -1,7 +1,10 @@
 package org.cryse.novelreader.ui;
 
 import android.animation.ObjectAnimator;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
@@ -10,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -31,6 +35,7 @@ import org.cryse.novelreader.R;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelDetailPresenter;
+import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.DataContract;
@@ -145,6 +150,8 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
     private boolean mIsFavorited = false;
     private boolean mShowStartReadingButton = true;
 
+    ServiceConnection mBackgroundServiceConnection;
+    private ChapterContentsCacheService.ChapterContentsCacheBinder mServiceBinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +166,18 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_novel_detail);
         ButterKnife.inject(this);
+
+        mBackgroundServiceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                mServiceBinder = (ChapterContentsCacheService.ChapterContentsCacheBinder) service;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mServiceBinder = null;
+            }
+        };
 
         getSupportActionBar().setBackgroundDrawable(null);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -198,6 +217,12 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         mAddNovelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(mServiceBinder != null && mServiceBinder.isCaching() && mServiceBinder.getCurrentCachingNovel() != null) {
+                    NovelModel currentCachingNovel = mServiceBinder.getCurrentCachingNovel();
+                    if(currentCachingNovel.getId().compareTo(mNovel.getId()) == 0)
+                        ToastProxy.showToast(NovelDetailActivity.this, getString(R.string.toast_chapter_contents_caching_cannot_delete, currentCachingNovel.getTitle()), ToastType.TOAST_ALERT);
+                        return;
+                }
                 boolean isFavorite = !mIsFavorited;
                 showFavorited(isFavorite, true);
                 getPresenter().addOrRemoveFavorite(mNovel, isFavorite);
@@ -277,12 +302,15 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
     public void onStart() {
         super.onStart();
         getPresenter().bindView(this);
+        Intent service = new Intent(this.getApplicationContext(), ChapterContentsCacheService.class);
+        this.bindService(service, mBackgroundServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         getPresenter().unbindView();
+        this.unbindService(mBackgroundServiceConnection);
     }
 
     @Override

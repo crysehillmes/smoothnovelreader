@@ -162,22 +162,42 @@ public class NovelDataServiceImpl implements NovelDataService {
                     if(forceUpdate || novel.getLatestUpdateCount() != 0) {
                         chapterList = loadChaptersFromWeb(novel.getId(), novel.getSrc());
                         updateChapterListInDB(novel.getId(), chapterList);
-                        subscriber.onNext(chapterList);
-                        subscriber.onCompleted();
-
+                        chapterList = loadChaptersFromDB(novel.getId());
                     } else {
                         //无需更新章节
                         chapterList = loadChaptersFromDB(novel.getId());
                         if(chapterList.size() == 0) {
                             chapterList = loadChaptersFromWeb(novel.getId(), novel.getSrc());
                             updateChapterListInDB(novel.getId(), chapterList);
+                            chapterList = loadChaptersFromDB(novel.getId());
                         }
-                        subscriber.onNext(chapterList);
-                        subscriber.onCompleted();
                     }
+                    subscriber.onNext(chapterList);
+                    subscriber.onCompleted();
                 } else {
                     chapterList = loadChaptersFromWeb(novel.getId(), novel.getSrc());
                     subscriber.onNext(chapterList);
+                    subscriber.onCompleted();
+                }
+            } catch (Exception ex) {
+                subscriber.onError(ex);
+            }
+        });
+    }
+
+    public Observable<Boolean> preloadChapterContents(NovelModel novel, List<NovelChapterModel> chapterModels) {
+        return Observable.create((Subscriber<? super Boolean> subscriber) -> {
+            try{
+                if(isFavoriteSync(novel.getId())) {
+                    for(NovelChapterModel chapterModel : chapterModels) {
+                        NovelChapterContentModel chapterContentModel = loadChapterContentFromWeb(novel.getId(), chapterModel.getSecondId(), chapterModel.getSrc());
+                        if(chapterContentModel != null) {
+                            updateChapterContentInDB(chapterModel.getSecondId(), chapterModel.getSrc(), chapterContentModel);
+                            subscriber.onNext(true);
+                        } else {
+                            subscriber.onNext(false);
+                        }
+                    }
                     subscriber.onCompleted();
                 }
             } catch (Exception ex) {
@@ -389,8 +409,8 @@ public class NovelDataServiceImpl implements NovelDataService {
     }
 
     private List<NovelChapterModel> loadChaptersFromDB(String id) {
-        QueryBuilder<NovelChapterModel> queryBuilder = novelChapterModelDao.queryBuilder().where(NovelChapterModelDao.Properties.Id.eq(id)).orderAsc(NovelChapterModelDao.Properties.ChapterIndex);
-        List<NovelChapterModel> chapters = queryBuilder.list();
+        //QueryBuilder<NovelChapterModel> queryBuilder = novelChapterModelDao.queryBuilder().where(NovelChapterModelDao.Properties.Id.eq(id)).orderAsc(NovelChapterModelDao.Properties.ChapterIndex);
+        List<NovelChapterModel> chapters = novelChapterModelDao.deepQueryList(id);//queryBuilder.list();
         //Collections.sort(chapters);
         return chapters;
     }

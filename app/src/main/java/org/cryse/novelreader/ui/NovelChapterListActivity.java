@@ -1,7 +1,12 @@
 package org.cryse.novelreader.ui;
 
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -9,6 +14,7 @@ import android.widget.TextView;
 
 import com.quentindommerc.superlistview.SuperListview;
 
+import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.util.ColorUtils;
 
 import org.cryse.novelreader.R;
@@ -46,6 +52,8 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     NovelChapterListAdapter mChapterListAdapter;
     private MenuItem mMenuItemLastRead;
+    ServiceConnection mBackgroundServiceConnection;
+    private ChapterContentsCacheService.ChapterContentsCacheBinder mServiceBinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +71,18 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         initListView();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle(mNovel.getTitle());
+
+        mBackgroundServiceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                mServiceBinder = (ChapterContentsCacheService.ChapterContentsCacheBinder) service;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mServiceBinder = null;
+            }
+        };
     }
 
     @SuppressLint("ResourceAsColor")
@@ -112,18 +132,22 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     protected void onStart() {
         super.onStart();
         getPresenter().bindView(this);
+        Intent service = new Intent(this.getApplicationContext(), ChapterContentsCacheService.class);
+        this.bindService(service, mBackgroundServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         getPresenter().unbindView();
+        this.unbindService(mBackgroundServiceConnection);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         getPresenter().checkLastReadState(mNovel.getId());
+        getPresenter().loadChapters(mNovel);
     }
 
     @Override
@@ -158,6 +182,9 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
             case R.id.menu_item_change_theme:
                 setNightMode(!isNightMode());
                 return true;
+            case R.id.menu_item_chapters_offline_cache:
+                chaptersOfflineCache();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -179,7 +206,6 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        //mNovel = savedInstanceState.getParcelable(DataContract.NOVEL_OBJECT_NAME);
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -231,5 +257,13 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     private void refreshChapters() {
         mListView.getSwipeToRefresh().setRefreshing(true);
         getPresenter().loadChapters(mNovel, true);
+    }
+
+    private void chaptersOfflineCache() {
+        if(mServiceBinder != null && !mServiceBinder.isCaching()) {
+            mServiceBinder.chaptersOfflineCache(mNovel, mNovelChapterList);
+        } else if(mServiceBinder != null && mServiceBinder.isCaching()) {
+            ToastProxy.showToast(this, getString(R.string.toast_chapter_contents_caching), ToastType.TOAST_INFO);
+        }
     }
 }

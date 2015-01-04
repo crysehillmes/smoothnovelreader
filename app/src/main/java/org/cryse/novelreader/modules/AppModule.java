@@ -2,6 +2,7 @@ package org.cryse.novelreader.modules;
 
 import android.app.Application;
 
+import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.ui.NovelCategoryFragment;
 import org.cryse.novelreader.ui.FadeTransitionActivity;
 import org.cryse.novelreader.ui.MainActivity;
@@ -57,7 +58,9 @@ import dagger.Provides;
                 FadeTransitionActivity.class,
                 NovelCategoryFragment.class,
                 NovelListFragment.class,
-                NovelCategoryFragment.CategorySubListFragment.class
+                NovelCategoryFragment.CategorySubListFragment.class,
+
+                ChapterContentsCacheService.class
         },
         includes = {
                 ContextProvider.class,

@@ -12,6 +12,11 @@ public class NovelChapterModel implements Parcelable, Comparable<NovelChapterMod
     private String src;
     private String title;
     private int chapterIndex;
+    private boolean cached = false;
+
+    public NovelChapterModel() {
+
+    }
 
     public NovelChapterModel(String id, String secondId, String src, String title, int chapterIndex) {
         this.id = id;
@@ -61,6 +66,13 @@ public class NovelChapterModel implements Parcelable, Comparable<NovelChapterMod
         this.title = title;
     }
 
+    public boolean isCached() {
+        return cached;
+    }
+
+    public void setCached(boolean cached) {
+        this.cached = cached;
+    }
 
     @Override
     public int describeContents() {
@@ -74,6 +86,7 @@ public class NovelChapterModel implements Parcelable, Comparable<NovelChapterMod
         dest.writeString(this.src);
         dest.writeString(this.title);
         dest.writeInt(this.chapterIndex);
+        dest.writeByte((byte) (cached ? 1 : 0));
     }
 
     private NovelChapterModel(Parcel in) {
@@ -82,6 +95,7 @@ public class NovelChapterModel implements Parcelable, Comparable<NovelChapterMod
         this.src = in.readString();
         this.title = in.readString();
         this.chapterIndex = in.readInt();
+        this.cached = in.readByte() != 0;
     }
 
     public static final Parcelable.Creator<NovelChapterModel> CREATOR = new Parcelable.Creator<NovelChapterModel>() {

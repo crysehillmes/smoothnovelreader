@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -135,6 +136,10 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
     @Override
     public void showNovelIntroduction(NovelModel novelModel) {
         mDisplay.showNovelDetailView(mView, novelModel, false);
+    }
+
+    public Observable<Boolean> preloadChapterContents(NovelModel novel, List<NovelChapterModel> chapterModels) {
+        return mNovelDataService.preloadChapterContents(novel, chapterModels);
     }
 
     private class EmptyNovelChaptersView implements NovelChaptersView {
