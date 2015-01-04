@@ -168,7 +168,7 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
                 mListView.hideMoreProgress();
             }
         });
-        mListView.setOnItemClickListener((parent, view, position, id) -> {
+        mListView.setOnItemClickListener((view, position, id) -> {
             NovelModel novelModel = mNovelListAdapter.getItem(position);
             getPresenter().showNovelIntroduction(novelModel);
         });

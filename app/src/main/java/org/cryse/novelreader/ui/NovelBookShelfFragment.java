@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,7 +21,6 @@ import android.widget.TextView;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.UIUtils;
-import org.cryse.widget.recyclerview.ItemClickSupport;
 import org.cryse.widget.recyclerview.SuperRecyclerView;
 
 import org.cryse.novelreader.R;
@@ -104,7 +102,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
             else
                 mShelfListView.getSwipeToRefresh().setRefreshing(false);
         });
-        mShelfListView.setOnItemClickListener((parent, view, position, id) -> {
+        mShelfListView.setOnItemClickListener((view, position, id) -> {
             if(!bookShelfListAdapter.isAllowSelection())
                 getPresenter().showNovelChapterList(novelList.get(position));
             else {
@@ -117,55 +115,52 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
             }
         });
 
-        mShelfListView.setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(RecyclerView parent, View view, int position, long id) {
-                if (!bookShelfListAdapter.isAllowSelection()) {
-                    ActionMode actionMode = getActionBarActivity().getSupportActionBar().startActionMode(new ActionMode.Callback() {
-                        @Override
-                        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-                            bookShelfListAdapter.setAllowSelection(true);
-                            MenuInflater inflater = actionMode.getMenuInflater();
-                            inflater.inflate(R.menu.menu_bookshelf_cab, menu);
-                            return true;
-                        }
+        mShelfListView.setOnItemLongClickListener((view, position, id) -> {
+            if (!bookShelfListAdapter.isAllowSelection()) {
+                ActionMode actionMode = getActionBarActivity().getSupportActionBar().startActionMode(new ActionMode.Callback() {
+                    @Override
+                    public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                        bookShelfListAdapter.setAllowSelection(true);
+                        MenuInflater inflater = actionMode.getMenuInflater();
+                        inflater.inflate(R.menu.menu_bookshelf_cab, menu);
+                        return true;
+                    }
 
-                        @Override
-                        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-                            return false;
-                        }
+                    @Override
+                    public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                        return false;
+                    }
 
-                        @Override
-                        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                            switch (menuItem.getItemId()) {
-                                case R.id.menu_bookshelf_cab_delete:
-                                    removeNovels();
-                                    actionMode.finish();
-                                    return true;
-                            }
-                            return false;
+                    @Override
+                    public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.menu_bookshelf_cab_delete:
+                                removeNovels();
+                                actionMode.finish();
+                                return true;
                         }
+                        return false;
+                    }
 
-                        @Override
-                        public void onDestroyActionMode(ActionMode actionMode) {
-                            bookShelfListAdapter.clearSelections();
-                            bookShelfListAdapter.setAllowSelection(false);
-                            setActionMode(null);
-                        }
-                    });
-                    setActionMode(actionMode);
+                    @Override
+                    public void onDestroyActionMode(ActionMode actionMode) {
+                        bookShelfListAdapter.clearSelections();
+                        bookShelfListAdapter.setAllowSelection(false);
+                        setActionMode(null);
+                    }
+                });
+                setActionMode(actionMode);
+                bookShelfListAdapter.toggleSelection(position);
+                getActionMode().setTitle(getString(R.string.cab_selection_count, bookShelfListAdapter.getSelectedItemCount()));
+            } else {
+                if(getActionMode() != null) {
                     bookShelfListAdapter.toggleSelection(position);
                     getActionMode().setTitle(getString(R.string.cab_selection_count, bookShelfListAdapter.getSelectedItemCount()));
-                } else {
-                    if(getActionMode() != null) {
-                        bookShelfListAdapter.toggleSelection(position);
-                        getActionMode().setTitle(getString(R.string.cab_selection_count, bookShelfListAdapter.getSelectedItemCount()));
-                        if(bookShelfListAdapter.getSelectedItemCount() == 0)
-                            getActionMode().finish();
-                    }
+                    if(bookShelfListAdapter.getSelectedItemCount() == 0)
+                        getActionMode().finish();
                 }
-                return true;
             }
+            return true;
         });
     }
 

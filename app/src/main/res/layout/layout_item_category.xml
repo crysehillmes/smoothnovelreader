@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:minHeight="56dp"
         android:background="?android:selectableItemBackground"
-        android:clickable="true"
         android:gravity="center_vertical">
 
         <ImageView

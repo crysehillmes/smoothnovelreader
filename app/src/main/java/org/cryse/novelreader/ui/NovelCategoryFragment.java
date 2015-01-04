@@ -29,7 +29,6 @@ import org.cryse.novelreader.ui.adapter.item.NovelCategoryItemGroup;
 import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
-import org.cryse.widget.recyclerview.ItemClickSupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -279,30 +278,26 @@ public class NovelCategoryFragment extends AbstractFragment {
             recyclerView.setAdapter(adapter);
             adapter.addAll(mItemGroup.getItems());
 
-            ItemClickSupport itemClickSupport = ItemClickSupport.addTo(recyclerView);
-            itemClickSupport.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                @Override
-                public void onItemClick(RecyclerView parent, View view, int position, long id) {
-                    NovelCategoryItem item = adapter.getItem(position);
-                    switch (mItemGroup.getGroupType()) {
-                        case NovelCategoryItemGroup.TYPE_TRADITIONAL_CATEGORY:
-                            mDisplay.showCategoryFragment(
-                                    item.getTitle(),
-                                    item.getValue(),
-                                    "",
-                                    false
-                            );
-                            break;
-                        case NovelCategoryItemGroup.TYPE_TAG_CATEGORY:
-                            String categoryHeaderTitle = mItemGroup.getGroupName();
-                            mDisplay.showCategoryFragment(
-                                    item.getTitle(),
-                                    categoryHeaderTitle,
-                                    item.getValue(),
-                                    true
-                            );
-                            break;
-                    }
+            adapter.setOnItemClickListener((view1, position, id) -> {
+                NovelCategoryItem item = adapter.getItem(position);
+                switch (mItemGroup.getGroupType()) {
+                    case NovelCategoryItemGroup.TYPE_TRADITIONAL_CATEGORY:
+                        mDisplay.showCategoryFragment(
+                                item.getTitle(),
+                                item.getValue(),
+                                "",
+                                false
+                        );
+                        break;
+                    case NovelCategoryItemGroup.TYPE_TAG_CATEGORY:
+                        String categoryHeaderTitle = mItemGroup.getGroupName();
+                        mDisplay.showCategoryFragment(
+                                item.getTitle(),
+                                categoryHeaderTitle,
+                                item.getValue(),
+                                true
+                        );
+                        break;
                 }
             });
             return view;

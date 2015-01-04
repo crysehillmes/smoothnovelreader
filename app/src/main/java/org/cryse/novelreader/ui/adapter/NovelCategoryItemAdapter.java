@@ -19,11 +19,12 @@ import org.cryse.novelreader.R;
 import org.cryse.novelreader.ui.adapter.item.NovelCategoryItem;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.UIUtils;
+import org.cryse.widget.recyclerview.RecyclerViewBaseAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NovelCategoryItemAdapter extends RecyclerView.Adapter<NovelCategoryItemAdapter.NovelCategoryItemViewHolder> {
+public class NovelCategoryItemAdapter extends RecyclerViewBaseAdapter<NovelCategoryItemAdapter.NovelCategoryItemViewHolder> {
     private List<NovelCategoryItem> mItems = new ArrayList<NovelCategoryItem>();
     private Context mContext;
     public NovelCategoryItemAdapter(Context context) {
@@ -74,6 +75,7 @@ public class NovelCategoryItemAdapter extends RecyclerView.Adapter<NovelCategory
 
     @Override
     public void onBindViewHolder(NovelCategoryItemViewHolder viewHolder, int position) {
+        super.onBindViewHolder(viewHolder, position);
         NovelCategoryItem item = getItem(position);
         if (viewHolder.imageView != null) {
             if(item.getIcon() == 0) {
