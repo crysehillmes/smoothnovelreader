@@ -73,6 +73,15 @@ public interface NovelDataService {
     public Observable<List<NovelChapterModel>> getChapterList(NovelModel novel, final boolean forceUpdate);
 
     /**
+     * Gets chapter list.
+     *
+     * @param novel the novel
+     * @param chapterModels the novel chapter List
+     * @return the Observable, would call onNext for many times
+     */
+    public Observable<Boolean> preloadChapterContents(NovelModel novel, List<NovelChapterModel> chapterModels);
+
+    /**
      * Gets chapter content.
      *
      * @param novel       the novel

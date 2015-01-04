@@ -41,6 +41,7 @@
     <!-- ActionBar MenuItem -->
     <string name="action_last_read_chapter">最后阅读</string>
     <string name="action_refresh_contentlist">刷新目录</string>
+    <string name="action_offline_chapters_cache">离线阅读</string>
     <string name="action_refresh">刷新目录</string>
     <string name="action_novel_detail">小说详情</string>
     <string name="action_bar_search_tip">搜索</string>
@@ -57,6 +58,12 @@
     <string name="toast_generic_error">好像出错啦</string>
     <string name="toast_chapter_content_lost">这一章找不到啦，重新加载试试</string>
     <string name="toast_chapter_list_loading">正在更新目录，请稍等…</string>
+    <string name="toast_chapter_contents_caching">已有一本小说正在缓存中…</string>
+    <string name="toast_chapter_contents_caching_cannot_delete">《%1$s》正在缓存中，无法删除</string>
+    <string name="notification_chapter_contents_cache_title">正在缓存《%1$s》章节</string>
+    <string name="notification_chapter_contents_cache_title_finish">完成缓存《%1$s》</string>
+    <string name="notification_chapter_contents_cache_content">缓存了 %1$d 章， %2$d 章缓存失败, %3$d 章未缓存。</string>
+    <string name="notification_action_chapter_contents_cache_title">取消缓存</string>
 
     <!-- Search text -->
     <string name="searchbox_hint">搜索书名或作者名</string>
@@ -132,6 +139,8 @@
     <string name="placeholder_novel_details_title">What\'s New in Android Developer Tools</string>
     <string name="placeholder_novel_details_subtitle">Trevor Johns and Roman Nurik</string>
     <string name="add_fab_novel">Add to bookshelf</string>
+
+    <string name="novel_chapter_contents_cache_progress">正在缓存第 %1$d 章， 共 %2$d 章。</string>
 
     <!-- Novel detail -->
     <string name="novel_details_a11y_novel_added">小说已添加至书架</string>

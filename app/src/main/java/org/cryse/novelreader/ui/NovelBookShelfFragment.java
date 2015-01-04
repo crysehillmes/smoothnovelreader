@@ -2,8 +2,13 @@ package org.cryse.novelreader.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.widget.recyclerview.ItemClickSupport;
@@ -50,12 +56,24 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     @InjectView(R.id.empty_view_text_prompt)
     TextView mEmptyViewText;
 
-    boolean mIsSearchViewOpen = false;
+    ServiceConnection mBackgroundServiceConnection;
+    private ChapterContentsCacheService.ChapterContentsCacheBinder mServiceBinder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        mBackgroundServiceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                mServiceBinder = (ChapterContentsCacheService.ChapterContentsCacheBinder) service;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mServiceBinder = null;
+            }
+        };
     }
 
     @Override
@@ -166,12 +184,15 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     public void onStart() {
         super.onStart();
         getPresenter().bindView(this);
+        Intent service = new Intent(getActivity().getApplicationContext(), ChapterContentsCacheService.class);
+        getActivity().bindService(service, mBackgroundServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         getPresenter().unbindView();
+        getActivity().unbindService(mBackgroundServiceConnection);
     }
 
     @Override
@@ -235,16 +256,22 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
 
     private void removeNovels() {
         int count = bookShelfListAdapter.getSelectedItemCount();
-        String[] novelIds = bookShelfListAdapter.getSelectedItemIds();
-        int index = 0;
-
+        List<String> removeIds = new ArrayList<String>();
+        NovelModel currentCachingNovel = null;
         int[] reverseSortedPositions = bookShelfListAdapter.getSelectedItemReversePositions();
-        for (int position : reverseSortedPositions) {
-            novelIds[index] = novelList.get(position).getId();
-            ((NovelBookShelfListAdapter) mShelfListView.getAdapter()).remove(position);
-            index++;
+        if(mServiceBinder != null && mServiceBinder.getCurrentCachingNovel() != null) {
+            currentCachingNovel = mServiceBinder.getCurrentCachingNovel();
         }
-        getPresenter().removeFromFavorite(novelIds);
+        for (int position : reverseSortedPositions) {
+            if(currentCachingNovel != null && currentCachingNovel.getId().compareTo(novelList.get(position).getId()) == 0) {
+                ToastProxy.showToast(getActivity(), getString(R.string.toast_chapter_contents_caching_cannot_delete, currentCachingNovel.getTitle()), ToastType.TOAST_ALERT);
+                continue;
+            } else {
+                removeIds.add(novelList.get(position).getId());
+                ((NovelBookShelfListAdapter) mShelfListView.getAdapter()).remove(position);
+            }
+        }
+        getPresenter().removeFromFavorite(removeIds.toArray(new String[removeIds.size()]));
         bookShelfListAdapter.clearSelections();
         bookShelfListAdapter.notifyDataSetChanged();
     }
