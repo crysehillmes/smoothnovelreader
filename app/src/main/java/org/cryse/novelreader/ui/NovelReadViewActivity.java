@@ -325,10 +325,16 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     private void addClickEventListener() {
         SimpleGestureDetector simpleGestureDetector = new SimpleGestureDetector(UIUtils.getDisplayDensity(this)) {
             @Override
-            public boolean onGesture(View view, int gestureId) {
+            public boolean onGesture(View view, int gestureId, MotionEvent motionEvent) {
                 if(view == mReadWidget.getReadDisplayView() && gestureId == SimpleGestureDetector.TAP) {
-                    showBottomMenu();
-                    return true;
+                    int viewWidth = view.getWidth();
+                    int viewHeight = view.getHeight();
+                    int x = (int)motionEvent.getX();
+                    int y = (int)motionEvent.getY();
+                    if((x > (viewWidth * 1 / 3) && x < (viewWidth * 2 / 3)) && (y > (viewHeight * 1 / 3) && y < (viewHeight * 2 / 3))) {
+                        showBottomMenu();
+                        return true;
+                    }
                 }
                 return false;
             }

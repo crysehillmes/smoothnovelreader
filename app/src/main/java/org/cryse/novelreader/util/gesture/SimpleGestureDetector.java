@@ -28,7 +28,7 @@ public abstract class SimpleGestureDetector implements OnTouchListener {
     private static final int TIME_LIMIT = 300;
 
     // The amount of distance (in density-independent pixels) a Pointer has to move to trigger a gesture.
-    private static final int MOVEMENT_LIMIT_DP = 48;
+    private static final int MOVEMENT_LIMIT_DP = 12;
 
     // The gesture id for an invalid gesture.
     public static final int INVALID_GESTURE = -1;
@@ -132,7 +132,7 @@ public abstract class SimpleGestureDetector implements OnTouchListener {
         }
     }
 
-    public abstract boolean onGesture(View pView, int pGestureId);
+    public abstract boolean onGesture(View view, int gestureId, MotionEvent motionEvent);
 
     public abstract boolean onTouchResult(View view, MotionEvent motionEvent);
 
@@ -181,7 +181,7 @@ public abstract class SimpleGestureDetector implements OnTouchListener {
                     }
                 }
 
-                return onGesture(view, getGestureId());
+                return onGesture(view, getGestureId(), motionEvent);
         }
         return onTouchResult(view, motionEvent);
     }
