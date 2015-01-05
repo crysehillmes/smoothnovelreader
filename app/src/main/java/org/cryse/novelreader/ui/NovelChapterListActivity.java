@@ -52,6 +52,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     NovelChapterListAdapter mChapterListAdapter;
     private MenuItem mMenuItemLastRead;
+    private MenuItem mMenuItemCacheChapters;
     ServiceConnection mBackgroundServiceConnection;
     private ChapterContentsCacheService.ChapterContentsCacheBinder mServiceBinder;
 
@@ -146,7 +147,8 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     @Override
     protected void onResume() {
         super.onResume();
-        getPresenter().checkLastReadState(mNovel.getId());
+        getPresenter().checkLastReadState(mNovel);
+        getPresenter().checkNovelFavoriteStatus(mNovel);
         getPresenter().loadChapters(mNovel);
     }
 
@@ -160,7 +162,9 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_chapterlist, menu);
         mMenuItemLastRead = menu.findItem(R.id.menu_item_last_read_history);
-        getPresenter().checkLastReadState(mNovel.getId());
+        mMenuItemCacheChapters = menu.findItem(R.id.menu_item_chapters_offline_cache);
+        getPresenter().checkLastReadState(mNovel);
+        getPresenter().checkNovelFavoriteStatus(mNovel);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -220,6 +224,12 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     public void canGoToLastRead(Boolean value) {
         if(mMenuItemLastRead != null)
             mMenuItemLastRead.setVisible(value);
+    }
+
+    @Override
+    public void checkFavoriteStatusComplete(Boolean isFavorite) {
+        if(isFavorite != null)
+            mMenuItemCacheChapters.setVisible(isFavorite);
     }
 
     @Override
