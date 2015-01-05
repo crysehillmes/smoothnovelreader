@@ -12,7 +12,8 @@ import rx.Observable;
 public interface NovelChaptersPresenter extends BasePresenter<NovelChaptersView> {
     public void loadChapters(NovelModel novelModel);
     public void loadChapters(NovelModel novelModel, boolean forceUpdate);
-    public void checkLastReadState(final String novelId);
+    public void checkNovelFavoriteStatus(NovelModel novelModel);
+    public void checkLastReadState(NovelModel novelModel);
     public void readChapter(NovelModel novelModel, int chapterIndex, List<NovelChapterModel> chapterList);
     public void readLastPosition(NovelModel novelModel, List<NovelChapterModel> chapterList);
     public void showNovelIntroduction(NovelModel novelModel);

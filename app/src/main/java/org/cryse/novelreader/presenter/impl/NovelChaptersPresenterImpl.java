@@ -30,6 +30,8 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
 
     Subscription mGetLastReadBookMarkSubscription;
 
+    Subscription mCheckFavoriteStatusSubscription;
+
     NovelDataService mNovelDataService;
 
     AndroidDisplay mDisplay;
@@ -70,6 +72,24 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
                 );
     }
 
+    public void checkNovelFavoriteStatus(NovelModel novelModel) {
+        SubscriptionUtils.checkAndUnsubscribe(mCheckFavoriteStatusSubscription);
+        mCheckFavoriteStatusSubscription = mNovelDataService.isFavorite(novelModel.getId())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        result -> {
+                            mView.checkFavoriteStatusComplete(result);
+                        },
+                        error -> {
+                            Timber.e(error, error.getMessage(), LOG_TAG);
+                        },
+                        () -> {
+                            Timber.d("checkNovelFavoriteStatus completed!", LOG_TAG);
+                        }
+                );
+    }
+
     @Override
     public void bindView(NovelChaptersView view) {
         this.mView = view;
@@ -85,12 +105,13 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
         SubscriptionUtils.checkAndUnsubscribe(mLoadChaptersSubscription);
         SubscriptionUtils.checkAndUnsubscribe(mCheckLastReadSubscription);
         SubscriptionUtils.checkAndUnsubscribe(mGetLastReadBookMarkSubscription);
+        SubscriptionUtils.checkAndUnsubscribe(mCheckFavoriteStatusSubscription);
         //mDisplay.removeChaptersInRunTimeStore();
     }
 
-    public void checkLastReadState(final String novelId) {
+    public void checkLastReadState(NovelModel novelModel) {
         SubscriptionUtils.checkAndUnsubscribe(mCheckLastReadSubscription);
-        mCheckLastReadSubscription = mNovelDataService.checkLastReadBookMarkState(novelId)
+        mCheckLastReadSubscription = mNovelDataService.checkLastReadBookMarkState(novelModel.getId())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -151,6 +172,11 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
 
         @Override
         public void canGoToLastRead(Boolean value) {
+
+        }
+
+        @Override
+        public void checkFavoriteStatusComplete(Boolean isFavorite) {
 
         }
 

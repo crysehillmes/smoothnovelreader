@@ -7,4 +7,5 @@ import java.util.List;
 public interface NovelChaptersView extends ContentView {
     public void showChapterList(List<NovelChapterModel> chapterList);
     public void canGoToLastRead(Boolean value);
+    public void checkFavoriteStatusComplete(Boolean isFavorite);
 }
