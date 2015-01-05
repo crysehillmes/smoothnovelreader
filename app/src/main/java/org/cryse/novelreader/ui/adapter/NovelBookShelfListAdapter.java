@@ -2,12 +2,8 @@ package org.cryse.novelreader.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
-import android.widget.RelativeLayout;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 
@@ -34,6 +30,7 @@ public class NovelBookShelfListAdapter extends NovelModelListAdapter {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
+        super.onBindViewHolder(viewHolder, position);
         NovelModel item = getItem(position);
 
         // 小说标题
@@ -92,7 +89,6 @@ public class NovelBookShelfListAdapter extends NovelModelListAdapter {
             //PicassoHelper.load(getContext(), item.getImageUrl(), viewHolder.mNovelImageImageView);
         }
         //viewHolder.mView.setSelected(mSelectedItems.get(position, false));
-
     }
 
 

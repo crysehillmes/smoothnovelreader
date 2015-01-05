@@ -32,6 +32,7 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
+        super.onBindViewHolder(viewHolder, position);
         NovelModel item = getItem(position);
 
         // 小说标题

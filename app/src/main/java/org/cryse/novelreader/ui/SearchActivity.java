@@ -132,7 +132,7 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
                 mListView.hideMoreProgress();
             }
         });
-        mListView.setOnItemClickListener((parent, view, position, id) -> {
+        mListView.setOnItemClickListener((view, position, id) -> {
             NovelModel novelModel = mSearchListAdapter.getItem(position);
             getPresenter().showNovelIntroduction(novelModel);
         });
