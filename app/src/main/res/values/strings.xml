@@ -152,6 +152,7 @@
 
     <string name="novel_detail_status_fomat">状态\u3000\u3000：%1$s</string>
     <string name="novel_detail_chapter_count_fomat">章节数\u3000：%1$d 章</string>
+    <string name="novel_detail_chapter_count_unknown">章节数\u3000：未知</string>
     <string name="novel_detail_latest_chapter_fomat">最新章节：%1$s</string>
 
     <string name="novel_detail_achieve_rank_fomat">第%1$s名</string>
