@@ -109,7 +109,7 @@ public interface NovelDataService {
 
     public Observable<List<NovelBookMarkModel>> getBookMarks(String novelId);
 
-    public Observable<Boolean> checkLastReadBookMarkState(String novelId);
+    public Observable<NovelBookMarkModel> checkLastReadBookMarkState(String novelId);
 
     public Observable<NovelDetailModel> getNovelDetail(String id, String src);
 

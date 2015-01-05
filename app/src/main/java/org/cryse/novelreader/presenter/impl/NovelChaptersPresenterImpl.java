@@ -1,6 +1,7 @@
 package org.cryse.novelreader.presenter.impl;
 
 import org.cryse.novelreader.logic.NovelDataService;
+import org.cryse.novelreader.model.NovelBookMarkModel;
 import org.cryse.novelreader.model.NovelChapterModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelChaptersPresenter;
@@ -119,7 +120,7 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
                             mView.canGoToLastRead(result);
                         },
                         error -> {
-                            mView.canGoToLastRead(false);
+                            mView.canGoToLastRead(null);
                             Timber.e(error, error.getMessage(), LOG_TAG);
                             mToastUtil.showExceptionToast(mView, error);
                         },
@@ -144,7 +145,7 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
                             mDisplay.showNovelReadActivity(mView, novelModel, result.getChapterIndex(), result.getChapterOffset(), chapterList);
                         },
                         error -> {
-                            mView.canGoToLastRead(false);
+                            mView.canGoToLastRead(null);
                             Timber.e(error, error.getMessage(), LOG_TAG);
                             mToastUtil.showExceptionToast(mView, error);
                         },
@@ -171,7 +172,7 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
         }
 
         @Override
-        public void canGoToLastRead(Boolean value) {
+        public void canGoToLastRead(NovelBookMarkModel bookMark) {
 
         }
 

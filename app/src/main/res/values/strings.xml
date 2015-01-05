@@ -140,6 +140,8 @@
     <string name="placeholder_novel_details_subtitle">Trevor Johns and Roman Nurik</string>
     <string name="add_fab_novel">Add to bookshelf</string>
 
+    <string name="listview_last_read_indicator_text">\t[上次阅读到这里]</string>
+
     <string name="novel_chapter_contents_cache_progress">正在缓存第 %1$d 章， 共 %2$d 章。</string>
 
     <!-- Novel detail -->

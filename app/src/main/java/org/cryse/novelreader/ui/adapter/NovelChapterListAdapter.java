@@ -5,6 +5,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +31,7 @@ public class NovelChapterListAdapter extends BaseAdapter{
     private int mTagColorDotSize;
     private int mTagColorDotPadding;
     private int mCachedColor;
+    private int mLastReadPosition = -1;
 
     public NovelChapterListAdapter(Context context,
                                    List<NovelChapterModel> novelContents) {
@@ -90,9 +94,31 @@ public class NovelChapterListAdapter extends BaseAdapter{
                         mCachedColor :
                         Color.TRANSPARENT
         );
-        viewHolder.mNovelChapterTitleTextView.setText(item.getTitle());
+        if(mLastReadPosition == position)
+        {
+            Spannable chapterTitle = new SpannableString(item.getTitle());
+            viewHolder.mNovelChapterTitleTextView.setText(chapterTitle);
+
+            Spannable lastReadPromptText = new SpannableString(getContext().getResources().getString(R.string.listview_last_read_indicator_text));
+            lastReadPromptText.setSpan(new ForegroundColorSpan(ColorUtils.getColorFromAttr(getContext(), R.attr.colorAccent)), 0, lastReadPromptText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            viewHolder.mNovelChapterTitleTextView.append(lastReadPromptText);
+        } else {
+            viewHolder.mNovelChapterTitleTextView.setText(item.getTitle());
+        }
 
         return convertView;
+    }
+
+    public int getLastReadIndicator() {
+        return mLastReadPosition;
+    }
+
+    public void setLastReadIndicator(int position) {
+        mLastReadPosition = position;
+    }
+
+    public void clearLastReadIndicator() {
+        mLastReadPosition = -1;
     }
 
     public Context getContext() {
