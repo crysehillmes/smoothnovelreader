@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import org.cryse.novelreader.R;
 public class SuperRecyclerView extends FrameLayout {
@@ -22,7 +21,6 @@ public class SuperRecyclerView extends FrameLayout {
     protected ViewStub    mMoreProgress;
     protected RecyclerView mRecyclerView;
     protected ViewStub    mEmpty;
-    protected ItemClickSupport mItemClickSupport;
 
     protected float   mDividerHeight;
     protected int     mDivider;
@@ -169,7 +167,7 @@ public class SuperRecyclerView extends FrameLayout {
      * If adapter is empty, then the emptyview is shown
      * @param adapter
      */
-    public void setAdapter(RecyclerView.Adapter adapter) {
+    public void setAdapter(RecyclerViewBaseAdapter adapter) {
         mRecyclerView.setAdapter(adapter);
         mProgress.setVisibility(View.GONE);
         /*if (mEmpty != null && mEmptyId != 0)
@@ -302,16 +300,16 @@ public class SuperRecyclerView extends FrameLayout {
      * Set the onItemClickListener for the listview
      * @param listener
      */
-    public void setOnItemClickListener(ItemClickSupport.OnItemClickListener listener) {
-        if(mItemClickSupport == null)
-            mItemClickSupport = ItemClickSupport.addTo(mRecyclerView);
-        mItemClickSupport.setOnItemClickListener(listener);
+    public void setOnItemClickListener(RecyclerViewOnItemClickListener listener) {
+        RecyclerView.Adapter adapter = mRecyclerView.getAdapter();
+        if(adapter != null && adapter instanceof RecyclerViewBaseAdapter)
+            ((RecyclerViewBaseAdapter) adapter).setOnItemClickListener(listener);
     }
 
-    public void setOnItemLongClickListener(ItemClickSupport.OnItemLongClickListener listener) {
-        if(mItemClickSupport == null)
-            mItemClickSupport = ItemClickSupport.addTo(mRecyclerView);
-        mItemClickSupport.setOnItemLongClickListener(listener);
+    public void setOnItemLongClickListener(RecyclerViewOnItemLongClickListener listener) {
+        RecyclerView.Adapter adapter = mRecyclerView.getAdapter();
+        if(adapter != null && adapter instanceof RecyclerViewBaseAdapter)
+            ((RecyclerViewBaseAdapter) adapter).setOnItemLongClickListener(listener);
     }
 
     /**

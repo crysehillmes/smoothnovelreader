@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
@@ -68,7 +69,9 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         } else {
             mNovel = getIntent().getParcelableExtra(DataContract.NOVEL_OBJECT_NAME);
         }
-        UIUtils.setInsets(this, getToolbar(), false);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            getWindow().setStatusBarColor(ColorUtils.getColorFromAttr(this, R.attr.colorPrimaryDark));
+        // UIUtils.setInsets(this, getToolbar(), false);
         initListView();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle(mNovel.getTitle());

@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import org.cryse.novelreader.ui.adapter.NovelCategoryItemAdapter;
 import org.cryse.novelreader.ui.adapter.item.NovelCategoryItem;
 import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
-import org.cryse.widget.recyclerview.ItemClickSupport;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.ui.common.AbstractFragment;
@@ -83,16 +82,12 @@ public class NovelRankFragment extends AbstractFragment {
                     )
             );
         }
-        ItemClickSupport itemClickSupport = ItemClickSupport.addTo(mRecyclerView);
-        itemClickSupport.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-            @Override
-            public void onItemClick(RecyclerView parent, View view, int position, long id) {
-                NovelCategoryItem item = mNovelListAdapter.getItem(position);
-                mDisplay.showRankFragment(
-                        item.getTitle(),
-                        item.getValue()
-                );
-            }
+        mNovelListAdapter.setOnItemClickListener((view, position, id) -> {
+            NovelCategoryItem item = mNovelListAdapter.getItem(position);
+            mDisplay.showRankFragment(
+                    item.getTitle(),
+                    item.getValue()
+            );
         });
     }
 

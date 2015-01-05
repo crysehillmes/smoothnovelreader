@@ -6,11 +6,12 @@
     android:layout_height="match_parent"
     android:background="?attr/smooth_theme_navigation_drawer_bg_color">
 
-<!--    <FrameLayout
+    <FrameLayout
         android:id="@+id/left_drawer_account_container"
         android:layout_width="match_parent"
         android:layout_height="162dp"
-        android:background="@color/gray"/>-->
+        android:background="?attr/smooth_theme_navigation_drawer_top_drawable"/>
+
     <ListView
         android:id="@+id/leftDrawerListView"
         android:layout_width="@dimen/navigation_drawer_width"

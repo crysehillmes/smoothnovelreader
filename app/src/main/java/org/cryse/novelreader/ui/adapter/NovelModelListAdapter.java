@@ -8,22 +8,21 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.model.NovelModel;
+import org.cryse.widget.recyclerview.RecyclerViewBaseAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.Optional;
 
-public abstract class NovelModelListAdapter extends RecyclerView.Adapter<NovelModelListAdapter.ViewHolder>
+public abstract class NovelModelListAdapter extends RecyclerViewBaseAdapter<NovelModelListAdapter.ViewHolder>
     implements ContentAdapter<NovelModel>{
     public static final int LAST_POSITION = -1 ;
 
@@ -109,7 +108,6 @@ public abstract class NovelModelListAdapter extends RecyclerView.Adapter<NovelMo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
-        public View mView;
 
         @InjectView(R.id.listview_item_novel_title_textview)
         public TextView mNovelTitleTextView;
@@ -134,8 +132,7 @@ public abstract class NovelModelListAdapter extends RecyclerView.Adapter<NovelMo
 
         public ViewHolder(View v) {
             super(v);
-            mView = v;
-            ButterKnife.inject(this, mView);
+            ButterKnife.inject(this, v);
         }
     }
 

@@ -73,6 +73,8 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         showCoverImage = mIsShowCoverImage.get();
         grayScaleInNight = mGrayScaleInNight.get();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            getWindow().setStatusBarColor(ColorUtils.getColorFromAttr(this, R.attr.colorPrimaryDark));
         UIUtils.setInsets(this, mListView, true, Build.VERSION.SDK_INT < 21);
         String query = getIntent().getStringExtra(SearchManager.QUERY);
         query = query == null ? "" : query;
@@ -130,7 +132,7 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
                 mListView.hideMoreProgress();
             }
         });
-        mListView.setOnItemClickListener((parent, view, position, id) -> {
+        mListView.setOnItemClickListener((view, position, id) -> {
             NovelModel novelModel = mSearchListAdapter.getItem(position);
             getPresenter().showNovelIntroduction(novelModel);
         });

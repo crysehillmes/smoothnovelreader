@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.RunTimeStore;
 
 import javax.inject.Inject;
@@ -39,7 +40,8 @@ public class FadeTransitionActivity extends Activity{
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         SmoothReaderApplication.get(this).inject(this);
         setContentView(R.layout.dialog_fade_transition);
-
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            getWindow().setStatusBarColor(ColorUtils.getColorFromAttr(this, R.attr.colorPrimaryDark));
         ImageView imageView = (ImageView)findViewById(R.id.screenshot_imageview);
         if (savedInstanceState != null) {
             mScreenShot = savedInstanceState.getParcelable("screen_shot");

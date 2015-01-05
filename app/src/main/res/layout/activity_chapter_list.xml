@@ -3,7 +3,8 @@
     xmlns:superlistview="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
 
     <com.quentindommerc.superlistview.SuperListview
         android:id="@+id/novel_chapter_list_listview"

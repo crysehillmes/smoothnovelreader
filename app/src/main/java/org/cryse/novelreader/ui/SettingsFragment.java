@@ -2,6 +2,7 @@ package org.cryse.novelreader.ui;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
 import org.cryse.novelreader.R;
@@ -17,6 +18,10 @@ public class SettingsFragment extends PreferenceFragment {
         mOnConcisePreferenceChangedListener = new OnConcisePreferenceChangedListener();
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preference_settings);
+        Preference isGrayScalePrefs = findPreference(PreferenceConstant.SHARED_PREFERENCE_GRAYSCALE_IN_NIGHT);
+
+        Boolean isNightMode = getPreferenceManager().getSharedPreferences().getBoolean(PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE, false);
+        isGrayScalePrefs.setEnabled(isNightMode);
     }
 
     @Override
