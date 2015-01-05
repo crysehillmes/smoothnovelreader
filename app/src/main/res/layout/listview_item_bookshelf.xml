@@ -78,6 +78,6 @@
         android:layout_margin="16dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textColor="@color/accent_color"
+        android:textColor="?colorAccent"
         android:textSize="@dimen/text_size_caption" />
 </RelativeLayout>
