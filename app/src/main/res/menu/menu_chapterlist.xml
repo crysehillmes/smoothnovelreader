@@ -3,12 +3,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_item_last_read_history"
-        android:icon="@drawable/ic_action_history"
-        app:showAsAction="ifRoom"
-        android:visible="false"
-        android:title="@string/action_last_read_chapter"/>
-    <item
         android:id="@+id/menu_item_chapters_refresh"
         android:icon="@drawable/ic_action_refresh"
         app:showAsAction="ifRoom"

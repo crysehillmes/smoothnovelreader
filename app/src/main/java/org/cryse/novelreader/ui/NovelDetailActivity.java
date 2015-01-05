@@ -477,7 +477,11 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
     private void showNovelDetailInformation() {
         setDetailSectionHeaderColor();
         mStatusTextView.setText(getString(R.string.novel_detail_status_fomat, mNovel.getStatus()));
-        mChapterCountTextView.setText(getString(R.string.novel_detail_chapter_count_fomat, mNovelDetail.getChapterNumber()));
+        if(mNovelDetail.getChapterNumber() <= 0) {
+            mChapterCountTextView.setText(getString(R.string.novel_detail_chapter_count_unknown));
+        } else {
+            mChapterCountTextView.setText(getString(R.string.novel_detail_chapter_count_fomat, mNovelDetail.getChapterNumber()));
+        }
         mLatestChapterTextView.setText(getString(R.string.novel_detail_latest_chapter_fomat, mNovelDetail.getLatestChapter()));
 
         final String detailAbstract = mNovelDetail.getSummary().replace("\t","");

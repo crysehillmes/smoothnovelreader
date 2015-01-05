@@ -350,8 +350,8 @@ public class NovelDataServiceImpl implements NovelDataService {
     }
 
     @Override
-    public Observable<Boolean> checkLastReadBookMarkState(final String novelId) {
-        return Observable.create((Subscriber<? super Boolean> subscriber) -> {
+    public Observable<NovelBookMarkModel> checkLastReadBookMarkState(final String novelId) {
+        return Observable.create((Subscriber<? super NovelBookMarkModel> subscriber) -> {
             try {
                 Boolean isFavorite = isFavoriteSync(novelId);
                 QueryBuilder queryBuilder = novelBookMarkModelDao.queryBuilder().where(
@@ -359,7 +359,10 @@ public class NovelDataServiceImpl implements NovelDataService {
                         NovelBookMarkModelDao.Properties.BookMarkType.eq(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD)
                 );
                 Boolean hasLastRead = queryBuilder.count() == 1;
-                subscriber.onNext(isFavorite && hasLastRead);
+                if(isFavorite && hasLastRead)
+                    subscriber.onNext((NovelBookMarkModel)queryBuilder.list().get(0));
+                else
+                    subscriber.onNext(null);
                 subscriber.onCompleted();
             } catch (Exception ex) {
                 subscriber.onError(ex);
