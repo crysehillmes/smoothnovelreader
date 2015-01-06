@@ -39,7 +39,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:textColor="?attr/smooth_theme_text_color_secondary"
+            android:textColor="?attr/smooth_theme_read_text_color"
             android:textSize="@dimen/text_size_bottom_status" />
 
         <TextView
@@ -48,7 +48,7 @@
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:textColor="?attr/smooth_theme_text_color_secondary"
+            android:textColor="?attr/smooth_theme_read_text_color"
             android:textSize="@dimen/text_size_bottom_status" />
 
         <TextView
@@ -58,7 +58,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:textColor="?attr/smooth_theme_text_color_secondary"
+            android:textColor="?attr/smooth_theme_read_text_color"
             android:textSize="@dimen/text_size_bottom_status" />
     </RelativeLayout>
 </RelativeLayout>
