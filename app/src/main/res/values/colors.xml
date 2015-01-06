@@ -67,6 +67,7 @@
 
     <color name="text_color_primary_white">#DEFFFFFF</color><!-- 87% transparency-->
     <color name="text_color_secondary_white">#8AFFFFFF</color><!-- 54% transparency-->
+    <color name="text_color_night_read">#66FFFFFF</color><!-- 40% transparency-->
     <color name="text_color_tint_white">#42FFFFFF</color><!-- 26% transparency-->
     <color name="text_color_divider_white">#1FFFFFFF</color><!-- 12% transparency-->
 
