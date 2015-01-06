@@ -13,12 +13,7 @@
         <item name="actionBarInsetStart">@dimen/keyline_2_minus_16dp</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="android:windowActionModeOverlay">true</item>
-        <!--<item name="android:windowContentOverlay">@null</item>-->
-        <!--<item name="android:popupMenuStyle">@style/Widget.Smooth.PopupMenu</item>
-        <item name="android:listPopupWindowStyle">@style/Widget.Smooth.PopupMenu</item>
-        <item name="android:dropDownListViewStyle">@style/Widget.Smooth.ListView.DropDown</item>-->
 
-        <item name="smooth_theme_translucent_color">@color/primary_translucent_color</item>
         <item name="smooth_theme_bg_color">@color/theme_bg_color</item>
         <item name="smooth_theme_detail_bg_color">#FFFFFF</item>
         <item name="smooth_theme_card_bg_color">#FFFFFF</item>
@@ -29,7 +24,7 @@
         <item name="smooth_theme_navigation_drawer_bg_color">@color/theme_navigation_drawer_bg</item>
         <item name="smooth_theme_navigation_drawer_top_drawable">@drawable/drawer_top_image_light</item>
 
-        <item name="smooth_theme_read_bg_drawable">@color/theme_read_bg_color</item>
+        <item name="smooth_theme_read_bg_drawable">@color/theme_read_bg_yellow</item>
         <item name="smooth_theme_read_text_color">#FF000000</item>
 
         <item name="smooth_theme_spinner_text_color">@drawable/spinner_text_color_light</item>
