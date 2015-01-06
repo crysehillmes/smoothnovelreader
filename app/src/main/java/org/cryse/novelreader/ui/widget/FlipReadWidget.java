@@ -30,6 +30,11 @@ public class FlipReadWidget extends FlipViewController implements ReadWidget {
     }
 
     @Override
+    public int getPageCount() {
+        return this.getAdapter() == null ? 0 : this.getAdapter().getCount();
+    }
+
+    @Override
     public int getCurrentPage() {
         return getSelectedItemPosition();
     }

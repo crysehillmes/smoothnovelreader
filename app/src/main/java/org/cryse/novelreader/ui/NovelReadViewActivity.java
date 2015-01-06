@@ -114,7 +114,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                         mReadWidget.setLoading(false);
                         return;
                     }
-                    readPrevChapter();
+                    goPrevChapter();
                 } else
                     mReadWidget.setLoading(false);
             }
@@ -126,7 +126,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                         mReadWidget.setLoading(false);
                         return;
                     }
-                    readNextChapter();
+                    goNextChapter();
                 } else
                     mReadWidget.setLoading(false);
             }
@@ -334,6 +334,12 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                     if((x > (viewWidth * 1 / 3) && x < (viewWidth * 2 / 3)) && (y > (viewHeight * 1 / 3) && y < (viewHeight * 2 / 3))) {
                         showBottomMenu();
                         return true;
+                    } else if((x > 0 && x < (viewWidth * 1 / 3))) {
+                        goPrevPage();
+                        return true;
+                    } else if((x > (viewWidth * 2 / 3) && x < viewWidth)) {
+                        goNextPage();
+                        return true;
                     }
                 }
                 return false;
@@ -524,16 +530,36 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         ToastProxy.showToast(this, text, toastType);
     }
 
-    private void readNextChapter() {
+    private void goNextChapter() {
         if(chapterIndex + 1 >= mNovelChapters.size())
             return;
         getPresenter().loadNextChapter(mNovelChapters.get(chapterIndex + 1));
     }
 
-    private void readPrevChapter() {
+    private void goPrevChapter() {
         if(chapterIndex - 1 < 0)
             return;
         getPresenter().loadPrevChapter(mNovelChapters.get(chapterIndex - 1), true);
+    }
+
+    private void goNextPage() {
+        int currentPage = mReadWidget.getCurrentPage();
+        int pageCount = mReadWidget.getPageCount();
+        if(currentPage + 1 >= 0 && currentPage + 1 < pageCount) {
+            mReadWidget.setCurrentPage(currentPage + 1, true);
+        } else if(currentPage + 1 >= pageCount) {
+            goNextChapter();
+        }
+    }
+
+    private void goPrevPage() {
+        int currentPage = mReadWidget.getCurrentPage();
+        int pageCount = mReadWidget.getPageCount();
+        if(currentPage - 1 >= 0 && currentPage - 1 < pageCount) {
+            mReadWidget.setCurrentPage(currentPage - 1, true);
+        } else if(currentPage - 1 < 0) {
+            goPrevChapter();
+        }
     }
 
     private void saveReadHistory() {
@@ -615,11 +641,11 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     }
 
     public void onMenuItemNextChapterClick() {
-        readNextChapter();
+        goNextChapter();
     }
 
     public void onMenuItemPreviousChapterClick() {
-        readPrevChapter();
+        goPrevChapter();
     }
 
     public void onMenuItemReloadClick() {

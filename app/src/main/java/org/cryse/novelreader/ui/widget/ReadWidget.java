@@ -3,6 +3,7 @@ package org.cryse.novelreader.ui.widget;
 import android.view.View;
 
 public interface ReadWidget {
+    public int getPageCount();
     public int getCurrentPage();
     public void setCurrentPage(int position, boolean animation);
     public void setAdapter(ReadWidgetAdapter adapter);
