@@ -21,13 +21,9 @@
 
     <color name="aqua">#009688</color>
 
-    <color name="primary_color">@color/md_indigo_500</color>
-    <color name="primary_color_dark">@color/md_indigo_700</color>
-    <color name="primary_translucent_color">#663f51b5</color>
-    <color name="primary_translucent_33_color">#333f51b5</color>
-    <color name="accent_color">@color/md_pink_200</color>
-    <color name="status_bar_tint_color">@color/md_indigo_700</color>
-    <color name="accent_translucent_33_color">#33f48fb1</color>
+    <color name="primary_color">@color/md_deep_purple_500</color>
+    <color name="primary_color_dark">@color/md_deep_purple_700</color>
+    <color name="accent_color">@color/md_green_500</color>
 
     <color name="theme_bg_color">#FFE8E8E8</color>
     <color name="theme_navigation_drawer_bg">@color/grey_background</color>
