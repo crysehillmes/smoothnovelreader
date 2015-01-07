@@ -3,6 +3,7 @@ package org.cryse.novelreader.ui;
 import android.app.Fragment;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -65,6 +66,10 @@ public class MainActivity extends AbstractThemeableActivity {
 
     private int mCurrentSelectedPosition;
 
+    private Handler mHandler = new Handler();
+    private Runnable mPendingRunnable = null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,8 +103,6 @@ public class MainActivity extends AbstractThemeableActivity {
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
-                getSupportActionBar().setDisplayShowCustomEnabled(false);
-                getSupportActionBar().setTitle(R.string.app_name);
             }
 
             @Override
@@ -110,8 +113,11 @@ public class MainActivity extends AbstractThemeableActivity {
                 }*/
 
                 invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
-                getSupportActionBar().setDisplayShowCustomEnabled(true);
-                getSupportActionBar().setTitle(mTitle);
+                // If mPendingRunnable is not null, then add to the message queue
+                if (mPendingRunnable != null) {
+                    mHandler.post(mPendingRunnable);
+                    mPendingRunnable = null;
+                }
             }
         };
         mDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
@@ -273,10 +279,14 @@ public class MainActivity extends AbstractThemeableActivity {
             //mHandler.postDelayed(() -> mDrawerLayout.closeDrawer(mLinearDrawerLayout), 300);
             if(position != mCurrentSelectedPosition) {
                 selectItem(position);
-                onNavigationDrawerItemSelected(position, false);
+                mPendingRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        onNavigationDrawerItemSelected(position, false);
+                    }
+                };
+                closeDrawer();
             }
-
-            closeDrawer();
         }
     }
 
