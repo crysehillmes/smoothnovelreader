@@ -134,7 +134,13 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         mReadWidget.setOnPageChangedListener(new ReadWidget.OnPageChangedListener() {
             @Override
             public void onPageChanged(int position) {
-                mPagePositionTextView.setText(String.format("本章第 %d / %d 页", position + 1, mNovelReadAdapter.getCount()));
+                mPagePositionTextView.setText(
+                        getResources().getString(
+                                R.string.readview_page_offset,
+                                position + 1,
+                                mNovelReadAdapter.getCount()
+                        )
+                );
                 chapterOffset = mNovelReadAdapter.getStringOffsetFromPage(mReadWidget.getCurrentPage());
                 hideSystemUI();
             }
@@ -430,7 +436,13 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         String title = mNovelChapters.get(chapterIndex).getTitle();
         setViewContent(title, splitedContent);
         mReadWidget.setCurrentPage(mNovelReadAdapter.getPageFromStringOffset(chapterOffset), false);
-        mPagePositionTextView.setText(String.format("本章第 %d / %d 页", mReadWidget.getCurrentPage() + 1, mNovelReadAdapter.getCount()));
+        mPagePositionTextView.setText(
+                getResources().getString(
+                        R.string.readview_page_offset,
+                        mReadWidget.getCurrentPage() + 1,
+                        mNovelReadAdapter.getCount()
+                )
+        );
         mCurrentChapterTextView.setText(title);
     }
 
@@ -442,7 +454,13 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         setViewContent(title, splitedContent);
         chapterOffset = 0;
         mReadWidget.setCurrentPage(0, false);
-        mPagePositionTextView.setText(String.format("本章第 %d / %d 页", mReadWidget.getCurrentPage() + 1, mNovelReadAdapter.getCount()));
+        mPagePositionTextView.setText(
+                getResources().getString(
+                        R.string.readview_page_offset,
+                        mReadWidget.getCurrentPage() + 1,
+                        mNovelReadAdapter.getCount()
+                )
+        );
         mCurrentChapterTextView.setText(title);
     }
 
@@ -457,7 +475,13 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
             mReadWidget.setCurrentPage(mNovelReadAdapter.getCount() - 1, false);
         else
             mReadWidget.setCurrentPage(0, false);
-        mPagePositionTextView.setText(String.format("本章第 %d / %d 页", mReadWidget.getCurrentPage() + 1, mNovelReadAdapter.getCount()));
+        mPagePositionTextView.setText(
+                getResources().getString(
+                        R.string.readview_page_offset,
+                        mReadWidget.getCurrentPage() + 1,
+                        mNovelReadAdapter.getCount()
+                )
+        );
         mCurrentChapterTextView.setText(title);
 
     }
