@@ -14,7 +14,7 @@ import rx.Observable;
 /**
  * The interface Novel data service.
  */
-public interface NovelDataService {
+public interface NovelBusinessLogicLayer {
 
     /**
      * Is favorite.
@@ -25,11 +25,11 @@ public interface NovelDataService {
     public Observable<Boolean> isFavorite(String id);
 
     /**
-     * Gets favorited.
+     * Get favorites.
      *
      * @return the favorited
      */
-    public Observable<List<NovelModel>> getFavorited();
+    public Observable<List<NovelModel>> getFavorites();
 
     /**
      * Add to favorite.

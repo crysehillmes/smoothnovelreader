@@ -1,6 +1,6 @@
 package org.cryse.novelreader.presenter.impl;
 
-import org.cryse.novelreader.logic.NovelDataService;
+import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelBookShelfPresenter;
 import org.cryse.novelreader.util.ToastType;
@@ -24,24 +24,24 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
 
     Subscription subscription;
 
-    NovelDataService mNovelDataService;
+    NovelBusinessLogicLayer mNovelBusinessLogicLayer;
 
     AndroidDisplay mDisplay;
 
     ToastUtil mToastUtil;
 
     @Inject
-    public NovelBookShelfPresenterImpl(NovelDataService mNovelDataService, AndroidDisplay display, ToastUtil toastUtil) {
-        this.mNovelDataService = mNovelDataService;
+    public NovelBookShelfPresenterImpl(NovelBusinessLogicLayer mNovelBusinessLogicLayer, AndroidDisplay display, ToastUtil toastUtil) {
+        this.mNovelBusinessLogicLayer = mNovelBusinessLogicLayer;
         this.mDisplay = display;
         this.mToastUtil = toastUtil;
         this.mView = new EmptyBookShelfView();
     }
 
     @Override
-    public void getFavoritedNovels() {
+    public void loadFavoriteNovels() {
         SubscriptionUtils.checkAndUnsubscribe(subscription);
-        subscription = mNovelDataService.getFavorited()
+        subscription = mNovelBusinessLogicLayer.getFavorites()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -63,7 +63,7 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
     @Override
     public void getNovelUpdates() {
         SubscriptionUtils.checkAndUnsubscribe(subscription);
-        subscription = mNovelDataService.getNovelUpdate()
+        subscription = mNovelBusinessLogicLayer.getNovelUpdate()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -85,7 +85,7 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
     @Override
     public void removeFromFavorite(String... novelIds) {
         SubscriptionUtils.checkAndUnsubscribe(subscription);
-        subscription = mNovelDataService.removeFromFavorite(novelIds)
+        subscription = mNovelBusinessLogicLayer.removeFromFavorite(novelIds)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

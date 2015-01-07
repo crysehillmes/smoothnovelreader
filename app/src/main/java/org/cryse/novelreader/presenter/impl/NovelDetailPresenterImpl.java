@@ -1,6 +1,6 @@
 package org.cryse.novelreader.presenter.impl;
 
-import org.cryse.novelreader.logic.NovelDataService;
+import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelDetailPresenter;
@@ -24,11 +24,11 @@ public class NovelDetailPresenterImpl implements NovelDetailPresenter {
     private Subscription mLoadDetailSubscription;
     private Subscription mCheckFavoriteStatusSubscription;
     private Subscription mAddFavoriteSubscription;
-    private NovelDataService dataService;
+    private NovelBusinessLogicLayer dataService;
     private ToastUtil mToastUtil;
     private AndroidDisplay mDisplay;
     @Inject
-    public NovelDetailPresenterImpl(NovelDataService dataService, AndroidDisplay display, ToastUtil toastUtil) {
+    public NovelDetailPresenterImpl(NovelBusinessLogicLayer dataService, AndroidDisplay display, ToastUtil toastUtil) {
         this.dataService = dataService;
         this.mDisplay = display;
         this.mToastUtil = toastUtil;

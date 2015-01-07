@@ -1,6 +1,6 @@
 package org.cryse.novelreader.presenter.impl;
 
-import org.cryse.novelreader.logic.NovelDataService;
+import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelBookMarkModel;
 import org.cryse.novelreader.model.NovelChapterModel;
 import org.cryse.novelreader.model.NovelModel;
@@ -33,15 +33,15 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
 
     Subscription mCheckFavoriteStatusSubscription;
 
-    NovelDataService mNovelDataService;
+    NovelBusinessLogicLayer mNovelBusinessLogicLayer;
 
     AndroidDisplay mDisplay;
 
     ToastUtil mToastUtil;
 
     @Inject
-    public NovelChaptersPresenterImpl(NovelDataService mNovelDataService, AndroidDisplay display, ToastUtil toastUtil) {
-        this.mNovelDataService = mNovelDataService;
+    public NovelChaptersPresenterImpl(NovelBusinessLogicLayer mNovelBusinessLogicLayer, AndroidDisplay display, ToastUtil toastUtil) {
+        this.mNovelBusinessLogicLayer = mNovelBusinessLogicLayer;
         this.mDisplay = display;
         this.mToastUtil = toastUtil;
     }
@@ -54,7 +54,7 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
     @Override
     public void loadChapters(NovelModel novelModel, boolean forceUpdate) {
         SubscriptionUtils.checkAndUnsubscribe(mLoadChaptersSubscription);
-        mLoadChaptersSubscription = mNovelDataService.getChapterList(novelModel, forceUpdate)
+        mLoadChaptersSubscription = mNovelBusinessLogicLayer.getChapterList(novelModel, forceUpdate)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -75,7 +75,7 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
 
     public void checkNovelFavoriteStatus(NovelModel novelModel) {
         SubscriptionUtils.checkAndUnsubscribe(mCheckFavoriteStatusSubscription);
-        mCheckFavoriteStatusSubscription = mNovelDataService.isFavorite(novelModel.getId())
+        mCheckFavoriteStatusSubscription = mNovelBusinessLogicLayer.isFavorite(novelModel.getId())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -112,7 +112,7 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
 
     public void checkLastReadState(NovelModel novelModel) {
         SubscriptionUtils.checkAndUnsubscribe(mCheckLastReadSubscription);
-        mCheckLastReadSubscription = mNovelDataService.checkLastReadBookMarkState(novelModel.getId())
+        mCheckLastReadSubscription = mNovelBusinessLogicLayer.checkLastReadBookMarkState(novelModel.getId())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -137,7 +137,7 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
     @Override
     public void readLastPosition(final NovelModel novelModel, final List<NovelChapterModel> chapterList) {
         SubscriptionUtils.checkAndUnsubscribe(mGetLastReadBookMarkSubscription);
-        mGetLastReadBookMarkSubscription = mNovelDataService.getLastReadBookMark(novelModel.getId())
+        mGetLastReadBookMarkSubscription = mNovelBusinessLogicLayer.getLastReadBookMark(novelModel.getId())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -161,7 +161,7 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
     }
 
     public Observable<Boolean> preloadChapterContents(NovelModel novel, List<NovelChapterModel> chapterModels) {
-        return mNovelDataService.preloadChapterContents(novel, chapterModels);
+        return mNovelBusinessLogicLayer.preloadChapterContents(novel, chapterModels);
     }
 
     private class EmptyNovelChaptersView implements NovelChaptersView {
