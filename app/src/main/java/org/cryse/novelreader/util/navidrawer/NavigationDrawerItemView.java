@@ -85,7 +85,6 @@ public class NavigationDrawerItemView extends RelativeLayout {
 
     public void bindTo(NavigationDrawerItem item, int position) {
         this.mPosition = position;
-        requestLayout();
         if (item.isMainItem()) {
             itemTitleTV.setText(item.getItemName());
             itemIconIV.setImageDrawable(getIcon(item.getItemIcon()));
