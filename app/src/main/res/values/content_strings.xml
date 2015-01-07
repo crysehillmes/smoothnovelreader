@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="novel_categorys">传统分类</string>
     <string-array name="novel_categorys_array">
         <item>都市</item>
         <item>玄幻</item>

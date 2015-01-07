@@ -108,7 +108,7 @@ public class NovelCategoryFragment extends AbstractFragment {
     public void loadViewPagerData() {
         NovelCategoryItemGroup traditionalCategoryGroup = new NovelCategoryItemGroup(
                 NovelCategoryItemGroup.TYPE_TRADITIONAL_CATEGORY,
-                "传统分类",
+                getString(R.string.novel_categorys),
                 new ArrayList<NovelCategoryItem>());
         String[] categoryTitles = getResources().getStringArray(R.array.novel_categorys_array);
         String[] categoryValues = getResources().getStringArray(R.array.novel_categorys_array);
