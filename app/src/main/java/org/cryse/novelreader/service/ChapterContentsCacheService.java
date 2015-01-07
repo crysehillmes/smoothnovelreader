@@ -108,7 +108,7 @@ public class ChapterContentsCacheService extends Service {
         PendingIntent pendingIntent = PendingIntent.getService(this, 0, cancelCacheIntent, 0);        mBuilder = new NotificationCompat.Builder(ChapterContentsCacheService.this);
         mBuilder.setContentTitle(getResources().getString(R.string.notification_chapter_contents_cache_title, novel.getTitle()))
                 .setContentText("")
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.drawable.ic_action_chapter_cache)
                 .setOngoing(true);
         mBuilder.addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cache_title), pendingIntent);
 
@@ -159,7 +159,7 @@ public class ChapterContentsCacheService extends Service {
                 mBuilder = new NotificationCompat.Builder(ChapterContentsCacheService.this);
                 mBuilder.setContentTitle(getResources().getString(R.string.notification_chapter_contents_cache_title_finish, novel.getTitle()))
                         .setContentText(getResources().getString(R.string.notification_chapter_contents_cache_content, successCount, failureCount, chapterCount - successCount - failureCount))
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.drawable.ic_notification_done)
                         .setAutoCancel(true);
                 //startForeground(CACHING_NOTIFICATION_ID, mBuilder.build());
                 mNotifyManager.notify(CACHING_NOTIFICATION_ID, mBuilder.build());
