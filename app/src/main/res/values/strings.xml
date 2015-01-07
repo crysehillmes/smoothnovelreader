@@ -31,6 +31,7 @@
     <string name="format_latest_chapter">最新章节: %1$s</string>
     <string name="current_none">暂无</string>
     <string name="reading_not_start">还未阅读</string>
+    <string name="has_updates">有更新</string>
 
     <!-- Content description -->
     <string name="placeholder_lorem_ipsum">placeholder</string>

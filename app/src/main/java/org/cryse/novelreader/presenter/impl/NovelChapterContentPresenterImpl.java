@@ -61,7 +61,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
 
     @Override
     public void loadPrevChapter(NovelChapterModel novelChapterModel, boolean jumpToLast) {
-        loadChapter(novelChapterModel, PREV, false, jumpToLast);// 读取上一章这里的boolean 用来确定是不是自动跳到最后一页
+        loadChapter(novelChapterModel, PREV, false, jumpToLast);
     }
 
     private static final int PREV = 0;
@@ -95,7 +95,6 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     }
 
     private void splitChapterAndDisplay(String title, String content, int type, Boolean autoJump) {
-        // 分割章节
         mSplitSubscription = splitNovelChapterAsync(title, content)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

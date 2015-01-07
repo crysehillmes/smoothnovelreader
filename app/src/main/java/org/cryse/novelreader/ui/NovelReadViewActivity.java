@@ -234,7 +234,6 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                 TextPaint textPaint = textView.getPaint();
                 mNovelReadAdapter = createReadWidgetAdapter(mFontSize);
                 mReadWidget.setAdapter(mNovelReadAdapter);
-                // TODO: 当修改了排版算法之后应该是用正确的值而不是这里的经验值
                 getPresenter().setSplitParams(
                         mFlipWidth - padding * 2,
                         mFlipHeight,
@@ -489,9 +488,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     @Override
     public void onBookMarkSaved(int type, boolean isSuccess) {
         if(isSuccess && type == NovelBookMarkModel.BOOKMARK_TYPE_NORMAL) {
-            // TODO: 书签保存成功提示
         } else {
-            // TODO: 书签保存失败提示
         }
     }
 

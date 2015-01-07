@@ -125,7 +125,7 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
         );
 
         mListView.setOnMoreListener((numberOfItems, numberBeforeMore, currentItemPos) -> {
-            if (!isNoMore && !isLoadingMore && currentListPageNumber < 4) { //下面加载的是+1，所以这里小于4，一共4页
+            if (!isNoMore && !isLoadingMore && currentListPageNumber < 4) { // load more would load +1, so current must less than 4
                 getPresenter().searchNovel(mQueryString, currentListPageNumber + 1, true);
             } else {
                 mListView.setLoadingMore(false);

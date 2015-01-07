@@ -65,22 +65,22 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
     public void removeFavorite(String... novelIds) {
         List novelsList = Arrays.asList(novelIds);
 
-        // 清除BookMark
+        // Clear BookMark
         DeleteQuery deleteBookMarksQuery = novelBookMarkModelDao.queryBuilder().where(NovelBookMarkModelDao.Properties.Id.in(novelsList)).buildDelete();
         deleteBookMarksQuery.executeDeleteWithoutDetachingEntities();
 
-        // 清除章节内容
+        // Clear ChapterContents
         DeleteQuery deleteChapterContentsQuery = novelChapterContentModelDao.queryBuilder().where(NovelChapterContentModelDao.Properties.Id.in(novelsList)).buildDelete();
         deleteChapterContentsQuery.executeDeleteWithoutDetachingEntities();
 
-        // 清除章节
+        // Clear Chapters
         DeleteQuery deleteChaptersQuery = novelChapterModelDao.queryBuilder().where(NovelChapterModelDao.Properties.Id.in(novelsList)).buildDelete();
         deleteChaptersQuery.executeDeleteWithoutDetachingEntities();
 
-        // 删除NovelModel
+        // Remove NovelModel
         novelModelDao.deleteByKeyInTx(novelIds);
 
-        // 刷新Session
+        // Clear DaoSession
         clearDaoSession();
     }
 
@@ -149,7 +149,7 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
 
     @Override
     public void insertOrUpdateLastReadBookMark(NovelBookMarkModel bookMark) {
-        //删除已有的最后阅读记录，保存新的
+        // Replace existing last read bookmark and by the new one.
         DeleteQuery deleteQuery = novelBookMarkModelDao.queryBuilder().where(
                 NovelBookMarkModelDao.Properties.Id.eq(bookMark.getId()),
                 NovelBookMarkModelDao.Properties.BookMarkType.eq(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD)
@@ -157,7 +157,7 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
         deleteQuery.executeDeleteWithoutDetachingEntities();
         novelBookMarkModelDao.insertOrReplace(bookMark);
 
-        // 更新书架上小说“最后阅读章节”的内容
+        // Update NovelModel lastReadChapterTitle field.
         NovelModel novelModel = novelModelDao.load(bookMark.getId());
         novelModel.setLastReadChapterTitle(bookMark.getChapterTitle());
         novelModelDao.update(novelModel);
@@ -165,7 +165,7 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
 
     @Override
     public NovelBookMarkModel loadLastReadBookMark(String novelId) {
-        // 获得Id相同且类型是LASTREAD的书签
+        // get last read bookmark according to novelId.
         QueryBuilder queryBuilder = novelBookMarkModelDao.queryBuilder().where(
                 NovelBookMarkModelDao.Properties.Id.eq(novelId),
                 NovelBookMarkModelDao.Properties.BookMarkType.eq(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD)
@@ -175,7 +175,7 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
 
     @Override
     public List<NovelBookMarkModel> loadBookMarks(String novelId) {
-        // 获得Id相同且类型是LASTREAD的书签
+        // get all bookmarks according to novelId.
         QueryBuilder queryBuilder = novelBookMarkModelDao.queryBuilder().where(
                 NovelBookMarkModelDao.Properties.Id.eq(novelId),
                 NovelBookMarkModelDao.Properties.BookMarkType.notEq(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD)
