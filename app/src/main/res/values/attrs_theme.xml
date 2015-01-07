@@ -50,6 +50,5 @@
     <attr name="smooth_theme_spinner_style" format="reference" />
     <attr name="smooth_theme_spinner_foreground" format="reference|color"/>
 
-    <attr name="smooth_theme_search_bg" format="reference"/>
     <attr name="smooth_theme_search_close" format="reference"/>
 </resources>
