@@ -3,30 +3,25 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/category_item_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="?android:selectableItemBackground"
+    android:gravity="center_vertical"
+    android:minHeight="56dp">
 
-    <FrameLayout
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="16dp" />
+
+    <TextView
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="56dp"
-        android:background="?android:selectableItemBackground"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="16dp" />
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="72dp"
-            android:layout_gravity="center_vertical"
-            android:gravity="start|center_vertical"
-            android:textColor="?smooth_theme_text_color_subhead"
-            android:textSize="18sp" />
-    </FrameLayout>
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="72dp"
+        android:gravity="start|center_vertical"
+        android:textColor="?smooth_theme_text_color_subhead"
+        android:textSize="18sp" />
 </FrameLayout>

@@ -89,6 +89,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     private void initListView() {
         novelList = new ArrayList<NovelModel>();
         bookShelfListAdapter = new NovelBookShelfListAdapter(getActivity(), novelList);
+        mShelfListView.getList().setHasFixedSize(true);
         mShelfListView.setAdapter(bookShelfListAdapter);
         mShelfListView.getSwipeToRefresh().setColorSchemeResources(
                 ColorUtils.getRefreshProgressBarColors()[0],
