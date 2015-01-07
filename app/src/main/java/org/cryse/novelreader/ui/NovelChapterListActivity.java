@@ -25,7 +25,6 @@ import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.ui.adapter.NovelChapterListAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.presenter.NovelChaptersPresenter;
-import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.view.NovelChaptersView;
 import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.ToastProxy;
@@ -228,10 +227,12 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
             int index = Collections.binarySearch(mNovelChapterList, new NovelChapterModel(null, null, null, null, bookMark.getChapterIndex()), chapterSecondIdComparator);
             if (index >= 0 && index < mNovelChapterList.size()) {
                 mChapterListAdapter.setLastReadIndicator(index);
+                mChapterListAdapter.notifyDataSetChanged();
                 mListView.getList().setSelection(index);
             }
         } else {
             mChapterListAdapter.clearLastReadIndicator();
+            mChapterListAdapter.notifyDataSetChanged();
         }
     }
 
@@ -264,13 +265,6 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     public NovelChaptersPresenter getPresenter() {
         return mPresenter;
-    }
-
-    private void gotoLastRead() {
-        if(mNovel != null && mNovelChapterList != null)
-            getPresenter().readLastPosition(mNovel, mNovelChapterList);
-        else
-            ToastProxy.showToast(this, getString(R.string.toast_chapter_list_loading), ToastType.TOAST_INFO);
     }
 
     private void refreshChapters() {
