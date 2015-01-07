@@ -20,8 +20,6 @@ public interface NovelDatabaseAccessLayer {
     // Chapter list operation
     public List<NovelChapterModel> loadChapters(String novelId);
     public void insertChapters(String novelId, List<NovelChapterModel> chapters);
-    public void removeChaptersByChapterId(String... chapterIds);
-    public void removeChaptersByNovelId(String... novelIds);
     public void updateChapters(String novelId, List<NovelChapterModel> chapters);
 
     // Chapter content operation

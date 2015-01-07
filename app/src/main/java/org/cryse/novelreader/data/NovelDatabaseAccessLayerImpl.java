@@ -107,20 +107,6 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
     }
 
     @Override
-    public void removeChaptersByChapterId(String... chapterIds) {
-        DeleteQuery deleteQuery = novelChapterModelDao.queryBuilder().where(NovelChapterModelDao.Properties.SecondId.in(chapterIds)).buildDelete();
-        deleteQuery.executeDeleteWithoutDetachingEntities();
-        clearDaoSession();
-    }
-
-    @Override
-    public void removeChaptersByNovelId(String... novelIds) {
-        DeleteQuery deleteQuery = novelChapterModelDao.queryBuilder().where(NovelChapterModelDao.Properties.Id.in(novelIds)).buildDelete();
-        deleteQuery.executeDeleteWithoutDetachingEntities();
-        clearDaoSession();
-    }
-
-    @Override
     public void updateChapters(String novelId, List<NovelChapterModel> chapters) {
         DeleteQuery deleteQuery = novelChapterModelDao.queryBuilder().where(NovelChapterModelDao.Properties.Id.eq(novelId)).buildDelete();
         deleteQuery.executeDeleteWithoutDetachingEntities();
