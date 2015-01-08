@@ -419,14 +419,6 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         getLUtils().setStatusBarColor(
                 UIUtils.scaleColor(mDetailPrimaryColor, 0.8f, false));
 
-
-        // 作者 | 状态
-        /*StringBuilder subtitleBuilder = new StringBuilder();
-        if (mNovel.getAuthor() != null && !TextUtils.isEmpty(mNovel.getAuthor()))
-            subtitleBuilder.append(mNovel.getAuthor());
-        if (mNovel.getStatus() != null && !TextUtils.isEmpty(mNovel.getStatus()))
-            subtitleBuilder.append(" | ").append(mNovel.getStatus());
-        String subtitle = subtitleBuilder.toString();*/
         String subtitle = mNovel.getAuthor();
         mTitleTextView.setText(mTitleString);
         mSubtitleTextView.setText(subtitle);

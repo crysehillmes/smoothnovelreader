@@ -134,7 +134,13 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         mReadWidget.setOnPageChangedListener(new ReadWidget.OnPageChangedListener() {
             @Override
             public void onPageChanged(int position) {
-                mPagePositionTextView.setText(String.format("本章第 %d / %d 页", position + 1, mNovelReadAdapter.getCount()));
+                mPagePositionTextView.setText(
+                        getResources().getString(
+                                R.string.readview_page_offset,
+                                position + 1,
+                                mNovelReadAdapter.getCount()
+                        )
+                );
                 chapterOffset = mNovelReadAdapter.getStringOffsetFromPage(mReadWidget.getCurrentPage());
                 hideSystemUI();
             }
@@ -228,7 +234,6 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                 TextPaint textPaint = textView.getPaint();
                 mNovelReadAdapter = createReadWidgetAdapter(mFontSize);
                 mReadWidget.setAdapter(mNovelReadAdapter);
-                // TODO: 当修改了排版算法之后应该是用正确的值而不是这里的经验值
                 getPresenter().setSplitParams(
                         mFlipWidth - padding * 2,
                         mFlipHeight,
@@ -430,7 +435,13 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         String title = mNovelChapters.get(chapterIndex).getTitle();
         setViewContent(title, splitedContent);
         mReadWidget.setCurrentPage(mNovelReadAdapter.getPageFromStringOffset(chapterOffset), false);
-        mPagePositionTextView.setText(String.format("本章第 %d / %d 页", mReadWidget.getCurrentPage() + 1, mNovelReadAdapter.getCount()));
+        mPagePositionTextView.setText(
+                getResources().getString(
+                        R.string.readview_page_offset,
+                        mReadWidget.getCurrentPage() + 1,
+                        mNovelReadAdapter.getCount()
+                )
+        );
         mCurrentChapterTextView.setText(title);
     }
 
@@ -442,7 +453,13 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         setViewContent(title, splitedContent);
         chapterOffset = 0;
         mReadWidget.setCurrentPage(0, false);
-        mPagePositionTextView.setText(String.format("本章第 %d / %d 页", mReadWidget.getCurrentPage() + 1, mNovelReadAdapter.getCount()));
+        mPagePositionTextView.setText(
+                getResources().getString(
+                        R.string.readview_page_offset,
+                        mReadWidget.getCurrentPage() + 1,
+                        mNovelReadAdapter.getCount()
+                )
+        );
         mCurrentChapterTextView.setText(title);
     }
 
@@ -457,7 +474,13 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
             mReadWidget.setCurrentPage(mNovelReadAdapter.getCount() - 1, false);
         else
             mReadWidget.setCurrentPage(0, false);
-        mPagePositionTextView.setText(String.format("本章第 %d / %d 页", mReadWidget.getCurrentPage() + 1, mNovelReadAdapter.getCount()));
+        mPagePositionTextView.setText(
+                getResources().getString(
+                        R.string.readview_page_offset,
+                        mReadWidget.getCurrentPage() + 1,
+                        mNovelReadAdapter.getCount()
+                )
+        );
         mCurrentChapterTextView.setText(title);
 
     }
@@ -465,9 +488,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     @Override
     public void onBookMarkSaved(int type, boolean isSuccess) {
         if(isSuccess && type == NovelBookMarkModel.BOOKMARK_TYPE_NORMAL) {
-            // TODO: 书签保存成功提示
         } else {
-            // TODO: 书签保存失败提示
         }
     }
 

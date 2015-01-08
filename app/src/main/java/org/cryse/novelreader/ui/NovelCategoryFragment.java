@@ -71,7 +71,7 @@ public class NovelCategoryFragment extends AbstractFragment {
         if(activity instanceof MainActivity) {
             ((MainActivity)activity).setToolbarTitleFromFragment(getString(R.string.drawer_category));
         }
-        if(savedInstanceState != null) {
+        if(savedInstanceState != null && savedInstanceState.containsKey("group_items")) {
             List<NovelCategoryItemGroup> items = savedInstanceState.getParcelableArrayList("group_items");
             mCategoryAdapter.addAll(items);
             mCategoryAdapter.notifyDataSetChanged();
@@ -83,7 +83,8 @@ public class NovelCategoryFragment extends AbstractFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("group_items", mCategoryAdapter.getItems());
+        if(mCategoryAdapter != null && mCategoryAdapter.getItems() != null)
+            outState.putParcelableArrayList("group_items", mCategoryAdapter.getItems());
     }
 
     @Override
@@ -108,7 +109,7 @@ public class NovelCategoryFragment extends AbstractFragment {
     public void loadViewPagerData() {
         NovelCategoryItemGroup traditionalCategoryGroup = new NovelCategoryItemGroup(
                 NovelCategoryItemGroup.TYPE_TRADITIONAL_CATEGORY,
-                "传统分类",
+                getString(R.string.novel_categorys),
                 new ArrayList<NovelCategoryItem>());
         String[] categoryTitles = getResources().getStringArray(R.array.novel_categorys_array);
         String[] categoryValues = getResources().getStringArray(R.array.novel_categorys_array);

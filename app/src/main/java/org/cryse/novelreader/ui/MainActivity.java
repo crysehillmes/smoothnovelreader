@@ -82,7 +82,6 @@ public class MainActivity extends AbstractThemeableActivity {
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayShowCustomEnabled(true);
 
-        //初始化Drawer导航数据
         initDrawerMenu();
 
         //Prepare the drawerToggle in order to be able to open/close the drawer

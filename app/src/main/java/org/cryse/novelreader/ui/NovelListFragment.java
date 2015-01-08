@@ -160,7 +160,7 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
         mNovelListAdapter = createAdapter();
         mListView.setAdapter(mNovelListAdapter);
         mListView.setOnMoreListener((numberOfItems, numberBeforeMore, currentItemPos) -> {
-            if (!isNoMore && !isLoadingMore && mCurrentListPageNumber < 4) { //下面加载的是+1，所以这里小于4，一共4页
+            if (!isNoMore && !isLoadingMore && mCurrentListPageNumber < 4) { // load more would load +1, so current must less than 4
                 //isLoadingMore = true;
                 loadMore(mCurrentListPageNumber);
             } else {

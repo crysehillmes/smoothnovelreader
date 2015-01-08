@@ -31,12 +31,16 @@
     <string name="format_latest_chapter">最新章节: %1$s</string>
     <string name="current_none">暂无</string>
     <string name="reading_not_start">还未阅读</string>
+    <string name="has_updates">有更新</string>
 
     <!-- Content description -->
     <string name="placeholder_lorem_ipsum">placeholder</string>
     <string name="default_content_description">图片</string>
     <string name="remove_from_bookshelf_description">移除收藏</string>
     <string name="add_to_bookshelf_description">添加收藏</string>
+
+    <!-- ReadViewActivity -->
+    <string name="readview_page_offset">本章第 %1$d / %2$d 页</string>
 
     <!-- ActionBar MenuItem -->
     <string name="action_last_read_chapter">最后阅读</string>

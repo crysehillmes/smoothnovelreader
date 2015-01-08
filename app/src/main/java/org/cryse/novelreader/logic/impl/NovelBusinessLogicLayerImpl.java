@@ -107,13 +107,11 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
             try{
                 List<NovelChapterModel> chapterList;
                 if(novelDataBase.isFavorite(novel.getId())) {
-                    //判断是否在书架之中
                     if(forceUpdate || novel.getLatestUpdateCount() != 0) {
                         chapterList = novelSource.getChapterListSync(novel.getId(), novel.getSrc());
                         novelDataBase.updateChapters(novel.getId(), chapterList);
                         chapterList = novelDataBase.loadChapters(novel.getId());
                     } else {
-                        //无需更新章节
                         chapterList = novelDataBase.loadChapters(novel.getId());
                         if(chapterList.size() == 0) {
                             chapterList = novelSource.getChapterListSync(novel.getId(), novel.getSrc());
@@ -162,7 +160,6 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                 NovelChapterContentModel chapterContent;
                 Boolean isFavorite = novelDataBase.isFavorite(novelChapter.getId());
                 if (isFavorite && forceUpdate == false) {
-                    //无需更新章节
                     chapterContent = novelDataBase.loadChapterContent(novelChapter.getSecondId());
                     if (chapterContent == null) {
                         chapterContent = novelSource.getChapterContentSync(novelChapter.getId(), novelChapter.getSecondId(), novelChapter.getSrc());

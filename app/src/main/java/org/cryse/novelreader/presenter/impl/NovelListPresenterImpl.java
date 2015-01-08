@@ -137,7 +137,6 @@ public class NovelListPresenterImpl implements NovelListPresenter {
     }
 
     private void setLoadingStatus(boolean append, boolean isLoading) {
-        // 如果加载更多就 setLoadingMore, 如果是加载或刷新就是 setLoading
         if(append)
             mView.setLoadingMore(isLoading);
         else
