@@ -12,21 +12,15 @@
         android:layout_height="40dp"
         android:layout_margin="16dp"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="72dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="72dp"
-        android:layout_marginTop="16dp"
-        android:orientation="vertical">
-
         <TextView
             android:id="@+id/listview_item_novel_title_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="72dp"
+            android:layout_marginLeft="72dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="?attr/smooth_theme_text_color_primary"
@@ -38,6 +32,11 @@
             android:id="@+id/listview_item_novel_info1_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/listview_item_novel_title_textview"
+            android:layout_marginStart="72dp"
+            android:layout_marginLeft="72dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="?attr/smooth_theme_text_color_secondary"
@@ -49,24 +48,18 @@
             android:id="@+id/listview_item_novel_info2_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/listview_item_novel_info1_textview"
+            android:layout_marginStart="72dp"
+            android:layout_marginLeft="72dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="?attr/smooth_theme_text_color_secondary"
             android:textSize="@dimen/text_size_body1">
 
         </TextView>
-
-        <!--<TextView
-            android:id="@+id/listview_item_novel_info3_textview"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:textSize="@dimen/text_size_body1"
-            android:textColor="@color/secondary_text_color"
-            android:ellipsize="end"
-            android:maxLines="1">
-
-        </TextView>-->
-    </LinearLayout>
 
     <TextView
         android:id="@+id/listview_item_novel_unread_textview"

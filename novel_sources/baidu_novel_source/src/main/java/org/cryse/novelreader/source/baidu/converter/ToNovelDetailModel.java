@@ -51,7 +51,7 @@ public class ToNovelDetailModel implements Func1<String, NovelDetailModel> {
     }
 
     private String getSummary(Document doc) {
-        String dataValue = "暂无简介";
+        String dataValue = "\u6682\u65e0\u7b80\u4ecb";
         Elements dataElements = doc.select("dd.summary");
         if(!dataElements.isEmpty()) {
             dataValue = dataElements.first().html();

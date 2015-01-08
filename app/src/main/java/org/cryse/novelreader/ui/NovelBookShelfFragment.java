@@ -89,6 +89,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     private void initListView() {
         novelList = new ArrayList<NovelModel>();
         bookShelfListAdapter = new NovelBookShelfListAdapter(getActivity(), novelList);
+        mShelfListView.getList().setHasFixedSize(true);
         mShelfListView.setAdapter(bookShelfListAdapter);
         mShelfListView.getSwipeToRefresh().setColorSchemeResources(
                 ColorUtils.getRefreshProgressBarColors()[0],
@@ -168,7 +169,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mShelfListView.getSwipeToRefresh().setRefreshing(true);
-        getPresenter().getFavoritedNovels();
+        getPresenter().loadFavoriteNovels();
         Activity activity = getActivity();
         if(activity instanceof MainActivity) {
             ((MainActivity)activity).setToolbarTitleFromFragment(getString(R.string.drawer_bookshelf));
@@ -193,7 +194,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     @Override
     public void onResume() {
         super.onResume();
-        getPresenter().getFavoritedNovels();
+        getPresenter().loadFavoriteNovels();
     }
 
     @Override

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="smooth_theme_translucent_color" format="reference|color" />
     <attr name="smooth_theme_bg_color" format="reference|color" />
     <attr name="smooth_theme_detail_bg_color" format="reference|color" />
     <attr name="smooth_theme_text_color" format="reference|color" />
     <attr name="smooth_theme_text_hint_color" format="reference|color" />
 
     <attr name="smooth_theme_actionbar_text_color" format="reference|color" />
+    <attr name="smooth_theme_toolbar_popup_theme" format="reference"/>
 
     <attr name="smooth_theme_spinner_text_color" format="reference|color"/>
     <attr name="smooth_theme_card_bg_color" format="reference|color"/>
@@ -50,6 +50,5 @@
     <attr name="smooth_theme_spinner_style" format="reference" />
     <attr name="smooth_theme_spinner_foreground" format="reference|color"/>
 
-    <attr name="smooth_theme_search_bg" format="reference"/>
     <attr name="smooth_theme_search_close" format="reference"/>
 </resources>

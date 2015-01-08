@@ -9,9 +9,11 @@ import org.cryse.novelreader.data.DaoSession;
 import org.cryse.novelreader.data.NovelBookMarkModelDao;
 import org.cryse.novelreader.data.NovelChapterContentModelDao;
 import org.cryse.novelreader.data.NovelChapterModelDao;
+import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
+import org.cryse.novelreader.data.NovelDatabaseAccessLayerImpl;
 import org.cryse.novelreader.data.NovelModelDao;
-import org.cryse.novelreader.logic.NovelDataService;
-import org.cryse.novelreader.logic.impl.NovelDataServiceImpl;
+import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
+import org.cryse.novelreader.logic.impl.NovelBusinessLogicLayerImpl;
 import org.cryse.novelreader.qualifier.ApplicationContext;
 import org.cryse.novelreader.source.NovelSource;
 import org.cryse.novelreader.source.baidu.BaiduNovelSourceImpl;
@@ -71,7 +73,12 @@ public class NovelSourceProvider {
     }
 
     @Provides
-    NovelDataService provideNovelDataService(NovelSource novelSource, NovelModelDao novelModelDao, NovelChapterModelDao novelChapterModelDao, NovelChapterContentModelDao novelChapterContentModelDao, NovelBookMarkModelDao novelBookMarkModelDao, NovelTextFilter novelTextFilter) {
-        return new NovelDataServiceImpl(novelSource, novelModelDao, novelChapterModelDao, novelChapterContentModelDao, novelBookMarkModelDao, novelTextFilter);
+    NovelDatabaseAccessLayer provideNovelDataBaseService(NovelModelDao novelModelDao, NovelChapterModelDao novelChapterModelDao, NovelChapterContentModelDao novelChapterContentModelDao, NovelBookMarkModelDao novelBookMarkModelDao) {
+        return new NovelDatabaseAccessLayerImpl(novelModelDao, novelChapterModelDao, novelChapterContentModelDao, novelBookMarkModelDao);
+    }
+
+    @Provides
+    NovelBusinessLogicLayer provideNovelDataService(NovelSource novelSource, NovelDatabaseAccessLayer dataBaseService, NovelTextFilter novelTextFilter) {
+        return new NovelBusinessLogicLayerImpl(novelSource, dataBaseService, novelTextFilter);
     }
 }

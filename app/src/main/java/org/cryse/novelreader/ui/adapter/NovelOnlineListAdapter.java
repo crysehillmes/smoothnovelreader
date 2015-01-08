@@ -35,7 +35,6 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
         super.onBindViewHolder(viewHolder, position);
         NovelModel item = getItem(position);
 
-        // 小说标题
         if(viewHolder.mNovelTitleTextView != null) {
             viewHolder.mNovelTitleTextView.setText(item.getTitle());
             if(!mIsShowCoverImage) {
@@ -43,15 +42,6 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
             }
         }
 
-        // 作者 | 状态
-        /*StringBuilder breifInfoBuilder = new StringBuilder();
-        if (item.getAuthor() != null && !TextUtils.isEmpty(item.getAuthor()))
-            breifInfoBuilder.append(item.getAuthor());
-        if (item.getStatus() != null && !TextUtils.isEmpty(item.getStatus()))
-            breifInfoBuilder.append(" | ").append(item.getStatus());
-        viewHolder.mNovelInfo1TextView.setText(breifInfoBuilder.toString());*/
-
-        // 小说作者
         if(viewHolder.mNovelInfo1TextView != null) {
             viewHolder.mNovelInfo1TextView.setText(item.getAuthor());
             if(!mIsShowCoverImage) {
@@ -59,7 +49,6 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
             }
         }
 
-        // 状态
         if(viewHolder.mNovelInfo2TextView != null && item.getStatus() != null && !TextUtils.isEmpty(item.getStatus())) {
             viewHolder.mNovelInfo2TextView.setText(item.getStatus());
             viewHolder.mNovelInfo2TextView.setVisibility(View.GONE);
@@ -67,17 +56,9 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
 
         if(viewHolder.mBackCoverLayout != null && !(mIsNightMode && mGrayScale))
             viewHolder.mBackCoverLayout.setBackgroundColor(ColorUtils.getPreDefinedColorFromId(getContext(), item.getId(), item.getTitle().length()));
-        
-        // 在追人数
-        /*if(viewHolder.mNovelInfo2TextView != null && item.getFollow() != null && item.getFollow() != 0)
-            viewHolder.mNovelInfo2TextView.setText(getString(R.string.format_follower_count, item.getFollow()));*/
 
-        // 小说封面图片
         if(viewHolder.mNovelImageImageView != null) {
             PicassoHelper.load(getContext(), item.getImageUrl(), viewHolder.mNovelImageImageView, mIsNightMode && mGrayScale);
-            /*LetterImageView letterImageView = (LetterImageView)viewHolder.mNovelImageImageView;
-            letterImageView.setContent(item.getTitle().charAt(0));
-            letterImageView.setBackgroundPainterColor(ColorUtils.getPreDefinedColorFromId(getContext(), item.getId(), item.getTitle().length()));*/
         }
     }
 }

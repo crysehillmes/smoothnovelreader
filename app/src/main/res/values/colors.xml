@@ -21,18 +21,14 @@
 
     <color name="aqua">#009688</color>
 
-    <color name="primary_color">@color/md_indigo_500</color>
-    <color name="primary_color_dark">@color/md_indigo_700</color>
-    <color name="primary_translucent_color">#663f51b5</color>
-    <color name="primary_translucent_33_color">#333f51b5</color>
-    <color name="accent_color">@color/md_pink_200</color>
-    <color name="status_bar_tint_color">@color/md_indigo_700</color>
-    <color name="accent_translucent_33_color">#33f48fb1</color>
+    <color name="primary_color">@color/md_deep_purple_500</color>
+    <color name="primary_color_dark">@color/md_deep_purple_700</color>
+    <color name="accent_color">@color/md_green_500</color>
 
     <color name="theme_bg_color">#FFE8E8E8</color>
     <color name="theme_navigation_drawer_bg">@color/grey_background</color>
     <color name="theme_read_bg_color">@color/theme_bg_color</color>
-
+    <color name="theme_read_bg_yellow">#FAF9DE</color>
 
 
     <color name="icon_color">#8A000000</color><!-- 54% transparency-->
@@ -71,6 +67,7 @@
 
     <color name="text_color_primary_white">#DEFFFFFF</color><!-- 87% transparency-->
     <color name="text_color_secondary_white">#8AFFFFFF</color><!-- 54% transparency-->
+    <color name="text_color_night_read">#66FFFFFF</color><!-- 40% transparency-->
     <color name="text_color_tint_white">#42FFFFFF</color><!-- 26% transparency-->
     <color name="text_color_divider_white">#1FFFFFFF</color><!-- 12% transparency-->
 

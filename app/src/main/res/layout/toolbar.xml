@@ -26,6 +26,6 @@
         app:contentInsetLeft="72dp"
         app:contentInsetEnd="0dp"
         android:layout_marginBottom="@dimen/toolbar_shadow_height"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:popupTheme="?smooth_theme_toolbar_popup_theme"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 </FrameLayout>

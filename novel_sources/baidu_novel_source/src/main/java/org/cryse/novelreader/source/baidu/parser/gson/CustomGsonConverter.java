@@ -45,11 +45,6 @@ public class CustomGsonConverter implements Converter {
     }
 
     @Override public Object fromBody(TypedInput body, Type type) throws ConversionException {
-        String charset = "UTF-8";
-        if (body.mimeType() != null) {
-            charset = MimeUtil.parseCharset(body.mimeType());
-        }
-        InputStreamReader isr = null;
         try {
             String responseBodyString = MiniIOUtils.toString(body.in());
             if(responseBodyString.contains("<!DOCTYPE html>"))
@@ -59,12 +54,6 @@ public class CustomGsonConverter implements Converter {
         } catch (JsonParseException | IOException e) {
             throw new ConversionException(e);
         } finally {
-            if (isr != null) {
-                try {
-                    isr.close();
-                } catch (IOException ignored) {
-                }
-            }
         }
     }
 

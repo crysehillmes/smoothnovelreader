@@ -2,12 +2,13 @@ package org.cryse.novelreader.modules;
 
 import android.app.Application;
 
+import org.cryse.novelreader.data.NovelDatabaseAccessLayerImpl;
+import org.cryse.novelreader.logic.impl.NovelBusinessLogicLayerImpl;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.ui.NovelCategoryFragment;
 import org.cryse.novelreader.ui.FadeTransitionActivity;
 import org.cryse.novelreader.ui.MainActivity;
 import org.cryse.novelreader.application.SmoothReaderApplication;
-import org.cryse.novelreader.logic.impl.NovelDataServiceImpl;
 import org.cryse.novelreader.modules.provider.ContextProvider;
 import org.cryse.novelreader.modules.provider.NovelSourceProvider;
 import org.cryse.novelreader.modules.provider.PreferenceProvider;
@@ -44,7 +45,8 @@ import dagger.Provides;
                 NovelDetailPresenterImpl.class,
 
                 //Source & Util
-                NovelDataServiceImpl.class,
+                NovelBusinessLogicLayerImpl.class,
+                NovelDatabaseAccessLayerImpl.class,
 
                 //Views
                 SettingsActivity.class,

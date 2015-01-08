@@ -2,7 +2,7 @@ package org.cryse.novelreader.modules.provider;
 
 import android.content.Context;
 
-import org.cryse.novelreader.logic.NovelDataService;
+import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.presenter.impl.NovelListPresenterImpl;
 import org.cryse.novelreader.qualifier.ApplicationContext;
 import org.cryse.novelreader.presenter.NovelBookShelfPresenter;
@@ -39,27 +39,27 @@ public class PresenterProvider {
     }
 
     @Provides
-    NovelChaptersPresenter provideNovelChaptersPresenter(NovelDataService dataService, AndroidDisplay display, ToastUtil toastUtil) {
+    NovelChaptersPresenter provideNovelChaptersPresenter(NovelBusinessLogicLayer dataService, AndroidDisplay display, ToastUtil toastUtil) {
         return new NovelChaptersPresenterImpl(dataService, display, toastUtil);
     }
 
     @Provides
-    NovelListPresenter provideNovelListPresenter(NovelDataService dataService, AndroidDisplay display, ToastUtil toastUtil) {
+    NovelListPresenter provideNovelListPresenter(NovelBusinessLogicLayer dataService, AndroidDisplay display, ToastUtil toastUtil) {
         return new NovelListPresenterImpl(dataService, display, toastUtil);
     }
 
     @Provides
-    NovelChapterContentPresenter provideNovelChapterContentPresenter(NovelDataService dataService, AndroidDisplay display, ToastUtil toastUtil) {
+    NovelChapterContentPresenter provideNovelChapterContentPresenter(NovelBusinessLogicLayer dataService, AndroidDisplay display, ToastUtil toastUtil) {
         return new NovelChapterContentPresenterImpl(dataService, display, toastUtil);
     }
 
     @Provides
-    NovelBookShelfPresenter provideNovelBookShelfPresenter(NovelDataService dataService, AndroidDisplay display, ToastUtil toastUtil) {
+    NovelBookShelfPresenter provideNovelBookShelfPresenter(NovelBusinessLogicLayer dataService, AndroidDisplay display, ToastUtil toastUtil) {
         return new NovelBookShelfPresenterImpl(dataService, display, toastUtil);
     }
 
     @Provides
-    NovelDetailPresenter provideNovelDetailPresenter(NovelDataService dataService, AndroidDisplay display, ToastUtil toastUtil) {
+    NovelDetailPresenter provideNovelDetailPresenter(NovelBusinessLogicLayer dataService, AndroidDisplay display, ToastUtil toastUtil) {
         return new NovelDetailPresenterImpl(dataService, display, toastUtil);
     }
 }

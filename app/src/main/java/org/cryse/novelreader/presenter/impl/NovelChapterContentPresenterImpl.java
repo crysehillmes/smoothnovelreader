@@ -2,7 +2,7 @@ package org.cryse.novelreader.presenter.impl;
 
 import android.text.TextPaint;
 
-import org.cryse.novelreader.logic.NovelDataService;
+import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelBookMarkModel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.NovelChapterModel;
@@ -32,7 +32,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     Subscription mSubscription;
     Subscription mSplitSubscription;
     Subscription mGetOtherSrcSubscription;
-    NovelDataService mNovelDataService;
+    NovelBusinessLogicLayer mNovelBusinessLogicLayer;
 
     AndroidDisplay mDisplay;
 
@@ -40,10 +40,10 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
 
     @Inject
     public NovelChapterContentPresenterImpl(
-            NovelDataService mNovelDataService,
+            NovelBusinessLogicLayer mNovelBusinessLogicLayer,
             AndroidDisplay display,
             ToastUtil toastUtil) {
-        this.mNovelDataService = mNovelDataService;
+        this.mNovelBusinessLogicLayer = mNovelBusinessLogicLayer;
         this.mDisplay = display;
         this.mToastUtil = toastUtil;
         this.mView = new EmptyNovelChapterContentView();
@@ -61,7 +61,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
 
     @Override
     public void loadPrevChapter(NovelChapterModel novelChapterModel, boolean jumpToLast) {
-        loadChapter(novelChapterModel, PREV, false, jumpToLast);// 读取上一章这里的boolean 用来确定是不是自动跳到最后一页
+        loadChapter(novelChapterModel, PREV, false, jumpToLast);
     }
 
     private static final int PREV = 0;
@@ -71,7 +71,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     private void loadChapter(final NovelChapterModel novelChapterModel, final int type, boolean forceUpdate, Boolean autoJump) {
         mView.setLoading(true);
         SubscriptionUtils.checkAndUnsubscribe(mSubscription);
-        mSubscription = mNovelDataService.getChapterContent(novelChapterModel, forceUpdate)
+        mSubscription = mNovelBusinessLogicLayer.getChapterContent(novelChapterModel, forceUpdate)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -95,7 +95,6 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     }
 
     private void splitChapterAndDisplay(String title, String content, int type, Boolean autoJump) {
-        // 分割章节
         mSplitSubscription = splitNovelChapterAsync(title, content)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -132,7 +131,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     @Override
     public void addBookMark(NovelBookMarkModel bookMarkModel) {
         SubscriptionUtils.checkAndUnsubscribe(mSubscription);
-        mSubscription = mNovelDataService.addBookMark(bookMarkModel)
+        mSubscription = mNovelBusinessLogicLayer.addBookMark(bookMarkModel)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -151,7 +150,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     @Override
     public void saveLastReadBookMark(NovelBookMarkModel bookMarkModel) {
         SubscriptionUtils.checkAndUnsubscribe(mSubscription);
-        mSubscription = mNovelDataService.saveLastReadBookMark(bookMarkModel)
+        mSubscription = mNovelBusinessLogicLayer.saveLastReadBookMark(bookMarkModel)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -233,7 +232,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     @Override
     public void getOtherSrc(NovelChapterModel novelChapterModel) {
         SubscriptionUtils.checkAndUnsubscribe(mGetOtherSrcSubscription);
-        mGetOtherSrcSubscription = mNovelDataService.getOtherChapterSrc(
+        mGetOtherSrcSubscription = mNovelBusinessLogicLayer.getOtherChapterSrc(
                 novelChapterModel.getId(),
                 novelChapterModel.getSrc(),
                 novelChapterModel.getTitle()).subscribeOn(Schedulers.newThread())
@@ -256,7 +255,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     public void changeSrc(NovelChapterModel novelChapterModel, NovelChangeSrcModel changeSrcModel) {
         mView.setLoading(true);
         SubscriptionUtils.checkAndUnsubscribe(mGetOtherSrcSubscription);
-        mGetOtherSrcSubscription = mNovelDataService.changeChapterSrc(novelChapterModel, changeSrcModel)
+        mGetOtherSrcSubscription = mNovelBusinessLogicLayer.changeChapterSrc(novelChapterModel, changeSrcModel)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

@@ -18,6 +18,7 @@ android {
     }
 
     compileOptions {
+        encoding 'UTF-8'
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -30,10 +31,12 @@ android {
     buildTypes {
         debug {
             debuggable true
+            shrinkResources true
             signingConfig signingConfigs.debug
         }
         release {
             minifyEnabled true
+            shrinkResources true
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

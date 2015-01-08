@@ -22,6 +22,11 @@ public class ViewPagerReadWidget extends PullToRefreshViewPager implements ReadW
     }
 
     @Override
+    public int getPageCount() {
+        return getRefreshableView().getAdapter() == null ? 0 : getRefreshableView().getAdapter().getCount();
+    }
+
+    @Override
     public int getCurrentPage() {
         return getRefreshableView().getCurrentItem();
     }

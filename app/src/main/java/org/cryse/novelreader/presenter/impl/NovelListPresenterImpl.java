@@ -1,6 +1,6 @@
 package org.cryse.novelreader.presenter.impl;
 
-import org.cryse.novelreader.logic.NovelDataService;
+import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelListPresenter;
 import org.cryse.novelreader.util.ToastType;
@@ -21,14 +21,14 @@ public class NovelListPresenterImpl implements NovelListPresenter {
     NovelOnlineListView mView;
     Subscription subscription;
 
-    NovelDataService novelDataService;
+    NovelBusinessLogicLayer novelBusinessLogicLayer;
 
     AndroidDisplay mDisplay;
 
     ToastUtil mToastUtil;
 
-    public NovelListPresenterImpl(NovelDataService novelDataService, AndroidDisplay display, ToastUtil toastUtil) {
-        this.novelDataService = novelDataService;
+    public NovelListPresenterImpl(NovelBusinessLogicLayer novelBusinessLogicLayer, AndroidDisplay display, ToastUtil toastUtil) {
+        this.novelBusinessLogicLayer = novelBusinessLogicLayer;
         this.mDisplay = display;
         this.mToastUtil = toastUtil;
         this.mView = new EmptyNovelListView();
@@ -38,7 +38,7 @@ public class NovelListPresenterImpl implements NovelListPresenter {
     public void loadNovelCategoryList(String category, String subCategory, int page, int status, boolean isByTag, boolean append) {
         SubscriptionUtils.checkAndUnsubscribe(subscription);
         setLoadingStatus(append, true);
-        subscription = novelDataService.getCategories(category, subCategory, page, status, isByTag)
+        subscription = novelBusinessLogicLayer.getCategories(category, subCategory, page, status, isByTag)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -62,7 +62,7 @@ public class NovelListPresenterImpl implements NovelListPresenter {
     public void loadNovelRankList(String rank, int page, boolean append) {
         SubscriptionUtils.checkAndUnsubscribe(subscription);
         setLoadingStatus(append, true);
-        subscription = novelDataService.getRanks(rank, page)
+        subscription = novelBusinessLogicLayer.getRanks(rank, page)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -86,7 +86,7 @@ public class NovelListPresenterImpl implements NovelListPresenter {
     public void searchNovel(String query, int page, boolean append) {
         SubscriptionUtils.checkAndUnsubscribe(subscription);
         setLoadingStatus(append, true);
-        subscription = novelDataService.search(query, page)
+        subscription = novelBusinessLogicLayer.search(query, page)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -137,7 +137,6 @@ public class NovelListPresenterImpl implements NovelListPresenter {
     }
 
     private void setLoadingStatus(boolean append, boolean isLoading) {
-        // 如果加载更多就 setLoadingMore, 如果是加载或刷新就是 setLoading
         if(append)
             mView.setLoadingMore(isLoading);
         else

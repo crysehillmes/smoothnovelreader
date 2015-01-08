@@ -33,18 +33,8 @@ public class NovelBookShelfListAdapter extends NovelModelListAdapter {
         super.onBindViewHolder(viewHolder, position);
         NovelModel item = getItem(position);
 
-        // 小说标题
         viewHolder.mNovelTitleTextView.setText(item.getTitle());
 
-        // 作者 | 类型
-        /*StringBuilder breifInfoBuilder = new StringBuilder();
-        if (item.getAuthor() != null && !TextUtils.isEmpty(item.getAuthor()))
-            breifInfoBuilder.append(item.getAuthor());
-        if (item.getCategoryName() != null && !TextUtils.isEmpty(item.getCategoryName()))
-            breifInfoBuilder.append(" | ").append(item.getCategoryName());
-        viewHolder.mNovelInfo1TextView.setText(breifInfoBuilder.toString());*/
-
-        // 最后阅读
         CharSequence lastReadLabel;
         if (item.getLastReadChapterTitle() != null && !TextUtils.isEmpty(item.getLastReadChapterTitle())) {
             lastReadLabel = getString(R.string.format_last_read_chapter, item.getLastReadChapterTitle());
@@ -53,7 +43,6 @@ public class NovelBookShelfListAdapter extends NovelModelListAdapter {
         }
         viewHolder.mNovelInfo1TextView.setText(lastReadLabel);
 
-        // 最新章节
         CharSequence latestChapterLabel;
         if (item.getLatestChapterTitle() != null && !TextUtils.isEmpty(item.getLatestChapterTitle())) {
             latestChapterLabel = getString(R.string.format_latest_chapter, item.getLatestChapterTitle());
@@ -62,15 +51,13 @@ public class NovelBookShelfListAdapter extends NovelModelListAdapter {
         }
         viewHolder.mNovelInfo2TextView.setText(latestChapterLabel);
 
-        // 是否有更新
         if (item.getLatestUpdateCount() > 0) {
-            viewHolder.mUnreadTextView.setText("有更新");
+            viewHolder.mUnreadTextView.setText(getContext().getString(R.string.has_updates));
         } else {
             viewHolder.mUnreadTextView.setText("");
         }
 
         if(mSelectedItems.get(position, false)) {
-            // 小说封面图片
             TextDrawable textDrawable = TextDrawable.builder()
                     .buildRoundRect("\u2713",
                             Color.DKGRAY,
@@ -78,8 +65,6 @@ public class NovelBookShelfListAdapter extends NovelModelListAdapter {
                     ); // radius in px
             viewHolder.mNovelImageImageView.setImageDrawable(textDrawable);
         } else {
-
-            // 小说封面图片
             TextDrawable textDrawable = TextDrawable.builder()
                     .buildRoundRect( item.getTitle().length() > 0 ? item.getTitle().substring(0,1) : "",
                             ColorUtils.getSortedPreDefinedColor(getContext(), position),
