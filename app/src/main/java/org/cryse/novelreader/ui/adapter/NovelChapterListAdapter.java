@@ -49,7 +49,7 @@ public class NovelChapterListAdapter extends BaseAdapter{
     }
 
     @Override
-    public Object getItem(int position) {
+    public NovelChapterModel getItem(int position) {
         return mContentList.get(position);
     }
 

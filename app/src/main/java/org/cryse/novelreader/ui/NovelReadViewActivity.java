@@ -205,7 +205,8 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
             Intent intent = getIntent();
             mNovelChapters = new ArrayList<NovelChapterModel>(getPresenter().getChaptersState());
             novelModel = intent.getParcelableExtra(DataContract.NOVEL_OBJECT_NAME);
-            chapterIndex = intent.getIntExtra(DataContract.NOVEL_CHAPTER_INDEX_NAME, 0);
+            String startChapterId = intent.getStringExtra(DataContract.NOVEL_CHAPTER_ID_NAME);
+            chapterIndex = findChapterIndex(startChapterId);
             chapterOffset = intent.getIntExtra(DataContract.NOVEL_CHAPTER_OFFSET_NAME, 0);
             if(intent.hasExtra(DataContract.NOVEL_HAS_STATE)) {
                 hasSavedStated = true;
@@ -589,9 +590,9 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
             return;
         NovelBookMarkModel lastReadBookMark = new NovelBookMarkModel(
                 novelModel.getId(),
-                mNovelChapters.get(chapterIndex).getTitle(),
+                mNovelChapters.get(chapterIndex).getSecondId(),
                 novelModel.getTitle(),
-                chapterIndex,
+                mNovelChapters.get(chapterIndex).getTitle(),
                 mNovelReadAdapter.getStringOffsetFromPage(currentPage),
                 NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD,
                 new Date()
@@ -671,5 +672,15 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
 
     public void onMenuItemReloadClick() {
         getPresenter().loadChapter(mNovelChapters.get(chapterIndex), true);
+    }
+
+    private int findChapterIndex(String chapterId) {
+        for (int i = 0; i < mNovelChapters.size(); i++) {
+            NovelChapterModel chapterModel = mNovelChapters.get(i);
+            if (chapterModel.getSecondId().equals(chapterId)) {
+                return i;
+            }
+        }
+        throw new IllegalStateException("ChapterIndex not found.");
     }
 }

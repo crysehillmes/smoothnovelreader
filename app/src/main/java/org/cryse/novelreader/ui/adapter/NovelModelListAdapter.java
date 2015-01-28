@@ -1,9 +1,7 @@
 package org.cryse.novelreader.ui.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,8 +27,6 @@ public abstract class NovelModelListAdapter extends RecyclerViewBaseAdapter<Nove
     private Context mContext;
     private Resources mResouces;
     private List<NovelModel> mNovelList;
-    private LayoutInflater mLayoutInflater;
-    private Handler mHandler;
     private String mCurrentCategory;
 
 
@@ -38,18 +34,6 @@ public abstract class NovelModelListAdapter extends RecyclerViewBaseAdapter<Nove
         mContext = context;
         mResouces = context.getResources();
         mNovelList = novelList;
-        if(context instanceof Activity) {
-            mLayoutInflater = ((Activity)context).getLayoutInflater();
-        } else {
-            mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-        mHandler = new Handler();
-    }
-
-    public void replaceWith(List<NovelModel> items) {
-        this.mNovelList.clear();
-        mNovelList.addAll(items);
-        notifyItemRangeChanged(0, items.size());
     }
 
     public void addAll(List<NovelModel> novelModels) {

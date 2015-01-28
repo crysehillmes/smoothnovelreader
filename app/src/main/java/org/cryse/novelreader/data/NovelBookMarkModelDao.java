@@ -23,10 +23,10 @@ public class NovelBookMarkModelDao extends AbstractDao<NovelBookMarkModel, Void>
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Id = new Property(0, String.class, "id", false, "ID");
-        public final static Property ChapterTitle = new Property(1, String.class, "chapterTitle", false, "CHAPTER_TITLE");
+        public final static Property NovelId = new Property(0, String.class, "novelId", false, "NOVEL_ID");
+        public final static Property ChapterId = new Property(1, Integer.class, "chapterId", false, "CHAPTER_ID");
         public final static Property NovelTitle = new Property(2, String.class, "novelTitle", false, "NOVEL_TITLE");
-        public final static Property ChapterIndex = new Property(3, Integer.class, "chapterIndex", false, "CHAPTER_INDEX");
+        public final static Property ChapterTitle = new Property(3, String.class, "chapterTitle", false, "CHAPTER_TITLE");
         public final static Property ChapterOffset = new Property(4, Integer.class, "chapterOffset", false, "CHAPTER_OFFSET");
         public final static Property BookMarkType = new Property(5, Integer.class, "bookMarkType", false, "BOOK_MARK_TYPE");
         public final static Property CreateTime = new Property(6, java.util.Date.class, "createTime", false, "CREATE_TIME");
@@ -45,10 +45,10 @@ public class NovelBookMarkModelDao extends AbstractDao<NovelBookMarkModel, Void>
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'NOVEL_BOOK_MARK_MODEL' (" + //
-                "'ID' TEXT," + // 0: id
-                "'CHAPTER_TITLE' TEXT," + // 1: chapterTitle
+                "'NOVEL_ID' TEXT," + // 0: novelId
+                "'CHAPTER_ID' TEXT," + // 1: chapterId
                 "'NOVEL_TITLE' TEXT," + // 2: novelTitle
-                "'CHAPTER_INDEX' INTEGER," + // 3: chapterIndex
+                "'CHAPTER_TITLE' TEXT," + // 3: chapterTitle
                 "'CHAPTER_OFFSET' INTEGER," + // 4: chapterOffset
                 "'BOOK_MARK_TYPE' INTEGER," + // 5: bookMarkType
                 "'CREATE_TIME' INTEGER);"); // 6: createTime
@@ -65,24 +65,24 @@ public class NovelBookMarkModelDao extends AbstractDao<NovelBookMarkModel, Void>
     protected void bindValues(SQLiteStatement stmt, NovelBookMarkModel entity) {
         stmt.clearBindings();
  
-        String id = entity.getId();
-        if (id != null) {
-            stmt.bindString(1, id);
+        String novelId = entity.getNovelId();
+        if (novelId != null) {
+            stmt.bindString(1, novelId);
         }
- 
-        String chapterTitle = entity.getChapterTitle();
-        if (chapterTitle != null) {
-            stmt.bindString(2, chapterTitle);
+
+        String chapterId = entity.getChapterId();
+        if (chapterId != null) {
+            stmt.bindString(2, chapterId);
         }
- 
+
         String novelTitle = entity.getNovelTitle();
         if (novelTitle != null) {
             stmt.bindString(3, novelTitle);
         }
- 
-        Integer chapterIndex = entity.getChapterIndex();
-        if (chapterIndex != null) {
-            stmt.bindLong(4, chapterIndex);
+
+        String chapterTitle = entity.getChapterTitle();
+        if (chapterTitle != null) {
+            stmt.bindString(4, chapterTitle);
         }
  
         Integer chapterOffset = entity.getChapterOffset();
@@ -111,10 +111,10 @@ public class NovelBookMarkModelDao extends AbstractDao<NovelBookMarkModel, Void>
     @Override
     public NovelBookMarkModel readEntity(Cursor cursor, int offset) {
         NovelBookMarkModel entity = new NovelBookMarkModel( //
-            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // chapterTitle
+            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // novelId
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // chapterId
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // novelTitle
-            cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // chapterIndex
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // chapterTitle
             cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // chapterOffset
             cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // bookMarkType
             cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)) // createTime
@@ -125,10 +125,10 @@ public class NovelBookMarkModelDao extends AbstractDao<NovelBookMarkModel, Void>
     /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, NovelBookMarkModel entity, int offset) {
-        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
-        entity.setChapterTitle(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setNovelId(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
+        entity.setChapterId(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setNovelTitle(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setChapterIndex(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
+        entity.setChapterTitle(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setChapterOffset(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
         entity.setBookMarkType(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
         entity.setCreateTime(cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)));

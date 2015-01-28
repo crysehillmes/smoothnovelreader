@@ -66,7 +66,7 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
         List novelsList = Arrays.asList(novelIds);
 
         // Clear BookMark
-        DeleteQuery deleteBookMarksQuery = novelBookMarkModelDao.queryBuilder().where(NovelBookMarkModelDao.Properties.Id.in(novelsList)).buildDelete();
+        DeleteQuery deleteBookMarksQuery = novelBookMarkModelDao.queryBuilder().where(NovelBookMarkModelDao.Properties.NovelId.in(novelsList)).buildDelete();
         deleteBookMarksQuery.executeDeleteWithoutDetachingEntities();
 
         // Clear ChapterContents
@@ -151,14 +151,14 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
     public void insertOrUpdateLastReadBookMark(NovelBookMarkModel bookMark) {
         // Replace existing last read bookmark and by the new one.
         DeleteQuery deleteQuery = novelBookMarkModelDao.queryBuilder().where(
-                NovelBookMarkModelDao.Properties.Id.eq(bookMark.getId()),
+                NovelBookMarkModelDao.Properties.NovelId.eq(bookMark.getNovelId()),
                 NovelBookMarkModelDao.Properties.BookMarkType.eq(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD)
         ).buildDelete();
         deleteQuery.executeDeleteWithoutDetachingEntities();
         novelBookMarkModelDao.insertOrReplace(bookMark);
 
         // Update NovelModel lastReadChapterTitle field.
-        NovelModel novelModel = novelModelDao.load(bookMark.getId());
+        NovelModel novelModel = novelModelDao.load(bookMark.getNovelId());
         novelModel.setLastReadChapterTitle(bookMark.getChapterTitle());
         novelModelDao.update(novelModel);
     }
@@ -167,7 +167,7 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
     public NovelBookMarkModel loadLastReadBookMark(String novelId) {
         // get last read bookmark according to novelId.
         QueryBuilder queryBuilder = novelBookMarkModelDao.queryBuilder().where(
-                NovelBookMarkModelDao.Properties.Id.eq(novelId),
+                NovelBookMarkModelDao.Properties.NovelId.eq(novelId),
                 NovelBookMarkModelDao.Properties.BookMarkType.eq(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD)
         );
         return (NovelBookMarkModel)queryBuilder.unique();
@@ -177,7 +177,7 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
     public List<NovelBookMarkModel> loadBookMarks(String novelId) {
         // get all bookmarks according to novelId.
         QueryBuilder queryBuilder = novelBookMarkModelDao.queryBuilder().where(
-                NovelBookMarkModelDao.Properties.Id.eq(novelId),
+                NovelBookMarkModelDao.Properties.NovelId.eq(novelId),
                 NovelBookMarkModelDao.Properties.BookMarkType.notEq(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD)
         );
         return (List<NovelBookMarkModel>)queryBuilder.list();
@@ -187,7 +187,7 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
     public NovelBookMarkModel checkLastReadBookMarkState(String novelId) {
         Boolean isFavorite = isFavorite(novelId);
         QueryBuilder queryBuilder = novelBookMarkModelDao.queryBuilder().where(
-                NovelBookMarkModelDao.Properties.Id.eq(novelId),
+                NovelBookMarkModelDao.Properties.NovelId.eq(novelId),
                 NovelBookMarkModelDao.Properties.BookMarkType.eq(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD)
         );
         Boolean hasLastRead = queryBuilder.count() == 1;

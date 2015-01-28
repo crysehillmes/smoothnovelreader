@@ -192,13 +192,13 @@ public class AndroidDisplay {
         startActivity(context, intent);
     }
 
-    public void showNovelReadActivity(Object currentView, NovelModel novelModel, int chapterIndex, int chapterOffset, List<NovelChapterModel> chapterList) {
+    public void showNovelReadActivity(Object currentView, NovelModel novelModel, String chapterId, int chapterOffset, List<NovelChapterModel> chapterList) {
         Context context = getContextFromView(currentView);
         Intent intent = new Intent(context, NovelReadViewActivity.class);
         //intent.putParcelableArrayListExtra(DataContract.NOVEL_CHAPTER_LIST_NAME, mNovelChapterList);
 
         intent.putExtra(DataContract.NOVEL_OBJECT_NAME, novelModel);
-        intent.putExtra(DataContract.NOVEL_CHAPTER_INDEX_NAME, chapterIndex);
+        intent.putExtra(DataContract.NOVEL_CHAPTER_ID_NAME, chapterId);
         intent.putExtra(DataContract.NOVEL_CHAPTER_OFFSET_NAME, chapterOffset);
         saveChaptersInRunTimeStore(chapterList);
         /*Bundle options = ActivityOptions.makeCustomAnimation(context, android.R.anim.fade_in, android.R.anim.fade_out).toBundle();*/
