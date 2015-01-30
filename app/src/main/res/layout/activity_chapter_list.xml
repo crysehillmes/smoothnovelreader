@@ -17,7 +17,7 @@
         superlistview:superlv__listDividerHeight="0dp"
         superlistview:superlv__listPadding="2dp"
         superlistview:superlv__moreProgress="@layout/layout_more_progress"
-        superlistview:superlv__scrollbarStyle="outsideOverlay" />
+        superlistview:superlv__scrollbarStyle="outsideInset" />
 
     <include
         layout="@layout/toolbar"

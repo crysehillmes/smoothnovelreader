@@ -31,8 +31,6 @@ import org.cryse.novelreader.util.ToastProxy;
 import org.cryse.novelreader.util.ToastType;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -103,10 +101,13 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
                 ColorUtils.getRefreshProgressBarColors()[3]
         );
         mListView.setOnItemClickListener((parent, view, position, id) -> {
-            if(position == mChapterListAdapter.getLastReadIndicator())
+            int truePosition = position - mListView.getList().getHeaderViewsCount();
+            if(truePosition == mChapterListAdapter.getLastReadIndicator())
                 getPresenter().readLastPosition(mNovel, mNovelChapterList);
-            else
-                getPresenter().readChapter(mNovel, position, mNovelChapterList);
+            else {
+                NovelChapterModel item = mChapterListAdapter.getItem(truePosition);
+                getPresenter().readChapter(mNovel, item.getSecondId(), mNovelChapterList);
+            }
         });
         mListView.getList().setFastScrollEnabled(true);
         mListView.getList().setFastScrollAlwaysVisible(true);
@@ -152,9 +153,9 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     @Override
     protected void onResume() {
         super.onResume();
-        getPresenter().checkLastReadState(mNovel);
         getPresenter().checkNovelFavoriteStatus(mNovel);
-        getPresenter().loadChapters(mNovel);
+        if(mNovelChapterList.size() > 0)
+            getPresenter().checkLastReadState(mNovel);
     }
 
     @Override
@@ -167,7 +168,6 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_chapterlist, menu);
         mMenuItemCacheChapters = menu.findItem(R.id.menu_item_chapters_offline_cache);
-        getPresenter().checkLastReadState(mNovel);
         getPresenter().checkNovelFavoriteStatus(mNovel);
         return super.onCreateOptionsMenu(menu);
     }
@@ -219,12 +219,14 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         mNovelChapterList.clear();
         mNovelChapterList.addAll(chapterList);
         mChapterListAdapter.notifyDataSetChanged();
+        if(mNovelChapterList.size() > 0)
+            getPresenter().checkLastReadState(mNovel);
     }
 
     @Override
     public void canGoToLastRead(NovelBookMarkModel bookMark) {
         if (bookMark != null) {
-            int index = Collections.binarySearch(mNovelChapterList, new NovelChapterModel(null, null, null, null, bookMark.getChapterIndex()), chapterSecondIdComparator);
+            int index = findChapterIndex(bookMark.getChapterId());
             if (index >= 0 && index < mNovelChapterList.size()) {
                 mChapterListAdapter.setLastReadIndicator(index);
                 mChapterListAdapter.notifyDataSetChanged();
@@ -280,9 +282,13 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         }
     }
 
-    Comparator<NovelChapterModel> chapterSecondIdComparator = new Comparator<NovelChapterModel>() {
-        public int compare(NovelChapterModel chapter1, NovelChapterModel chapter2) {
-            return ((Integer)chapter1.getChapterIndex()).compareTo((Integer)chapter2.getChapterIndex());
+    private int findChapterIndex(String chapterId) {
+        for (int i = 0; i < mNovelChapterList.size(); i++) {
+            NovelChapterModel chapterModel = mNovelChapterList.get(i);
+            if (chapterModel.getSecondId().equals(chapterId)) {
+                return i;
+            }
         }
-    };
+        throw new IllegalStateException("ChapterIndex not found.");
+    }
 }

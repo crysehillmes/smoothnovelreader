@@ -130,8 +130,8 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
                 );
     }
 
-    public void readChapter(NovelModel novelModel, int chapterIndex, List<NovelChapterModel> chapterList) {
-        mDisplay.showNovelReadActivity(mView, novelModel, chapterIndex, 0, chapterList);
+    public void readChapter(NovelModel novelModel, String chapterId, List<NovelChapterModel> chapterList) {
+        mDisplay.showNovelReadActivity(mView, novelModel, chapterId, 0, chapterList);
     }
 
     @Override
@@ -142,7 +142,7 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            mDisplay.showNovelReadActivity(mView, novelModel, result.getChapterIndex(), result.getChapterOffset(), chapterList);
+                            mDisplay.showNovelReadActivity(mView, novelModel, result.getChapterId(), result.getChapterOffset(), chapterList);
                         },
                         error -> {
                             mView.canGoToLastRead(null);
