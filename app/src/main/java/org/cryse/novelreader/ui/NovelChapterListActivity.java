@@ -31,8 +31,6 @@ import org.cryse.novelreader.util.ToastProxy;
 import org.cryse.novelreader.util.ToastType;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -103,10 +101,11 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
                 ColorUtils.getRefreshProgressBarColors()[3]
         );
         mListView.setOnItemClickListener((parent, view, position, id) -> {
-            if(position == mChapterListAdapter.getLastReadIndicator())
+            int truePosition = position - mListView.getList().getHeaderViewsCount();
+            if(truePosition == mChapterListAdapter.getLastReadIndicator())
                 getPresenter().readLastPosition(mNovel, mNovelChapterList);
             else {
-                NovelChapterModel item = mChapterListAdapter.getItem(position);
+                NovelChapterModel item = mChapterListAdapter.getItem(truePosition);
                 getPresenter().readChapter(mNovel, item.getSecondId(), mNovelChapterList);
             }
         });
