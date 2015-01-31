@@ -1,6 +1,7 @@
 package org.cryse.novelreader.util.textsplitter;
 
 import android.text.Layout;
+import android.text.SpannableStringBuilder;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 
@@ -13,7 +14,7 @@ public class PageSplitter {
     private final float lineSpacingMultiplier;
     private final float lineSpacingExtra;
     private final List<CharSequence> pages = new ArrayList<CharSequence>();
-    private StringBuilder mStringBuilder = new StringBuilder();
+    private SpannableStringBuilder mSpannableStringBuilder = new SpannableStringBuilder();
 
     public PageSplitter(int pageWidth, int pageHeight, float lineSpacingMultiplier, float lineSpacingExtra) {
         this.pageWidth = pageWidth;
@@ -22,14 +23,13 @@ public class PageSplitter {
         this.lineSpacingExtra = lineSpacingExtra;
     }
 
-    public void append(String string) {
-        mStringBuilder.append(string);
+    public void append(CharSequence charSequence) {
+        mSpannableStringBuilder.append(charSequence);
     }
 
     public void split(TextPaint textPaint) {
-        String content = mStringBuilder.toString();
         StaticLayout staticLayout = new StaticLayout(
-                content,
+                mSpannableStringBuilder,
                 textPaint,
                 pageWidth,
                 Layout.Alignment.ALIGN_NORMAL,
@@ -49,7 +49,7 @@ public class PageSplitter {
                 lastFullyVisibleLine = endLine;
             int startOffset = staticLayout.getLineStart(startLine);
             int endOffset = staticLayout.getLineEnd(lastFullyVisibleLine);
-            pages.add(content.substring(startOffset, endOffset));
+            pages.add(mSpannableStringBuilder.subSequence(startOffset, endOffset));
             startLine = lastFullyVisibleLine + 1;
         }
     }
