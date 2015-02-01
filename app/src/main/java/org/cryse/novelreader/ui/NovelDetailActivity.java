@@ -219,9 +219,15 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
             public void onClick(View view) {
                 if(mServiceBinder != null && mServiceBinder.isCaching() && mServiceBinder.getCurrentCachingNovelId() != null) {
                     String currentCachingNovelId = mServiceBinder.getCurrentCachingNovelId();
-                    if(mIsFavorited && currentCachingNovelId.compareTo(mNovel.getId()) == 0)
+                    if(mIsFavorited && currentCachingNovelId.compareTo(mNovel.getId()) == 0) {
                         ToastProxy.showToast(NovelDetailActivity.this, getString(R.string.toast_chapter_contents_caching_cannot_delete, mNovel.getTitle()), ToastType.TOAST_ALERT);
                         return;
+                    }
+                }
+                if(mIsFavorited && mServiceBinder != null) {
+                   if(mServiceBinder.removeFromQueueIfExist(mNovel.getId())) {
+                       ToastProxy.showToast(NovelDetailActivity.this, getString(R.string.notification_action_chapter_contents_cancel_novel, mNovel.getTitle()), ToastType.TOAST_INFO);
+                   }
                 }
                 boolean isFavorite = !mIsFavorited;
                 showFavorited(isFavorite, true);

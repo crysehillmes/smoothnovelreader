@@ -263,6 +263,11 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                 ToastProxy.showToast(getActivity(), getString(R.string.toast_chapter_contents_caching_cannot_delete, novelList.get(position).getTitle()), ToastType.TOAST_ALERT);
             } else {
                 removeIds.add(novelList.get(position).getId());
+                if(mServiceBinder != null) {
+                    if(mServiceBinder.removeFromQueueIfExist(novelList.get(position).getId())) {
+                    ToastProxy.showToast(getActivity(), getString(R.string.notification_action_chapter_contents_cancel_novel, novelList.get(position).getTitle()), ToastType.TOAST_INFO);
+                }
+                }
                 ((NovelBookShelfListAdapter) mShelfListView.getAdapter()).remove(position);
             }
         }

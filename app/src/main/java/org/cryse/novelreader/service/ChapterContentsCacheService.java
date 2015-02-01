@@ -199,10 +199,25 @@ public class ChapterContentsCacheService extends Service {
             return mCurrentTask == null ? null : mCurrentTask.getNovelId();
         }
 
-        public void chaptersOfflineCache(NovelModel novelModel) {
+        public void addToCacheQueue(NovelModel novelModel) {
             NovelCacheTask novelCacheTask = new NovelCacheTask(novelModel.getId(), novelModel.getTitle());
+            for(NovelCacheTask task : mTaskQueue) {
+                if(task.getNovelId().equalsIgnoreCase(novelModel.getId())) {
+                    return;
+                }
+            }
             mTaskQueue.add(novelCacheTask);
             // preloadChapterContents(novelModel, novelChapterModels);
+        }
+
+        public boolean removeFromQueueIfExist(String novelId) {
+            for(NovelCacheTask task : mTaskQueue) {
+                if(task.getNovelId().equalsIgnoreCase(novelId)) {
+                    mTaskQueue.remove(task);
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
