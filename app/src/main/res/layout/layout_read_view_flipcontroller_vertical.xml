@@ -5,6 +5,5 @@
     android:id="@+id/activity_read_view_readwidget"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/smooth_theme_read_bg_drawable"
     app:animationBitmapFormat="ARGB_8888"
     app:orientation="vertical" />

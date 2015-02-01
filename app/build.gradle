@@ -100,7 +100,7 @@ dependencies {
     compile 'com.quentindommerc.superlistview:library:1.5.2'
     compile 'com.github.castorflex.smoothprogressbar:library:1.0.0'
     compile 'com.github.castorflex.smoothprogressbar:library-circular:1.0.1'
-    compile 'com.afollestad:material-dialogs:0.3.0'
+    compile 'com.afollestad:material-dialogs:0.6.2.1'
     compile 'com.jpardogo.materialtabstrip:library:1.0.6'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.0'
 

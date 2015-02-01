@@ -18,14 +18,13 @@ public class ReadViewPagerAdapter extends PagerAdapter implements ReadWidgetAdap
     private ArrayList<CharSequence> mContentList;
     private Context mContext;
     private LayoutInflater mLayoutInflater;
-
     private float mFontSize;
 
     public ReadViewPagerAdapter(Context context, float fontSize) {
         mContext = context;
         mFontSize = fontSize;
         mContentList = new ArrayList<CharSequence>();
-        mLayoutInflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mLayoutInflater = LayoutInflater.from(mContext);
     }
 
     @Override

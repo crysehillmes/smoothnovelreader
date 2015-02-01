@@ -9,6 +9,7 @@ import org.cryse.novelreader.qualifier.PrefsFontLineHeight;
 import org.cryse.novelreader.qualifier.PrefsFontSize;
 import org.cryse.novelreader.qualifier.PrefsGrayScaleInNight;
 import org.cryse.novelreader.qualifier.PrefsNightMode;
+import org.cryse.novelreader.qualifier.PrefsReadBackground;
 import org.cryse.novelreader.qualifier.PrefsScrollMode;
 import org.cryse.novelreader.qualifier.PrefsShowCoverImage;
 import org.cryse.novelreader.util.prefs.BooleanPreference;
@@ -74,5 +75,12 @@ public class PreferenceProvider {
     @PrefsGrayScaleInNight
     BooleanPreference provideGrayScaleInNight(SharedPreferences preferences) {
         return new BooleanPreference(preferences, PreferenceConstant.SHARED_PREFERENCE_GRAYSCALE_IN_NIGHT, PreferenceConstant.SHARED_PREFERENCE_GRAYSCALE_IN_NIGHT_VALUE);
+    }
+
+    @Provides
+    @Singleton
+    @PrefsReadBackground
+    IntegerPreference provideReadBackground(SharedPreferences preferences) {
+        return new IntegerPreference(preferences, PreferenceConstant.SHARED_PREFERENCE_READ_BACKGROUND, PreferenceConstant.SHARED_PREFERENCE_READ_BACKGROUND_VALUE);
     }
 }

@@ -14,13 +14,13 @@ import org.cryse.novelreader.ui.widget.ReadWidgetAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlipNovelChapterAdapter extends BaseAdapter implements ReadWidgetAdapter {
+public class ReadViewFlipAdapter extends BaseAdapter implements ReadWidgetAdapter {
     private Context mContext = null;
     private LayoutInflater inflater = null;
     private ArrayList<CharSequence> mContentList = new ArrayList<CharSequence>();
     private float mFontSize;
 
-    public FlipNovelChapterAdapter(
+    public ReadViewFlipAdapter(
             Context context,
             float fontSize
     ) {

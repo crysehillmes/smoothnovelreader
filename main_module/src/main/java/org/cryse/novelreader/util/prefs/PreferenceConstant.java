@@ -1,6 +1,8 @@
 package org.cryse.novelreader.util.prefs;
 
 
+import android.graphics.Color;
+
 public class PreferenceConstant {
     public static final String SHARED_PREFERENCE_IS_NIGHT_MODE = "is_night_mode";
     public static final String SHARED_PREFERENCE_READ_FONT_SIZE = "read_font_size";
@@ -19,4 +21,8 @@ public class PreferenceConstant {
 
     public static final String SHARED_PREFERENCE_GRAYSCALE_IN_NIGHT = "grayscale_in_night_mode";
     public static final Boolean SHARED_PREFERENCE_GRAYSCALE_IN_NIGHT_VALUE = false;
+
+
+    public static final String SHARED_PREFERENCE_READ_BACKGROUND = "prefs_read_background";
+    public static final int SHARED_PREFERENCE_READ_BACKGROUND_VALUE = Color.WHITE;
 }
