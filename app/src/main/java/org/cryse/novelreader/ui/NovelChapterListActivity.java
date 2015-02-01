@@ -154,8 +154,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     protected void onResume() {
         super.onResume();
         getPresenter().checkNovelFavoriteStatus(mNovel);
-        if(mNovelChapterList.size() > 0)
-            getPresenter().checkLastReadState(mNovel);
+        getPresenter().loadChapters(mNovel);
     }
 
     @Override
