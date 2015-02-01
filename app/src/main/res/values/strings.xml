@@ -100,6 +100,8 @@
     </string-array>
 
     <string-array name="readview_font_size_entries">
+        <item>10</item>
+        <item>12</item>
         <item>14</item>
         <item>16</item>
         <item>18</item>
@@ -107,6 +109,9 @@
         <item>22</item>
         <item>24</item>
         <item>26</item>
+        <item>28</item>
+        <item>30</item>
+        <item>32</item>
     </string-array>
 
     <!-- Spinner label and value section-->
