@@ -19,14 +19,16 @@ public class ReadViewFlipAdapter extends BaseAdapter implements ReadWidgetAdapte
     private LayoutInflater inflater = null;
     private ArrayList<CharSequence> mContentList = new ArrayList<CharSequence>();
     private float mFontSize;
-
+    private int mBackgroundColor;
     public ReadViewFlipAdapter(
             Context context,
-            float fontSize
+            float fontSize,
+            int backgroundColor
     ) {
         this.mContext = context;
         this.inflater = LayoutInflater.from(this.mContext);
         this.mFontSize = fontSize;
+        this.mBackgroundColor = backgroundColor;
     }
 
     public int getPageFromStringOffset(int offset) {
@@ -79,6 +81,7 @@ public class ReadViewFlipAdapter extends BaseAdapter implements ReadWidgetAdapte
         readTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mFontSize);
         readTextView.setText(mContentList.get(position));
         readTextView.setLineSpacing(0f, 1.3f);
+        readTextView.setBackgroundColor(mBackgroundColor);
         return convertView;
     }
 
@@ -92,6 +95,12 @@ public class ReadViewFlipAdapter extends BaseAdapter implements ReadWidgetAdapte
             this.mContentList.clear();
             this.mContentList.addAll(newContents);
         }
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void setBackgroundColor(int backgroundColor) {
+        this.mBackgroundColor = backgroundColor;
         notifyDataSetChanged();
     }
 

@@ -67,6 +67,8 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
 
     @InjectView(R.id.activity_read_view_widget_container)
     FrameLayout mReadWidgetContainer;
+    @InjectView(R.id.activity_chapter_read_status_layout)
+    RelativeLayout mReadStatusContainer;
 
     @InjectView(R.id.activity_chapter_read_status_page_pos_textview)
     protected TextView mPagePositionTextView = null;
@@ -180,22 +182,25 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         else if(scrollMode == PreferenceConverter.SCROLL_MODE_VIEWPAGER_HORIZONTAL)
             getLayoutInflater().inflate(R.layout.layout_read_view_pager, mReadWidgetContainer);
         mReadWidget = (ReadWidget)findViewById(R.id.activity_read_view_readwidget);
-        if(isNightMode())
-            mRootContainer.setBackgroundColor(getResources().getColor(R.color.theme_read_bg_color_white));
-        else
-            mRootContainer.setBackgroundColor(mReadBackgroundPrefs.get());
+        setReadBackgroundColor();
     }
 
     private ReadWidgetAdapter createReadWidgetAdapter(float fontSize) {
         int scrollMode = PreferenceConverter.getScrollMode(mScrollMode.get());
         if (scrollMode == PreferenceConverter.SCROLL_MODE_FLIP_VERTICAL ||
                 scrollMode == PreferenceConverter.SCROLL_MODE_FLIP_HORIZONTAL)
-            return new ReadViewFlipAdapter(this, fontSize);
+            return new ReadViewFlipAdapter(this, fontSize, isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white) : mReadBackgroundPrefs.get());
         else if (scrollMode == PreferenceConverter.SCROLL_MODE_VIEWPAGER_HORIZONTAL) {
-            return new ReadViewPagerAdapter(this, fontSize);
+            return new ReadViewPagerAdapter(this, fontSize, isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white) : mReadBackgroundPrefs.get());
         } else {
             throw new IllegalStateException("Unsupported read view scroll mode.");
         }
+    }
+
+    public void setReadBackgroundColor() {
+        mRootContainer.setBackgroundColor(isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white) : mReadBackgroundPrefs.get());
+        if(mNovelReadAdapter != null)
+            mNovelReadAdapter.setBackgroundColor(isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white) : mReadBackgroundPrefs.get());
     }
 
     @Override
@@ -687,7 +692,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     public void onMenuItemChooseReadBackground() {
         new ColorChooserDialog().show(this, mReadBackgroundPrefs.get(), (index, color, darker) -> {
             mReadBackgroundPrefs.set(color);
-            mRootContainer.setBackgroundColor(color);
+            setReadBackgroundColor();
         });
     }
 

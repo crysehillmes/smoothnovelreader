@@ -19,12 +19,14 @@ public class ReadViewPagerAdapter extends PagerAdapter implements ReadWidgetAdap
     private Context mContext;
     private LayoutInflater mLayoutInflater;
     private float mFontSize;
+    private int mBackgroundColor;
 
-    public ReadViewPagerAdapter(Context context, float fontSize) {
-        mContext = context;
-        mFontSize = fontSize;
-        mContentList = new ArrayList<CharSequence>();
-        mLayoutInflater = LayoutInflater.from(mContext);
+    public ReadViewPagerAdapter(Context context, float fontSize, int backgroundColor) {
+        this.mContext = context;
+        this.mFontSize = fontSize;
+        this.mContentList = new ArrayList<CharSequence>();
+        this.mLayoutInflater = LayoutInflater.from(mContext);
+        this.mBackgroundColor = backgroundColor;
     }
 
     @Override
@@ -60,6 +62,11 @@ public class ReadViewPagerAdapter extends PagerAdapter implements ReadWidgetAdap
         notifyDataSetChanged();
         mContentList.addAll(newContents);
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void setBackgroundColor(int backgroundColor) {
+        this.mBackgroundColor = backgroundColor;
     }
 
     @Override
