@@ -66,10 +66,11 @@
     <string name="toast_chapter_contents_caching">已有一本小说正在缓存中…</string>
     <string name="toast_chapter_contents_caching_cannot_delete">《%1$s》正在缓存中，无法删除</string>
     <string name="toast_menu_not_available_in_night_mode">夜间模式不可用</string>
-    <string name="notification_chapter_contents_cache_title">正在缓存《%1$s》章节</string>
+    <string name="notification_chapter_contents_cache_title">正在缓存《%1$s》</string>
     <string name="notification_chapter_contents_cache_title_finish">完成缓存《%1$s》</string>
     <string name="notification_chapter_contents_cache_content">缓存了 %1$d 章， %2$d 章缓存失败, %3$d 章未缓存。</string>
-    <string name="notification_action_chapter_contents_cache_title">取消缓存</string>
+    <string name="notification_action_chapter_contents_cancel_current">取消缓存</string>
+    <string name="notification_action_chapter_contents_cancel_all">取消全部缓存</string>
 
     <!-- Search text -->
     <string name="searchbox_hint">搜索书名或作者名</string>
@@ -153,7 +154,7 @@
 
     <string name="listview_last_read_indicator_text">\t[上次阅读到这里]</string>
 
-    <string name="novel_chapter_contents_cache_progress">正在缓存第 %1$d 章， 共 %2$d 章。</string>
+    <string name="novel_chapter_contents_cache_progress">正在缓存第 %1$d 章， 共 %2$d 章, %3$d 本书等待缓存。</string>
 
     <!-- Novel detail -->
     <string name="novel_details_a11y_novel_added">小说已添加至书架</string>

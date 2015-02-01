@@ -217,10 +217,10 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         mAddNovelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mServiceBinder != null && mServiceBinder.isCaching() && mServiceBinder.getCurrentCachingNovel() != null) {
-                    NovelModel currentCachingNovel = mServiceBinder.getCurrentCachingNovel();
-                    if(currentCachingNovel.getId().compareTo(mNovel.getId()) == 0)
-                        ToastProxy.showToast(NovelDetailActivity.this, getString(R.string.toast_chapter_contents_caching_cannot_delete, currentCachingNovel.getTitle()), ToastType.TOAST_ALERT);
+                if(mServiceBinder != null && mServiceBinder.isCaching() && mServiceBinder.getCurrentCachingNovelId() != null) {
+                    String currentCachingNovelId = mServiceBinder.getCurrentCachingNovelId();
+                    if(mIsFavorited && currentCachingNovelId.compareTo(mNovel.getId()) == 0)
+                        ToastProxy.showToast(NovelDetailActivity.this, getString(R.string.toast_chapter_contents_caching_cannot_delete, mNovel.getTitle()), ToastType.TOAST_ALERT);
                         return;
                 }
                 boolean isFavorite = !mIsFavorited;
