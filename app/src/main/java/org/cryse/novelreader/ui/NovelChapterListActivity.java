@@ -274,10 +274,9 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     }
 
     private void chaptersOfflineCache() {
-        if(mServiceBinder != null && !mServiceBinder.isCaching()) {
-            mServiceBinder.chaptersOfflineCache(mNovel, mNovelChapterList);
-        } else if(mServiceBinder != null && mServiceBinder.isCaching()) {
-            ToastProxy.showToast(this, getString(R.string.toast_chapter_contents_caching), ToastType.TOAST_INFO);
+        if(mServiceBinder != null) {
+            mServiceBinder.addToCacheQueue(mNovel);
+            ToastProxy.showToast(this, getString(R.string.toast_chapter_contents_add_to_cache_queue, mNovel.getTitle()), ToastType.TOAST_INFO);
         }
     }
 

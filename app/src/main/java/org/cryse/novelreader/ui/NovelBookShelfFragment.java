@@ -253,17 +253,21 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     private void removeNovels() {
         int count = bookShelfListAdapter.getSelectedItemCount();
         List<String> removeIds = new ArrayList<String>();
-        NovelModel currentCachingNovel = null;
+        String currentCachingNovelId = null;
         int[] reverseSortedPositions = bookShelfListAdapter.getSelectedItemReversePositions();
-        if(mServiceBinder != null && mServiceBinder.getCurrentCachingNovel() != null) {
-            currentCachingNovel = mServiceBinder.getCurrentCachingNovel();
+        if(mServiceBinder != null && mServiceBinder.getCurrentCachingNovelId() != null) {
+            currentCachingNovelId = mServiceBinder.getCurrentCachingNovelId();
         }
         for (int position : reverseSortedPositions) {
-            if(currentCachingNovel != null && currentCachingNovel.getId().compareTo(novelList.get(position).getId()) == 0) {
-                ToastProxy.showToast(getActivity(), getString(R.string.toast_chapter_contents_caching_cannot_delete, currentCachingNovel.getTitle()), ToastType.TOAST_ALERT);
-                continue;
+            if(currentCachingNovelId != null && currentCachingNovelId.compareTo(novelList.get(position).getId()) == 0) {
+                ToastProxy.showToast(getActivity(), getString(R.string.toast_chapter_contents_caching_cannot_delete, novelList.get(position).getTitle()), ToastType.TOAST_ALERT);
             } else {
                 removeIds.add(novelList.get(position).getId());
+                if(mServiceBinder != null) {
+                    if(mServiceBinder.removeFromQueueIfExist(novelList.get(position).getId())) {
+                    ToastProxy.showToast(getActivity(), getString(R.string.notification_action_chapter_contents_cancel_novel, novelList.get(position).getTitle()), ToastType.TOAST_INFO);
+                }
+                }
                 ((NovelBookShelfListAdapter) mShelfListView.getAdapter()).remove(position);
             }
         }
