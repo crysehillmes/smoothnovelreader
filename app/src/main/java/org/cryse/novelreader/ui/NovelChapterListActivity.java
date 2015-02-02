@@ -229,7 +229,21 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
             if (index >= 0 && index < mNovelChapterList.size()) {
                 mChapterListAdapter.setLastReadIndicator(index);
                 mChapterListAdapter.notifyDataSetChanged();
-                mListView.getList().setSelection(index);
+                if(index < mListView.getList().getFirstVisiblePosition()) {
+                    int distance = mListView.getList().getFirstVisiblePosition() - index;
+                    if(distance > 50) {
+                        distance = 50;
+                    }
+                    mListView.getList().setSelection(index + distance);
+                    mListView.getList().smoothScrollToPosition(index);
+                } else if(index > mListView.getList().getLastVisiblePosition()) {
+                    int distance = index - mListView.getList().getFirstVisiblePosition();
+                    if(distance > 50) {
+                        distance = 50;
+                    }
+                    mListView.getList().setSelection(index - distance);
+                    mListView.getList().smoothScrollToPosition(index);
+                }
             }
         } else {
             mChapterListAdapter.clearLastReadIndicator();
