@@ -255,7 +255,7 @@ public class MainActivity extends AbstractThemeableActivity {
                 .theme(isNightMode() ? Theme.DARK : Theme.LIGHT)  // the default is light, so you don't need this line
                 .positiveText(R.string.dialog_exit_confirm)  // the default is 'OK'
                 .negativeText(R.string.dialog_exit_cancel)  // leaving this line out will remove the negative button
-                .callback(new MaterialDialog.Callback() {
+                .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
                         dialog.dismiss();

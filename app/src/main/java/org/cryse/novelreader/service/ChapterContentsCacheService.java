@@ -6,39 +6,30 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
-import org.cryse.novelreader.data.DaoSession;
-import org.cryse.novelreader.data.NovelChapterContentModelDao;
-import org.cryse.novelreader.data.NovelChapterModelDao;
-import org.cryse.novelreader.data.NovelModelDao;
+import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.model.NovelChapterContentModel;
 import org.cryse.novelreader.model.NovelChapterModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.source.NovelSource;
 import org.cryse.novelreader.util.NovelTextFilter;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.inject.Inject;
 
-import de.greenrobot.dao.query.DeleteQuery;
-import de.greenrobot.dao.query.QueryBuilder;
-
-
 public class ChapterContentsCacheService extends Service {
+    private static final String LOG_TAG = ChapterContentsCacheService.class.getName();
     @Inject
-    NovelModelDao novelModelDao;
-
-    @Inject
-    NovelChapterModelDao novelChapterModelDao;
-
-    @Inject
-    NovelChapterContentModelDao novelChapterContentModelDao;
+    NovelDatabaseAccessLayer mNovelDatabase;
 
     @Inject
     NovelSource novelSource;
@@ -46,19 +37,46 @@ public class ChapterContentsCacheService extends Service {
     @Inject
     NovelTextFilter novelTextFilter;
 
+    BlockingQueue<NovelCacheTask> mTaskQueue = new LinkedBlockingQueue<NovelCacheTask>();
+    NovelCacheTask mCurrentTask = null;
+    public static final int NOTIFICATION_START_ID = 150;
+    public int notification_count = 0;
+
     NotificationManager mNotifyManager;
     static final int CACHING_NOTIFICATION_ID = 110;
-    NotificationCompat.Builder mBuilder;
-    boolean isCaching = false;
-    NovelModel mCurrentNovelModel;
-    boolean stopThreadSignal = false;
-    Thread mWorkingThread;
+
+    boolean stopCurrentTask = false;
+    Thread mCachingThread;
+    boolean mIsStopingService;
+
     @Override
     public void onCreate() {
         super.onCreate();
         ((SmoothReaderApplication)getApplication()).inject(this);
         mNotifyManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        mCachingThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while (!mIsStopingService) {
+                        mCurrentTask = mTaskQueue.take();
+                        downloadChapters(mCurrentTask);
+                        mCurrentTask = null;
+                    }
+                } catch (InterruptedException ex) {
+                    Log.e(LOG_TAG, "Caching thread exception.", ex);
+                }
+            }
+        });
+        mCachingThread.start();
+    }
+
+    @Override
+    public void onDestroy() {
+        mIsStopingService = true;
+        super.onDestroy();
     }
 
     @Override
@@ -66,122 +84,140 @@ public class ChapterContentsCacheService extends Service {
         return new ChapterContentsCacheBinder();
     }
 
-    private Boolean isFavoriteSync(String id) {
-        Boolean isExist;
-        QueryBuilder<NovelModel> qb = novelModelDao.queryBuilder().where(NovelModelDao.Properties.Id.eq(id));
-        isExist = qb.count() != 0;
-        return isExist;
-    }
-
     private NovelChapterContentModel loadChapterContentFromWeb(String id, String secondId, String src) {
         return novelSource.getChapterContentSync(id, secondId, src);
     }
 
-    private void updateChapterContentInDB(String secondId, String src, NovelChapterContentModel chapterContentModel) {
-        DeleteQuery deleteQuery = novelChapterContentModelDao.queryBuilder().whereOr(NovelChapterContentModelDao.Properties.SecondId.eq(secondId), NovelChapterContentModelDao.Properties.Src.eq(src)).buildDelete();
-        deleteQuery.executeDeleteWithoutDetachingEntities();
-        clearDaoSession();
-        novelChapterContentModelDao.insert(chapterContentModel);
-    }
-
-    private void clearDaoSession() {
-        DaoSession daoSession = (DaoSession)novelModelDao.getSession();
-        daoSession.clear();
-    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(LOG_TAG, "onStartCommand");
         if(intent != null && intent.hasExtra("type")) {
-            if("cancel_cache".compareTo(intent.getStringExtra("type")) == 0) {
-                stopThreadSignal = true;
+
+            Log.d(LOG_TAG, String.format("onStartCommand: %s", intent.getStringExtra("type")));
+            if("cancel_current".compareTo(intent.getStringExtra("type")) == 0) {
+                Log.d(LOG_TAG, "onStartCommand, type: cancel_current");
+                stopCurrentTask = true;
+            } else if("cancel_all".compareTo(intent.getStringExtra("type")) == 0) {
+                Log.d(LOG_TAG, "onStartCommand, type: cancel_all");
+                mTaskQueue.clear();
+                stopCurrentTask = true;
             }
         }
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void preloadChapterContents(NovelModel novel, final List<NovelChapterModel> chapterModels) {
-        if(isCaching) return;
-        mCurrentNovelModel = novel;
-        int chapterCount = chapterModels.size();
-        Intent cancelCacheIntent = new Intent(this, ChapterContentsCacheService.class);
-        cancelCacheIntent.putExtra("type", "cancel_cache");
-        PendingIntent pendingIntent = PendingIntent.getService(this, 0, cancelCacheIntent, 0);        mBuilder = new NotificationCompat.Builder(ChapterContentsCacheService.this);
-        mBuilder.setContentTitle(getResources().getString(R.string.notification_chapter_contents_cache_title, novel.getTitle()))
+    public void downloadChapters(NovelCacheTask cacheTask) {
+        Log.d(LOG_TAG, "downloadChapters");
+        NotificationCompat.Builder progressNotificationBuilder;
+
+        Intent cancelCurrentIntent = new Intent(this, ChapterContentsCacheService.class);
+        cancelCurrentIntent.putExtra("type", "cancel_current");
+        PendingIntent cancelCurrentPendingIntent = PendingIntent.getService(this, 0, cancelCurrentIntent, 0);
+        Intent cancelAllIntent = new Intent(this, ChapterContentsCacheService.class);
+        cancelAllIntent.putExtra("type", "cancel_all");
+        PendingIntent cancelAllPendingIntent = PendingIntent.getService(this, 1, cancelAllIntent, 0);
+
+
+        progressNotificationBuilder = new NotificationCompat.Builder(ChapterContentsCacheService.this);
+        progressNotificationBuilder.setContentTitle(getResources().getString(R.string.notification_chapter_contents_cache_title, cacheTask.getNovelTitle()))
                 .setContentText("")
                 .setSmallIcon(R.drawable.ic_action_chapter_cache)
-                .setOngoing(true);
-        mBuilder.addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cache_title), pendingIntent);
+                .setOngoing(true)
+                .addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cancel_current), cancelCurrentPendingIntent)
+                .addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cancel_all), cancelAllPendingIntent);
 
-        isCaching = true;
+        startForeground(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
 
-        startForeground(CACHING_NOTIFICATION_ID, mBuilder.build());
 
-        mWorkingThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int index = 0;
-                int successCount = 0, failureCount = 0;
-                List<NovelChapterModel> items = new ArrayList<NovelChapterModel>(chapterCount);
-                items.addAll(chapterModels);
-                if (isFavoriteSync(novel.getId())) {
-                    for (NovelChapterModel chapterModel : items) {
-                        if(stopThreadSignal) {
-                            stopThreadSignal = false;
-                            break;
-                        }
-                        try {
-                            index++;
-                            if (chapterModel.isCached()) {
-                                successCount++;
-                                continue;
-                            }
-                            NovelChapterContentModel chapterContentModel = loadChapterContentFromWeb(novel.getId(), chapterModel.getSecondId(), chapterModel.getSrc());
-                            if (chapterContentModel != null) {
-                                chapterContentModel.setContent(novelTextFilter.filter(chapterContentModel.getContent()));
-                                updateChapterContentInDB(chapterModel.getSecondId(), chapterModel.getSrc(), chapterContentModel);
-                                successCount++;
-                            } else {
-                                failureCount++;
-                            }
-                        } catch (Exception ex) {
-                            failureCount++;
-                        } finally {
-                            mBuilder.setProgress(chapterCount, index, false);
-                            mBuilder.setContentText(getResources().getString(R.string.novel_chapter_contents_cache_progress, index, chapterCount));
-                            mNotifyManager.notify(CACHING_NOTIFICATION_ID, mBuilder.build());
-                        }
-                    }
-
-                }
-                mNotifyManager.cancel(CACHING_NOTIFICATION_ID);
-                stopForeground(true);
-
-                mBuilder = new NotificationCompat.Builder(ChapterContentsCacheService.this);
-                mBuilder.setContentTitle(getResources().getString(R.string.notification_chapter_contents_cache_title_finish, novel.getTitle()))
-                        .setContentText(getResources().getString(R.string.notification_chapter_contents_cache_content, successCount, failureCount, chapterCount - successCount - failureCount))
-                        .setSmallIcon(R.drawable.ic_notification_done)
-                        .setAutoCancel(true);
-                //startForeground(CACHING_NOTIFICATION_ID, mBuilder.build());
-                mNotifyManager.notify(CACHING_NOTIFICATION_ID, mBuilder.build());
-
-                //stopForeground(true);
-                isCaching = false;
+        int index = 0;
+        int successCount = 0, failureCount = 0;
+        List<NovelChapterModel> items = mNovelDatabase.loadChapters(cacheTask.getNovelId());
+        int chapterCount = items.size();
+        for (NovelChapterModel chapterModel : items) {
+            if (stopCurrentTask) {
+                stopCurrentTask = false;
+                break;
             }
-        });
-        mWorkingThread.start();
+            try {
+                index++;
+                if (chapterModel.isCached()) {
+                    successCount++;
+                    continue;
+                }
+                NovelChapterContentModel chapterContentModel = loadChapterContentFromWeb(cacheTask.getNovelId(), chapterModel.getSecondId(), chapterModel.getSrc());
+                if (chapterContentModel != null) {
+                    chapterContentModel.setContent(novelTextFilter.filter(chapterContentModel.getContent()));
+                    mNovelDatabase.updateChapterContent(chapterContentModel);
+                    successCount++;
+                } else {
+                    failureCount++;
+                }
+            } catch (Exception ex) {
+                failureCount++;
+            } finally {
+                progressNotificationBuilder
+                        .setProgress(chapterCount, index, false)
+                        .setContentText(getResources().getString(R.string.novel_chapter_contents_cache_progress, index, chapterCount, mTaskQueue.size()));
+                mNotifyManager.notify(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
+            }
+        }
+
+        // TODO: If this is not the last task, do not cancel the progress notification, otherwise cancel it and stopForeground.
+        mNotifyManager.cancel(CACHING_NOTIFICATION_ID);
+        stopForeground(true);
+
+        // TODO: Show a notification here to let user know one book is cached.
+        showTaskResultNotification(
+                cacheTask.getNovelId(),
+                cacheTask.getNovelTitle(),
+                successCount,
+                failureCount,
+                chapterCount
+        );
+    }
+
+    private void showTaskResultNotification(String novelId, String novelTitle, int successCount, int failureCount, int chapterCount) {
+        notification_count = notification_count + 1;
+        NotificationCompat.Builder mResultBuilder = new NotificationCompat.Builder(this);
+        Bundle extras = new Bundle();
+        extras.putString("novel_id", novelId);
+        extras.putString("novel_title", novelTitle);
+        mResultBuilder.setContentTitle(getResources().getString(R.string.notification_chapter_contents_cache_title_finish, novelTitle))
+                .setContentText(getResources().getString(R.string.notification_chapter_contents_cache_content, successCount, failureCount, chapterCount - successCount - failureCount))
+                .setSmallIcon(R.drawable.ic_notification_done)
+                .setExtras(extras)
+                .setAutoCancel(true);
+        mNotifyManager.notify(NOTIFICATION_START_ID + notification_count, mResultBuilder.build());
     }
 
     public class ChapterContentsCacheBinder extends Binder {
         public boolean isCaching() {
-            return isCaching;
+            return mCurrentTask != null;
         }
 
-        public NovelModel getCurrentCachingNovel() {
-            return mCurrentNovelModel;
+        public String getCurrentCachingNovelId() {
+            return mCurrentTask == null ? null : mCurrentTask.getNovelId();
         }
 
-        public void chaptersOfflineCache(NovelModel novelModel, List<NovelChapterModel> novelChapterModels) {
-            preloadChapterContents(novelModel, novelChapterModels);
+        public void addToCacheQueue(NovelModel novelModel) {
+            NovelCacheTask novelCacheTask = new NovelCacheTask(novelModel.getId(), novelModel.getTitle());
+            for(NovelCacheTask task : mTaskQueue) {
+                if(task.getNovelId().equalsIgnoreCase(novelModel.getId())) {
+                    return;
+                }
+            }
+            mTaskQueue.add(novelCacheTask);
+            // preloadChapterContents(novelModel, novelChapterModels);
+        }
+
+        public boolean removeFromQueueIfExist(String novelId) {
+            for(NovelCacheTask task : mTaskQueue) {
+                if(task.getNovelId().equalsIgnoreCase(novelId)) {
+                    mTaskQueue.remove(task);
+                    return true;
+                }
+            }
+            return false;
         }
     }
 

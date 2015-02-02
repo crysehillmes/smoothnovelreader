@@ -23,6 +23,7 @@
     <string name="dialog_button_start_read">开始阅读</string>
     <string name="dialog_button_add_favorite">加入书架</string>
 
+    <string name="dialog_choose_read_bg_color">选择背景色</string>
     <string name="dialog_choose">选择</string>
 
     <!-- Book introduction format -->
@@ -63,11 +64,15 @@
     <string name="toast_chapter_content_lost">这一章找不到啦，重新加载试试</string>
     <string name="toast_chapter_list_loading">正在更新目录，请稍等…</string>
     <string name="toast_chapter_contents_caching">已有一本小说正在缓存中…</string>
+    <string name="toast_chapter_contents_add_to_cache_queue">《%1$s》已加入缓存队列</string>
     <string name="toast_chapter_contents_caching_cannot_delete">《%1$s》正在缓存中，无法删除</string>
-    <string name="notification_chapter_contents_cache_title">正在缓存《%1$s》章节</string>
+    <string name="toast_menu_not_available_in_night_mode">夜间模式不可用</string>
+    <string name="notification_chapter_contents_cache_title">正在缓存《%1$s》</string>
     <string name="notification_chapter_contents_cache_title_finish">完成缓存《%1$s》</string>
     <string name="notification_chapter_contents_cache_content">缓存了 %1$d 章， %2$d 章缓存失败, %3$d 章未缓存。</string>
-    <string name="notification_action_chapter_contents_cache_title">取消缓存</string>
+    <string name="notification_action_chapter_contents_cancel_current">取消缓存</string>
+    <string name="notification_action_chapter_contents_cancel_novel">取消缓存《%1$s》</string>
+    <string name="notification_action_chapter_contents_cancel_all">取消全部缓存</string>
 
     <!-- Search text -->
     <string name="searchbox_hint">搜索书名或作者名</string>
@@ -98,6 +103,8 @@
     </string-array>
 
     <string-array name="readview_font_size_entries">
+        <item>10</item>
+        <item>12</item>
         <item>14</item>
         <item>16</item>
         <item>18</item>
@@ -105,6 +112,9 @@
         <item>22</item>
         <item>24</item>
         <item>26</item>
+        <item>28</item>
+        <item>30</item>
+        <item>32</item>
     </string-array>
 
     <!-- Spinner label and value section-->
@@ -146,7 +156,7 @@
 
     <string name="listview_last_read_indicator_text">\t[上次阅读到这里]</string>
 
-    <string name="novel_chapter_contents_cache_progress">正在缓存第 %1$d 章， 共 %2$d 章。</string>
+    <string name="novel_chapter_contents_cache_progress">正在缓存第 %1$d 章， 共 %2$d 章, %3$d 本书等待缓存。</string>
 
     <!-- Novel detail -->
     <string name="novel_details_a11y_novel_added">小说已添加至书架</string>
@@ -172,6 +182,7 @@
     <string name="bottom_sheet_item_daylight_mode">日间模式</string>
     <string name="bottom_sheet_item_font_size">文字大小</string>
     <string name="bottom_sheet_item_page_curl_mode">@string/settings_item_scroll_mode_title</string>
+    <string name="bottom_sheet_item_read_background">阅读背景色</string>
     <string name="bottom_sheet_item_reload">重新加载</string>
 
     <!-- Settings section -->

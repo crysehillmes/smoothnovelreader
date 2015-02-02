@@ -3,6 +3,7 @@ package org.cryse.novelreader.ui;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -28,8 +30,9 @@ import org.cryse.novelreader.model.NovelChapterModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelChapterContentPresenter;
 import org.cryse.novelreader.qualifier.PrefsFontSize;
+import org.cryse.novelreader.qualifier.PrefsReadBackground;
 import org.cryse.novelreader.qualifier.PrefsScrollMode;
-import org.cryse.novelreader.ui.adapter.FlipNovelChapterAdapter;
+import org.cryse.novelreader.ui.adapter.ReadViewFlipAdapter;
 import org.cryse.novelreader.ui.adapter.ReadViewPagerAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.ui.widget.ReadWidget;
@@ -41,6 +44,7 @@ import org.cryse.novelreader.util.ToastProxy;
 import org.cryse.novelreader.util.ToastType;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.gesture.SimpleGestureDetector;
+import org.cryse.novelreader.util.prefs.IntegerPreference;
 import org.cryse.novelreader.util.prefs.StringPreference;
 import org.cryse.novelreader.view.NovelChapterContentView;
 import java.util.ArrayList;
@@ -58,8 +62,13 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 public class NovelReadViewActivity extends AbstractThemeableActivity implements NovelChapterContentView {
     ReadWidget mReadWidget;
 
+    @InjectView(R.id.activity_chapter_read_container)
+    RelativeLayout mRootContainer;
+
     @InjectView(R.id.activity_read_view_widget_container)
     FrameLayout mReadWidgetContainer;
+    @InjectView(R.id.activity_chapter_read_status_layout)
+    RelativeLayout mReadStatusContainer;
 
     @InjectView(R.id.activity_chapter_read_status_page_pos_textview)
     protected TextView mPagePositionTextView = null;
@@ -81,6 +90,10 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     @Inject
     @PrefsScrollMode
     StringPreference mScrollMode;
+
+    @Inject
+    @PrefsReadBackground
+    IntegerPreference mReadBackgroundPrefs;
 
     Handler mHandler;
 
@@ -169,18 +182,25 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         else if(scrollMode == PreferenceConverter.SCROLL_MODE_VIEWPAGER_HORIZONTAL)
             getLayoutInflater().inflate(R.layout.layout_read_view_pager, mReadWidgetContainer);
         mReadWidget = (ReadWidget)findViewById(R.id.activity_read_view_readwidget);
+        setReadBackgroundColor();
     }
 
     private ReadWidgetAdapter createReadWidgetAdapter(float fontSize) {
         int scrollMode = PreferenceConverter.getScrollMode(mScrollMode.get());
         if (scrollMode == PreferenceConverter.SCROLL_MODE_FLIP_VERTICAL ||
                 scrollMode == PreferenceConverter.SCROLL_MODE_FLIP_HORIZONTAL)
-            return new FlipNovelChapterAdapter(this, fontSize);
+            return new ReadViewFlipAdapter(this, fontSize, isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white) : mReadBackgroundPrefs.get());
         else if (scrollMode == PreferenceConverter.SCROLL_MODE_VIEWPAGER_HORIZONTAL) {
-            return new ReadViewPagerAdapter(this, fontSize);
+            return new ReadViewPagerAdapter(this, fontSize, isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white) : mReadBackgroundPrefs.get());
         } else {
             throw new IllegalStateException("Unsupported read view scroll mode.");
         }
+    }
+
+    public void setReadBackgroundColor() {
+        mRootContainer.setBackgroundColor(isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white) : mReadBackgroundPrefs.get());
+        if(mNovelReadAdapter != null)
+            mNovelReadAdapter.setBackgroundColor(isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white) : mReadBackgroundPrefs.get());
     }
 
     @Override
@@ -205,7 +225,8 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
             Intent intent = getIntent();
             mNovelChapters = new ArrayList<NovelChapterModel>(getPresenter().getChaptersState());
             novelModel = intent.getParcelableExtra(DataContract.NOVEL_OBJECT_NAME);
-            chapterIndex = intent.getIntExtra(DataContract.NOVEL_CHAPTER_INDEX_NAME, 0);
+            String startChapterId = intent.getStringExtra(DataContract.NOVEL_CHAPTER_ID_NAME);
+            chapterIndex = findChapterIndex(startChapterId);
             chapterOffset = intent.getIntExtra(DataContract.NOVEL_CHAPTER_OFFSET_NAME, 0);
             if(intent.hasExtra(DataContract.NOVEL_HAS_STATE)) {
                 hasSavedStated = true;
@@ -408,6 +429,12 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                         case R.id.menu_bottomsheet_pagecurl_mode:
                             onMenuItemPageCurlModeClick();
                             break;
+                        case R.id.menu_bottomsheet_background_color:
+                            if(isNightMode())
+                                ToastProxy.showToast(this, getString(R.string.toast_menu_not_available_in_night_mode), ToastType.TOAST_INFO);
+                            else
+                                onMenuItemChooseReadBackground();
+                            break;
                     }
                     dialog.dismiss();
                 });
@@ -509,12 +536,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                 .title(R.string.bottom_sheet_item_change_src)
                 .items(srcs)
                 .theme(isNightMode() ? Theme.DARK : Theme.LIGHT)
-                .itemsCallback(new MaterialDialog.ListCallback() {
-                    @Override
-                    public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                        getPresenter().changeSrc(mNovelChapters.get(chapterIndex), otherSrc.get(i));
-                    }
-                });
+                .itemsCallback((materialDialog, view, selection, charSequence) -> getPresenter().changeSrc(mNovelChapters.get(chapterIndex), otherSrc.get(selection)));
         MaterialDialog dialog = dialogBuilder.build();
         dialog.setOnDismissListener(dialogInterface -> hideSystemUI());
         dialog.show();
@@ -589,9 +611,9 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
             return;
         NovelBookMarkModel lastReadBookMark = new NovelBookMarkModel(
                 novelModel.getId(),
-                mNovelChapters.get(chapterIndex).getTitle(),
+                mNovelChapters.get(chapterIndex).getSecondId(),
                 novelModel.getTitle(),
-                chapterIndex,
+                mNovelChapters.get(chapterIndex).getTitle(),
                 mNovelReadAdapter.getStringOffsetFromPage(currentPage),
                 NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD,
                 new Date()
@@ -619,16 +641,13 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                 .title(R.string.settings_item_font_size_dialog_title)
                 .items(fontSizes)
                 .theme(isNightMode() ? Theme.DARK : Theme.LIGHT)
-                .itemsCallbackSingleChoice(index, new MaterialDialog.ListCallback() {
-                    @Override
-                    public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                        mFontSizePref.set(charSequence.toString());
-                        mFontSize = PreferenceConverter.getFontSize(NovelReadViewActivity.this, charSequence.toString());
-                        mNovelReadAdapter.setFontSize(mFontSize);
-                        getPresenter().getSplitTextPainter().setTextSize(mFontSize);
-                        getPresenter().splitChapterAndDisplay(mNovelChapters.get(chapterIndex).getTitle(),
-                                mCurrentContent);
-                    }
+                .itemsCallbackSingleChoice(index, (materialDialog, view, selection, charSequence) -> {
+                    mFontSizePref.set(charSequence.toString());
+                    mFontSize = PreferenceConverter.getFontSize(NovelReadViewActivity.this, charSequence.toString());
+                    mNovelReadAdapter.setFontSize(mFontSize);
+                    getPresenter().getSplitTextPainter().setTextSize(mFontSize);
+                    getPresenter().splitChapterAndDisplay(mNovelChapters.get(chapterIndex).getTitle(),
+                            mCurrentContent);
                 })
                 .positiveText(R.string.dialog_choose);
         MaterialDialog dialog = dialogBuilder.build();
@@ -646,14 +665,11 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                 .title(R.string.settings_item_scroll_mode_title)
                 .items(pageCurlModes)
                 .theme(isNightMode() ? Theme.DARK : Theme.LIGHT)
-                .itemsCallbackSingleChoice(index, new MaterialDialog.ListCallback() {
-                    @Override
-                    public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                        if(i == index) return;
-                        mScrollMode.set(pageCurlModeValues[i]);
-                        mReadWidgetContainer.removeAllViews();
-                        reloadTheme(true);
-                    }
+                .itemsCallbackSingleChoice(index, (materialDialog, view, selection, charSequence) -> {
+                    if(selection == index) return;
+                    mScrollMode.set(pageCurlModeValues[selection]);
+                    mReadWidgetContainer.removeAllViews();
+                    reloadTheme(true);
                 })
                 .positiveText(R.string.dialog_choose);
         MaterialDialog dialog = dialogBuilder.build();
@@ -671,5 +687,22 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
 
     public void onMenuItemReloadClick() {
         getPresenter().loadChapter(mNovelChapters.get(chapterIndex), true);
+    }
+
+    public void onMenuItemChooseReadBackground() {
+        new ColorChooserDialog().show(this, mReadBackgroundPrefs.get(), (index, color, darker) -> {
+            mReadBackgroundPrefs.set(color);
+            setReadBackgroundColor();
+        });
+    }
+
+    private int findChapterIndex(String chapterId) {
+        for (int i = 0; i < mNovelChapters.size(); i++) {
+            NovelChapterModel chapterModel = mNovelChapters.get(i);
+            if (chapterModel.getSecondId().equals(chapterId)) {
+                return i;
+            }
+        }
+        throw new IllegalStateException("ChapterIndex not found.");
     }
 }

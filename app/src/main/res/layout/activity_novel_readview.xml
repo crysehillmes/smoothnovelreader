@@ -4,7 +4,6 @@
     android:id="@+id/activity_chapter_read_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/smooth_theme_read_bg_drawable"
     android:clipChildren="false"
     android:orientation="vertical">
 

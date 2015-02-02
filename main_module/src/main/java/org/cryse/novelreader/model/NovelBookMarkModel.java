@@ -9,30 +9,38 @@ public class NovelBookMarkModel implements Parcelable, Comparable<NovelBookMarkM
     public static final int BOOKMARK_TYPE_LASTREAD = 3;
     public static final int BOOKMARK_TYPE_NORMAL = 5;
 
-    private String id;
+    private String novelId;
+    private String chapterId;
     private String chapterTitle;
     private String novelTitle;
-    private int chapterIndex;
     private int chapterOffset;
     private int bookMarkType;
     private Date createTime;
 
-    public NovelBookMarkModel(String id, String chapterTitle, String novelTitle, int chapterIndex, int chapterOffset, int bookMarkType, Date createTime) {
-        this.id = id;
-        this.chapterTitle = chapterTitle;
+    public NovelBookMarkModel(String id, String chapterId, String novelTitle, String chapterTitle, int chapterOffset, int bookMarkType, Date createTime) {
+        this.novelId = id;
+        this.chapterId = chapterId;
         this.novelTitle = novelTitle;
-        this.chapterIndex = chapterIndex;
+        this.chapterTitle = chapterTitle;
         this.chapterOffset = chapterOffset;
         this.bookMarkType = bookMarkType;
         this.createTime = createTime;
     }
 
-    public String getId() {
-        return id;
+    public String getChapterId() {
+        return chapterId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setChapterId(String chapterId) {
+        this.chapterId = chapterId;
+    }
+
+    public String getNovelId() {
+        return novelId;
+    }
+
+    public void setNovelId(String novelId) {
+        this.novelId = novelId;
     }
 
     public String getChapterTitle() {
@@ -49,14 +57,6 @@ public class NovelBookMarkModel implements Parcelable, Comparable<NovelBookMarkM
 
     public void setNovelTitle(String novelTitle) {
         this.novelTitle = novelTitle;
-    }
-
-    public int getChapterIndex() {
-        return chapterIndex;
-    }
-
-    public void setChapterIndex(int chapterIndex) {
-        this.chapterIndex = chapterIndex;
     }
 
     public int getChapterOffset() {
@@ -93,20 +93,20 @@ public class NovelBookMarkModel implements Parcelable, Comparable<NovelBookMarkM
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.id);
+        dest.writeString(this.novelId);
+        dest.writeString(this.chapterId);
         dest.writeString(this.chapterTitle);
         dest.writeString(this.novelTitle);
-        dest.writeInt(this.chapterIndex);
         dest.writeInt(this.chapterOffset);
         dest.writeInt(this.bookMarkType);
         dest.writeLong(createTime != null ? createTime.getTime() : -1);
     }
 
     private NovelBookMarkModel(Parcel in) {
-        this.id = in.readString();
+        this.novelId = in.readString();
+        this.chapterId = in.readString();
         this.chapterTitle = in.readString();
         this.novelTitle = in.readString();
-        this.chapterIndex = in.readInt();
         this.chapterOffset = in.readInt();
         this.bookMarkType = in.readInt();
         long tmpCreateTime = in.readLong();
