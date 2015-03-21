@@ -2,8 +2,8 @@ apply plugin: 'com.android.library'
 apply plugin: 'retrolambda'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.0'
+    compileSdkVersion 22
+    buildToolsVersion '22'
 
     defaultConfig {
         minSdkVersion appMinSdkVersion
@@ -31,7 +31,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v13:21.+'
+    compile 'com.android.support:support-v13:22.0.0'
     compile 'io.reactivex:rxjava:1.0.0-rc.5'
     compile 'de.greenrobot:greendao:1.3.7'
     retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:1.7.0'

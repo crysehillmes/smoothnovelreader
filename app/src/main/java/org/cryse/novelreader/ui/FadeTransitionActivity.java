@@ -1,23 +1,14 @@
 package org.cryse.novelreader.ui;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Point;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
@@ -26,9 +17,6 @@ import org.cryse.novelreader.util.RunTimeStore;
 
 import javax.inject.Inject;
 
-/**
- * Created by cryse on 11/11/14.
- */
 public class FadeTransitionActivity extends Activity{
     private Bitmap mScreenShot;
 

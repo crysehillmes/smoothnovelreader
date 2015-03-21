@@ -2,8 +2,8 @@ apply plugin: 'com.android.library'
 apply plugin: 'retrolambda'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.0"
+    compileSdkVersion 22
+    buildToolsVersion "22"
 
     defaultConfig {
         minSdkVersion appMinSdkVersion
