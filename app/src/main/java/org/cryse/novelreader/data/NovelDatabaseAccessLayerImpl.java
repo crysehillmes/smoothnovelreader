@@ -99,7 +99,7 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
 
     @Override
     public void insertChapters(String novelId, List<NovelChapterModel> chapters) {
-        novelChapterModelDao.insertInTx(chapters);
+        novelChapterModelDao.insertOrReplaceInTx(chapters);
         NovelModel novelModel = novelModelDao.load(novelId);
         novelModel.setLatestUpdateCount(0);
         novelModel.setLatestChapterTitle(chapters.get(chapters.size() - 1).getTitle());
