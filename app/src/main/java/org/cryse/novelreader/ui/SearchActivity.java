@@ -10,12 +10,14 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.qualifier.PrefsGrayScaleInNight;
 import org.cryse.novelreader.qualifier.PrefsShowCoverImage;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.ToastTextGenerator;
 import org.cryse.novelreader.util.ToastUtil;
 import org.cryse.novelreader.util.UIUtils;
+import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.prefs.BooleanPreference;
 import org.cryse.novelreader.view.NovelOnlineListView;
 import org.cryse.widget.recyclerview.SuperRecyclerView;
@@ -38,6 +40,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class SearchActivity extends AbstractThemeableActivity implements NovelOnlineListView {
+    private static final String LOG_TAG = SearchActivity.class.getName();
     @Inject
     NovelListPresenter mPresenter;
 
@@ -67,8 +70,10 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        injectThis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
         ButterKnife.inject(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         showCoverImage = mIsShowCoverImage.get();
@@ -105,6 +110,21 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
             showCoverImage = mIsShowCoverImage.get();
             grayScaleInNight = mGrayScaleInNight.get();
         }
+    }
+
+    @Override
+    protected void injectThis() {
+        SmoothReaderApplication.get(this).inject(this);
+    }
+
+    @Override
+    protected void analyticsTrackEnter() {
+        AnalyticsUtils.trackActivityEnter(this, LOG_TAG);
+    }
+
+    @Override
+    protected void analyticsTrackExit() {
+        AnalyticsUtils.trackActivityExit(this, LOG_TAG);
     }
 
     public NovelListPresenter getPresenter() {

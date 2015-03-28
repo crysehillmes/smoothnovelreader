@@ -18,9 +18,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.UIUtils;
+import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.widget.recyclerview.SuperRecyclerView;
 
 import org.cryse.novelreader.R;
@@ -40,7 +42,8 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class NovelBookShelfFragment extends AbstractFragment implements NovelBookShelfView{
+public class NovelBookShelfFragment extends AbstractFragment implements NovelBookShelfView {
+    private static final String LOG_TAG = NovelBookShelfFragment.class.getName();
     @Inject
     NovelBookShelfPresenter presenter;
 
@@ -59,6 +62,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        injectThis();
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mBackgroundServiceConnection = new ServiceConnection() {
@@ -72,6 +76,11 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                 mServiceBinder = null;
             }
         };
+    }
+
+    @Override
+    protected void injectThis() {
+        SmoothReaderApplication.get(getActivity()).inject(this);
     }
 
     @Override
@@ -201,6 +210,16 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     public void onDestroy() {
         super.onDestroy();
         getPresenter().destroy();
+    }
+
+    @Override
+    protected void analyticsTrackEnter() {
+        AnalyticsUtils.trackFragmentEnter(this, LOG_TAG);
+    }
+
+    @Override
+    protected void analyticsTrackExit() {
+        AnalyticsUtils.trackFragmentExit(this, LOG_TAG);
     }
 
     @Override

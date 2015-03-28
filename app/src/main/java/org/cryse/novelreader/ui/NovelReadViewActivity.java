@@ -24,6 +24,7 @@ import com.cocosw.bottomsheet.BottomSheet;
 import com.example.android.systemuivis.SystemUiHelper;
 
 import org.cryse.novelreader.R;
+import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.model.NovelBookMarkModel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.NovelChapterModel;
@@ -43,6 +44,7 @@ import org.cryse.novelreader.util.PreferenceConverter;
 import org.cryse.novelreader.util.ToastProxy;
 import org.cryse.novelreader.util.ToastType;
 import org.cryse.novelreader.util.UIUtils;
+import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.gesture.SimpleGestureDetector;
 import org.cryse.novelreader.util.prefs.IntegerPreference;
 import org.cryse.novelreader.util.prefs.StringPreference;
@@ -60,6 +62,7 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 
 public class NovelReadViewActivity extends AbstractThemeableActivity implements NovelChapterContentView {
+    private static final String LOG_TAG = NovelReadViewActivity.class.getName();
     ReadWidget mReadWidget;
 
     @InjectView(R.id.activity_chapter_read_container)
@@ -112,9 +115,11 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        injectThis();
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_novel_readview);
+        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
         requestSystemUiHelper(SystemUiHelper.LEVEL_IMMERSIVE, SystemUiHelper.FLAG_IMMERSIVE_STICKY);
         ButterKnife.inject(this);
         mHandler = new Handler();
@@ -303,6 +308,21 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     protected void onDestroy() {
         super.onDestroy();
         getPresenter().destroy();
+    }
+
+    @Override
+    protected void injectThis() {
+        SmoothReaderApplication.get(this).inject(this);
+    }
+
+    @Override
+    protected void analyticsTrackEnter() {
+        AnalyticsUtils.trackActivityEnter(this, LOG_TAG);
+    }
+
+    @Override
+    protected void analyticsTrackExit() {
+        AnalyticsUtils.trackActivityExit(this, LOG_TAG);
     }
 
     @Override

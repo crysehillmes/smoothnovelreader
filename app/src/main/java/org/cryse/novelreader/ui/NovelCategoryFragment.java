@@ -1,12 +1,12 @@
 package org.cryse.novelreader.ui;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -28,6 +28,7 @@ import org.cryse.novelreader.ui.adapter.item.NovelCategoryItem;
 import org.cryse.novelreader.ui.adapter.item.NovelCategoryItemGroup;
 import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.util.UIUtils;
+import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class NovelCategoryFragment extends AbstractFragment {
+    private static final String LOG_TAG = NovelCategoryFragment.class.getName();
     private View mContentView;
 
     @InjectView(R.id.category_group_viewpager)
@@ -50,8 +52,14 @@ public class NovelCategoryFragment extends AbstractFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        injectThis();
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    protected void injectThis() {
+        SmoothReaderApplication.get(getActivity()).inject(this);
     }
 
     @Override
@@ -99,6 +107,17 @@ public class NovelCategoryFragment extends AbstractFragment {
         ViewCompat.setElevation(getThemedActivity().getToolbar(),
                 getResources().getDimensionPixelSize(R.dimen.toolbar_elevation));
     }
+
+    @Override
+    protected void analyticsTrackEnter() {
+        AnalyticsUtils.trackFragmentEnter(this, LOG_TAG);
+    }
+
+    @Override
+    protected void analyticsTrackExit() {
+        AnalyticsUtils.trackFragmentExit(this, LOG_TAG);
+    }
+
 
     public void initViewPager() {
         mCategoryAdapter = new CategoryGroupPagerAdapter(getChildFragmentManager());

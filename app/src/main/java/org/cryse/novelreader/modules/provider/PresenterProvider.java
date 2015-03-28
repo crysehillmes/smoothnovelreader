@@ -14,9 +14,14 @@ import org.cryse.novelreader.presenter.impl.NovelBookShelfPresenterImpl;
 import org.cryse.novelreader.presenter.impl.NovelChapterContentPresenterImpl;
 import org.cryse.novelreader.presenter.impl.NovelChaptersPresenterImpl;
 import org.cryse.novelreader.presenter.impl.NovelDetailPresenterImpl;
+import org.cryse.novelreader.qualifier.PrefsNightMode;
+import org.cryse.novelreader.qualifier.PrefsThemeColor;
+import org.cryse.novelreader.util.ThemeEngine;
 import org.cryse.novelreader.util.ToastUtil;
 import org.cryse.novelreader.util.ToastTextGenerator;
 import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
+import org.cryse.novelreader.util.prefs.BooleanPreference;
+import org.cryse.novelreader.util.prefs.IntegerPreference;
 
 import dagger.Module;
 import dagger.Provides;
@@ -25,7 +30,8 @@ import dagger.Provides;
         library = true,
         includes = {
                 NovelSourceProvider.class,
-                ContextProvider.class
+                ContextProvider.class,
+                PreferenceProvider.class
         }
 )
 public class PresenterProvider {
@@ -61,5 +67,10 @@ public class PresenterProvider {
     @Provides
     NovelDetailPresenter provideNovelDetailPresenter(NovelBusinessLogicLayer dataService, AndroidDisplay display, ToastUtil toastUtil) {
         return new NovelDetailPresenterImpl(dataService, display, toastUtil);
+    }
+
+    @Provides
+    public ThemeEngine provideThemeEngine(@PrefsNightMode BooleanPreference nightModePrefs, @PrefsThemeColor IntegerPreference themeColorPrefs) {
+        return new ThemeEngine(nightModePrefs, themeColorPrefs);
     }
 }

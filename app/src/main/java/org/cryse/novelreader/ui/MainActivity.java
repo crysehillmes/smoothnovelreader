@@ -1,7 +1,5 @@
 package org.cryse.novelreader.ui;
 
-import android.app.Fragment;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
@@ -10,9 +8,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -21,7 +17,7 @@ import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ColorUtils;
-import org.cryse.novelreader.util.UIUtils;
+import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
 import org.cryse.novelreader.util.navidrawer.NavigationDrawerItem;
 import org.cryse.novelreader.util.navidrawer.NavigationDrawerView;
@@ -39,6 +35,7 @@ import butterknife.OnItemClick;
 
 
 public class MainActivity extends AbstractThemeableActivity {
+    private static final String LOG_TAG = MainActivity.class.getName();
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -72,8 +69,10 @@ public class MainActivity extends AbstractThemeableActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        injectThis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
         ButterKnife.inject(this);
         SmoothReaderApplication.get(this).inject(this);
 
@@ -141,6 +140,21 @@ public class MainActivity extends AbstractThemeableActivity {
         }
 
         selectItem(mCurrentSelectedPosition);
+    }
+
+    @Override
+    protected void injectThis() {
+        SmoothReaderApplication.get(this).inject(this);
+    }
+
+    @Override
+    protected void analyticsTrackEnter() {
+        AnalyticsUtils.trackActivityEnter(this, LOG_TAG);
+    }
+
+    @Override
+    protected void analyticsTrackExit() {
+        AnalyticsUtils.trackActivityExit(this, LOG_TAG);
     }
 
     @Override

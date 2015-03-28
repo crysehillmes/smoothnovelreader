@@ -32,6 +32,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.cryse.novelreader.R;
+import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelDetailPresenter;
@@ -42,6 +43,7 @@ import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.ToastProxy;
 import org.cryse.novelreader.util.ToastType;
 import org.cryse.novelreader.util.UIUtils;
+import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.view.NovelDetailView;
 import org.cryse.widget.CheckableFrameLayout;
 import org.cryse.widget.ObservableScrollView;
@@ -53,7 +55,8 @@ import butterknife.InjectView;
 import timber.log.Timber;
 
 
-public class NovelDetailActivity extends AbstractThemeableActivity implements NovelDetailView, ObservableScrollView.Callbacks{
+public class NovelDetailActivity extends AbstractThemeableActivity implements NovelDetailView, ObservableScrollView.Callbacks {
+    private static final String LOG_TAG = NovelDetailActivity.class.getName();
     // Constant
     private static final float PHOTO_ASPECT_RATIO = 1.7777777f;
     private static final float GAP_FILL_DISTANCE_MULTIPLIER = 1.5f;
@@ -155,6 +158,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        injectThis();
         /*UIUtils.tryTranslateHttpIntent(this);
         BeamUtils.tryUpdateIntentFromBeam(this);*/
         // requestWindowFeature(Window.FEATURE_ACTION_BAR);
@@ -165,6 +169,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_novel_detail);
+        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
         ButterKnife.inject(this);
 
         mBackgroundServiceConnection = new ServiceConnection() {
@@ -331,6 +336,21 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         if (vto.isAlive()) {
             vto.removeGlobalOnLayoutListener(mGlobalLayoutListener);
         }
+    }
+
+    @Override
+    protected void injectThis() {
+        SmoothReaderApplication.get(this).inject(this);
+    }
+
+    @Override
+    protected void analyticsTrackEnter() {
+        AnalyticsUtils.trackActivityEnter(this, LOG_TAG);
+    }
+
+    @Override
+    protected void analyticsTrackExit() {
+        AnalyticsUtils.trackActivityExit(this, LOG_TAG);
     }
 
     private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener

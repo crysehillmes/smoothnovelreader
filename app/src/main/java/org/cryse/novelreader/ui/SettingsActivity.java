@@ -8,15 +8,20 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import org.cryse.novelreader.R;
+import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ColorUtils;
+import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 
 public class SettingsActivity extends AbstractThemeableActivity {
+    private static final String LOG_TAG = SettingsActivity.class.getName();
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        injectThis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
@@ -38,6 +43,21 @@ public class SettingsActivity extends AbstractThemeableActivity {
         fragmentTransaction.replace(R.id.content_frame, fragment);
         fragmentTransaction.commit();
 
+    }
+
+    @Override
+    protected void injectThis() {
+        SmoothReaderApplication.get(this).inject(this);
+    }
+
+    @Override
+    protected void analyticsTrackEnter() {
+        AnalyticsUtils.trackActivityEnter(this, LOG_TAG);
+    }
+
+    @Override
+    protected void analyticsTrackExit() {
+        AnalyticsUtils.trackActivityExit(this, LOG_TAG);
     }
 
     @Override

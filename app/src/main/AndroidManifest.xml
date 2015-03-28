@@ -55,7 +55,6 @@
 
         <service android:name=".service.ChapterContentsCacheService"/>
 
-        <meta-data android:value="54117fcdfd98c5578c002940" android:name="UMENG_APPKEY"></meta-data>
         <meta-data android:value="Test" android:name="UMENG_CHANNEL"/>
     </application>
 

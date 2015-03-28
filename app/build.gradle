@@ -73,6 +73,8 @@ dependencies {
     // REST Client
     // compile 'com.squareup.retrofit:retrofit:1.7.0'
 
+    compile 'com.umeng.analytics:analytics:5.4.2'
+
     // Dependency Injection
     compile 'com.squareup.dagger:dagger:1.2.2'
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'

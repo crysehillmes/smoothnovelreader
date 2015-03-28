@@ -25,4 +25,7 @@ public class PreferenceConstant {
 
     public static final String SHARED_PREFERENCE_READ_BACKGROUND = "prefs_read_background";
     public static final int SHARED_PREFERENCE_READ_BACKGROUND_VALUE = Color.WHITE;
+
+    public static final String SHARED_PREFERENCE_THEME_COLOR = "prefs_theme_color";
+    public static final int SHARED_PREFERENCE_THEME_COLOR_VALUE = 4;
 }

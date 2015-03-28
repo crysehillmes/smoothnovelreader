@@ -12,6 +12,7 @@ import org.cryse.novelreader.qualifier.PrefsNightMode;
 import org.cryse.novelreader.qualifier.PrefsReadBackground;
 import org.cryse.novelreader.qualifier.PrefsScrollMode;
 import org.cryse.novelreader.qualifier.PrefsShowCoverImage;
+import org.cryse.novelreader.qualifier.PrefsThemeColor;
 import org.cryse.novelreader.util.prefs.BooleanPreference;
 import org.cryse.novelreader.util.prefs.IntegerPreference;
 import org.cryse.novelreader.util.prefs.PreferenceConstant;
@@ -82,5 +83,11 @@ public class PreferenceProvider {
     @PrefsReadBackground
     IntegerPreference provideReadBackground(SharedPreferences preferences) {
         return new IntegerPreference(preferences, PreferenceConstant.SHARED_PREFERENCE_READ_BACKGROUND, PreferenceConstant.SHARED_PREFERENCE_READ_BACKGROUND_VALUE);
+    }
+
+    @Provides
+    @PrefsThemeColor
+    IntegerPreference provideThemeColorIndex(SharedPreferences preferences) {
+        return new IntegerPreference(preferences, PreferenceConstant.SHARED_PREFERENCE_THEME_COLOR, PreferenceConstant.SHARED_PREFERENCE_THEME_COLOR_VALUE);
     }
 }

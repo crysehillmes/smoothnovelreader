@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.quentindommerc.superlistview.SuperListview;
 
+import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.model.NovelBookMarkModel;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.util.ColorUtils;
@@ -25,6 +26,7 @@ import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.ui.adapter.NovelChapterListAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.presenter.NovelChaptersPresenter;
+import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.view.NovelChaptersView;
 import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.ToastProxy;
@@ -39,6 +41,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class NovelChapterListActivity extends AbstractThemeableActivity implements NovelChaptersView{
+    private static final String LOG_TAG = NovelChapterListActivity.class.getName();
     @Inject
     NovelChaptersPresenter mPresenter;
 
@@ -58,8 +61,10 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        injectThis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chapter_list);
+        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
         ButterKnife.inject(this);
         mEmptyViewText.setText(getString(R.string.empty_view_prompt));
         if(savedInstanceState != null) {
@@ -161,6 +166,21 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     protected void onDestroy() {
         super.onDestroy();
         getPresenter().destroy();
+    }
+
+    @Override
+    protected void injectThis() {
+        SmoothReaderApplication.get(this).inject(this);
+    }
+
+    @Override
+    protected void analyticsTrackEnter() {
+        AnalyticsUtils.trackActivityEnter(this, LOG_TAG);
+    }
+
+    @Override
+    protected void analyticsTrackExit() {
+        AnalyticsUtils.trackActivityExit(this, LOG_TAG);
     }
 
     @Override

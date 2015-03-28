@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.cryse.novelreader.R;
+import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelListPresenter;
 import org.cryse.novelreader.qualifier.PrefsGrayScaleInNight;
@@ -27,6 +28,7 @@ import org.cryse.novelreader.util.ToastTextGenerator;
 import org.cryse.novelreader.util.ToastType;
 import org.cryse.novelreader.util.ToastUtil;
 import org.cryse.novelreader.util.UIUtils;
+import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.prefs.BooleanPreference;
 import org.cryse.novelreader.view.NovelOnlineListView;
 import org.cryse.widget.recyclerview.SuperRecyclerView;
@@ -41,6 +43,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class NovelListFragment extends AbstractFragment implements NovelOnlineListView {
+    private static final String LOG_TAG = NovelListFragment.class.getName();
     @Inject
     NovelListPresenter mPresenter;
 
@@ -114,6 +117,7 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        injectThis();
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mHandler = new Handler();
@@ -127,6 +131,11 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
             mIsQueryByTag = bundle.getBoolean(CONTRACT_IS_QUERY_BY_TAG);
         } else
             throw new IllegalArgumentException("Must set category_keyword.");
+    }
+
+    @Override
+    protected void injectThis() {
+        SmoothReaderApplication.get(getActivity()).inject(this);
     }
 
     protected NovelListPresenter getPresenter() {
@@ -277,6 +286,16 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
     public void onDestroy() {
         getPresenter().destroy();
         super.onDestroy();
+    }
+
+    @Override
+    protected void analyticsTrackEnter() {
+        AnalyticsUtils.trackFragmentEnter(this, LOG_TAG);
+    }
+
+    @Override
+    protected void analyticsTrackExit() {
+        AnalyticsUtils.trackFragmentExit(this, LOG_TAG);
     }
 
     @Override
