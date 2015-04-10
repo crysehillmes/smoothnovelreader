@@ -70,7 +70,7 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
                 child.getChildAt(0).setVisibility(preselect == i ? View.VISIBLE : View.GONE);
             } else {
                 child.getChildAt(0).setVisibility(View.GONE);
-                break;
+                continue;
             }
             Drawable selector = createSelector(mColors[i]);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
