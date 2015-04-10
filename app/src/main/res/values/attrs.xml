@@ -18,14 +18,8 @@
         <attr name="far_width_weight" format="integer"/>
     </declare-styleable>
 
-    <declare-styleable name="LetterImageViewAttr">
-        <attr name="liv_oval" format="boolean"/>
-        <attr name="liv_textColor" format="color"/>
-        <attr name="liv_textPadding" format="dimension"/>
-    </declare-styleable>
-
     <declare-styleable name="FlipViewController">
-        <attr name="orientation" format="enum">
+        <attr name="fvc_orientation" format="enum">
             <enum name="vertical" value="0" />
             <enum name="horizontal" value="1" />
         </attr>

@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'retrolambda'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 22
@@ -38,7 +38,7 @@ dependencies {
     compile 'io.reactivex:rxjava:1.0.0-rc.5'
     compile 'com.squareup.retrofit:retrofit:1.7.0'
     compile 'org.jsoup:jsoup:1.7.2'
-    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:1.7.0'
+    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.0.1'
 }
 
 retrolambda {

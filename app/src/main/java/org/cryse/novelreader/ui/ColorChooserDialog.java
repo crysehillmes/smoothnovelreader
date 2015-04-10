@@ -2,7 +2,7 @@ package org.cryse.novelreader.ui;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -13,9 +13,12 @@ import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.ArrayRes;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.GridLayout;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.GridLayout;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -39,7 +42,7 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
         }
     }
 
-    public static interface Callback {
+    public interface Callback {
         void onColorSelection(int index, int color, int darker);
     }
 
@@ -55,25 +58,20 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
                 .customView(R.layout.dialog_color_chooser, false)
                 .build();
 
-        final TypedArray ta = getActivity().getResources().obtainTypedArray(R.array.read_bg_colors);
-        mColors = new int[ta.length()];
-        for (int i = 0; i < ta.length(); i++)
-            mColors[i] = ta.getColor(i, 0);
-        ta.recycle();
+
         final GridLayout list = (GridLayout) dialog.getCustomView().findViewById(R.id.grid);
-        int preselect = -1;
-        final int preselectcolor = getArguments().getInt("preselectcolor", Color.WHITE);
-        for (int i1 = 0; i1 < mColors.length; i1++) {
-            if(preselectcolor == mColors[i1])
-                preselect = i1;
-        }
+        final int preselect = getArguments().getInt("preselect", -1);
 
         for (int i = 0; i < list.getChildCount(); i++) {
             FrameLayout child = (FrameLayout) list.getChildAt(i);
-            child.setTag(i);
-            child.setOnClickListener(this);
-            child.getChildAt(0).setVisibility(preselect == i ? View.VISIBLE : View.GONE);
-
+            if(i < mColors.length) {
+                child.setTag(i);
+                child.setOnClickListener(this);
+                child.getChildAt(0).setVisibility(preselect == i ? View.VISIBLE : View.GONE);
+            } else {
+                child.getChildAt(0).setVisibility(View.GONE);
+                break;
+            }
             Drawable selector = createSelector(mColors[i]);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 int[][] states = new int[][]{
@@ -120,11 +118,28 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
         return stateListDrawable;
     }
 
-    public void show(Activity context, int preselectColor, Callback callback) {
-        mCallback = callback;
+    /*@Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (!(activity instanceof Callback))
+            throw new RuntimeException("The Activity must implement Callback to be used by ColorChooserDialog.");
+        mCallback = (Callback) activity;
+    }*/
+
+    public void show(ActionBarActivity context, int preselect, Callback callback) {
         Bundle args = new Bundle();
-        args.putInt("preselectcolor", preselectColor);
+        args.putInt("preselect", preselect);
         setArguments(args);
-        show(context.getFragmentManager(), "COLOR_SELECTOR");
+        mCallback = callback;
+        show(context.getSupportFragmentManager(), "COLOR_SELECTOR");
+    }
+
+    public ColorChooserDialog setColors(Context context, @ArrayRes int colorsResId) {
+        final TypedArray ta = context.getResources().obtainTypedArray(colorsResId);
+        mColors = new int[ta.length()];
+        for (int i = 0; i < ta.length(); i++)
+            mColors[i] = ta.getColor(i, 0);
+        ta.recycle();
+        return this;
     }
 }

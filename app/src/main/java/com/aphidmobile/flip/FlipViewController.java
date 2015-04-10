@@ -135,7 +135,7 @@ public class FlipViewController extends AdapterView<Adapter> {
         context.getTheme().obtainStyledAttributes(attrs, R.styleable.FlipViewController, 0, 0);
 
     try {
-      int value = a.getInteger(R.styleable.FlipViewController_orientation, VERTICAL);
+      int value = a.getInteger(R.styleable.FlipViewController_fvc_orientation, VERTICAL);
       if (value == HORIZONTAL) {
         orientation = HORIZONTAL;
       }

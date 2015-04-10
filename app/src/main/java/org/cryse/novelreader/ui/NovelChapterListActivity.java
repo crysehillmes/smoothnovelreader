@@ -73,8 +73,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         } else {
             mNovel = getIntent().getParcelableExtra(DataContract.NOVEL_OBJECT_NAME);
         }
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            getWindow().setStatusBarColor(ColorUtils.getColorFromAttr(this, R.attr.colorPrimaryDark));
+
         // UIUtils.setInsets(this, getToolbar(), false);
         initListView();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

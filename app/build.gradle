@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'crashlytics'
-apply plugin: 'retrolambda'
+apply plugin: 'me.tatarka.retrolambda'
 
 
 android {
@@ -61,6 +61,7 @@ dependencies {
 
     // Android Support Libraries
     compile 'com.android.support:support-v13:22.0.0'
+    compile 'com.android.support:gridlayout-v7:22.0.0'
     compile "com.android.support:appcompat-v7:22.0.0"
     compile 'com.android.support:support-annotations:22.0.0'
     compile 'com.android.support:cardview-v7:22.0.0'
@@ -89,7 +90,7 @@ dependencies {
         exclude group: 'com.squareup.okhttp', module: 'okhttp-urlconnection'
     }
 
-    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:1.7.0'
+    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.0.1'
 
     // UI elements
     compile 'com.nispok:snackbar:2.3.0'
@@ -102,7 +103,7 @@ dependencies {
     compile 'com.quentindommerc.superlistview:library:1.5.2'
     compile 'com.github.castorflex.smoothprogressbar:library:1.0.0'
     compile 'com.github.castorflex.smoothprogressbar:library-circular:1.0.1'
-    compile 'com.afollestad:material-dialogs:0.6.2.1'
+    compile 'com.afollestad:material-dialogs:0.7.1.0'
     compile 'com.jpardogo.materialtabstrip:library:1.0.6'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.0'
 

@@ -668,6 +668,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                     getPresenter().getSplitTextPainter().setTextSize(mFontSize);
                     getPresenter().splitChapterAndDisplay(mNovelChapters.get(chapterIndex).getTitle(),
                             mCurrentContent);
+                    return true;
                 })
                 .positiveText(R.string.dialog_choose);
         MaterialDialog dialog = dialogBuilder.build();
@@ -686,10 +687,11 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                 .items(pageCurlModes)
                 .theme(isNightMode() ? Theme.DARK : Theme.LIGHT)
                 .itemsCallbackSingleChoice(index, (materialDialog, view, selection, charSequence) -> {
-                    if(selection == index) return;
+                    if(selection == index) return false;
                     mScrollMode.set(pageCurlModeValues[selection]);
                     mReadWidgetContainer.removeAllViews();
                     reloadTheme(true);
+                    return true;
                 })
                 .positiveText(R.string.dialog_choose);
         MaterialDialog dialog = dialogBuilder.build();
@@ -710,7 +712,9 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     }
 
     public void onMenuItemChooseReadBackground() {
-        new ColorChooserDialog().show(this, mReadBackgroundPrefs.get(), (index, color, darker) -> {
+        new ColorChooserDialog()
+                .setColors(this, R.array.read_bg_colors)
+                .show(this, mReadBackgroundPrefs.get(), (index, color, darker) -> {
             mReadBackgroundPrefs.set(color);
             setReadBackgroundColor();
         });
