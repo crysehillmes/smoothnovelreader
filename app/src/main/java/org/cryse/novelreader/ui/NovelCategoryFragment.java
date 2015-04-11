@@ -1,6 +1,7 @@
 package org.cryse.novelreader.ui;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,10 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.astuetz.PagerSlidingTabStrip;
-
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.event.AbstractEvent;
+import org.cryse.novelreader.event.ThemeColorChangedEvent;
 import org.cryse.novelreader.ui.adapter.NovelCategoryItemAdapter;
 import org.cryse.novelreader.ui.adapter.item.NovelCategoryItem;
 import org.cryse.novelreader.ui.adapter.item.NovelCategoryItemGroup;
@@ -30,6 +31,7 @@ import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
+import org.cryse.widget.slidingtabs.SlidingTabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +47,8 @@ public class NovelCategoryFragment extends AbstractFragment {
 
     @InjectView(R.id.category_group_viewpager)
     ViewPager mViewPager;
-    @InjectView(R.id.tabs)
-    PagerSlidingTabStrip mPagerTabStrip;
+    @InjectView(R.id.fragment_notification_sliding_tabs)
+    SlidingTabLayout mTabLayout;
 
     CategoryGroupPagerAdapter mCategoryAdapter;
 
@@ -86,6 +88,7 @@ public class NovelCategoryFragment extends AbstractFragment {
         } else {
             loadViewPagerData();
         }
+        mTabLayout.setViewPager(mViewPager);
     }
 
     @Override
@@ -99,6 +102,7 @@ public class NovelCategoryFragment extends AbstractFragment {
     public void onResume() {
         super.onResume();
         ViewCompat.setElevation(getThemedActivity().getToolbar(), 0);
+        getThemedActivity().setPreLShadowVisibility(false);
     }
 
     @Override
@@ -106,6 +110,7 @@ public class NovelCategoryFragment extends AbstractFragment {
         super.onPause();
         ViewCompat.setElevation(getThemedActivity().getToolbar(),
                 getResources().getDimensionPixelSize(R.dimen.toolbar_elevation));
+        getThemedActivity().setPreLShadowVisibility(true);
     }
 
     @Override
@@ -122,7 +127,21 @@ public class NovelCategoryFragment extends AbstractFragment {
     public void initViewPager() {
         mCategoryAdapter = new CategoryGroupPagerAdapter(getChildFragmentManager());
         mViewPager.setAdapter(mCategoryAdapter);
-        mPagerTabStrip.setViewPager(mViewPager);
+        mTabLayout.setBackgroundColor(getThemedActivity().getThemeEngine().getPrimaryColor(getActivity()));
+        mTabLayout.setTextColor(Color.WHITE);
+        mTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+
+            @Override
+            public int getIndicatorColor(int position) {
+                return Color.WHITE;
+            }
+
+            @Override
+            public int getDividerColor(int position) {
+                return Color.TRANSPARENT;
+            }
+
+        });
     }
 
     public void loadViewPagerData() {
@@ -328,6 +347,14 @@ public class NovelCategoryFragment extends AbstractFragment {
             super.onSaveInstanceState(outState);
             outState.putInt("position", mPosition);
             outState.putParcelable("item_group", mItemGroup);
+        }
+    }
+
+    @Override
+    protected void onEvent(AbstractEvent event) {
+        super.onEvent(event);
+        if (event instanceof ThemeColorChangedEvent) {
+            mTabLayout.setBackgroundColor(((ThemeColorChangedEvent) event).getNewPrimaryColor());
         }
     }
 }

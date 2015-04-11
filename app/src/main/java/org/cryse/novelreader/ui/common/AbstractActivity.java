@@ -47,11 +47,13 @@ public abstract class AbstractActivity extends ActionBarActivity {
     protected void setUpToolbar(int toolbarLayoutId, int customToolbarShadowId) {
         if (mToolbar == null) {
             mToolbar = (Toolbar) findViewById(toolbarLayoutId);
-            View mPreLShadow = findViewById(customToolbarShadowId);
+            mPreLShadow = findViewById(customToolbarShadowId);
             if (mToolbar != null) {
                 //UIUtils.setInsets(this, mToolbar, false);
                 if(Build.VERSION.SDK_INT < 21 && mPreLShadow != null) {
                     mPreLShadow.setVisibility(View.VISIBLE);
+                } else if(Build.VERSION.SDK_INT >= 21 && mPreLShadow != null) {
+                    mPreLShadow.setVisibility(View.GONE);
                 }
                 setSupportActionBar(mToolbar);
             } else {
@@ -165,9 +167,9 @@ public abstract class AbstractActivity extends ActionBarActivity {
         this.mActionMode = actionMode;
     }
 
-    public void setPreLShadowVisibility(int visibility) {
-        if(mPreLShadow != null)
-            mPreLShadow.setVisibility(visibility);
+    public void setPreLShadowVisibility(boolean visibility) {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && mPreLShadow != null)
+            mPreLShadow.setVisibility(visibility ? View.VISIBLE : View.GONE);
     }
 
     public void finishCompat() {

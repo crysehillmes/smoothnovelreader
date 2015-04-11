@@ -5,15 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
-    <com.astuetz.PagerSlidingTabStrip
-        android:id="@+id/tabs"
+    <org.cryse.widget.slidingtabs.SlidingTabLayout
+        android:id="@+id/fragment_notification_sliding_tabs"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="?attr/colorPrimary"
-        android:textColor="@color/text_color_body1_white"
-        app:pstsIndicatorColor="?colorAccent"
-        android:elevation="@dimen/toolbar_elevation"
-        app:elevation="@dimen/toolbar_elevation"/>
+        android:background="?colorPrimary"
+        android:elevation="@dimen/toolbar_elevation"/>
     <android.support.v4.view.ViewPager
         android:id="@+id/category_group_viewpager"
         android:layout_width="match_parent"

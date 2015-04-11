@@ -103,7 +103,6 @@ dependencies {
     compile 'com.github.castorflex.smoothprogressbar:library:1.0.0'
     compile 'com.github.castorflex.smoothprogressbar:library-circular:1.0.1'
     compile 'com.afollestad:material-dialogs:0.7.1.0'
-    compile 'com.jpardogo.materialtabstrip:library:1.0.6'
     compile('com.mikepenz.materialdrawer:library:2.7.6') {
         transitive = true
     }

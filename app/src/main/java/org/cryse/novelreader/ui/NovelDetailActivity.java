@@ -190,7 +190,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         if(shouldBeFloatingWindow()) {
             getToolbar().setNavigationIcon(R.drawable.ic_ab_close);
         }
-        setPreLShadowVisibility(View.GONE);
+        setPreLShadowVisibility(false);
         if (savedInstanceState == null) {
             Uri sessionUri = getIntent().getData();
             /*BeamUtils.setBeamSessionUri(this, sessionUri);*/
