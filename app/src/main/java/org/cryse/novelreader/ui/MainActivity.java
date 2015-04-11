@@ -2,6 +2,7 @@ package org.cryse.novelreader.ui;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -87,6 +88,7 @@ public class MainActivity extends AbstractThemeableActivity {
                         new SecondaryDrawerItem().withName(R.string.drawer_settings).withIdentifier(1101).withIcon(R.drawable.ic_drawer_settings).withCheckable(false)
 
                 )
+                .withOnDrawerNavigationListener(view -> getSupportFragmentManager().popBackStackImmediate())
                 .withOnDrawerListener(new Drawer.OnDrawerListener() {
                     @Override
                     public void onDrawerOpened(View view) {
@@ -103,14 +105,11 @@ public class MainActivity extends AbstractThemeableActivity {
                         }
                     }
                 })
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
-                        // do something with the clicked item :D
-                        if (drawerItem.getType().equalsIgnoreCase("PRIMARY_ITEM"))
-                            mCurrentSelection = drawerItem.getIdentifier();
-                        mPendingRunnable = () ->  onNavigationSelected(drawerItem);
-                    }
+                .withOnDrawerItemClickListener((parent, view, position, id, drawerItem) -> {
+                    // do something with the clicked item :D
+                    if (drawerItem.getType().equalsIgnoreCase("PRIMARY_ITEM"))
+                        mCurrentSelection = drawerItem.getIdentifier();
+                    mPendingRunnable = () ->  onNavigationSelected(drawerItem);
                 })
                 .build();
         if(mCurrentSelection == 1001 && !mIsRestorePosition) {
@@ -203,7 +202,7 @@ public class MainActivity extends AbstractThemeableActivity {
             return;
         }
 
-        if (getFragmentManager().popBackStackImmediate()) {
+        if (getSupportFragmentManager().popBackStackImmediate()) {
             return;
         }
 
