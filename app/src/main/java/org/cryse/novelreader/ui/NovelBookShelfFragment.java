@@ -181,7 +181,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         getPresenter().loadFavoriteNovels();
         Activity activity = getActivity();
         if(activity instanceof MainActivity) {
-            ((MainActivity)activity).setToolbarTitleFromFragment(getString(R.string.drawer_bookshelf));
+            ((MainActivity)activity).onSectionAttached(getString(R.string.drawer_bookshelf));
         }
     }
 

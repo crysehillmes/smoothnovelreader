@@ -29,7 +29,7 @@ import org.cryse.novelreader.ui.adapter.item.NovelCategoryItemGroup;
 import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
-import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
+import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +77,7 @@ public class NovelCategoryFragment extends AbstractFragment {
         super.onActivityCreated(savedInstanceState);
         Activity activity = getActivity();
         if(activity instanceof MainActivity) {
-            ((MainActivity)activity).setToolbarTitleFromFragment(getString(R.string.drawer_category));
+            ((MainActivity)activity).onSectionAttached(getString(R.string.drawer_category));
         }
         if(savedInstanceState != null && savedInstanceState.containsKey("group_items")) {
             List<NovelCategoryItemGroup> items = savedInstanceState.getParcelableArrayList("group_items");
@@ -261,7 +261,7 @@ public class NovelCategoryFragment extends AbstractFragment {
         private NovelCategoryItemGroup mItemGroup;
 
         @Inject
-        AndroidDisplay mDisplay;
+        AndroidNavigation mDisplay;
 
         public static CategorySubListFragment newInstance(int position, NovelCategoryItemGroup itemGroup) {
             CategorySubListFragment fragment = new CategorySubListFragment();
@@ -302,7 +302,7 @@ public class NovelCategoryFragment extends AbstractFragment {
                 NovelCategoryItem item = adapter.getItem(position);
                 switch (mItemGroup.getGroupType()) {
                     case NovelCategoryItemGroup.TYPE_TRADITIONAL_CATEGORY:
-                        mDisplay.showCategoryFragment(
+                        mDisplay.navigateToCategoryFragment(
                                 item.getTitle(),
                                 item.getValue(),
                                 "",
@@ -311,7 +311,7 @@ public class NovelCategoryFragment extends AbstractFragment {
                         break;
                     case NovelCategoryItemGroup.TYPE_TAG_CATEGORY:
                         String categoryHeaderTitle = mItemGroup.getGroupName();
-                        mDisplay.showCategoryFragment(
+                        mDisplay.navigateToCategoryFragment(
                                 item.getTitle(),
                                 categoryHeaderTitle,
                                 item.getValue(),

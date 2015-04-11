@@ -14,7 +14,7 @@ import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.store.HashTableRunTimeStore;
 import org.cryse.novelreader.util.RunTimeStore;
-import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
+import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
 import dagger.ObjectGraph;
 import timber.log.Timber;
@@ -26,7 +26,7 @@ public class SmoothReaderApplication extends Application {
     private ObjectGraph objectGraph;
     private RxEventBus mEventBus;
     private RunTimeStore mRunTimeStore;
-    private AndroidDisplay mAndroidDisplay;
+    private AndroidNavigation mAndroidNavigation;
     public static SmoothReaderApplication get(Context context) {
         return (SmoothReaderApplication) context.getApplicationContext();
     }
@@ -50,7 +50,7 @@ public class SmoothReaderApplication extends Application {
         buildObjectGraphAndInject();
 
         mRunTimeStore = new HashTableRunTimeStore();
-        mAndroidDisplay = new AndroidDisplay(mRunTimeStore);
+        mAndroidNavigation = new AndroidNavigation(mRunTimeStore);
 
         Intent chapterContentCacheServiceIntent = new Intent(this, ChapterContentsCacheService.class);
         startService(chapterContentCacheServiceIntent);
@@ -89,8 +89,8 @@ public class SmoothReaderApplication extends Application {
         return mRunTimeStore;
     }
 
-    public AndroidDisplay getAndroidDisplay() {
-        return mAndroidDisplay;
+    public AndroidNavigation getAndroidDisplay() {
+        return mAndroidNavigation;
     }
 
     public RxEventBus getEventBus() {

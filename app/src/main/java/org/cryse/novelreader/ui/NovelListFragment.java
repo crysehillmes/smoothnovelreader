@@ -236,7 +236,7 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
         Activity activity = getActivity();
         if(activity instanceof MainActivity) {
             MainActivity mainActivity = (MainActivity)activity;
-            mainActivity.setToolbarTitleFromFragment(mFragmentTitle);
+            mainActivity.onSectionAttached(mFragmentTitle);
             mainActivity.showDrawToggleAsUp(true);
             mainActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             mainActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);

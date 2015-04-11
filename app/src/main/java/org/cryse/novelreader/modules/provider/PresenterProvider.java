@@ -19,7 +19,7 @@ import org.cryse.novelreader.qualifier.PrefsThemeColor;
 import org.cryse.novelreader.util.ThemeEngine;
 import org.cryse.novelreader.util.ToastUtil;
 import org.cryse.novelreader.util.ToastTextGenerator;
-import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
+import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 import org.cryse.novelreader.util.prefs.BooleanPreference;
 import org.cryse.novelreader.util.prefs.IntegerPreference;
 
@@ -45,27 +45,27 @@ public class PresenterProvider {
     }
 
     @Provides
-    NovelChaptersPresenter provideNovelChaptersPresenter(NovelBusinessLogicLayer dataService, AndroidDisplay display, ToastUtil toastUtil) {
+    NovelChaptersPresenter provideNovelChaptersPresenter(NovelBusinessLogicLayer dataService, AndroidNavigation display, ToastUtil toastUtil) {
         return new NovelChaptersPresenterImpl(dataService, display, toastUtil);
     }
 
     @Provides
-    NovelListPresenter provideNovelListPresenter(NovelBusinessLogicLayer dataService, AndroidDisplay display, ToastUtil toastUtil) {
+    NovelListPresenter provideNovelListPresenter(NovelBusinessLogicLayer dataService, AndroidNavigation display, ToastUtil toastUtil) {
         return new NovelListPresenterImpl(dataService, display, toastUtil);
     }
 
     @Provides
-    NovelChapterContentPresenter provideNovelChapterContentPresenter(NovelBusinessLogicLayer dataService, AndroidDisplay display, ToastUtil toastUtil) {
+    NovelChapterContentPresenter provideNovelChapterContentPresenter(NovelBusinessLogicLayer dataService, AndroidNavigation display, ToastUtil toastUtil) {
         return new NovelChapterContentPresenterImpl(dataService, display, toastUtil);
     }
 
     @Provides
-    NovelBookShelfPresenter provideNovelBookShelfPresenter(NovelBusinessLogicLayer dataService, AndroidDisplay display, ToastUtil toastUtil) {
+    NovelBookShelfPresenter provideNovelBookShelfPresenter(NovelBusinessLogicLayer dataService, AndroidNavigation display, ToastUtil toastUtil) {
         return new NovelBookShelfPresenterImpl(dataService, display, toastUtil);
     }
 
     @Provides
-    NovelDetailPresenter provideNovelDetailPresenter(NovelBusinessLogicLayer dataService, AndroidDisplay display, ToastUtil toastUtil) {
+    NovelDetailPresenter provideNovelDetailPresenter(NovelBusinessLogicLayer dataService, AndroidNavigation display, ToastUtil toastUtil) {
         return new NovelDetailPresenterImpl(dataService, display, toastUtil);
     }
 

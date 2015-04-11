@@ -9,7 +9,7 @@ import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.qualifier.ApplicationContext;
 import org.cryse.novelreader.util.RunTimeStore;
-import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
+import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
 import java.io.File;
 
@@ -47,7 +47,7 @@ public class ContextProvider {
     }
 
     @Provides
-    AndroidDisplay provideAndroidDisplay() {
+    AndroidNavigation provideAndroidDisplay() {
         return ((SmoothReaderApplication)mApplicationContext).getAndroidDisplay();
     }
 

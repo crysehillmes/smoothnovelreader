@@ -27,7 +27,7 @@ import org.cryse.novelreader.presenter.impl.NovelChapterContentPresenterImpl;
 import org.cryse.novelreader.presenter.impl.NovelChaptersPresenterImpl;
 import org.cryse.novelreader.presenter.impl.NovelDetailPresenterImpl;
 import org.cryse.novelreader.ui.SettingsFragment;
-import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
+import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
 import javax.inject.Singleton;
 
@@ -37,7 +37,7 @@ import dagger.Provides;
 @Module(
         injects = {
                 SmoothReaderApplication.class,
-                AndroidDisplay.class,
+                AndroidNavigation.class,
 
                 //Presenters
                 NovelBookShelfPresenterImpl.class,

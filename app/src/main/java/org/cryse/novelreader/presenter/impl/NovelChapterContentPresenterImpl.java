@@ -11,7 +11,7 @@ import org.cryse.novelreader.util.ToastType;
 import org.cryse.novelreader.view.NovelChapterContentView;
 import org.cryse.novelreader.util.SubscriptionUtils;
 import org.cryse.novelreader.util.ToastUtil;
-import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
+import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 import org.cryse.novelreader.util.textsplitter.PageSplitter;
 
 import java.util.ArrayList;
@@ -34,14 +34,14 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     Subscription mGetOtherSrcSubscription;
     NovelBusinessLogicLayer mNovelBusinessLogicLayer;
 
-    AndroidDisplay mDisplay;
+    AndroidNavigation mDisplay;
 
     ToastUtil mToastUtil;
 
     @Inject
     public NovelChapterContentPresenterImpl(
             NovelBusinessLogicLayer mNovelBusinessLogicLayer,
-            AndroidDisplay display,
+            AndroidNavigation display,
             ToastUtil toastUtil) {
         this.mNovelBusinessLogicLayer = mNovelBusinessLogicLayer;
         this.mDisplay = display;

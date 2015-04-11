@@ -119,4 +119,6 @@ allprojects {
     ext.appVersionName = generateVersionName()
     ext.appMinSdkVersion = 17
     ext.appTargetSdkVersion = 22
+    ext.appCompileSdkVersion=22
+    ext.appBuildToolsVersion='22.0.1'
 }
