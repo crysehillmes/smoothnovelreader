@@ -17,7 +17,7 @@ import java.util.List;
 /** 
  * DAO for table NOVEL_CHAPTER_MODEL.
 */
-public class NovelChapterModelDao extends AbstractDao<NovelChapterModel, Void> {
+public class NovelChapterModelDao extends AbstractDao<NovelChapterModel, String> {
 
     public static final String TABLENAME = "NOVEL_CHAPTER_MODEL";
 
@@ -27,7 +27,7 @@ public class NovelChapterModelDao extends AbstractDao<NovelChapterModel, Void> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, String.class, "id", false, "ID");
-        public final static Property SecondId = new Property(1, String.class, "secondId", false, "SECOND_ID");
+        public final static Property SecondId = new Property(1, String.class, "secondId", true, "SECOND_ID");
         public final static Property Src = new Property(2, String.class, "src", false, "SRC");
         public final static Property Title = new Property(3, String.class, "title", false, "TITLE");
         public final static Property ChapterIndex = new Property(4, Integer.class, "chapterIndex", false, "CHAPTER_INDEX");
@@ -47,7 +47,7 @@ public class NovelChapterModelDao extends AbstractDao<NovelChapterModel, Void> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'NOVEL_CHAPTER_MODEL' (" + //
                 "'ID' TEXT," + // 0: id
-                "'SECOND_ID' TEXT," + // 1: secondId
+                "'SECOND_ID' TEXT PRIMARY KEY," + // 1: secondId
                 "'SRC' TEXT," + // 2: src
                 "'TITLE' TEXT," + // 3: title
                 "'CHAPTER_INDEX' INTEGER);"); // 4: chapterIndex
@@ -97,8 +97,8 @@ public class NovelChapterModelDao extends AbstractDao<NovelChapterModel, Void> {
 
     /** @inheritdoc */
     @Override
-    public Void readKey(Cursor cursor, int offset) {
-        return null;
+    public String readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1);
     }    
 
     /** @inheritdoc */
@@ -126,15 +126,19 @@ public class NovelChapterModelDao extends AbstractDao<NovelChapterModel, Void> {
     
     /** @inheritdoc */
     @Override
-    protected Void updateKeyAfterInsert(NovelChapterModel entity, long rowId) {
+    protected String updateKeyAfterInsert(NovelChapterModel entity, long rowId) {
         // Unsupported or missing PK type
-        return null;
+        return entity.getSecondId();
     }
     
     /** @inheritdoc */
     @Override
-    public Void getKey(NovelChapterModel entity) {
-        return null;
+    public String getKey(NovelChapterModel entity) {
+        if(entity != null) {
+            return entity.getSecondId();
+        } else {
+            return null;
+        }
     }
 
     /** @inheritdoc */
