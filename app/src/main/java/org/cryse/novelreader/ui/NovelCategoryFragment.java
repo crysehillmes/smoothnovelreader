@@ -66,7 +66,7 @@ public class NovelCategoryFragment extends AbstractFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContentView = inflater.inflate(R.layout.fragment_category_list,null);
         ButterKnife.inject(this, mContentView);
-        UIUtils.setInsets(getActivity(), mContentView, true, Build.VERSION.SDK_INT < 21);
+        UIUtils.setInsets(getActivity(), mContentView, false, false, true, Build.VERSION.SDK_INT < 21);
         //UIUtils.setInsets(getActivity(), mViewPager, true, Build.VERSION.SDK_INT < 21);
         initViewPager();
         return mContentView;

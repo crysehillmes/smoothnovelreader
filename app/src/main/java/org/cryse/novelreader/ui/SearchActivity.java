@@ -79,7 +79,7 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
         showCoverImage = mIsShowCoverImage.get();
         grayScaleInNight = mGrayScaleInNight.get();
 
-        UIUtils.setInsets(this, mListView, true, Build.VERSION.SDK_INT < 21);
+        UIUtils.setInsets(this, mListView, false, false, true, Build.VERSION.SDK_INT < 21);
         String query = getIntent().getStringExtra(SearchManager.QUERY);
         query = query == null ? "" : query;
         mQueryString = query;

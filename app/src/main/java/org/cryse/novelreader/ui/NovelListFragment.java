@@ -151,7 +151,7 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
         mEmptyViewText.setText(getActivity().getString(R.string.empty_view_prompt));
         initListView();
         mListView.setClipToPadding(false);
-        UIUtils.setInsets(getActivity(), mListView, true, Build.VERSION.SDK_INT < 21);
+        UIUtils.setInsets(getActivity(), mListView, false, false, true, Build.VERSION.SDK_INT < 21);
         return mContentView;
     }
 

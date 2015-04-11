@@ -57,7 +57,7 @@ public class NovelRankFragment extends AbstractFragment {
         ButterKnife.inject(this, mContentView);
         initListView();
         mRecyclerView.setClipToPadding(false);
-        UIUtils.setInsets(getActivity(), mRecyclerView, true, Build.VERSION.SDK_INT < 21);
+        UIUtils.setInsets(getActivity(), mRecyclerView, false, false, true, Build.VERSION.SDK_INT < 21);
         return mContentView;
     }
 

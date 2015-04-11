@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.readystatesoftware.systembartint.BuildConfig;
 
+import org.cryse.novelreader.BuildConfig;
 import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.modules.ModulesList;
 import org.cryse.novelreader.service.ChapterContentsCacheService;

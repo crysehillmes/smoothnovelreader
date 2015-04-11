@@ -89,7 +89,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         ButterKnife.inject(this, contentView);
         mEmptyViewText.setText(getActivity().getString(R.string.empty_view_no_book_on_shelf_prompt));
         initListView();
-        UIUtils.setInsets(getActivity(), mShelfListView, true, Build.VERSION.SDK_INT < 21);
+        UIUtils.setInsets(getActivity(), mShelfListView, false, false, true, Build.VERSION.SDK_INT < 21);
         mShelfListView.setClipToPadding(false);
         return contentView;
     }
