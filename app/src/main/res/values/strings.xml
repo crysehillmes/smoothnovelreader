@@ -213,4 +213,5 @@
     <string name="settings_item_author_blog_site_value" translatable="false">http://www.cryse.org</string>
     <string name="settings_item_author_blog_site">作者网站</string>
     <string name="settings_item_version">版本</string>
+    <string name="copyright_statement">[声明：本应用内小说来自手机百度页面，本应用不爬取或存储任何小说内容]</string>
 </resources>
