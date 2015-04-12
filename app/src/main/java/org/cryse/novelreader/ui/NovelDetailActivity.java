@@ -15,7 +15,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.view.ViewCompat;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -505,6 +508,10 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         final String detailAbstract = mNovelDetail.getSummary().replace("\t","");
         if (!TextUtils.isEmpty(detailAbstract)) {
             UIUtils.setTextMaybeHtml(mAbstractTextView, UIUtils.addIndentToStart(detailAbstract));
+            SpannableString copyRightString = new SpannableString(getString(R.string.copyright_statement));
+            copyRightString.setSpan(new ForegroundColorSpan(mDetailPrimaryColor), 0, copyRightString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            mAbstractTextView.append("\n\n");
+            mAbstractTextView.append(copyRightString);
             mAbstractHeaderTextView.setVisibility(View.VISIBLE);
             mAbstractTextView.setVisibility(View.VISIBLE);
             mHasSummaryContent = true;
