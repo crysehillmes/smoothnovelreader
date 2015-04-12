@@ -1,12 +1,13 @@
 package org.cryse.novelreader.ui;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -19,16 +20,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.astuetz.PagerSlidingTabStrip;
-
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.event.AbstractEvent;
+import org.cryse.novelreader.event.ThemeColorChangedEvent;
 import org.cryse.novelreader.ui.adapter.NovelCategoryItemAdapter;
 import org.cryse.novelreader.ui.adapter.item.NovelCategoryItem;
 import org.cryse.novelreader.ui.adapter.item.NovelCategoryItemGroup;
 import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.util.UIUtils;
-import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
+import org.cryse.novelreader.util.analytics.AnalyticsUtils;
+import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
+import org.cryse.widget.slidingtabs.SlidingTabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,26 +42,33 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class NovelCategoryFragment extends AbstractFragment {
+    private static final String LOG_TAG = NovelCategoryFragment.class.getName();
     private View mContentView;
 
     @InjectView(R.id.category_group_viewpager)
     ViewPager mViewPager;
-    @InjectView(R.id.tabs)
-    PagerSlidingTabStrip mPagerTabStrip;
+    @InjectView(R.id.fragment_notification_sliding_tabs)
+    SlidingTabLayout mTabLayout;
 
     CategoryGroupPagerAdapter mCategoryAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        injectThis();
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    protected void injectThis() {
+        SmoothReaderApplication.get(getActivity()).inject(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContentView = inflater.inflate(R.layout.fragment_category_list,null);
         ButterKnife.inject(this, mContentView);
-        UIUtils.setInsets(getActivity(), mContentView, true, Build.VERSION.SDK_INT < 21);
+        UIUtils.setInsets(getActivity(), mContentView, false, false, true, Build.VERSION.SDK_INT < 21);
         //UIUtils.setInsets(getActivity(), mViewPager, true, Build.VERSION.SDK_INT < 21);
         initViewPager();
         return mContentView;
@@ -69,7 +79,7 @@ public class NovelCategoryFragment extends AbstractFragment {
         super.onActivityCreated(savedInstanceState);
         Activity activity = getActivity();
         if(activity instanceof MainActivity) {
-            ((MainActivity)activity).setToolbarTitleFromFragment(getString(R.string.drawer_category));
+            ((MainActivity)activity).onSectionAttached(getString(R.string.drawer_category));
         }
         if(savedInstanceState != null && savedInstanceState.containsKey("group_items")) {
             List<NovelCategoryItemGroup> items = savedInstanceState.getParcelableArrayList("group_items");
@@ -78,6 +88,7 @@ public class NovelCategoryFragment extends AbstractFragment {
         } else {
             loadViewPagerData();
         }
+        mTabLayout.setViewPager(mViewPager);
     }
 
     @Override
@@ -91,6 +102,7 @@ public class NovelCategoryFragment extends AbstractFragment {
     public void onResume() {
         super.onResume();
         ViewCompat.setElevation(getThemedActivity().getToolbar(), 0);
+        getThemedActivity().setPreLShadowVisibility(false);
     }
 
     @Override
@@ -98,12 +110,38 @@ public class NovelCategoryFragment extends AbstractFragment {
         super.onPause();
         ViewCompat.setElevation(getThemedActivity().getToolbar(),
                 getResources().getDimensionPixelSize(R.dimen.toolbar_elevation));
+        getThemedActivity().setPreLShadowVisibility(true);
     }
+
+    @Override
+    protected void analyticsTrackEnter() {
+        AnalyticsUtils.trackFragmentEnter(this, LOG_TAG);
+    }
+
+    @Override
+    protected void analyticsTrackExit() {
+        AnalyticsUtils.trackFragmentExit(this, LOG_TAG);
+    }
+
 
     public void initViewPager() {
         mCategoryAdapter = new CategoryGroupPagerAdapter(getChildFragmentManager());
         mViewPager.setAdapter(mCategoryAdapter);
-        mPagerTabStrip.setViewPager(mViewPager);
+        mTabLayout.setBackgroundColor(getThemedActivity().getThemeEngine().getPrimaryColor(getActivity()));
+        mTabLayout.setTextColor(Color.WHITE);
+        mTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+
+            @Override
+            public int getIndicatorColor(int position) {
+                return Color.WHITE;
+            }
+
+            @Override
+            public int getDividerColor(int position) {
+                return Color.TRANSPARENT;
+            }
+
+        });
     }
 
     public void loadViewPagerData() {
@@ -242,7 +280,7 @@ public class NovelCategoryFragment extends AbstractFragment {
         private NovelCategoryItemGroup mItemGroup;
 
         @Inject
-        AndroidDisplay mDisplay;
+        AndroidNavigation mDisplay;
 
         public static CategorySubListFragment newInstance(int position, NovelCategoryItemGroup itemGroup) {
             CategorySubListFragment fragment = new CategorySubListFragment();
@@ -283,7 +321,7 @@ public class NovelCategoryFragment extends AbstractFragment {
                 NovelCategoryItem item = adapter.getItem(position);
                 switch (mItemGroup.getGroupType()) {
                     case NovelCategoryItemGroup.TYPE_TRADITIONAL_CATEGORY:
-                        mDisplay.showCategoryFragment(
+                        mDisplay.navigateToCategoryFragment(
                                 item.getTitle(),
                                 item.getValue(),
                                 "",
@@ -292,7 +330,7 @@ public class NovelCategoryFragment extends AbstractFragment {
                         break;
                     case NovelCategoryItemGroup.TYPE_TAG_CATEGORY:
                         String categoryHeaderTitle = mItemGroup.getGroupName();
-                        mDisplay.showCategoryFragment(
+                        mDisplay.navigateToCategoryFragment(
                                 item.getTitle(),
                                 categoryHeaderTitle,
                                 item.getValue(),
@@ -309,6 +347,14 @@ public class NovelCategoryFragment extends AbstractFragment {
             super.onSaveInstanceState(outState);
             outState.putInt("position", mPosition);
             outState.putParcelable("item_group", mItemGroup);
+        }
+    }
+
+    @Override
+    protected void onEvent(AbstractEvent event) {
+        super.onEvent(event);
+        if (event instanceof ThemeColorChangedEvent) {
+            mTabLayout.setBackgroundColor(((ThemeColorChangedEvent) event).getNewPrimaryColor());
         }
     }
 }

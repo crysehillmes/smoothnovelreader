@@ -6,14 +6,15 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.readystatesoftware.systembartint.BuildConfig;
 
+import org.cryse.novelreader.BuildConfig;
+import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.modules.ModulesList;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
+import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.store.HashTableRunTimeStore;
 import org.cryse.novelreader.util.RunTimeStore;
-import org.cryse.novelreader.util.analytics.AnalyticsHelper;
-import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
+import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
 import dagger.ObjectGraph;
 import timber.log.Timber;
@@ -23,9 +24,9 @@ public class SmoothReaderApplication extends Application {
 
     private static final long CACHE_MAX_SIZE = 20l * 1024l * 1024l;
     private ObjectGraph objectGraph;
-
+    private RxEventBus mEventBus;
     private RunTimeStore mRunTimeStore;
-    private AndroidDisplay mAndroidDisplay;
+    private AndroidNavigation mAndroidNavigation;
     public static SmoothReaderApplication get(Context context) {
         return (SmoothReaderApplication) context.getApplicationContext();
     }
@@ -42,13 +43,14 @@ public class SmoothReaderApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        AnalyticsHelper.init();
+        AnalyticsUtils.init("54117fcdfd98c5578c002940");
         Crashlytics.start(this);
         Timber.plant(new CrashReportingTree());
+        mEventBus = new RxEventBus();
         buildObjectGraphAndInject();
 
         mRunTimeStore = new HashTableRunTimeStore();
-        mAndroidDisplay = new AndroidDisplay(mRunTimeStore);
+        mAndroidNavigation = new AndroidNavigation(mRunTimeStore);
 
         Intent chapterContentCacheServiceIntent = new Intent(this, ChapterContentsCacheService.class);
         startService(chapterContentCacheServiceIntent);
@@ -87,8 +89,12 @@ public class SmoothReaderApplication extends Application {
         return mRunTimeStore;
     }
 
-    public AndroidDisplay getAndroidDisplay() {
-        return mAndroidDisplay;
+    public AndroidNavigation getAndroidDisplay() {
+        return mAndroidNavigation;
+    }
+
+    public RxEventBus getEventBus() {
+        return mEventBus;
     }
 
     /** A tree which logs important information for crash reporting. */

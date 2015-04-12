@@ -6,9 +6,10 @@ import android.content.Context;
 import android.content.res.AssetManager;
 
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.qualifier.ApplicationContext;
 import org.cryse.novelreader.util.RunTimeStore;
-import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
+import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
 import java.io.File;
 
@@ -23,9 +24,10 @@ import dagger.Provides;
 public class ContextProvider {
 
     private final Context mApplicationContext;
-
-    public ContextProvider(Context context) {
+    private final RxEventBus mEventBus;
+    public ContextProvider(Context context, RxEventBus eventBus) {
         mApplicationContext = context;
+        mEventBus = eventBus;
     }
 
     @Provides
@@ -45,11 +47,12 @@ public class ContextProvider {
     }
 
     @Provides
-    AndroidDisplay provideAndroidDisplay() {
+    AndroidNavigation provideAndroidDisplay() {
         return ((SmoothReaderApplication)mApplicationContext).getAndroidDisplay();
     }
 
-    @Provides @Singleton
+    @Singleton
+    @Provides
     public AccountManager provideAccountManager() {
         return AccountManager.get(mApplicationContext);
     }
@@ -59,14 +62,21 @@ public class ContextProvider {
         return mApplicationContext.getFilesDir();
     }
 
-    @Provides @Singleton
+    @Singleton
+    @Provides
     public AssetManager provideAssetManager() {
         return mApplicationContext.getAssets();
     }
 
-    @Provides @Singleton
+    @Singleton
+    @Provides
     public AlarmManager provideAlarmManager() {
         return (AlarmManager) mApplicationContext.getSystemService(Context.ALARM_SERVICE);
     }
 
+    @Singleton
+    @Provides
+    public RxEventBus provideRxEventBus() {
+        return mEventBus;
+    }
 }

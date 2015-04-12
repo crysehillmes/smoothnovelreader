@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.quentindommerc.superlistview.SuperListview;
 
+import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.model.NovelBookMarkModel;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.util.ColorUtils;
@@ -25,6 +26,7 @@ import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.ui.adapter.NovelChapterListAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.presenter.NovelChaptersPresenter;
+import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.view.NovelChaptersView;
 import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.ToastProxy;
@@ -39,6 +41,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class NovelChapterListActivity extends AbstractThemeableActivity implements NovelChaptersView{
+    private static final String LOG_TAG = NovelChapterListActivity.class.getName();
     @Inject
     NovelChaptersPresenter mPresenter;
 
@@ -58,8 +61,10 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        injectThis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chapter_list);
+        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
         ButterKnife.inject(this);
         mEmptyViewText.setText(getString(R.string.empty_view_prompt));
         if(savedInstanceState != null) {
@@ -68,8 +73,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         } else {
             mNovel = getIntent().getParcelableExtra(DataContract.NOVEL_OBJECT_NAME);
         }
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            getWindow().setStatusBarColor(ColorUtils.getColorFromAttr(this, R.attr.colorPrimaryDark));
+
         // UIUtils.setInsets(this, getToolbar(), false);
         initListView();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -164,6 +168,21 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     }
 
     @Override
+    protected void injectThis() {
+        SmoothReaderApplication.get(this).inject(this);
+    }
+
+    @Override
+    protected void analyticsTrackEnter() {
+        AnalyticsUtils.trackActivityEnter(this, LOG_TAG);
+    }
+
+    @Override
+    protected void analyticsTrackExit() {
+        AnalyticsUtils.trackActivityExit(this, LOG_TAG);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_chapterlist, menu);
         mMenuItemCacheChapters = menu.findItem(R.id.menu_item_chapters_offline_cache);
@@ -229,7 +248,21 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
             if (index >= 0 && index < mNovelChapterList.size()) {
                 mChapterListAdapter.setLastReadIndicator(index);
                 mChapterListAdapter.notifyDataSetChanged();
-                mListView.getList().setSelection(index);
+                if(index < mListView.getList().getFirstVisiblePosition()) {
+                    int distance = mListView.getList().getFirstVisiblePosition() - index;
+                    if(distance > 50) {
+                        distance = 50;
+                    }
+                    mListView.getList().setSelection(index + distance);
+                    mListView.getList().smoothScrollToPosition(index);
+                } else if(index > mListView.getList().getLastVisiblePosition()) {
+                    int distance = index - mListView.getList().getFirstVisiblePosition();
+                    if(distance > 50) {
+                        distance = 50;
+                    }
+                    mListView.getList().setSelection(index - distance);
+                    mListView.getList().smoothScrollToPosition(index);
+                }
             }
         } else {
             mChapterListAdapter.clearLastReadIndicator();

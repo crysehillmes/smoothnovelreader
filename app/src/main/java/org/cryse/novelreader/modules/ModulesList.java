@@ -16,7 +16,7 @@ public class ModulesList {
     public static Object[] list(SmoothReaderApplication application) {
         return new Object[]{
                 new AppModule(application),
-                new ContextProvider(application),
+                new ContextProvider(application, application.getEventBus()),
                 new PreferenceProvider(),
                 new NovelSourceProvider(),
                 new UtilProvider()

@@ -1,22 +1,38 @@
 package org.cryse.novelreader.ui.common;
 
-import android.app.Fragment;
+import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 
-import org.cryse.novelreader.application.SmoothReaderApplication;
-import org.cryse.novelreader.util.analytics.AnalyticsHelper;
+import org.cryse.novelreader.event.AbstractEvent;
+import org.cryse.novelreader.event.RxEventBus;
+import org.cryse.novelreader.util.SubscriptionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractFragment extends Fragment {
+import javax.inject.Inject;
+
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+public abstract class AbstractFragment extends android.support.v4.app.Fragment {
     private List<Runnable> mDeferredUiOperations = new ArrayList<Runnable>();
+
+    @Inject
+    RxEventBus mEventBus;
+
+    private Subscription mEventBusSubscription;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SmoothReaderApplication.get(getActivity()).inject(this);
+        mEventBusSubscription = mEventBus.toObservable()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onEvent);
     }
 
     protected List<Runnable> getDeferredUiOperations() {
@@ -30,16 +46,29 @@ public abstract class AbstractFragment extends Fragment {
         mDeferredUiOperations.clear();
     }
 
+    protected abstract void injectThis();
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        AnalyticsHelper.trackFragmentEnter(this, getFragmentName());
+        analyticsTrackEnter();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        AnalyticsHelper.trackFragmentExit(this, getFragmentName());
+        analyticsTrackExit();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        SubscriptionUtils.checkAndUnsubscribe(mEventBusSubscription);
     }
 
     public ActionBarActivity getActionBarActivity() {
@@ -62,7 +91,25 @@ public abstract class AbstractFragment extends Fragment {
         return ((AbstractActivity)getActionBarActivity()).getActionMode();
     }
 
-    public boolean isNightMode() {
-        return ((AbstractThemeableActivity)getActionBarActivity()).isNightMode();
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        getActivity().invalidateOptionsMenu();
+    }
+
+    public Boolean isNightMode() {
+        if(isAdded())
+            return ((AbstractThemeableActivity)getActionBarActivity()).isNightMode();
+        else
+            return null;
+
+    }
+
+    protected abstract void analyticsTrackEnter();
+
+    protected abstract void analyticsTrackExit();
+
+    protected void onEvent(AbstractEvent event) {
+
     }
 }

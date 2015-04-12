@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="FrameworkRoot.Light" parent="Theme.AppCompat.Light.NoActionBar" />
+    <style name="FrameworkRoot.Light" parent="MaterialDrawerTheme.Light.DarkToolbar" />
     <style name="FrameworkRoot.Light.ActionButton.Overflow" parent="Widget.AppCompat.ActionButton.Overflow" />
     <style name="FrameworkRoot.Light.Spinner" parent="Widget.AppCompat.Spinner" />
 

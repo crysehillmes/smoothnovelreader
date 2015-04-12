@@ -2,14 +2,13 @@ package org.cryse.novelreader.util.navidrawer;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBarDrawerToggle;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
@@ -33,24 +32,21 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 
-public class AndroidDisplay {
-    private static final String TAG = AndroidDisplay.class.getCanonicalName();
+public class AndroidNavigation {
+    private static final String TAG = AndroidNavigation.class.getCanonicalName();
     RunTimeStore mRunTimeStore;
 
     protected ActionBarActivity mActivity;
     protected FragmentManager mFragmentManager;
-    protected ActionBarDrawerToggle mActionBarDrawerToggle;
-    protected String mMainActivityTitle;
 
     @Inject
-    public AndroidDisplay(RunTimeStore runTimeStore) {
+    public AndroidNavigation(RunTimeStore runTimeStore) {
         this.mRunTimeStore = runTimeStore;
     }
 
-    public void attach(ActionBarActivity activity, ActionBarDrawerToggle actionBarDrawerToggle) {
+    public void attachMainActivity(ActionBarActivity activity) {
         mActivity = activity;
-        mFragmentManager = mActivity.getFragmentManager();
-        mActionBarDrawerToggle = actionBarDrawerToggle;
+        mFragmentManager = mActivity.getSupportFragmentManager();
         SmoothReaderApplication.get(activity).inject(this);
     }
 
@@ -63,16 +59,16 @@ public class AndroidDisplay {
     }
 
     public void switchContentFragment(Fragment targetFragment, String backStackTag) {
-        if(mActionBarDrawerToggle == null || mActivity == null)
+        if(mActivity == null)
             throw new IllegalStateException("Should attach to MainActivity before call any method.");
         clearBackStack();
         FragmentTransaction fragmentTransaction = mFragmentManager
                 .beginTransaction();
-        fragmentTransaction.setCustomAnimations(android.R.animator.fade_in,
-                android.R.animator.fade_out);
+        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                android.R.anim.fade_out);
         if(backStackTag != null)
             fragmentTransaction.addToBackStack(backStackTag);
-        fragmentTransaction.replace(R.id.contentFrame, targetFragment);
+        fragmentTransaction.replace(R.id.container, targetFragment);
         fragmentTransaction.commit();
     }
 
@@ -81,16 +77,6 @@ public class AndroidDisplay {
             mFragmentManager.popBackStack();
         }
     }
-
-    public void showUpNavigation(boolean show) {
-        if (mActionBarDrawerToggle != null) {
-            mActionBarDrawerToggle.setDrawerIndicatorEnabled(!show);
-        } else {
-            mActivity.getActionBar().setDisplayHomeAsUpEnabled(show);
-            mActivity.getActionBar().setHomeButtonEnabled(true);
-        }
-    }
-
 
     public boolean popEntireFragmentBackStack() {
         final int backStackCount = mFragmentManager.getBackStackEntryCount();
@@ -118,39 +104,19 @@ public class AndroidDisplay {
         startActivity(activity, intent);
     }
 
-    public void handleNaviDrawerSelection(NavigationDrawerItem naviItem) {
-        switch(naviItem.getNavigationType()) {
-            case NOVEL_BOOKSHELF_FRAGMENT:
-                showBookShelfFragment();
-                break;
-            case NOVEL_CATEGORY_FRAGMENT:
-                showCategoryListFragment();
-                break;
-            case NOVEL_RANK_FRAGMENT:
-                showRankFragment();
-                break;
-            case NOVEL_SETTINGS_ACTIVITY:
-                showSettingsActivity();
-                break;
-            default:
-                break;
-        }
-        mMainActivityTitle = naviItem.getItemName();
-    }
-
-    private void showBookShelfFragment() {
+    public void navigateToBookShelfFragment() {
         switchContentFragment(NovelBookShelfFragment.class.getName(), null);
     }
 
-    private void showCategoryListFragment() {
+    public void navigateToCategoryListFragment() {
         switchContentFragment(NovelCategoryFragment.class.getName(), null);
     }
 
-    private void showRankFragment() {
+    public void navigateToRankFragment() {
         switchContentFragment(NovelRankFragment.class.getName(), null);
     }
 
-    public void showRankFragment(String title, String queryString) {
+    public void navigateToRankFragment(String title, String queryString) {
         NovelListFragment categoryFragment = NovelListFragment.newInstance(
                 NovelListFragment.QUERY_TYPE_RANK,
                 title,
@@ -161,7 +127,7 @@ public class AndroidDisplay {
         switchContentFragment(categoryFragment, "rank_list");
     }
 
-    public void showCategoryFragment(String title, String queryString, String subQueryString, boolean isQueryByTag) {
+    public void navigateToCategoryFragment(String title, String queryString, String subQueryString, boolean isQueryByTag) {
         NovelListFragment categoryFragment = NovelListFragment.newInstance(
             NovelListFragment.QUERY_TYPE_CATEGORY,
             title,
@@ -178,9 +144,9 @@ public class AndroidDisplay {
         startActivity(context, intent);
     }
 
-    private void showSettingsActivity() {
-        Intent intent = new Intent(mActivity, SettingsActivity.class);
-        startActivity(mActivity, intent);
+    public void navigateToSettingsActivity(Context context) {
+        Intent intent = new Intent(context, SettingsActivity.class);
+        context.startActivity(intent);
     }
 
     public void showNovelChapterList(Object currentView, NovelModel novel) {
@@ -269,9 +235,5 @@ public class AndroidDisplay {
         else
             throw new IllegalArgumentException("Param view must be a fragment,an activity or a dialog.");
         return activity;
-    }
-
-    public String getMainActivityTitle() {
-        return mMainActivityTitle;
     }
 }

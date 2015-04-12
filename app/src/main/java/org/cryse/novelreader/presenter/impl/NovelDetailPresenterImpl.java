@@ -8,7 +8,7 @@ import org.cryse.novelreader.util.ToastType;
 import org.cryse.novelreader.view.NovelDetailView;
 import org.cryse.novelreader.util.SubscriptionUtils;
 import org.cryse.novelreader.util.ToastUtil;
-import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
+import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
 import javax.inject.Inject;
 
@@ -26,9 +26,9 @@ public class NovelDetailPresenterImpl implements NovelDetailPresenter {
     private Subscription mAddFavoriteSubscription;
     private NovelBusinessLogicLayer dataService;
     private ToastUtil mToastUtil;
-    private AndroidDisplay mDisplay;
+    private AndroidNavigation mDisplay;
     @Inject
-    public NovelDetailPresenterImpl(NovelBusinessLogicLayer dataService, AndroidDisplay display, ToastUtil toastUtil) {
+    public NovelDetailPresenterImpl(NovelBusinessLogicLayer dataService, AndroidNavigation display, ToastUtil toastUtil) {
         this.dataService = dataService;
         this.mDisplay = display;
         this.mToastUtil = toastUtil;

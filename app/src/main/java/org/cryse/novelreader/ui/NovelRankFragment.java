@@ -13,9 +13,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.ui.adapter.NovelCategoryItemAdapter;
 import org.cryse.novelreader.ui.adapter.item.NovelCategoryItem;
-import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
+import org.cryse.novelreader.util.analytics.AnalyticsUtils;
+import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.ui.common.AbstractFragment;
@@ -27,10 +29,10 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class NovelRankFragment extends AbstractFragment {
-
+    public static final String LOG_TAG = NovelRankFragment.class.getName();
     protected View mContentView;
     @Inject
-    AndroidDisplay mDisplay;
+    AndroidNavigation mDisplay;
 
     @InjectView(R.id.rank_recyclerview)
     RecyclerView mRecyclerView;
@@ -39,8 +41,14 @@ public class NovelRankFragment extends AbstractFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        injectThis();
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    protected void injectThis() {
+        SmoothReaderApplication.get(getActivity()).inject(this);
     }
 
     @Override
@@ -49,7 +57,7 @@ public class NovelRankFragment extends AbstractFragment {
         ButterKnife.inject(this, mContentView);
         initListView();
         mRecyclerView.setClipToPadding(false);
-        UIUtils.setInsets(getActivity(), mRecyclerView, true, Build.VERSION.SDK_INT < 21);
+        UIUtils.setInsets(getActivity(), mRecyclerView, false, false, true, Build.VERSION.SDK_INT < 21);
         return mContentView;
     }
 
@@ -84,7 +92,7 @@ public class NovelRankFragment extends AbstractFragment {
         }
         mNovelListAdapter.setOnItemClickListener((view, position, id) -> {
             NovelCategoryItem item = mNovelListAdapter.getItem(position);
-            mDisplay.showRankFragment(
+            mDisplay.navigateToRankFragment(
                     item.getTitle(),
                     item.getValue()
             );
@@ -96,8 +104,18 @@ public class NovelRankFragment extends AbstractFragment {
         super.onActivityCreated(savedInstanceState);
         Activity activity = getActivity();
         if(activity instanceof MainActivity) {
-            ((MainActivity)activity).setToolbarTitleFromFragment(getString(R.string.drawer_rank));
+            ((MainActivity)activity).onSectionAttached(getString(R.string.drawer_rank));
         }
+    }
+
+    @Override
+    protected void analyticsTrackEnter() {
+        AnalyticsUtils.trackFragmentEnter(this, LOG_TAG);
+    }
+
+    @Override
+    protected void analyticsTrackExit() {
+        AnalyticsUtils.trackFragmentExit(this, LOG_TAG);
     }
 
     @Override

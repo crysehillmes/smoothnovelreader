@@ -18,9 +18,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.UIUtils;
+import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.widget.recyclerview.SuperRecyclerView;
 
 import org.cryse.novelreader.R;
@@ -40,7 +42,8 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class NovelBookShelfFragment extends AbstractFragment implements NovelBookShelfView{
+public class NovelBookShelfFragment extends AbstractFragment implements NovelBookShelfView {
+    private static final String LOG_TAG = NovelBookShelfFragment.class.getName();
     @Inject
     NovelBookShelfPresenter presenter;
 
@@ -59,6 +62,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        injectThis();
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mBackgroundServiceConnection = new ServiceConnection() {
@@ -75,12 +79,17 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     }
 
     @Override
+    protected void injectThis() {
+        SmoothReaderApplication.get(getActivity()).inject(this);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View contentView = inflater.inflate(R.layout.fragment_bookshelf, null);
         ButterKnife.inject(this, contentView);
         mEmptyViewText.setText(getActivity().getString(R.string.empty_view_no_book_on_shelf_prompt));
         initListView();
-        UIUtils.setInsets(getActivity(), mShelfListView, true, Build.VERSION.SDK_INT < 21);
+        UIUtils.setInsets(getActivity(), mShelfListView, false, false, true, Build.VERSION.SDK_INT < 21);
         mShelfListView.setClipToPadding(false);
         return contentView;
     }
@@ -172,7 +181,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         getPresenter().loadFavoriteNovels();
         Activity activity = getActivity();
         if(activity instanceof MainActivity) {
-            ((MainActivity)activity).setToolbarTitleFromFragment(getString(R.string.drawer_bookshelf));
+            ((MainActivity)activity).onSectionAttached(getString(R.string.drawer_bookshelf));
         }
     }
 
@@ -201,6 +210,16 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     public void onDestroy() {
         super.onDestroy();
         getPresenter().destroy();
+    }
+
+    @Override
+    protected void analyticsTrackEnter() {
+        AnalyticsUtils.trackFragmentEnter(this, LOG_TAG);
+    }
+
+    @Override
+    protected void analyticsTrackExit() {
+        AnalyticsUtils.trackFragmentExit(this, LOG_TAG);
     }
 
     @Override

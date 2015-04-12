@@ -8,15 +8,21 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import com.example.android.systemuivis.SystemUiHelper;
 
-import org.cryse.novelreader.R;
-import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.event.AbstractEvent;
+import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.util.LUtils;
-import org.cryse.novelreader.util.UIUtils;
-import org.cryse.novelreader.util.analytics.AnalyticsHelper;
+import org.cryse.novelreader.util.SubscriptionUtils;
+
+import javax.inject.Inject;
+
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public abstract class AbstractActivity extends ActionBarActivity {
     private LUtils mLUtils;
@@ -24,26 +30,34 @@ public abstract class AbstractActivity extends ActionBarActivity {
     private Toolbar mToolbar;
     private View mPreLShadow;
     private ActionMode mActionMode;
+    private Subscription mEventBusSubscription;
+    @Inject
+    RxEventBus mEventBus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        injectThis();
         mLUtils = LUtils.getInstance(this);
+        mEventBusSubscription = mEventBus.toObservable()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onEvent);
     }
 
-    @Override
-    public void setContentView(int layoutResID) {
-        super.setContentView(layoutResID);
+    protected void setUpToolbar(int toolbarLayoutId, int customToolbarShadowId) {
         if (mToolbar == null) {
-            mToolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
-            View mPreLShadow = findViewById(R.id.toolbar_shadow);
+            mToolbar = (Toolbar) findViewById(toolbarLayoutId);
+            mPreLShadow = findViewById(customToolbarShadowId);
             if (mToolbar != null) {
                 //UIUtils.setInsets(this, mToolbar, false);
                 if(Build.VERSION.SDK_INT < 21 && mPreLShadow != null) {
                     mPreLShadow.setVisibility(View.VISIBLE);
+                } else if(Build.VERSION.SDK_INT >= 21 && mPreLShadow != null) {
+                    mPreLShadow.setVisibility(View.GONE);
                 }
                 setSupportActionBar(mToolbar);
+            } else {
+                Log.e("AbstractActivity", "Toolbar is null");
             }
         }
     }
@@ -51,13 +65,19 @@ public abstract class AbstractActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        AnalyticsHelper.trackActivityEnter(this);
+        analyticsTrackEnter();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        AnalyticsHelper.trackActivityExit(this);
+        analyticsTrackExit();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SubscriptionUtils.checkAndUnsubscribe(mEventBusSubscription);
     }
 
     /**
@@ -129,9 +149,7 @@ public abstract class AbstractActivity extends ActionBarActivity {
         return !(mSystemUiHelper == null);
     }
 
-    protected void injectThis() {
-        SmoothReaderApplication.get(this).inject(this);
-    }
+    protected abstract void injectThis();
 
     public Toolbar getToolbar() {
         return mToolbar;
@@ -149,8 +167,28 @@ public abstract class AbstractActivity extends ActionBarActivity {
         this.mActionMode = actionMode;
     }
 
-    public void setPreLShadowVisibility(int visibility) {
-        if(mPreLShadow != null)
-            mPreLShadow.setVisibility(visibility);
+    public void setPreLShadowVisibility(boolean visibility) {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && mPreLShadow != null)
+            mPreLShadow.setVisibility(visibility ? View.VISIBLE : View.GONE);
+    }
+
+    public void finishCompat() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            this.finishAfterTransition();
+        else
+            this.finish();
+    }
+
+    protected abstract void analyticsTrackEnter();
+
+    protected abstract void analyticsTrackExit();
+
+
+    protected void onEvent(AbstractEvent event) {
+
+    }
+
+    protected RxEventBus getEventBus() {
+        return mEventBus;
     }
 }

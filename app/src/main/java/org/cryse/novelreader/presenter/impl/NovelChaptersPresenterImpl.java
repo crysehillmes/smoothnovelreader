@@ -9,7 +9,7 @@ import org.cryse.novelreader.util.ToastType;
 import org.cryse.novelreader.view.NovelChaptersView;
 import org.cryse.novelreader.util.SubscriptionUtils;
 import org.cryse.novelreader.util.ToastUtil;
-import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
+import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
 import java.util.List;
 
@@ -35,12 +35,12 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
 
     NovelBusinessLogicLayer mNovelBusinessLogicLayer;
 
-    AndroidDisplay mDisplay;
+    AndroidNavigation mDisplay;
 
     ToastUtil mToastUtil;
 
     @Inject
-    public NovelChaptersPresenterImpl(NovelBusinessLogicLayer mNovelBusinessLogicLayer, AndroidDisplay display, ToastUtil toastUtil) {
+    public NovelChaptersPresenterImpl(NovelBusinessLogicLayer mNovelBusinessLogicLayer, AndroidNavigation display, ToastUtil toastUtil) {
         this.mNovelBusinessLogicLayer = mNovelBusinessLogicLayer;
         this.mDisplay = display;
         this.mToastUtil = toastUtil;

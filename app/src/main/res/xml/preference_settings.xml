@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/settings_category_dispaly_title">
-
+        <Preference
+            android:key="prefs_theme_color"
+            android:summary="@string/settings_item_theme_color_summary"
+            android:title="@string/settings_item_theme_color_title"/>
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="is_night_mode"

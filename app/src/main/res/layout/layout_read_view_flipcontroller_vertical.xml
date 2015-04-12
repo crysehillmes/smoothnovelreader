@@ -6,4 +6,4 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:animationBitmapFormat="ARGB_8888"
-    app:orientation="vertical" />
+    app:fvc_orientation="vertical" />

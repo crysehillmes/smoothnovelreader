@@ -1,232 +1,188 @@
 package org.cryse.novelreader.ui;
 
-import android.app.Fragment;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
+import android.widget.AdapterView;
+
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.squareup.picasso.Picasso;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.event.AbstractEvent;
+import org.cryse.novelreader.event.ThemeColorChangedEvent;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
-import org.cryse.novelreader.util.ColorUtils;
-import org.cryse.novelreader.util.UIUtils;
-import org.cryse.novelreader.util.navidrawer.AndroidDisplay;
-import org.cryse.novelreader.util.navidrawer.NavigationDrawerItem;
-import org.cryse.novelreader.util.navidrawer.NavigationDrawerView;
-import org.cryse.novelreader.util.navidrawer.NavigationType;
-import org.cryse.widget.ScrimInsetsFrameLayout;
+import org.cryse.novelreader.util.analytics.AnalyticsUtils;
+import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnItemClick;
-
-
 public class MainActivity extends AbstractThemeableActivity {
-    private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
-    private CharSequence mTitle;
-
-    @InjectView(R.id.navigationDrawerListViewWrapper)
-    NavigationDrawerView mNavigationDrawerListViewWrapper;
-
-    @InjectView(R.id.linearDrawer)
-    ScrimInsetsFrameLayout mDrawerLayoutContainer;
-
-    @InjectView(R.id.drawerLayout)
-    DrawerLayout mDrawerLayout;
-
-    @InjectView(R.id.leftDrawerListView)
-    ListView leftDrawerListView;
-
-    private ActionBarDrawerToggle mDrawerToggle;
-
-    private List<NavigationDrawerItem> navigationItems;
-
+    private static final String LOG_TAG = MainActivity.class.getName();
     @Inject
-    AndroidDisplay mDisplay;
+    AndroidNavigation mNavigation;
 
-    private int mCurrentSelectedPosition;
+    AccountHeader.Result mAccountHeader;
+    Drawer.Result mNaviagtionDrawer;
 
+    Picasso mPicasso;
+
+    int mCurrentSelection = 0;
+    boolean mIsRestorePosition = false;
+    /**
+     * Used to post delay navigation action to improve UX
+     */
     private Handler mHandler = new Handler();
     private Runnable mPendingRunnable = null;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        injectThis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.inject(this);
-        SmoothReaderApplication.get(this).inject(this);
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayShowCustomEnabled(true);
-
-        initDrawerMenu();
-
-        //Prepare the drawerToggle in order to be able to open/close the drawer
-        mDrawerToggle = new ActionBarDrawerToggle(this,
-                mDrawerLayout,
-                getToolbar(),
-                R.string.app_name,
-                R.string.app_name) {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, slideOffset);
-                if (getActionMode() != null) {
-                    getActionMode().finish();
-                }
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                /*if (!isAdded()) {
-                    return;
-                }*/
-
-                invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
-                // If mPendingRunnable is not null, then add to the message queue
-                if (mPendingRunnable != null) {
-                    mHandler.post(mPendingRunnable);
-                    mPendingRunnable = null;
-                }
-            }
-        };
-        mDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(getFragmentManager().getBackStackEntryCount() > 0)
-                    getFragmentManager().popBackStack();
-            }
-        });
-        //Attach the DrawerListener
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mDrawerLayout.setStatusBarBackgroundColor(ColorUtils.getColorFromAttr(this, R.attr.colorPrimaryDark));
-        mDisplay.attach(this, mDrawerToggle);
-
-        if(savedInstanceState != null) {
-            mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
-            onNavigationDrawerItemSelected(mCurrentSelectedPosition, true);
+        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
+        mPicasso = new Picasso.Builder(this).executor(Executors.newSingleThreadExecutor()).build();
+        setIsOverrideStatusBarColor(false);
+        mNavigation.attachMainActivity(this);
+        /*setDrawerLayoutBackground(isNightMode());
+        getDrawerLayout().setStatusBarBackgroundColor(getThemeEngine().getPrimaryDarkColor(this));*/
+        if(savedInstanceState!=null && savedInstanceState.containsKey("selection_item_position")) {
+            mCurrentSelection = savedInstanceState.getInt("selection_item_position");
+            mIsRestorePosition = true;
         } else {
-            mCurrentSelectedPosition = 0;
-            onNavigationDrawerItemSelected(mCurrentSelectedPosition, false);
-
+            mCurrentSelection = 1001;
+            mIsRestorePosition = false;
         }
+        initDrawer();
 
-        selectItem(mCurrentSelectedPosition);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
-    }
+    private void initDrawer() {
+        AccountHeader accountHeader = new AccountHeader()
+                .withActivity(this)
+                .withHeaderBackground(isNightMode() ? R.drawable.drawer_top_image_dark : R.drawable.drawer_top_image_light);
+        //Now create your drawer and pass the AccountHeader.Result
+        mAccountHeader = accountHeader.build();
+        mNaviagtionDrawer = new Drawer()
+                .withActivity(this)
+                .withToolbar(getToolbar())
+                .withAccountHeader(mAccountHeader)
+                .withStatusBarColor(getThemeEngine().getPrimaryDarkColor(this))
+                .addDrawerItems(
+                        new PrimaryDrawerItem().withName(R.string.drawer_bookshelf).withIcon(R.drawable.ic_drawer_novel).withIdentifier(1001),
+                        new PrimaryDrawerItem().withName(R.string.drawer_rank).withIcon(R.drawable.ic_drawer_rank).withIdentifier(1002),
+                        new PrimaryDrawerItem().withName(R.string.drawer_category).withIcon(R.drawable.ic_drawer_category).withIdentifier(1003),
+                        new DividerDrawerItem(),
+                        new SecondaryDrawerItem().withName(R.string.drawer_settings).withIdentifier(1101).withIcon(R.drawable.ic_drawer_settings).withCheckable(false)
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
-    }
+                )
+                .withOnDrawerNavigationListener(view -> getSupportFragmentManager().popBackStackImmediate())
+                .withOnDrawerListener(new Drawer.OnDrawerListener() {
+                    @Override
+                    public void onDrawerOpened(View view) {
 
-    public void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(mTitle);
-    }
-
-    public boolean isDrawerOpened() {
-        if(mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mDrawerLayoutContainer)) {
-            return true;
-        }
-        return false;
-    }
-
-    public void closeDrawer() {
-        if (mDrawerLayoutContainer != null) {
-            mDrawerLayout.closeDrawer(mDrawerLayoutContainer);
-        }
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean isDrawerOpened = isDrawerOpened();
-        for(int i = 0; i < menu.size(); i++){
-            menu.getItem(i).setVisible(!isDrawerOpened);
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (mDrawerLayout != null && !mDrawerLayout.isDrawerOpen(mDrawerLayoutContainer)) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-            //getMenuInflater().inflate(R.menu.main, menu);
-            restoreActionBar();
-            return true;
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        switch (id) {
-            case android.R.id.home:
-                if (mDrawerLayout != null) {
-                    if (mDrawerLayout.isDrawerOpen(mDrawerLayoutContainer)) {
-                        mDrawerLayout.closeDrawer(mDrawerLayoutContainer);
-                    } else {
-                        mDrawerLayout.openDrawer(mDrawerLayoutContainer);
                     }
-                }
-                break;
+
+                    @Override
+                    public void onDrawerClosed(View view) {
+                        supportInvalidateOptionsMenu();
+                        // If mPendingRunnable is not null, then add to the message queue
+                        if (mPendingRunnable != null) {
+                            mHandler.post(mPendingRunnable);
+                            mPendingRunnable = null;
+                        }
+                    }
+                })
+                .withOnDrawerItemClickListener((parent, view, position, id, drawerItem) -> {
+                    // do something with the clicked item :D
+                    if (drawerItem.getType().equalsIgnoreCase("PRIMARY_ITEM"))
+                        mCurrentSelection = drawerItem.getIdentifier();
+                    mPendingRunnable = () ->  onNavigationSelected(drawerItem);
+                })
+                .build();
+        if(mCurrentSelection == 1001 && !mIsRestorePosition) {
+            mNaviagtionDrawer.setSelectionByIdentifier(1001, false);
+            mNavigation.navigateToBookShelfFragment();
+        } else if(mIsRestorePosition) {
+            mNaviagtionDrawer.setSelectionByIdentifier(mCurrentSelection, false);
         }
-        return super.onOptionsItemSelected(item);
+
     }
 
-    private void selectItem(int position) {
-
-        if (leftDrawerListView != null) {
-            leftDrawerListView.setItemChecked(position, true);
-
-            if(navigationItems.get(position).isMainItem()) {
-                navigationItems.get(mCurrentSelectedPosition).setSelected(false);
-                navigationItems.get(position).setSelected(true);
-
-                mCurrentSelectedPosition = position;
-            }
+    private void onNavigationSelected(IDrawerItem drawerItem) {
+        switch (drawerItem.getIdentifier()) {
+            case 1001:
+                mNavigation.navigateToBookShelfFragment();
+                break;
+            case 1002:
+                mNavigation.navigateToRankFragment();
+                break;
+            case 1003:
+                mNavigation.navigateToCategoryListFragment();
+                break;
+            case 1101:
+                mNavigation.navigateToSettingsActivity(MainActivity.this);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown NavigationDrawerItem position.");
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("selection_item_position", mCurrentSelection);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPicasso.shutdown();
+    }
+
+    @Override
+    protected void injectThis() {
+        SmoothReaderApplication.get(this).inject(this);
+    }
+
+    @Override
+    protected void analyticsTrackEnter() {
+        AnalyticsUtils.trackFragmentActivityEnter(this, LOG_TAG);
+    }
+
+    @Override
+    protected void analyticsTrackExit() {
+        AnalyticsUtils.trackFragmentActivityExit(this, LOG_TAG);
+    }
+
+    public void onSectionAttached(String title) {
+        setTitle(title);
+    }
+
+    @Override
+    protected void onEvent(AbstractEvent event) {
+        super.onEvent(event);
+        if (event instanceof ThemeColorChangedEvent) {
+            mNaviagtionDrawer.setStatusBarColor(((ThemeColorChangedEvent) event).getNewPrimaryDarkColor());
+            mNaviagtionDrawer.getContent().invalidate();
+            // setDrawerSelectedItemColor(((ThemeColorChangedEvent) event).getNewPrimaryColorResId());
+        }
+    }
+
+    public void showDrawToggleAsUp(boolean showAsUp) {
+        mNaviagtionDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(!showAsUp);
     }
 
     @Override
@@ -241,12 +197,12 @@ public class MainActivity extends AbstractThemeableActivity {
             return;
         }
 
-        if(isDrawerOpened()) {
-            closeDrawer();
+        if(mNaviagtionDrawer != null && mNaviagtionDrawer.isDrawerOpen()) {
+            mNaviagtionDrawer.closeDrawer();
             return;
         }
 
-        if (getFragmentManager().popBackStackImmediate()) {
+        if (getSupportFragmentManager().popBackStackImmediate()) {
             return;
         }
 
@@ -270,74 +226,5 @@ public class MainActivity extends AbstractThemeableActivity {
                 })
                 .build()
                 .show();
-    }
-
-    @OnItemClick(R.id.leftDrawerListView)
-    public void onItemClick(int position, long id) {
-        if (mDrawerLayout.isDrawerOpen(mDrawerLayoutContainer)) {
-            //mHandler.postDelayed(() -> mDrawerLayout.closeDrawer(mLinearDrawerLayout), 300);
-            if(position != mCurrentSelectedPosition) {
-                selectItem(position);
-                mPendingRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        onNavigationDrawerItemSelected(position, false);
-                    }
-                };
-                closeDrawer();
-            }
-        }
-    }
-
-    public void setToolbarTitleFromFragment(String title) {
-        mTitle = title;
-        setTitle(mTitle);
-    }
-
-    private void onNavigationDrawerItemSelected(int position, boolean fromSavedInstanceState) {
-        if(!fromSavedInstanceState) {
-            mDisplay.handleNaviDrawerSelection(navigationItems.get(position));
-        }
-    }
-
-    private void initDrawerMenu() {
-        navigationItems = new ArrayList<NavigationDrawerItem>();
-        navigationItems.add(
-                new NavigationDrawerItem(
-                        getString(R.string.drawer_bookshelf),
-                        NavigationType.NOVEL_BOOKSHELF_FRAGMENT,
-                        R.drawable.ic_drawer_novel,
-                        true,
-                        true
-                ));
-        navigationItems.add(
-                new NavigationDrawerItem(
-                        getString(R.string.drawer_rank),
-                        NavigationType.NOVEL_RANK_FRAGMENT,
-                        R.drawable.ic_drawer_rank,
-                        true,
-                        false
-                ));
-        navigationItems.add(
-                new NavigationDrawerItem(
-                        getString(R.string.drawer_category),
-                        NavigationType.NOVEL_CATEGORY_FRAGMENT,
-                        R.drawable.ic_drawer_category,
-                        true,
-                        true
-                ));
-        navigationItems.add(
-                new NavigationDrawerItem(
-                        getString(R.string.drawer_settings),
-                        NavigationType.NOVEL_SETTINGS_ACTIVITY,
-                        R.drawable.ic_drawer_settings,
-                        false,
-                        false
-                ));
-        mNavigationDrawerListViewWrapper.replaceWith(navigationItems);
-    }
-
-    public void showDrawToggleAsUp(boolean showAsUp) {
-        mDrawerToggle.setDrawerIndicatorEnabled(!showAsUp);
     }
 }
