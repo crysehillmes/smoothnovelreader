@@ -35,7 +35,7 @@
     <string name="has_updates">有更新</string>
 
     <!-- Content description -->
-    <string name="placeholder_lorem_ipsum">placeholder</string>
+    <string name="placeholder_lorem_ipsum" translatable="false">placeholder</string>
     <string name="default_content_description">图片</string>
     <string name="remove_from_bookshelf_description">移除收藏</string>
     <string name="add_to_bookshelf_description">添加收藏</string>
@@ -52,7 +52,7 @@
     <string name="action_bar_search_tip">搜索</string>
     <string name="action_bar_add_novel_tip">添加小说</string>
     <string name="action_remove_from_bookshelf">移除</string>
-    <string name="action_change_theme">切换主题</string>
+    <string name="action_change_theme">切换日/夜模式</string>
 
     <!-- Contextual ActionBar Title -->
     <string name="cab_selection_count">选中 %1$d 项</string>
@@ -150,8 +150,8 @@
 
 
     <!-- PlaceHolder -->
-    <string name="placeholder_novel_details_title">What\'s New in Android Developer Tools</string>
-    <string name="placeholder_novel_details_subtitle">Trevor Johns and Roman Nurik</string>
+    <string name="placeholder_novel_details_title" translatable="false">placeholder</string>
+    <string name="placeholder_novel_details_subtitle" translatable="false">placeholder</string>
     <string name="add_fab_novel">Add to bookshelf</string>
 
     <string name="listview_last_read_indicator_text">\t[上次阅读到这里]</string>
@@ -206,11 +206,11 @@
     <!-- About -->
     <string name="settings_about_activity_title">关于</string>
     <string name="settings_category_author_title">关于</string>
-    <string name="settings_item_author_name_value">Cryse Hillmes</string>
+    <string name="settings_item_author_name_value" translatable="false">Cryse Hillmes</string>
     <string name="settings_item_author_name_title">作者</string>
-    <string name="settings_item_email_address_value">tyk5555@hotmail.com</string>
+    <string name="settings_item_email_address_value" translatable="false">tyk5555@hotmail.com</string>
     <string name="settings_item_email_address_title">联系作者</string>
-    <string name="settings_item_author_blog_site_value">http://www.cryse.org</string>
+    <string name="settings_item_author_blog_site_value" translatable="false">http://www.cryse.org</string>
     <string name="settings_item_author_blog_site">作者网站</string>
     <string name="settings_item_version">版本</string>
 </resources>

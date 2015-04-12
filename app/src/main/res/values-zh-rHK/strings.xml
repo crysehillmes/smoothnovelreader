@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">品阅看书</string>
+
+    <string name="navigation_drawer_open">打開導航菜單</string>
+    <string name="navigation_drawer_close">關閉導航菜單</string>
+
+
+    <!-- DrawerItem text-->
+    <string name="drawer_bookshelf">我的書架</string>
+    <string name="drawer_category">分類目錄</string>
+    <string name="drawer_rank">熱門排行榜</string>
+    <string name="drawer_settings">設定</string>
+
+
+    <!-- Dialog text -->
+    <string name="dialog_exit_title">確定退出%1$s?</string>
+    <string name="dialog_exit_content"></string>
+    <string name="dialog_exit_confirm">退出</string>
+    <string name="dialog_exit_cancel">繼續閱讀</string>
+
+    <string name="dialog_button_start_read">開始閱讀</string>
+    <string name="dialog_button_add_favorite">加入書架</string>
+
+    <string name="dialog_choose_read_bg_color">選擇背景色</string>
+    <string name="dialog_choose">選擇</string>
+
+    <!-- Book introduction format -->
+    <string name="format_follower_count">%1$d 人在追</string>
+    <string name="format_last_read_chapter">最後閱讀: %1$s</string>
+    <string name="format_latest_chapter">最新章節: %1$s</string>
+    <string name="current_none">暫無</string>
+    <string name="reading_not_start">還未閱讀</string>
+    <string name="has_updates">有更新</string>
+
+    <!-- Content description -->
+    <string name="default_content_description">圖片</string>
+    <string name="remove_from_bookshelf_description">移除收藏</string>
+    <string name="add_to_bookshelf_description">添加收藏</string>
+
+    <!-- ReadViewActivity -->
+    <string name="readview_page_offset">本章第 %1$d / %2$d 頁</string>
+
+    <!-- ActionBar MenuItem -->
+    <string name="action_last_read_chapter">最後閱讀</string>
+    <string name="action_refresh_contentlist">刷新目錄</string>
+    <string name="action_offline_chapters_cache">離線閱讀</string>
+    <string name="action_refresh">刷新目錄</string>
+    <string name="action_novel_detail">小說詳情</string>
+    <string name="action_bar_search_tip">搜索</string>
+    <string name="action_bar_add_novel_tip">添加小說</string>
+    <string name="action_remove_from_bookshelf">移除</string>
+    <string name="action_change_theme">切換日/夜模式</string>
+
+    <!-- Contextual ActionBar Title -->
+    <string name="cab_selection_count">選中 %1$d 項</string>
+
+    <!-- Toast text -->
+    <string name="toast_network_error">網路不太通暢哦</string>
+    <string name="toast_network_no_connection">好像沒有網絡連接</string>
+    <string name="toast_generic_error">好像出錯了</string>
+    <string name="toast_chapter_content_lost">這一章找不到了，重新加載試試</string>
+    <string name="toast_chapter_list_loading">正在更新目錄，請稍等…</string>
+    <string name="toast_chapter_contents_caching">已有一本小說正在緩存中…</string>
+    <string name="toast_chapter_contents_add_to_cache_queue">《%1$s》已加入緩存隊列</string>
+    <string name="toast_chapter_contents_caching_cannot_delete">《%1$s》正在緩存中，無法刪除</string>
+    <string name="toast_menu_not_available_in_night_mode">夜間模式不可用</string>
+    <string name="notification_chapter_contents_cache_title">正在緩存《%1$s》</string>
+    <string name="notification_chapter_contents_cache_title_finish">完成緩存《%1$s》</string>
+    <string name="notification_chapter_contents_cache_content">緩存了 %1$d 章， %2$d 章緩存失敗, %3$d 章未緩存。</string>
+    <string name="notification_action_chapter_contents_cancel_current">取消緩存</string>
+    <string name="notification_action_chapter_contents_cancel_novel">取消緩存《%1$s》</string>
+    <string name="notification_action_chapter_contents_cancel_all">取消全部緩存</string>
+
+    <!-- Search text -->
+    <string name="searchbox_hint">搜索書名或作者名</string>
+    <string name="search_prompt_no_result_title">未搜索到結果</string>
+    <string name="search_prompt_no_result_subtitle">換個關鍵詞試試</string>
+    <string name="search_hint">搜索書名或作者名</string>
+    <string name="search_label">小說</string>
+
+
+    <!-- EmptyView text -->
+    <string name="empty_view_no_book_on_shelf_prompt">書架還是空的，去找幾本書吧</string>
+    <string name="empty_view_prompt">這裡是空的，刷新一下試試</string>
+    <string name="empty_view_searchview">輸入書名或者作者名搜索</string>
+
+
+    <string name="settings_item_scroll_mode_title">翻頁模式</string>
+    <string name="settings_item_scroll_mode_summary">選擇您喜歡的翻頁模式</string>
+    <string name="settings_item_scroll_mode_dialog_title">選擇翻頁模式</string>
+    <string-array name="scroll_mode_string_entries">
+        <item>縱向翻頁(FlipBoard 模式)</item>
+        <item>橫向翻頁(FlipBoard 模式)</item>
+        <item>橫向滑動</item>
+    </string-array>
+
+    <string-array name="novel_rank_categorys_array">
+        <item>熱門排行榜</item>
+        <item>連載排行榜</item>
+        <item>完結排行榜</item>
+        <item>上升最快榜</item>
+        <item>男生愛看</item>
+        <item>女生愛看</item>
+        <item>起點點擊榜</item>
+        <item>17k點擊榜</item>
+        <item>逐浪點擊榜</item>
+        <item>縱橫點擊榜</item>
+        <item>紅袖點擊榜</item>
+    </string-array>
+
+    <string name="add_fab_novel">添加至書架</string>
+    <string name="listview_last_read_indicator_text">\t[最後閱讀]</string>
+
+    <string name="novel_chapter_contents_cache_progress">正在緩存第 %1$d 章， 共 %2$d 章, %3$d 本書等待緩存。</string>
+
+    <!-- Novel detail -->
+    <string name="novel_details_a11y_novel_added">小說已添加至書架</string>
+    <string name="novel_details_a11y_novel_removed">小說已從書架中移除</string>
+    <string name="novel_detail_achieve_header">排行榜成就</string>
+    <string name="novel_detail_abstract_header">狀態</string>
+
+    <string name="novel_detail_status_fomat">狀態\u3000\u3000：%1$s</string>
+    <string name="novel_detail_chapter_count_fomat">章節數\u3000：%1$d 章</string>
+    <string name="novel_detail_chapter_count_unknown">章節數\u3000：未知</string>
+    <string name="novel_detail_latest_chapter_fomat">最新章節：%1$s</string>
+
+    <string name="novel_detail_achieve_rank_fomat">第%1$s名</string>
+    <string name="novel_detail_achieve_date_fomat">%1$s年%2$s月</string>
+
+    <!-- Read bottom sheet -->
+    <string name="bottom_sheet_title">閱讀設置</string>
+    <string name="bottom_sheet_item_change_src">更換來源</string>
+    <string name="bottom_sheet_item_chapter_next">下一章</string>
+    <string name="bottom_sheet_item_chapter_prev">上一章</string>
+    <string name="bottom_sheet_item_night_mode">夜間模式</string>
+    <string name="bottom_sheet_item_reading_settings">閱讀設置</string>
+    <string name="bottom_sheet_item_daylight_mode">日間模式</string>
+    <string name="bottom_sheet_item_font_size">文字大小</string>
+    <string name="bottom_sheet_item_page_curl_mode">@string/settings_item_scroll_mode_title</string>
+    <string name="bottom_sheet_item_read_background">閱讀背景色</string>
+    <string name="bottom_sheet_item_reload">重新加載</string>
+
+    <!-- Settings section -->
+    <string name="settings_category_dispaly_title">顯示</string>
+    <string name="settings_category_reading_title">閱讀</string>
+    <string name="settings_item_theme_color_summary">選擇你喜歡的主題顏色</string>
+    <string name="settings_item_theme_color_title">主題</string>
+    <string name="settings_item_is_night_mode_title">夜間模式</string>
+    <string name="settings_item_is_night_mode_summary">夜間使用較低亮度，減少雙眼疲勞</string>
+    <string name="settings_item_show_cover_img_title">封面圖片</string>
+    <string name="settings_item_show_cover_img_summary">是否顯示小說封面圖片</string>
+    <string name="settings_item_gray_scale_in_night_mode_title">黑白封面</string>
+    <string name="settings_item_gray_scale_in_night_mode_summary">在夜間使用黑白的小說封面以降低亮度</string>
+    <string name="settings_item_font_size_title">文字大小</string>
+    <string name="settings_item_font_size_summary">設置閱讀頁面文字大小</string>
+    <string name="settings_item_font_size_dialog_title">選擇字體大小</string>
+
+    <string name="settings_category_other_title">其他</string>
+    <string name="settings_item_about_title">關於</string>
+
+    <!-- About -->
+    <string name="settings_about_activity_title">關於</string>
+    <string name="settings_category_author_title">關於</string>
+    <string name="settings_item_author_name_title">作者</string>
+    <string name="settings_item_email_address_title">聯繫作者</string>
+    <string name="settings_item_author_blog_site">作者主頁</string>
+    <string name="settings_item_version">版本</string>
+</resources>
