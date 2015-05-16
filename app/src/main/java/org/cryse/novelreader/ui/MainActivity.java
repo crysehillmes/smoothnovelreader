@@ -104,6 +104,11 @@ public class MainActivity extends AbstractThemeableActivity {
                             mPendingRunnable = null;
                         }
                     }
+
+                    @Override
+                    public void onDrawerSlide(View view, float v) {
+
+                    }
                 })
                 .withOnDrawerItemClickListener((parent, view, position, id, drawerItem) -> {
                     // do something with the clicked item :D

@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
@@ -36,7 +36,7 @@ public class AndroidNavigation {
     private static final String TAG = AndroidNavigation.class.getCanonicalName();
     RunTimeStore mRunTimeStore;
 
-    protected ActionBarActivity mActivity;
+    protected AppCompatActivity mActivity;
     protected FragmentManager mFragmentManager;
 
     @Inject
@@ -44,7 +44,7 @@ public class AndroidNavigation {
         this.mRunTimeStore = runTimeStore;
     }
 
-    public void attachMainActivity(ActionBarActivity activity) {
+    public void attachMainActivity(AppCompatActivity activity) {
         mActivity = activity;
         mFragmentManager = mActivity.getSupportFragmentManager();
         SmoothReaderApplication.get(activity).inject(this);
