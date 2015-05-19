@@ -58,6 +58,7 @@ dependencies {
     compile project(':main_module')
     compile project(':novel_sources:baidu_novel_source')
     compile project(':thirdparty_libs:bottomsheet_library')
+    compile project(':changelog')
 
     // Android Support Libraries
     compile "com.android.support:support-v13:$supportlibraryVersion"
