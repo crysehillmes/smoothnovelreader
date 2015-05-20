@@ -71,7 +71,7 @@ public abstract class AbstractFragment extends android.support.v4.app.Fragment {
         SubscriptionUtils.checkAndUnsubscribe(mEventBusSubscription);
     }
 
-    public AppCompatActivity getActionBarActivity() {
+    public AppCompatActivity getAppCompatActivity() {
         return (AppCompatActivity)getActivity();
     }
 
@@ -84,11 +84,11 @@ public abstract class AbstractFragment extends android.support.v4.app.Fragment {
     }
 
     public void setActionMode(ActionMode actionMode) {
-        ((AbstractActivity)getActionBarActivity()).setActionMode(actionMode);
+        ((AbstractActivity)getAppCompatActivity()).setActionMode(actionMode);
     }
 
     public ActionMode getActionMode() {
-        return ((AbstractActivity)getActionBarActivity()).getActionMode();
+        return ((AbstractActivity)getAppCompatActivity()).getActionMode();
     }
 
     @Override
@@ -99,7 +99,7 @@ public abstract class AbstractFragment extends android.support.v4.app.Fragment {
 
     public Boolean isNightMode() {
         if(isAdded())
-            return ((AbstractThemeableActivity)getActionBarActivity()).isNightMode();
+            return ((AbstractThemeableActivity)getAppCompatActivity()).isNightMode();
         else
             return null;
 

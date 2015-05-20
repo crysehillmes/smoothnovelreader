@@ -390,7 +390,7 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
 
     protected NovelModelListAdapter createAdapter() {
         return new NovelOnlineListAdapter(
-                getActionBarActivity().getSupportActionBar().getThemedContext(),
+                getAppCompatActivity().getSupportActionBar().getThemedContext(),
                 mNovelList,
                 mIsShowCoverImage.get(),
                 isNightMode(),

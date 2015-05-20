@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<changelog bulletedList="true">
+    <changelogversion
+        changeDate="May 22, 2015"
+        versionCode="701"
+        versionName="0.7.1">
+        <changelogbug>Fixed few bugs.</changelogbug>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="May 1, 2015"
+        versionCode="700"
+        versionName="0.7.0">
+        <changelogtext><![CDATA[<b><font color=red>New!</font></b> Theme switch.]]>
+        </changelogtext>
+        <changelogtext>Fixed some navigation error.</changelogtext>
+        <changelogtext>Fixed duplicate items in content table.</changelogtext>
+    </changelogversion>
+
+
+</changelog>
