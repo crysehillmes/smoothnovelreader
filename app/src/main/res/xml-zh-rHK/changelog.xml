@@ -2,9 +2,15 @@
 <changelog bulletedList="true">
     <changelogversion
         changeDate="May 22, 2015"
+        versionCode="703"
+        versionName="0.7.3">
+        <changelogbug>修復一個小 Bug</changelogbug>
+    </changelogversion>
+    <changelogversion
+        changeDate="May 22, 2015"
         versionCode="702"
         versionName="0.7.2">
-        <changelogbug>新功能：更新模塊</changelogbug>
+        <changelogtext>新功能：更新模塊</changelogtext>
     </changelogversion>
     <changelogversion
         changeDate="2015年5月22日"
@@ -18,7 +24,7 @@
         versionName="0.7.0">
         <changelogtext><![CDATA[<b><font color=red>新功能！</font></b> 主題切換]]>
         </changelogtext>
-        <changelogtext>修復頁面導航錯誤</changelogtext>
-        <changelogtext>修復章節目錄更新時出現重複項的錯誤</changelogtext>
+        <changelogbug>修復頁面導航錯誤</changelogbug>
+        <changelogbug>修復章節目錄更新時出現重複項的錯誤</changelogbug>
     </changelogversion>
 </changelog>
