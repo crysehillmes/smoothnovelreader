@@ -3,7 +3,7 @@ package org.cryse.novelreader.ui.common;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 
 import org.cryse.novelreader.event.AbstractEvent;
@@ -71,8 +71,8 @@ public abstract class AbstractFragment extends android.support.v4.app.Fragment {
         SubscriptionUtils.checkAndUnsubscribe(mEventBusSubscription);
     }
 
-    public ActionBarActivity getActionBarActivity() {
-        return (ActionBarActivity)getActivity();
+    public AppCompatActivity getAppCompatActivity() {
+        return (AppCompatActivity)getActivity();
     }
 
     public AbstractThemeableActivity getThemedActivity() {
@@ -84,11 +84,11 @@ public abstract class AbstractFragment extends android.support.v4.app.Fragment {
     }
 
     public void setActionMode(ActionMode actionMode) {
-        ((AbstractActivity)getActionBarActivity()).setActionMode(actionMode);
+        ((AbstractActivity)getAppCompatActivity()).setActionMode(actionMode);
     }
 
     public ActionMode getActionMode() {
-        return ((AbstractActivity)getActionBarActivity()).getActionMode();
+        return ((AbstractActivity)getAppCompatActivity()).getActionMode();
     }
 
     @Override
@@ -99,7 +99,7 @@ public abstract class AbstractFragment extends android.support.v4.app.Fragment {
 
     public Boolean isNightMode() {
         if(isAdded())
-            return ((AbstractThemeableActivity)getActionBarActivity()).isNightMode();
+            return ((AbstractThemeableActivity)getAppCompatActivity()).isNightMode();
         else
             return null;
 

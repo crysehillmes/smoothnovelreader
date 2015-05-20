@@ -98,7 +98,7 @@ public class SmoothReaderApplication extends Application {
     }
 
     /** A tree which logs important information for crash reporting. */
-    private static class CrashReportingTree extends Timber.HollowTree {
+    private static class CrashReportingTree extends Timber.DebugTree {
         @Override public void i(String message, Object... args) {
             if (BuildConfig.DEBUG) {
                 Crashlytics.log(String.format(message, args));

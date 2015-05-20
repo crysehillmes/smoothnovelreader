@@ -47,6 +47,15 @@
 
     <PreferenceCategory android:title="@string/settings_category_other_title">
         <Preference
+            android:key="prefs_about_changelog"
+            android:summary="@string/settings_item_change_log_summary"
+            android:title="@string/settings_item_change_log_title"/>
+        <Preference
+            android:key="prefs_about_version"
+            android:summary=""
+            android:title="@string/settings_item_version">
+        </Preference>
+        <Preference
             android:title="@string/settings_item_about_title">
             <intent
                 android:targetPackage="org.cryse.novelreader"

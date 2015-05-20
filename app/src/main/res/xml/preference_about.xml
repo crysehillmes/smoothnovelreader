@@ -23,10 +23,5 @@
                 android:action="android.intent.action.VIEW"
                 android:data="http://www.cryse.org" />
         </Preference>
-        <Preference
-            android:key="prefs_about_version"
-            android:summary=""
-            android:title="@string/settings_item_version">
-        </Preference>
     </PreferenceCategory>
 </PreferenceScreen>

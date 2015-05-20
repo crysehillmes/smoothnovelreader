@@ -1,6 +1,5 @@
 package org.cryse.novelreader.ui;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -15,7 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ArrayRes;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -126,7 +125,7 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
         mCallback = (Callback) activity;
     }*/
 
-    public void show(ActionBarActivity context, int preselect, Callback callback) {
+    public void show(AppCompatActivity context, int preselect, Callback callback) {
         Bundle args = new Bundle();
         args.putInt("preselect", preselect);
         setArguments(args);
