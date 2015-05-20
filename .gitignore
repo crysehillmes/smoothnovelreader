@@ -51,3 +51,6 @@ app/crashlytics.properties
 # SigningConfig
 app/signing.properties
 *.keystore
+
+# UMeng
+umeng_properties.xml

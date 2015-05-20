@@ -54,7 +54,14 @@
             android:theme="@style/TransparentActivity"/>
 
         <service android:name=".service.ChapterContentsCacheService"/>
-
+        <service
+            android:name="com.umeng.update.net.DownloadingService"
+            android:process=":DownloadingService" >
+        </service>
+        <activity
+            android:name="com.umeng.update.UpdateDialogActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
         <meta-data android:value="Test" android:name="UMENG_CHANNEL"/>
     </application>
 
