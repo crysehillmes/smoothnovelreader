@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<changelog>
+    <release version="0.7.1" versioncode="701" >
+        <change>修复: 一些 Bug.</change>
+    </release>
+
+    <release version="0.7.0" versioncode="700" >
+        <change>新功能：主题切换</change>
+        <change>修复：导航错误</change>
+        <change>修复：目录更新重复的 bug</change>
+    </release>
+</changelog>

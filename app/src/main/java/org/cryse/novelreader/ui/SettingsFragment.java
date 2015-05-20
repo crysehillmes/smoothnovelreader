@@ -11,7 +11,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 
-import org.cryse.changelog.ChangelogReader;
+import org.cryse.changelog.ChangelogUtils;
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.event.RxEventBus;
@@ -20,9 +20,8 @@ import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ThemeEngine;
 import org.cryse.novelreader.util.prefs.IntegerPreference;
 import org.cryse.novelreader.util.prefs.PreferenceConstant;
-import org.json.JSONException;
 
-import java.io.IOException;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -81,22 +80,18 @@ public class SettingsFragment extends PreferenceFragment {
 
         Preference changelogPref = findPreference("prefs_about_changelog");
         changelogPref.setOnPreferenceClickListener(preference -> {
-            ChangelogReader reader = new ChangelogReader();
-            try {
-                reader.fromAsset(getActivity(), "changelog.json");
-                MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity())
-                        .title(R.string.settings_item_change_log_title)
-                        .theme(((AbstractThemeableActivity)getActivity()).isNightMode() ? Theme.DARK : Theme.LIGHT)
-                                .content(reader.toSpannable())
-                        .show();
+            Toast.makeText(getActivity(),
+                    Locale.getDefault().getLanguage() + Locale.getDefault().getCountry()
+                    , Toast.LENGTH_SHORT).show();
+            ChangelogUtils reader = new ChangelogUtils(getActivity(), R.xml.changelog);
 
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return false;
+            MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity())
+                    .title(R.string.settings_item_change_log_title)
+                    .theme(((AbstractThemeableActivity) getActivity()).isNightMode() ? Theme.DARK : Theme.LIGHT)
+                    .content(reader.toSpannable(true))
+                    .show();
+
+            return true;
         });
     }
 
