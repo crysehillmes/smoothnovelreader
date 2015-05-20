@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.umeng.update.UmengUpdateAgent;
 
 import org.cryse.novelreader.BuildConfig;
+import org.cryse.novelreader.R;
 import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.modules.ModulesList;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
@@ -43,10 +45,12 @@ public class SmoothReaderApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        AnalyticsUtils.init("54117fcdfd98c5578c002940");
+        AnalyticsUtils.init(getString(R.string.UMENG_APPKEY_VALUE));
         Crashlytics.start(this);
         Timber.plant(new CrashReportingTree());
         mEventBus = new RxEventBus();
+        UmengUpdateAgent.setAppkey(getString(R.string.UMENG_APPKEY_VALUE));
+        UmengUpdateAgent.update(this);
         buildObjectGraphAndInject();
 
         mRunTimeStore = new HashTableRunTimeStore();
