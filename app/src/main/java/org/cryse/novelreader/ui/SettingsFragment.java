@@ -11,7 +11,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 
-import org.cryse.changelog.ChangelogUtils;
+import org.cryse.changelog.ChangeLogUtils;
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.event.RxEventBus;
@@ -20,8 +20,6 @@ import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ThemeEngine;
 import org.cryse.novelreader.util.prefs.IntegerPreference;
 import org.cryse.novelreader.util.prefs.PreferenceConstant;
-
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -80,15 +78,12 @@ public class SettingsFragment extends PreferenceFragment {
 
         Preference changelogPref = findPreference("prefs_about_changelog");
         changelogPref.setOnPreferenceClickListener(preference -> {
-            Toast.makeText(getActivity(),
-                    Locale.getDefault().getLanguage() + Locale.getDefault().getCountry()
-                    , Toast.LENGTH_SHORT).show();
-            ChangelogUtils reader = new ChangelogUtils(getActivity(), R.xml.changelog);
+            ChangeLogUtils reader = new ChangeLogUtils(getActivity(), R.xml.changelog);
 
             MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity())
                     .title(R.string.settings_item_change_log_title)
                     .theme(((AbstractThemeableActivity) getActivity()).isNightMode() ? Theme.DARK : Theme.LIGHT)
-                    .content(reader.toSpannable(true))
+                    .content(reader.toSpannable())
                     .show();
 
             return true;

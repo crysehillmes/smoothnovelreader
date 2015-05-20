@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<changelog bulletedList="true">
+    <changelogversion
+        changeDate="2015年5月22日"
+        versionCode="701"
+        versionName="0.7.1">
+        <changelogbug>修复一些错误</changelogbug>
+    </changelogversion>
+    <changelogversion
+        changeDate="2015年5月1日"
+        versionCode="700"
+        versionName="0.7.0">
+        <changelogtext><![CDATA[<b><font color=red>新功能！</font></b> 主题切换]]>
+        </changelogtext>
+        <changelogtext>修复页面导航错误</changelogtext>
+        <changelogtext>修复章节目录更新时出现重复项的错误</changelogtext>
+    </changelogversion>
+</changelog>

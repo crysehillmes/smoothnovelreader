@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<changelog>
-    <release version="0.7.1" versioncode="701" >
-        <change>修复: 一些 Bug.</change>
-    </release>
+<changelog bulletedList="true">
+    <changelogversion
+        changeDate="May 22, 2015"
+        versionCode="701"
+        versionName="0.7.1">
+        <changelogbug>Fixed few bugs.</changelogbug>
+    </changelogversion>
 
-    <release version="0.7.0" versioncode="700" >
-        <change>新功能：主题切换</change>
-        <change>修复：导航错误</change>
-        <change>修复：目录更新重复的 bug</change>
-    </release>
+    <changelogversion
+        changeDate="May 1, 2015"
+        versionCode="700"
+        versionName="0.7.0">
+        <changelogtext><![CDATA[<b><font color=red>New!</font></b> Theme switch.]]>
+        </changelogtext>
+        <changelogtext>Fixed some navigation error.</changelogtext>
+        <changelogtext>Fixed duplicate items in content table.</changelogtext>
+    </changelogversion>
+
+
 </changelog>
