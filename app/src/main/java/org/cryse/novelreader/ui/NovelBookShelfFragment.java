@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.view.ActionMode;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +18,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
@@ -113,20 +116,20 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                 mShelfListView.getSwipeToRefresh().setRefreshing(false);
         });
         mShelfListView.setOnItemClickListener((view, position, id) -> {
-            if(!bookShelfListAdapter.isAllowSelection())
+            if (!bookShelfListAdapter.isAllowSelection())
                 getPresenter().showNovelChapterList(novelList.get(position));
             else {
                 bookShelfListAdapter.toggleSelection(position);
-                if(getActionMode() != null) {
+                if (getActionMode() != null) {
                     getActionMode().setTitle(getString(R.string.cab_selection_count, bookShelfListAdapter.getSelectedItemCount()));
-                    if(bookShelfListAdapter.getSelectedItemCount() == 0)
+                    if (bookShelfListAdapter.getSelectedItemCount() == 0)
                         getActionMode().finish();
                 }
             }
         });
 
         mShelfListView.setOnItemLongClickListener((view, position, id) -> {
-            if (!bookShelfListAdapter.isAllowSelection()) {
+            if (!bookShelfListAdapter.isAllowSelection() && getAppCompatActivity().getSupportActionBar() != null) {
                 ActionMode actionMode = getAppCompatActivity().getSupportActionBar().startActionMode(new ActionMode.Callback() {
                     @Override
                     public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
@@ -163,10 +166,10 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                 bookShelfListAdapter.toggleSelection(position);
                 getActionMode().setTitle(getString(R.string.cab_selection_count, bookShelfListAdapter.getSelectedItemCount()));
             } else {
-                if(getActionMode() != null) {
+                if (getActionMode() != null) {
                     bookShelfListAdapter.toggleSelection(position);
                     getActionMode().setTitle(getString(R.string.cab_selection_count, bookShelfListAdapter.getSelectedItemCount()));
-                    if(bookShelfListAdapter.getSelectedItemCount() == 0)
+                    if (bookShelfListAdapter.getSelectedItemCount() == 0)
                         getActionMode().finish();
                 }
             }
@@ -235,7 +238,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                 getThemedActivity().setNightMode(!isNightMode());
                 return true;
             case R.id.menu_item_add_book:
-                getPresenter().goSearch();
+                showAddBookDialog();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -297,5 +300,28 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
 
     public NovelBookShelfPresenter getPresenter() {
         return presenter;
+    }
+
+    protected void showAddBookDialog() {
+        new MaterialDialog.Builder(getActivity())
+                .title(R.string.action_add_book_source_dialog_title)
+                .items(R.array.action_add_book_sources)
+                .itemsCallback((dialog, view, which, text) -> {
+                    if (which == 0) {
+                        getPresenter().goSearch();
+                    } else {
+                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                        intent.setType("file/*");
+                        startActivityForResult(intent, OPEN_TEXT_FILE_RESULT_CODE);
+                    }
+                })
+                .show();
+    }
+
+    private static final int OPEN_TEXT_FILE_RESULT_CODE = 10010;
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("abb", String.format("requestCode: %d, resultCode: %d", requestCode, resultCode));
     }
 }

@@ -109,6 +109,8 @@ dependencies {
     }
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
 
+    compile 'org.apache.tika:tika-core:1.8'
+
     // Local libs
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
