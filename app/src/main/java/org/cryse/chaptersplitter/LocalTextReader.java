@@ -17,21 +17,24 @@ public class LocalTextReader {
     static final Pattern symbol2Pattern = Pattern.compile("[,./`!@#$%^&*-=_+;:\\{\\}，。、！￥…<>？：；a-zA-z]+");
     public static final int DEFAULT_MAX_CHAPTERS_CACHE_SIZE = 10;
     private int mListCacheSize = DEFAULT_MAX_CHAPTERS_CACHE_SIZE;
-    private File mTextFile;
+    private InputStream mInputStream;
     private BufferedReader mBufferedReader;
 
-    public LocalTextReader(String textFilePath) {
+    public LocalTextReader(String textFilePath) throws FileNotFoundException {
         this(new File(textFilePath));
     }
 
-    public LocalTextReader(File textFile) {
-        this.mTextFile = textFile;
+    public LocalTextReader(File textFile) throws FileNotFoundException {
+        this.mInputStream = new FileInputStream(textFile);
+    }
+
+    public LocalTextReader(InputStream in) {
+        this.mInputStream = in;
     }
 
     public void open() throws IOException {
         UniversalEncodingDetector detector = new UniversalEncodingDetector();
-        InputStream inputStream = new FileInputStream(mTextFile);
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(mInputStream);
         Charset charset = detector.detect(bufferedInputStream, new Metadata());
         bufferedInputStream.reset();
         InputStreamReader reader = new InputStreamReader(bufferedInputStream, charset);
@@ -81,7 +84,8 @@ public class LocalTextReader {
                     if(count > 1) {
                         TextChapter prevChapter = textChapters.get(count - 2);
                         prevChapter.setChapterSize(chapterContentBuilder.length());
-                        callback.onChapterRead(prevChapter, chapterContentBuilder.toString());
+                        if(callback != null)
+                            callback.onChapterRead(prevChapter, chapterContentBuilder.toString());
                     }
                     chapterContentBuilder.delete(0, chapterContentBuilder.length());
                 }
@@ -96,7 +100,8 @@ public class LocalTextReader {
             lastChapter.setEndLineNumber(lineCount);
             if(chapterContentBuilder.length() > 0) {
                 lastChapter.setChapterSize(chapterContentBuilder.length());
-                callback.onChapterRead(lastChapter, chapterContentBuilder.toString());
+                if(callback != null)
+                    callback.onChapterRead(lastChapter, chapterContentBuilder.toString());
             }
         }
         return mChapterCount;

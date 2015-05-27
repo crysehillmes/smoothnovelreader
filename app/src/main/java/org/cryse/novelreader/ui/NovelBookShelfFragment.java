@@ -21,6 +21,8 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.cryse.chaptersplitter.LocalTextReader;
+import org.cryse.chaptersplitter.TextChapter;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.util.ColorUtils;
@@ -37,6 +39,10 @@ import org.cryse.novelreader.view.NovelBookShelfView;
 import org.cryse.novelreader.util.ToastProxy;
 import org.cryse.novelreader.util.ToastType;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -311,7 +317,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                         getPresenter().goSearch();
                     } else {
                         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                        intent.setType("file/*");
+                        intent.setType("text/plain");
                         startActivityForResult(intent, OPEN_TEXT_FILE_RESULT_CODE);
                     }
                 })
@@ -322,6 +328,43 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("abb", String.format("requestCode: %d, resultCode: %d", requestCode, resultCode));
+        if(requestCode == OPEN_TEXT_FILE_RESULT_CODE && data != null) {
+            if(data.getExtras() != null && data.getExtras().keySet() != null) {
+                for(String key : data.getExtras().keySet()) {
+                    Log.d("TEST", String.format("Extra Key: %s", key));
+                }
+            }
+
+            Log.d("TEST", String.format("Data String: %s", data.getDataString()));
+            File file = new File(data.getDataString());
+            Log.d("TEST", String.format("File size: %d", file.length() / 1024 / 1024));
+            LocalTextReader localTextReader = null;
+            try {
+                InputStream inputStream = getActivity().getContentResolver().openInputStream(data.getData());
+                localTextReader = new LocalTextReader(inputStream);
+                localTextReader.open();
+                int chapterCount = localTextReader.readChapters(new LocalTextReader.OnChapterReadCallback() {
+                    @Override
+                    public void onChapterRead(TextChapter chapter, String content) {
+                        Log.d("CHAPTERS",
+                                String.format(
+                                        "Chapter: %s, SL: %d, EL: %d, Length: %d",
+                                        chapter.getChapterName(),
+                                        chapter.getStartLineNumber(),
+                                        chapter.getEndLineNumber(),
+                                        chapter.getChapterSize()
+                                )
+                        );
+                    }
+                });
+                Log.d("CHAPTERS", String.format("Chapter count: %d", chapterCount));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if(localTextReader != null) {
+                    localTextReader.close();
+                }
+            }
+        }
     }
 }
