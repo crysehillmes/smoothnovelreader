@@ -414,6 +414,9 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                         case R.id.menu_bottomsheet_chapter_next:
                             onMenuItemNextChapterClick();
                             break;
+                        case R.id.menu_bottomsheet_back:
+                            finish();
+                            break;
                         case R.id.menu_bottomsheet_changesrc:
                             onMenuItemChangeSrcClick();
                             break;

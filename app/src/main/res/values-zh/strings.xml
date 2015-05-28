@@ -176,6 +176,7 @@
     <string name="bottom_sheet_item_chapter_prev">上一章</string>
     <string name="bottom_sheet_item_night_mode">夜间模式</string>
     <string name="bottom_sheet_item_reading_settings">阅读设置</string>
+    <string name="bottom_sheet_item_back">返回目录</string>
     <string name="bottom_sheet_item_daylight_mode">日间模式</string>
     <string name="bottom_sheet_item_font_size">文字大小</string>
     <string name="bottom_sheet_item_page_curl_mode">@string/settings_item_scroll_mode_title</string>
