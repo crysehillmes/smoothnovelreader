@@ -357,6 +357,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
             MainActivity activity = (MainActivity) getActivity();
             LoadLocalTextService.ReadLocalTextFileBinder binder = activity.getReadLocalTextFileBinder();
             binder.addToCacheQueue(textFilePath, customTitle);
+            ToastProxy.showToast(getActivity(), R.string.toast_read_local_file_background, ToastType.TOAST_INFO);
         }
 
     }

@@ -144,7 +144,13 @@ public class LoadLocalTextService extends Service {
                                 customTitle == null ? fileName : customTitle
                         )
                 )
-                .setContentText("")
+                .setContentText(
+                        mTaskQueue.size() > 0 ?
+                        getString(
+                                R.string.notification_read_local_file_content,
+                                mTaskQueue.size()
+                        ) : ""
+                )
                 .setSmallIcon(R.drawable.ic_notification_open_local)
                 .setOngoing(true)
                 .setProgress(0, 0, true);
@@ -261,6 +267,7 @@ public class LoadLocalTextService extends Service {
                 }
             }
             mTaskQueue.add(newTask);
+            updateQueueCountInNotification();
             // preloadChapterContents(novelModel, novelChapterModels);
         }
 
@@ -268,6 +275,7 @@ public class LoadLocalTextService extends Service {
             for(ReadLocalTextTask task : mTaskQueue) {
                 if(task.getTextFilePath().equalsIgnoreCase(textFilePath)) {
                     mTaskQueue.remove(task);
+                    updateQueueCountInNotification();
                     return true;
                 }
             }
@@ -275,5 +283,33 @@ public class LoadLocalTextService extends Service {
         }
     }
 
+    protected void updateQueueCountInNotification() {
 
+        String filePath = mCurrentTask.getTextFilePath();
+        File file = new File(filePath);
+        String fileName = file.getName();
+        String customTitle = mCurrentTask.getCustomTitle();
+        NotificationCompat.Builder progressNotificationBuilder = new NotificationCompat.Builder(LoadLocalTextService.this);
+        progressNotificationBuilder
+                .setContentTitle(
+                        getString(
+                                R.string.notification_read_local_file_title,
+                                customTitle == null ? fileName : customTitle
+                        )
+                )
+                .setContentText(
+                        mTaskQueue.size() > 0 ?
+                                getString(
+                                        R.string.notification_read_local_file_content,
+                                        mTaskQueue.size()
+                                ) : ""
+                )
+                .setSmallIcon(R.drawable.ic_notification_open_local)
+                .setOngoing(true)
+                .setProgress(0, 0, true);
+        //.addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cancel_current), cancelCurrentPendingIntent)
+        //.addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cancel_all), cancelAllPendingIntent);
+
+        startForeground(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
+    }
 }
