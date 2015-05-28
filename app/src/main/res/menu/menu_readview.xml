@@ -5,5 +5,8 @@
     <item android:id="@+id/menu_bottomsheet_chapter_next" android:title="@string/bottom_sheet_item_chapter_next" android:icon="@drawable/ic_menu_chapter_next"/>
     <item android:id="@+id/menu_bottomsheet_changesrc" android:title="@string/bottom_sheet_item_change_src" android:icon="@drawable/ic_menu_change_src"/>
     <item android:id="@+id/menu_bottomsheet_nightmode" android:title="@string/bottom_sheet_item_night_mode" android:icon="@drawable/ic_menu_night_mode"/>
-    <item android:id="@+id/menu_bottomsheet_reading_settings" android:title="@string/bottom_sheet_item_reading_settings" android:icon="@drawable/ic_menu_reading_settings"/>
+    <!--<item android:id="@+id/menu_bottomsheet_reading_settings" android:title="@string/bottom_sheet_item_reading_settings" android:icon="@drawable/ic_menu_reading_settings"/>-->
+    <item android:id="@+id/menu_bottomsheet_textsize" android:title="@string/bottom_sheet_item_font_size" android:icon="@drawable/ic_menu_text_font_size"/>
+    <item android:id="@+id/menu_bottomsheet_pagecurl_mode" android:title="@string/bottom_sheet_item_page_curl_mode" android:icon="@drawable/ic_menu_page_curl_mode"/>
+    <item android:id="@+id/menu_bottomsheet_background_color" android:title="@string/bottom_sheet_item_read_background" android:icon="@drawable/ic_menu_color_palette"/>
 </menu>

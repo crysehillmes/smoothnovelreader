@@ -2,8 +2,6 @@ package org.cryse.novelreader.ui;
 
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -404,7 +402,6 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         BottomSheet.Builder bottomSheetBuilder = new BottomSheet.Builder(NovelReadViewActivity.this)
                 .title(getString(R.string.bottom_sheet_title))
                 .sheet(R.menu.menu_readview)
-                .applyColorFilter(isNightMode() ? getResources().getColor(R.color.white_54_percent) : Color.BLACK)
                 .grid()
                 .listener((dialog, which) -> {
                     switch (which) {
@@ -423,26 +420,6 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                         case R.id.menu_bottomsheet_nightmode:
                             onMenuItemNightModeClick();
                             break;
-                        case R.id.menu_bottomsheet_reading_settings:
-                            showBottomReadingSettingsMenu();
-                            break;
-                    }
-                    dialog.dismiss();
-                });
-        if(isNightMode())
-            bottomSheetBuilder.darkTheme();
-        BottomSheet bottomSheet = bottomSheetBuilder.show();
-        bottomSheet.setOnDismissListener(dialog -> hideSystemUI());
-    }
-
-    private void showBottomReadingSettingsMenu() {
-        BottomSheet.Builder bottomSheetBuilder = new BottomSheet.Builder(NovelReadViewActivity.this)
-                .title(getString(R.string.bottom_sheet_title))
-                .sheet(R.menu.menu_readview_read_settings)
-                .applyColorFilter(isNightMode() ? getResources().getColor(R.color.white_54_percent) : Color.BLACK)
-                .grid()
-                .listener((dialog, which) -> {
-                    switch (which) {
                         case R.id.menu_bottomsheet_textsize:
                             onMenuItemFontSizeClick();
                             break;
