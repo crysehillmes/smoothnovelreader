@@ -1,7 +1,5 @@
 package org.cryse.novelreader.logic.impl;
 
-import android.content.ContentResolver;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -17,12 +15,12 @@ import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.model.NovelSyncBookShelfModel;
 import org.cryse.novelreader.source.NovelSource;
+import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.HashUtils;
 import org.cryse.novelreader.util.NovelTextFilter;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -35,7 +33,7 @@ import rx.Observable;
 import rx.Subscriber;
 
 public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
-    public static final String LOCAL_FILE_PREFIX = "LOCAL_FILE";
+    public static final String LOCAL_FILE_PREFIX = DataContract.LOCAL_FILE_PREFIX;
     NovelSource novelSource;
 
     NovelDatabaseAccessLayer novelDataBase;

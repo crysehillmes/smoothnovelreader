@@ -21,8 +21,6 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import org.cryse.chaptersplitter.LocalTextReader;
-import org.cryse.chaptersplitter.TextChapter;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.util.ColorUtils;
@@ -40,10 +38,6 @@ import org.cryse.novelreader.view.NovelBookShelfView;
 import org.cryse.novelreader.util.ToastProxy;
 import org.cryse.novelreader.util.ToastType;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
