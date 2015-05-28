@@ -386,15 +386,6 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                                     novelTextFilter.filter(content),
                                     LOCAL_FILE_PREFIX + ":" + chapterHash
                             ));
-                            /*Log.d("CHAPTERS",
-                                    String.format(
-                                            "Chapter: %s, SL: %d, EL: %d, Length: %d",
-                                            chapter.getChapterName(),
-                                            chapter.getStartLineNumber(),
-                                            chapter.getEndLineNumber(),
-                                            chapter.getChapterSize()
-                                    )
-                            );*/
                         }
                     });
                     Log.d("CHAPTERS", String.format("Chapter count: %d", chapterCount));

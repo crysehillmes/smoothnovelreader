@@ -266,11 +266,11 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                         1.3f,
                         0f,
                         textPaint);
-                if(finalHasSavedStated) {
+                if (finalHasSavedStated) {
                     getPresenter().splitChapterAndDisplay(mNovelChapters.get(chapterIndex).getTitle(),
                             mCurrentContent);
                 } else {
-                    if(chapterIndex > mNovelChapters.size() - 1) {
+                    if (chapterIndex > mNovelChapters.size() - 1) {
                         chapterIndex = 0;
                         chapterOffset = 0;
                     }
@@ -645,11 +645,12 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         return mPresenter;
     }
 
-    public void onMenuItemChangeSrcClick(){
-        getPresenter().getOtherSrc(mNovelChapters.get(chapterIndex));
+    public void onMenuItemChangeSrcClick() {
+        if(checkIfLocal(chapterIndex))
+            getPresenter().getOtherSrc(mNovelChapters.get(chapterIndex));
     }
 
-    public void onMenuItemNightModeClick(){
+    public void onMenuItemNightModeClick() {
         setNightMode(!isNightMode());
     }
 
@@ -708,7 +709,8 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     }
 
     public void onMenuItemReloadClick() {
-        getPresenter().loadChapter(mNovelChapters.get(chapterIndex), true);
+        if(checkIfLocal(chapterIndex))
+            getPresenter().loadChapter(mNovelChapters.get(chapterIndex), true);
     }
 
     public void onMenuItemChooseReadBackground() {
@@ -728,5 +730,9 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
             }
         }
         throw new IllegalStateException("ChapterIndex not found.");
+    }
+
+    private boolean checkIfLocal(int chapterIndex) {
+        return mNovelChapters.get(chapterIndex).getSrc().contains("://");
     }
 }

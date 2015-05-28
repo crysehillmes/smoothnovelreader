@@ -89,7 +89,7 @@ public class LocalTextReader {
                     }
                     chapterContentBuilder.delete(0, chapterContentBuilder.length());
                 }
-                if(trim(line).length() > 0)
+                // if(trim(line).length() > 0)
                     chapterContentBuilder.append(line).append('\n');
 
             }
