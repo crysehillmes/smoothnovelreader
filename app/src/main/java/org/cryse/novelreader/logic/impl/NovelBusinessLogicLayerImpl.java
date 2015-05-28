@@ -190,12 +190,12 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
             try {
                 NovelChapterContentModel chapterContent;
                 Boolean isFavorite = novelDataBase.isFavorite(novelChapter.getId());
-                if (isFavorite && forceUpdate == false) {
+                if (isFavorite && !forceUpdate) {
                     chapterContent = novelDataBase.loadChapterContent(novelChapter.getSecondId());
                     if (chapterContent == null) {
                         chapterContent = novelSource.getChapterContentSync(novelChapter.getId(), novelChapter.getSecondId(), novelChapter.getSrc());
                         chapterContent.setContent(novelTextFilter.filter(chapterContent.getContent()));
-                        if (isFavorite) novelDataBase.updateChapterContent(chapterContent);
+                        novelDataBase.updateChapterContent(chapterContent);
                     }
                     subscriber.onNext(chapterContent);
                     subscriber.onCompleted();
@@ -364,7 +364,6 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                             0,
                             new Date().getTime()
                     ));
-                    List<NovelChapterModel> chapters = new ArrayList<NovelChapterModel>(256);
                     int chapterCount = localTextReader.readChapters(new LocalTextReader.OnChapterReadCallback() {
 
                         int chapterIndex = 0;
@@ -385,7 +384,7 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                                     novelId,
                                     chapterHash,
                                     content,
-                                    LOCAL_FILE_PREFIX
+                                    LOCAL_FILE_PREFIX + ":" + chapterHash
                             ));
                             /*Log.d("CHAPTERS",
                                     String.format(
