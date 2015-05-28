@@ -23,6 +23,7 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
     NovelBookShelfView mView;
 
     Subscription subscription;
+    Subscription addLocalBookSubscription;
 
     NovelBusinessLogicLayer mNovelBusinessLogicLayer;
 
@@ -36,6 +37,29 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
         this.mDisplay = display;
         this.mToastUtil = toastUtil;
         this.mView = new EmptyBookShelfView();
+    }
+
+    @Override
+    public void addLocalTextFile(String filePath, String customTitle) {
+        SubscriptionUtils.checkAndUnsubscribe(addLocalBookSubscription);
+        addLocalBookSubscription = mNovelBusinessLogicLayer.addLocalTextFile(filePath, customTitle)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        result -> {
+                            loadFavoriteNovels();
+                        },
+                        error -> {
+
+                            mView.showAddLocalBookProgressDialog(false);
+                            Timber.e(error, error.getMessage(), LOG_TAG);
+                            mToastUtil.showExceptionToast(mView, error);
+                        },
+                        () -> {
+                            mView.showAddLocalBookProgressDialog(false);
+                            Timber.d("Load completed!", LOG_TAG);
+                        }
+                );
     }
 
     @Override
@@ -115,23 +139,31 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
 
     @Override
     public void bindView(NovelBookShelfView view) {
+        Timber.d(String.format("bindView: %s", view.getClass().getName()), LOG_TAG);
         this.mView = view;
     }
 
     @Override
     public void unbindView() {
+        Timber.d("unbindView", LOG_TAG);
         bindView(new EmptyBookShelfView());
     }
 
     @Override
     public void destroy() {
         SubscriptionUtils.checkAndUnsubscribe(subscription);
+        SubscriptionUtils.checkAndUnsubscribe(addLocalBookSubscription);
     }
 
     private class EmptyBookShelfView implements NovelBookShelfView {
 
         @Override
         public void showBooksOnShelf(List<NovelModel> books) {
+
+        }
+
+        @Override
+        public void showAddLocalBookProgressDialog(boolean show) {
 
         }
 

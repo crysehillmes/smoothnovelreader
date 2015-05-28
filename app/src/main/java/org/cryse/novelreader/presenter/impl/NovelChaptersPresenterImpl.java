@@ -75,12 +75,12 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
 
     public void checkNovelFavoriteStatus(NovelModel novelModel) {
         SubscriptionUtils.checkAndUnsubscribe(mCheckFavoriteStatusSubscription);
-        mCheckFavoriteStatusSubscription = mNovelBusinessLogicLayer.isFavorite(novelModel.getId())
+        mCheckFavoriteStatusSubscription = mNovelBusinessLogicLayer.isFavoriteLocal(novelModel.getId())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            mView.checkFavoriteStatusComplete(result);
+                            mView.checkFavoriteStatusComplete(result[0], result[1]);
                         },
                         error -> {
                             Timber.e(error, error.getMessage(), LOG_TAG);
@@ -177,7 +177,7 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
         }
 
         @Override
-        public void checkFavoriteStatusComplete(Boolean isFavorite) {
+        public void checkFavoriteStatusComplete(Boolean isFavorite, Boolean isLocal) {
 
         }
 

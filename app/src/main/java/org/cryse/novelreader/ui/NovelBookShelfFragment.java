@@ -26,6 +26,7 @@ import org.cryse.chaptersplitter.TextChapter;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.util.ColorUtils;
+import org.cryse.novelreader.util.PathUriUtils;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.widget.recyclerview.SuperRecyclerView;
@@ -135,8 +136,8 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         });
 
         mShelfListView.setOnItemLongClickListener((view, position, id) -> {
-            if (!bookShelfListAdapter.isAllowSelection() && getAppCompatActivity().getSupportActionBar() != null) {
-                ActionMode actionMode = getAppCompatActivity().getSupportActionBar().startActionMode(new ActionMode.Callback() {
+            if (!bookShelfListAdapter.isAllowSelection()) {
+                setActionMode(getAppCompatActivity().startSupportActionMode(new ActionMode.Callback() {
                     @Override
                     public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
                         bookShelfListAdapter.setAllowSelection(true);
@@ -165,10 +166,10 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                     public void onDestroyActionMode(ActionMode actionMode) {
                         bookShelfListAdapter.clearSelections();
                         bookShelfListAdapter.setAllowSelection(false);
+                        Log.d("AAA","AAAAAA");
                         setActionMode(null);
                     }
-                });
-                setActionMode(actionMode);
+                }));
                 bookShelfListAdapter.toggleSelection(position);
                 getActionMode().setTitle(getString(R.string.cab_selection_count, bookShelfListAdapter.getSelectedItemCount()));
             } else {
@@ -257,6 +258,25 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         bookShelfListAdapter.notifyDataSetChanged();
     }
 
+    MaterialDialog mAddLocalFileProgressDialog = null;
+    @Override
+    public void showAddLocalBookProgressDialog(boolean show) {
+        if(show) {
+            if (mAddLocalFileProgressDialog != null && mAddLocalFileProgressDialog.isShowing())
+                mAddLocalFileProgressDialog.dismiss();
+            mAddLocalFileProgressDialog = new MaterialDialog.Builder(getActivity())
+                    .title("Adding")
+                    .content("Please wait...")
+                    .progress(true, 0)
+                    .cancelable(false)
+                    .show();
+        } else {
+            if (mAddLocalFileProgressDialog != null && mAddLocalFileProgressDialog.isShowing())
+                mAddLocalFileProgressDialog.dismiss();
+        }
+
+    }
+
     @Override
     public void setLoading(Boolean isLoading) {
         if(isLoading) {
@@ -329,42 +349,9 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == OPEN_TEXT_FILE_RESULT_CODE && data != null) {
-            if(data.getExtras() != null && data.getExtras().keySet() != null) {
-                for(String key : data.getExtras().keySet()) {
-                    Log.d("TEST", String.format("Extra Key: %s", key));
-                }
-            }
-
-            Log.d("TEST", String.format("Data String: %s", data.getDataString()));
-            File file = new File(data.getDataString());
-            Log.d("TEST", String.format("File size: %d", file.length() / 1024 / 1024));
-            LocalTextReader localTextReader = null;
-            try {
-                InputStream inputStream = getActivity().getContentResolver().openInputStream(data.getData());
-                localTextReader = new LocalTextReader(inputStream);
-                localTextReader.open();
-                int chapterCount = localTextReader.readChapters(new LocalTextReader.OnChapterReadCallback() {
-                    @Override
-                    public void onChapterRead(TextChapter chapter, String content) {
-                        Log.d("CHAPTERS",
-                                String.format(
-                                        "Chapter: %s, SL: %d, EL: %d, Length: %d",
-                                        chapter.getChapterName(),
-                                        chapter.getStartLineNumber(),
-                                        chapter.getEndLineNumber(),
-                                        chapter.getChapterSize()
-                                )
-                        );
-                    }
-                });
-                Log.d("CHAPTERS", String.format("Chapter count: %d", chapterCount));
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if(localTextReader != null) {
-                    localTextReader.close();
-                }
-            }
+            String filePath = PathUriUtils.getPath(getActivity(), data.getData());
+            getPresenter().addLocalTextFile(filePath, null);
+            showAddLocalBookProgressDialog(true);
         }
     }
 }

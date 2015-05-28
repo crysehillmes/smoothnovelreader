@@ -1,5 +1,12 @@
 package org.cryse.novelreader.logic.impl;
 
+import android.content.ContentResolver;
+import android.net.Uri;
+import android.text.TextUtils;
+import android.util.Log;
+
+import org.cryse.chaptersplitter.LocalTextReader;
+import org.cryse.chaptersplitter.TextChapter;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelBookMarkModel;
@@ -10,10 +17,15 @@ import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.model.NovelSyncBookShelfModel;
 import org.cryse.novelreader.source.NovelSource;
+import org.cryse.novelreader.util.HashUtils;
 import org.cryse.novelreader.util.NovelTextFilter;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -23,7 +35,7 @@ import rx.Observable;
 import rx.Subscriber;
 
 public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
-
+    public static final String LOCAL_FILE_PREFIX = "LOCAL_FILE";
     NovelSource novelSource;
 
     NovelDatabaseAccessLayer novelDataBase;
@@ -46,6 +58,27 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
         return Observable.create((Subscriber<? super Boolean> subscriber) -> {
             try{
                 subscriber.onNext(novelDataBase.isFavorite(id));
+                subscriber.onCompleted();
+            } catch (Exception ex) {
+                subscriber.onError(ex);
+            }
+        });
+    }
+
+    @Override
+    public Observable<Boolean[]> isFavoriteLocal(String id) {
+        return Observable.create((Subscriber<? super Boolean[]> subscriber) -> {
+            try{
+                Boolean[] result = new Boolean[2];
+                NovelModel novelModel = novelDataBase.loadFavorite(id);
+                if(novelModel == null) {
+                    result[0] = false;
+                    result[1] = false;
+                } else {
+                    result[0] = true;
+                    result[1] = novelModel.getSrc().startsWith(LOCAL_FILE_PREFIX + ":");
+                }
+                subscriber.onNext(result);
                 subscriber.onCompleted();
             } catch (Exception ex) {
                 subscriber.onError(ex);
@@ -104,16 +137,16 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     @Override
     public Observable<List<NovelChapterModel>> getChapterList(final NovelModel novel, final boolean forceUpdate) {
         return Observable.create((Subscriber<? super List<NovelChapterModel>> subscriber) -> {
-            try{
+            try {
                 List<NovelChapterModel> chapterList;
-                if(novelDataBase.isFavorite(novel.getId())) {
-                    if(forceUpdate || novel.getLatestUpdateCount() != 0) {
+                if (novelDataBase.isFavorite(novel.getId())) {
+                    if (forceUpdate || novel.getLatestUpdateCount() != 0) {
                         chapterList = novelSource.getChapterListSync(novel.getId(), novel.getSrc());
                         novelDataBase.updateChapters(novel.getId(), chapterList);
                         chapterList = novelDataBase.loadChapters(novel.getId());
                     } else {
                         chapterList = novelDataBase.loadChapters(novel.getId());
-                        if(chapterList.size() == 0) {
+                        if (chapterList.size() == 0) {
                             chapterList = novelSource.getChapterListSync(novel.getId(), novel.getSrc());
                             novelDataBase.updateChapters(novel.getId(), chapterList);
                             chapterList = novelDataBase.loadChapters(novel.getId());
@@ -189,17 +222,20 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     @Override
     public Observable<List<NovelModel>> getNovelUpdate() {
         return Observable.create((Subscriber<? super List<NovelModel>> subscriber) -> {
-            try{
+            try {
                 List<NovelModel> novelModels = novelDataBase.loadAllFavorites();
-                String[] novelIds = new String[novelModels.size()];
+                List<String> novelIds = new ArrayList<String>(novelModels.size());
                 Hashtable<String, NovelModel> hashtable = new Hashtable<String, NovelModel>();
 
-                for(int i = 0; i < novelModels.size(); i++) {
-                    String id =  novelModels.get(i).getId();
-                    novelIds[i] = id;
-                    hashtable.put(id, novelModels.get(i));
+                for (int i = 0; i < novelModels.size(); i++) {
+                    NovelModel novelModel = novelModels.get(i);
+                    if(novelModel.getSrc().startsWith(LOCAL_FILE_PREFIX + ":"))
+                        continue;
+                    String id = novelModel.getId();
+                    novelIds.add(id);
+                    hashtable.put(id, novelModel);
                 }
-                List<NovelSyncBookShelfModel> syncShelfItems = novelSource.getNovelUpdatesSync(novelIds);
+                List<NovelSyncBookShelfModel> syncShelfItems = novelSource.getNovelUpdatesSync(novelIds.toArray(new String[novelIds.size()]));
 
                 for (NovelSyncBookShelfModel syncBookShelfModel : syncShelfItems) {
                     String gid = syncBookShelfModel.getId();
@@ -297,6 +333,82 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
         return Observable.create((Subscriber<? super NovelChapterModel> subscriber) -> {
             try {
                 subscriber.onNext(novelDataBase.changeChapterSource(chapterModel, changeSrcModel));
+                subscriber.onCompleted();
+            } catch (Exception ex) {
+                subscriber.onError(ex);
+            }
+        });
+    }
+
+    @Override
+    public Observable<Void> addLocalTextFile(String filePath, String customTitle) {
+        return Observable.create((Subscriber<? super Void> subscriber) -> {
+            try {
+                LocalTextReader localTextReader = null;
+                try {
+                    File textFile = new File(filePath);
+                    localTextReader = new LocalTextReader(filePath);
+                    localTextReader.open();
+                    String novelId = HashUtils.md5(filePath);
+                    novelDataBase.addToFavorite(new NovelModel(
+                            novelId,
+                            LOCAL_FILE_PREFIX + ":" + filePath,
+                            TextUtils.isEmpty(customTitle) ? textFile.getName() : customTitle,
+                            "",
+                            "",
+                            0l,
+                            "",
+                            "",
+                            "",
+                            0,
+                            "",
+                            "",
+                            0,
+                            new Date().getTime()
+                    ));
+                    List<NovelChapterModel> chapters = new ArrayList<NovelChapterModel>(256);
+                    int chapterCount = localTextReader.readChapters(new LocalTextReader.OnChapterReadCallback() {
+
+                        int chapterIndex = 0;
+                        @Override
+                        public void onChapterRead(TextChapter chapter, String content) {
+                            String chapterHash = HashUtils.md5(chapter.getChapterName() + String.format("%06d", chapterIndex));
+
+                            novelDataBase.insertChapter(novelId, new NovelChapterModel(
+                                    novelId,
+                                    chapterHash,
+                                    LOCAL_FILE_PREFIX,
+                                    chapter.getChapterName(),
+                                    chapterIndex
+                            ));
+
+                            chapterIndex++;
+                            novelDataBase.updateChapterContent(new NovelChapterContentModel(
+                                    novelId,
+                                    chapterHash,
+                                    content,
+                                    LOCAL_FILE_PREFIX
+                            ));
+                            /*Log.d("CHAPTERS",
+                                    String.format(
+                                            "Chapter: %s, SL: %d, EL: %d, Length: %d",
+                                            chapter.getChapterName(),
+                                            chapter.getStartLineNumber(),
+                                            chapter.getEndLineNumber(),
+                                            chapter.getChapterSize()
+                                    )
+                            );*/
+                        }
+                    });
+                    Log.d("CHAPTERS", String.format("Chapter count: %d", chapterCount));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if(localTextReader != null) {
+                        localTextReader.close();
+                    }
+                }
+                subscriber.onNext(null);
                 subscriber.onCompleted();
             } catch (Exception ex) {
                 subscriber.onError(ex);

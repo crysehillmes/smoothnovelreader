@@ -48,6 +48,12 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
     }
 
     @Override
+    public NovelModel loadFavorite(String id) {
+        QueryBuilder<NovelModel> qb = novelModelDao.queryBuilder().where(NovelModelDao.Properties.Id.eq(id));
+        return qb.count() != 0 ? qb.unique() : null;
+    }
+
+    @Override
     public void addToFavorite(NovelModel novel) {
         if (!isFavorite(novel.getId())) {
             novel.setSortWeight((new Date()).getTime());
@@ -95,6 +101,15 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
     @Override
     public List<NovelChapterModel> loadChapters(String novelId) {
         return novelChapterModelDao.deepQueryList(novelId);
+    }
+
+    @Override
+    public void insertChapter(String novelId, NovelChapterModel chapter) {
+        novelChapterModelDao.insertOrReplace(chapter);
+        NovelModel novelModel = novelModelDao.load(novelId);
+        novelModel.setLatestUpdateCount(0);
+        novelModel.setLatestChapterTitle(chapter.getTitle());
+        novelModelDao.update(novelModel);
     }
 
     @Override

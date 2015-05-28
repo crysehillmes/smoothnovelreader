@@ -271,9 +271,13 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     }
 
     @Override
-    public void checkFavoriteStatusComplete(Boolean isFavorite) {
-        if(isFavorite != null)
-            mMenuItemCacheChapters.setVisible(isFavorite);
+    public void checkFavoriteStatusComplete(Boolean isFavorite, Boolean isLocal) {
+        if(isFavorite != null && mMenuItemCacheChapters != null) {
+            if(isFavorite && (isLocal != null && !isLocal))
+                mMenuItemCacheChapters.setVisible(true);
+            else
+                mMenuItemCacheChapters.setVisible(false);
+        }
     }
 
     @Override
