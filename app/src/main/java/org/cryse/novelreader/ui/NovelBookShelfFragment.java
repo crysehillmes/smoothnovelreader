@@ -23,6 +23,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
+import org.cryse.novelreader.service.LoadLocalTextService;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.PathUriUtils;
 import org.cryse.novelreader.util.UIUtils;
@@ -262,7 +263,6 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                     .title("Adding")
                     .content("Please wait...")
                     .progress(true, 0)
-                    .cancelable(false)
                     .show();
         } else {
             if (mAddLocalFileProgressDialog != null && mAddLocalFileProgressDialog.isShowing())
@@ -344,8 +344,18 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == OPEN_TEXT_FILE_RESULT_CODE && data != null) {
             String filePath = PathUriUtils.getPath(getActivity(), data.getData());
-            getPresenter().addLocalTextFile(filePath, null);
-            showAddLocalBookProgressDialog(true);
+            /*getPresenter().addLocalTextFile(filePath, null);
+            showAddLocalBookProgressDialog(true);*/
+            readLocalTextFile(filePath, null);
         }
+    }
+
+    public void readLocalTextFile(String textFilePath, String customTitle) {
+        if(getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            LoadLocalTextService.ReadLocalTextFileBinder binder = activity.getReadLocalTextFileBinder();
+            binder.addToCacheQueue(textFilePath, customTitle);
+        }
+
     }
 }

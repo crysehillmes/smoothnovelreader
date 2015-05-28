@@ -54,6 +54,7 @@
             android:theme="@style/TransparentActivity"/>
 
         <service android:name=".service.ChapterContentsCacheService"/>
+        <service android:name=".service.LoadLocalTextService"/>
         <service
             android:name="com.umeng.update.net.DownloadingService"
             android:process=":DownloadingService" >

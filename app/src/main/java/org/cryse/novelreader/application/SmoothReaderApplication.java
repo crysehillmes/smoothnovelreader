@@ -13,6 +13,7 @@ import org.cryse.novelreader.R;
 import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.modules.ModulesList;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
+import org.cryse.novelreader.service.LoadLocalTextService;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.store.HashTableRunTimeStore;
 import org.cryse.novelreader.util.RunTimeStore;
@@ -58,6 +59,8 @@ public class SmoothReaderApplication extends Application {
 
         Intent chapterContentCacheServiceIntent = new Intent(this, ChapterContentsCacheService.class);
         startService(chapterContentCacheServiceIntent);
+        Intent loadLocalTextServiceIntent = new Intent(this, LoadLocalTextService.class);
+        startService(loadLocalTextServiceIntent);
     }
 
 
