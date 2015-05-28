@@ -22,6 +22,8 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.event.AbstractEvent;
+import org.cryse.novelreader.event.LoadLocalFileDoneEvent;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.service.LoadLocalTextService;
 import org.cryse.novelreader.util.ColorUtils;
@@ -357,5 +359,13 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
             binder.addToCacheQueue(textFilePath, customTitle);
         }
 
+    }
+
+    @Override
+    protected void onEvent(AbstractEvent event) {
+        super.onEvent(event);
+        if(event instanceof LoadLocalFileDoneEvent) {
+            getPresenter().loadFavoriteNovels();
+        }
     }
 }

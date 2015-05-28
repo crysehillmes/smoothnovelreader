@@ -72,6 +72,9 @@
     <string name="notification_action_chapter_contents_cancel_current">取消缓存</string>
     <string name="notification_action_chapter_contents_cancel_novel">取消缓存《%1$s》</string>
     <string name="notification_action_chapter_contents_cancel_all">取消全部缓存</string>
+    <string name="notification_read_local_file_title">正在导入 %1$s</string>
+    <string name="notification_read_local_file_finish_title">%1$s 已导入书架</string>
+    <string name="notification_read_local_file_finish_content">可以开始阅读啦</string>
 
     <!-- Search text -->
     <string name="searchbox_hint">搜索书名或作者名</string>

@@ -17,6 +17,8 @@ import org.cryse.chaptersplitter.TextChapter;
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
+import org.cryse.novelreader.event.LoadLocalFileDoneEvent;
+import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.model.NovelChapterContentModel;
 import org.cryse.novelreader.model.NovelChapterModel;
 import org.cryse.novelreader.model.NovelModel;
@@ -44,6 +46,9 @@ public class LoadLocalTextService extends Service {
 
     @Inject
     NovelTextFilter novelTextFilter;
+
+    @Inject
+    RxEventBus mEventBus;
 
     BlockingQueue<ReadLocalTextTask> mTaskQueue = new LinkedBlockingQueue<ReadLocalTextTask>();
     ReadLocalTextTask mCurrentTask = null;
@@ -116,6 +121,8 @@ public class LoadLocalTextService extends Service {
 
     public void readChapters(ReadLocalTextTask task) {
         String filePath = task.getTextFilePath();
+        File file = new File(filePath);
+        String fileName = file.getName();
         String customTitle = task.getCustomTitle();
 
         Log.d(LOG_TAG, "downloadChapters");
@@ -130,13 +137,19 @@ public class LoadLocalTextService extends Service {
 
 
         progressNotificationBuilder = new NotificationCompat.Builder(LoadLocalTextService.this);
-        progressNotificationBuilder.setContentTitle(getResources().getString(R.string.notification_chapter_contents_cache_title, task.getTextFilePath()))
+        progressNotificationBuilder
+                .setContentTitle(
+                        getString(
+                                R.string.notification_read_local_file_title,
+                                customTitle == null ? fileName : customTitle
+                        )
+                )
                 .setContentText("")
-                .setSmallIcon(R.drawable.ic_action_chapter_cache)
+                .setSmallIcon(R.drawable.ic_notification_open_local)
                 .setOngoing(true)
-                .setProgress(0, 0, true)
-                .addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cancel_current), cancelCurrentPendingIntent)
-                .addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cancel_all), cancelAllPendingIntent);
+                .setProgress(0, 0, true);
+                //.addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cancel_current), cancelCurrentPendingIntent)
+                //.addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cancel_all), cancelAllPendingIntent);
 
         startForeground(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
 
@@ -196,6 +209,7 @@ public class LoadLocalTextService extends Service {
             if(localTextReader != null) {
                 localTextReader.close();
             }
+            mEventBus.sendEvent(new LoadLocalFileDoneEvent());
         }
 
         // TODO: If this is not the last task, do not cancel the progress notification, otherwise cancel it and stopForeground.
@@ -204,19 +218,26 @@ public class LoadLocalTextService extends Service {
 
         // TODO: Show a notification here to let user know one book is cached.
         showTaskResultNotification(
-                task.getTextFilePath(),
-                task.getCustomTitle()
+                filePath,
+                fileName,
+                customTitle
         );
     }
 
-    private void showTaskResultNotification(String textFilePath, String customTitle) {
+    private void showTaskResultNotification(String textFilePath, String fileName, String customTitle) {
         notification_count = notification_count + 1;
         NotificationCompat.Builder mResultBuilder = new NotificationCompat.Builder(this);
         Bundle extras = new Bundle();
         extras.putString("text_file_path", textFilePath);
         extras.putString("custom_title", customTitle);
-        mResultBuilder.setContentTitle("Finish")
-                .setContentText("Finish")
+        mResultBuilder
+                .setContentTitle(
+                        getString(
+                                R.string.notification_read_local_file_finish_title,
+                                customTitle == null ? fileName : customTitle
+                        )
+                )
+                .setContentText(getString(R.string.notification_read_local_file_finish_content))
                 .setSmallIcon(R.drawable.ic_notification_done)
                 .setExtras(extras)
                 .setAutoCancel(true);
