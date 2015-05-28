@@ -383,7 +383,7 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                             novelDataBase.updateChapterContent(new NovelChapterContentModel(
                                     novelId,
                                     chapterHash,
-                                    content,
+                                    novelTextFilter.filter(content),
                                     LOCAL_FILE_PREFIX + ":" + chapterHash
                             ));
                             /*Log.d("CHAPTERS",
