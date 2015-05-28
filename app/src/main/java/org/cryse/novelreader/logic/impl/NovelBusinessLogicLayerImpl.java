@@ -243,9 +243,8 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                     novelModel.setLatestChapterTitle(syncBookShelfModel.getLastChapterTitle());
                 }
                 novelDataBase.updateFavoritesStatus(hashtable.values());
-                List<NovelModel> resultNovels = new ArrayList<NovelModel>(hashtable.values());
-                Collections.sort(resultNovels);
-                subscriber.onNext(resultNovels);
+
+                subscriber.onNext(novelDataBase.loadAllFavorites());
                 hashtable.clear();
                 subscriber.onCompleted();
             } catch (Exception ex) {
