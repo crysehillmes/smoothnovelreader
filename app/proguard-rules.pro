@@ -126,3 +126,8 @@
 
 -keep class org.cryse.novelreader.presenter.**
 -keepnames class org.cryse.novelreader.presenter.**
+
+-keep class org.apache.tika.** { *; }
+# Tika's optional deps
+-dontwarn aQute.**
+-dontwarn org.osgi.**
