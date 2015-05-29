@@ -7,10 +7,10 @@ import org.cryse.novelreader.model.NovelBookMarkModel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.NovelChapterModel;
 import org.cryse.novelreader.presenter.NovelChapterContentPresenter;
-import org.cryse.novelreader.util.ToastType;
+import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.view.NovelChapterContentView;
 import org.cryse.novelreader.util.SubscriptionUtils;
-import org.cryse.novelreader.util.ToastUtil;
+import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 import org.cryse.novelreader.util.textsplitter.PageSplitter;
 
@@ -36,16 +36,16 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
 
     AndroidNavigation mDisplay;
 
-    ToastUtil mToastUtil;
+    SnackbarUtils mSnackbarUtils;
 
     @Inject
     public NovelChapterContentPresenterImpl(
             NovelBusinessLogicLayer mNovelBusinessLogicLayer,
             AndroidNavigation display,
-            ToastUtil toastUtil) {
+            SnackbarUtils snackbarUtils) {
         this.mNovelBusinessLogicLayer = mNovelBusinessLogicLayer;
         this.mDisplay = display;
-        this.mToastUtil = toastUtil;
+        this.mSnackbarUtils = snackbarUtils;
         this.mView = new EmptyNovelChapterContentView();
     }
 
@@ -81,8 +81,8 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                         error -> {
                             mView.setLoading(false);
                             Timber.e(error, error.getMessage(), LOG_TAG);
-                            mToastUtil.showExceptionToast(mView, error);
-                            showEmptyContent(type, generateEmptyString(novelChapterModel.getTitle(), mToastUtil.getEmptyContentText()));
+                            mSnackbarUtils.showExceptionToast(mView, error);
+                            showEmptyContent(type, generateEmptyString(novelChapterModel.getTitle(), mSnackbarUtils.getEmptyContentText()));
                         },
                         () -> {
                             mView.setLoading(false);
@@ -116,10 +116,10 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                             mView.setLoading(false);
                             Timber.e(error, error.getMessage(), LOG_TAG);
                             if( content == null || error instanceof NullPointerException)
-                                mToastUtil.showEmptyContentToast(mView);
+                                mSnackbarUtils.showEmptyContentToast(mView);
                             else
-                                mToastUtil.showExceptionToast(mView, error);
-                            showEmptyContent(type, generateEmptyString(title, mToastUtil.getEmptyContentText()));
+                                mSnackbarUtils.showExceptionToast(mView, error);
+                            showEmptyContent(type, generateEmptyString(title, mSnackbarUtils.getEmptyContentText()));
                         },
                         () -> {
                             mView.setLoading(false);
@@ -139,7 +139,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                         },
                         error -> {
                             mView.onBookMarkSaved(NovelBookMarkModel.BOOKMARK_TYPE_NORMAL, false);
-                            mToastUtil.showExceptionToast(mView, error);
+                            mSnackbarUtils.showExceptionToast(mView, error);
                         },
                         () -> {
                             mView.onBookMarkSaved(NovelBookMarkModel.BOOKMARK_TYPE_NORMAL, true);
@@ -158,7 +158,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                         },
                         error -> {
                             mView.onBookMarkSaved(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD, false);
-                            mToastUtil.showExceptionToast(mView, error);
+                            mSnackbarUtils.showExceptionToast(mView, error);
                         },
                         () -> {
                             mView.onBookMarkSaved(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD, true);
@@ -243,7 +243,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                         },
                         error -> {
                             Timber.e(error, error.getMessage(), LOG_TAG);
-                            mToastUtil.showExceptionToast(mView, error);
+                            mSnackbarUtils.showExceptionToast(mView, error);
                         },
                         () -> {
 
@@ -266,7 +266,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                         error -> {
                             mView.setLoading(false);
                             Timber.e(error, error.getMessage(), LOG_TAG);
-                            mToastUtil.showExceptionToast(mView, error);
+                            mSnackbarUtils.showExceptionToast(mView, error);
                         },
                         () -> {
                             Timber.d("changeSrc onCompleted.", LOG_TAG);
@@ -337,7 +337,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
         }
 
         @Override
-        public void showToast(String text, ToastType toastType) {
+        public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
 
         }
     }

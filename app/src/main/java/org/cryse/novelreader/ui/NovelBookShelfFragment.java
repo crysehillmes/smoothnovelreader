@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.design.widget.Snackbar;
 import android.support.v7.view.ActionMode;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +29,8 @@ import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.service.LoadLocalTextService;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.PathUriUtils;
+import org.cryse.novelreader.util.SimpleSnackbarType;
+import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.widget.recyclerview.SuperRecyclerView;
@@ -38,8 +41,6 @@ import org.cryse.novelreader.ui.adapter.NovelBookShelfListAdapter;
 import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.presenter.NovelBookShelfPresenter;
 import org.cryse.novelreader.view.NovelBookShelfView;
-import org.cryse.novelreader.util.ToastProxy;
-import org.cryse.novelreader.util.ToastType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -290,8 +291,9 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     }
 
     @Override
-    public void showToast(String text, ToastType toastType) {
-        ToastProxy.showToast(getActivity(), text, toastType);
+    public void showSnackbar(CharSequence text, SimpleSnackbarType snackbarType) {
+        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, snackbarType, Snackbar.LENGTH_SHORT);
+        snackbar.show();
     }
 
     private void removeNovels() {
@@ -304,12 +306,12 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         }
         for (int position : reverseSortedPositions) {
             if(currentCachingNovelId != null && currentCachingNovelId.compareTo(novelList.get(position).getId()) == 0) {
-                ToastProxy.showToast(getActivity(), getString(R.string.toast_chapter_contents_caching_cannot_delete, novelList.get(position).getTitle()), ToastType.TOAST_ALERT);
+                showSnackbar(getString(R.string.toast_chapter_contents_caching_cannot_delete, novelList.get(position).getTitle()), SimpleSnackbarType.WARNING);
             } else {
                 removeIds.add(novelList.get(position).getId());
                 if(mServiceBinder != null) {
                     if(mServiceBinder.removeFromQueueIfExist(novelList.get(position).getId())) {
-                    ToastProxy.showToast(getActivity(), getString(R.string.notification_action_chapter_contents_cancel_novel, novelList.get(position).getTitle()), ToastType.TOAST_INFO);
+                        showSnackbar(getString(R.string.notification_action_chapter_contents_cancel_novel, novelList.get(position).getTitle()), SimpleSnackbarType.INFO);
                 }
                 }
                 ((NovelBookShelfListAdapter) mShelfListView.getAdapter()).remove(position);
@@ -357,7 +359,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
             MainActivity activity = (MainActivity) getActivity();
             LoadLocalTextService.ReadLocalTextFileBinder binder = activity.getReadLocalTextFileBinder();
             binder.addToCacheQueue(textFilePath, customTitle);
-            ToastProxy.showToast(getActivity(), R.string.toast_read_local_file_background, ToastType.TOAST_INFO);
+            showSnackbar(getString(R.string.toast_read_local_file_background), SimpleSnackbarType.INFO);
         }
 
     }

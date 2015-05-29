@@ -8,13 +8,13 @@ import org.cryse.novelreader.qualifier.ApplicationContext;
 
 import javax.inject.Inject;
 
-public class ToastTextGenerator {
+public class SnackbarTextDelegate {
     Context mContext;
     Resources mResource;
 
 
     @Inject
-    public ToastTextGenerator(@ApplicationContext Context context) {
+    public SnackbarTextDelegate(@ApplicationContext Context context) {
         this.mContext = context;
         this.mResource = mContext.getResources();
     }

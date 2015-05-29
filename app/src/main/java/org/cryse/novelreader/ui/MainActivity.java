@@ -10,7 +10,9 @@ import android.os.IBinder;
 import android.view.View;
 
 import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
+import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
@@ -38,8 +40,8 @@ public class MainActivity extends AbstractThemeableActivity {
     @Inject
     AndroidNavigation mNavigation;
 
-    AccountHeader.Result mAccountHeader;
-    Drawer.Result mNaviagtionDrawer;
+    AccountHeader mAccountHeader;
+    Drawer mNaviagtionDrawer;
 
     Picasso mPicasso;
 
@@ -87,12 +89,12 @@ public class MainActivity extends AbstractThemeableActivity {
     }
 
     private void initDrawer() {
-        AccountHeader accountHeader = new AccountHeader()
+        AccountHeaderBuilder accountHeaderBuilder = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(isNightMode() ? R.drawable.drawer_top_image_dark : R.drawable.drawer_top_image_light);
         //Now create your drawer and pass the AccountHeader.Result
-        mAccountHeader = accountHeader.build();
-        mNaviagtionDrawer = new Drawer()
+        mAccountHeader = accountHeaderBuilder.build();
+        mNaviagtionDrawer = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(getToolbar())
                 .withAccountHeader(mAccountHeader)
@@ -132,6 +134,7 @@ public class MainActivity extends AbstractThemeableActivity {
                     if (drawerItem.getType().equalsIgnoreCase("PRIMARY_ITEM"))
                         mCurrentSelection = drawerItem.getIdentifier();
                     mPendingRunnable = () ->  onNavigationSelected(drawerItem);
+                    return false;
                 })
                 .build();
         if(mCurrentSelection == 1001 && !mIsRestorePosition) {

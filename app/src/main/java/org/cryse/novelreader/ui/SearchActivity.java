@@ -5,6 +5,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -14,8 +15,9 @@ import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.qualifier.PrefsGrayScaleInNight;
 import org.cryse.novelreader.qualifier.PrefsShowCoverImage;
 import org.cryse.novelreader.util.ColorUtils;
-import org.cryse.novelreader.util.ToastTextGenerator;
-import org.cryse.novelreader.util.ToastUtil;
+import org.cryse.novelreader.util.SimpleSnackbarType;
+import org.cryse.novelreader.util.SnackbarUtils;
+import org.cryse.novelreader.util.SnackbarTextDelegate;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.prefs.BooleanPreference;
@@ -28,8 +30,6 @@ import org.cryse.novelreader.ui.adapter.NovelModelListAdapter;
 import org.cryse.novelreader.ui.adapter.NovelOnlineListAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.presenter.NovelListPresenter;
-import org.cryse.novelreader.util.ToastProxy;
-import org.cryse.novelreader.util.ToastType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -240,8 +240,8 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
 
     @Override
     public void getNovelListFailure(Throwable e, Object... extras) {
-        ToastUtil toastUtil = new ToastUtil(new ToastTextGenerator(this));
-        toastUtil.showExceptionToast(this, e);
+        SnackbarUtils snackbarUtils = new SnackbarUtils(new SnackbarTextDelegate(this));
+        snackbarUtils.showExceptionToast(this, e);
     }
 
     @Override
@@ -271,7 +271,8 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
     }
 
     @Override
-    public void showToast(String text, ToastType toastType) {
-        ToastProxy.showToast(this, text, toastType);
+    public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
+        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, type, Snackbar.LENGTH_SHORT);
+        snackbar.show();
     }
 }

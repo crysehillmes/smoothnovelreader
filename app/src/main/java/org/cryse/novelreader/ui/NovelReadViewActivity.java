@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.text.TextPaint;
 import android.util.TypedValue;
 import android.view.MenuItem;
@@ -39,8 +40,8 @@ import org.cryse.novelreader.ui.widget.ReadWidgetAdapter;
 
 import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.PreferenceConverter;
-import org.cryse.novelreader.util.ToastProxy;
-import org.cryse.novelreader.util.ToastType;
+import org.cryse.novelreader.util.SimpleSnackbarType;
+import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.gesture.SimpleGestureDetector;
@@ -432,7 +433,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                             break;
                         case R.id.menu_bottomsheet_background_color:
                             if (isNightMode())
-                                ToastProxy.showToast(this, getString(R.string.toast_menu_not_available_in_night_mode), ToastType.TOAST_INFO);
+                                showSnackbar(getString(R.string.toast_menu_not_available_in_night_mode), SimpleSnackbarType.INFO);
                             else
                                 onMenuItemChooseReadBackground();
                             break;
@@ -567,11 +568,6 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     @Override
     public Boolean isLoading() {
         return mIsLoading;
-    }
-
-    @Override
-    public void showToast(String text, ToastType toastType) {
-        ToastProxy.showToast(this, text, toastType);
     }
 
     private void goNextChapter() {
@@ -715,5 +711,11 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
 
     private boolean checkIfLocal(int chapterIndex) {
         return mNovelChapters.get(chapterIndex).getSrc().contains("://");
+    }
+
+    @Override
+    public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
+        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, type, Snackbar.LENGTH_SHORT);
+        snackbar.show();
     }
 }

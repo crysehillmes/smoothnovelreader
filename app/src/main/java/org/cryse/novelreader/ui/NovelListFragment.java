@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,10 +24,9 @@ import org.cryse.novelreader.ui.adapter.NovelModelListAdapter;
 import org.cryse.novelreader.ui.adapter.NovelOnlineListAdapter;
 import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.util.RecyclerViewUtils;
-import org.cryse.novelreader.util.ToastProxy;
-import org.cryse.novelreader.util.ToastTextGenerator;
-import org.cryse.novelreader.util.ToastType;
-import org.cryse.novelreader.util.ToastUtil;
+import org.cryse.novelreader.util.SimpleSnackbarType;
+import org.cryse.novelreader.util.SnackbarUtils;
+import org.cryse.novelreader.util.SnackbarTextDelegate;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.prefs.BooleanPreference;
@@ -353,8 +353,8 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
 
     @Override
     public void getNovelListFailure(Throwable e, Object... extras) {
-        ToastUtil toastUtil = new ToastUtil(new ToastTextGenerator(getActivity()));
-        toastUtil.showExceptionToast(this, e);
+        SnackbarUtils snackbarUtils = new SnackbarUtils(new SnackbarTextDelegate(getActivity()));
+        snackbarUtils.showExceptionToast(this, e);
     }
 
     @Override
@@ -383,11 +383,6 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
         return isLoadingMore;
     }
 
-    @Override
-    public void showToast(String text, ToastType toastType) {
-        ToastProxy.showToast(getActivity(), text, toastType);
-    }
-
     protected NovelModelListAdapter createAdapter() {
         return new NovelOnlineListAdapter(
                 getAppCompatActivity().getSupportActionBar().getThemedContext(),
@@ -396,5 +391,11 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
                 isNightMode(),
                 mGrayScaleInNight.get()
         );
+    }
+
+    @Override
+    public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
+        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, type, Snackbar.LENGTH_SHORT);
+        snackbar.show();
     }
 }

@@ -3,10 +3,10 @@ package org.cryse.novelreader.presenter.impl;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelBookShelfPresenter;
-import org.cryse.novelreader.util.ToastType;
+import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.view.NovelBookShelfView;
 import org.cryse.novelreader.util.SubscriptionUtils;
-import org.cryse.novelreader.util.ToastUtil;
+import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
 import java.util.List;
@@ -29,13 +29,13 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
 
     AndroidNavigation mDisplay;
 
-    ToastUtil mToastUtil;
+    SnackbarUtils mToastUtil;
 
     @Inject
-    public NovelBookShelfPresenterImpl(NovelBusinessLogicLayer mNovelBusinessLogicLayer, AndroidNavigation display, ToastUtil toastUtil) {
+    public NovelBookShelfPresenterImpl(NovelBusinessLogicLayer mNovelBusinessLogicLayer, AndroidNavigation display, SnackbarUtils snackbarUtils) {
         this.mNovelBusinessLogicLayer = mNovelBusinessLogicLayer;
         this.mDisplay = display;
-        this.mToastUtil = toastUtil;
+        this.mToastUtil = snackbarUtils;
         this.mView = new EmptyBookShelfView();
     }
 
@@ -178,7 +178,7 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
         }
 
         @Override
-        public void showToast(String text, ToastType toastType) {
+        public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
 
         }
     }

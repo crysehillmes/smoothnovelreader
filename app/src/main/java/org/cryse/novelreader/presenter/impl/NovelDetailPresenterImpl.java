@@ -4,10 +4,10 @@ import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelDetailPresenter;
-import org.cryse.novelreader.util.ToastType;
+import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.view.NovelDetailView;
 import org.cryse.novelreader.util.SubscriptionUtils;
-import org.cryse.novelreader.util.ToastUtil;
+import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
 import javax.inject.Inject;
@@ -25,13 +25,13 @@ public class NovelDetailPresenterImpl implements NovelDetailPresenter {
     private Subscription mCheckFavoriteStatusSubscription;
     private Subscription mAddFavoriteSubscription;
     private NovelBusinessLogicLayer dataService;
-    private ToastUtil mToastUtil;
+    private SnackbarUtils mSnackbarUtils;
     private AndroidNavigation mDisplay;
     @Inject
-    public NovelDetailPresenterImpl(NovelBusinessLogicLayer dataService, AndroidNavigation display, ToastUtil toastUtil) {
+    public NovelDetailPresenterImpl(NovelBusinessLogicLayer dataService, AndroidNavigation display, SnackbarUtils snackbarUtils) {
         this.dataService = dataService;
         this.mDisplay = display;
-        this.mToastUtil = toastUtil;
+        this.mSnackbarUtils = snackbarUtils;
         this.mView = new EmptyNovelDetailView();
     }
 
@@ -66,7 +66,7 @@ public class NovelDetailPresenterImpl implements NovelDetailPresenter {
                         error -> {
                             mView.setLoading(false);
                             Timber.e(error, error.getMessage(), LOG_TAG);
-                            mToastUtil.showExceptionToast(mView, error);
+                            mSnackbarUtils.showExceptionToast(mView, error);
                         },
                         () -> {
                             mView.setLoading(false);
@@ -140,7 +140,7 @@ public class NovelDetailPresenterImpl implements NovelDetailPresenter {
         }
 
         @Override
-        public void showToast(String text, ToastType toastType) {
+        public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
 
         }
     }

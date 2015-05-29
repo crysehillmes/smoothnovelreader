@@ -50,12 +50,6 @@
         <attr name="fab_shadowColor" format="integer"/>
     </declare-styleable>
 
-    <declare-styleable name="RippleView">
-        <attr name="rippleColor" format="color" />
-        <attr name="alphaFactor" format="float" />
-        <attr name="hover" format="boolean" />
-    </declare-styleable>
-
     <declare-styleable name="superrecyclerview">
         <attr name='srv_columns' format="integer|reference"/>
         <attr name="srv_listSelector" format="reference"/>
@@ -80,9 +74,5 @@
         <!-- Layout to build a superList. Default values are  @layout/widget_superrecyclerview for a list and
          @layout/view_progress_gridview for a grid-->
         <attr name="srv_mainLayoutID" format="reference"/>
-    </declare-styleable>
-
-    <declare-styleable name="ScrimInsetsView">
-        <attr name="insetForeground" format="reference|color" />
     </declare-styleable>
 </resources>

@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.design.widget.Snackbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,11 +27,11 @@ import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.ui.adapter.NovelChapterListAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.presenter.NovelChaptersPresenter;
+import org.cryse.novelreader.util.SimpleSnackbarType;
+import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.view.NovelChaptersView;
 import org.cryse.novelreader.util.DataContract;
-import org.cryse.novelreader.util.ToastProxy;
-import org.cryse.novelreader.util.ToastType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -313,11 +314,6 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         return mListView.getSwipeToRefresh().isRefreshing() || mListView.isLoadingMore();
     }
 
-    @Override
-    public void showToast(String text, ToastType toastType) {
-        ToastProxy.showToast(this, text, toastType);
-    }
-
     public NovelChaptersPresenter getPresenter() {
         return mPresenter;
     }
@@ -330,7 +326,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     private void chaptersOfflineCache() {
         if(mServiceBinder != null) {
             mServiceBinder.addToCacheQueue(mNovel);
-            ToastProxy.showToast(this, getString(R.string.toast_chapter_contents_add_to_cache_queue, mNovel.getTitle()), ToastType.TOAST_INFO);
+            showSnackbar(getString(R.string.toast_chapter_contents_add_to_cache_queue, mNovel.getTitle()), SimpleSnackbarType.INFO);
         }
     }
 
@@ -342,5 +338,11 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
             }
         }
         throw new IllegalStateException("ChapterIndex not found.");
+    }
+
+    @Override
+    public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
+        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, type, Snackbar.LENGTH_SHORT);
+        snackbar.show();
     }
 }

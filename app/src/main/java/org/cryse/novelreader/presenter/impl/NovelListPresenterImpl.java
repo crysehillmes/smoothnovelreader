@@ -3,10 +3,10 @@ package org.cryse.novelreader.presenter.impl;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelListPresenter;
-import org.cryse.novelreader.util.ToastType;
+import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.view.NovelOnlineListView;
 import org.cryse.novelreader.util.SubscriptionUtils;
-import org.cryse.novelreader.util.ToastUtil;
+import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
 import java.util.List;
@@ -25,12 +25,12 @@ public class NovelListPresenterImpl implements NovelListPresenter {
 
     AndroidNavigation mDisplay;
 
-    ToastUtil mToastUtil;
+    SnackbarUtils mSnackbarUtils;
 
-    public NovelListPresenterImpl(NovelBusinessLogicLayer novelBusinessLogicLayer, AndroidNavigation display, ToastUtil toastUtil) {
+    public NovelListPresenterImpl(NovelBusinessLogicLayer novelBusinessLogicLayer, AndroidNavigation display, SnackbarUtils snackbarUtils) {
         this.novelBusinessLogicLayer = novelBusinessLogicLayer;
         this.mDisplay = display;
-        this.mToastUtil = toastUtil;
+        this.mSnackbarUtils = snackbarUtils;
         this.mView = new EmptyNovelListView();
     }
 
@@ -166,17 +166,17 @@ public class NovelListPresenterImpl implements NovelListPresenter {
         }
 
         @Override
-        public void showToast(String text, ToastType toastType) {
-
-        }
-
-        @Override
         public boolean isLoadingMore() {
             return false;
         }
 
         @Override
         public void setLoadingMore(boolean value) {
+
+        }
+
+        @Override
+        public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
 
         }
     }
