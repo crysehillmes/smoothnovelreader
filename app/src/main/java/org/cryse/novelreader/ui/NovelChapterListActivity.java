@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.design.widget.Snackbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,11 +27,11 @@ import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.ui.adapter.NovelChapterListAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.presenter.NovelChaptersPresenter;
+import org.cryse.novelreader.util.SimpleSnackbarType;
+import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.view.NovelChaptersView;
 import org.cryse.novelreader.util.DataContract;
-import org.cryse.novelreader.util.ToastProxy;
-import org.cryse.novelreader.util.ToastType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +57,9 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     NovelChapterListAdapter mChapterListAdapter;
     private MenuItem mMenuItemCacheChapters;
+    private MenuItem mMenuItemDetail;
+    private MenuItem mMenuItemRefresh;
+
     ServiceConnection mBackgroundServiceConnection;
     private ChapterContentsCacheService.ChapterContentsCacheBinder mServiceBinder;
 
@@ -186,8 +190,22 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_chapterlist, menu);
         mMenuItemCacheChapters = menu.findItem(R.id.menu_item_chapters_offline_cache);
+        mMenuItemDetail = menu.findItem(R.id.menu_item_chapters_detail);
+        mMenuItemRefresh = menu.findItem(R.id.menu_item_chapters_refresh);
         getPresenter().checkNovelFavoriteStatus(mNovel);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean isLocalBook = mNovel.getSrc().startsWith(DataContract.LOCAL_FILE_PREFIX);
+        if(mMenuItemRefresh != null) {
+            mMenuItemRefresh.setVisible(!isLocalBook);
+        }
+        if(mMenuItemDetail != null) {
+            mMenuItemDetail.setVisible(!isLocalBook);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -271,9 +289,13 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     }
 
     @Override
-    public void checkFavoriteStatusComplete(Boolean isFavorite) {
-        if(isFavorite != null)
-            mMenuItemCacheChapters.setVisible(isFavorite);
+    public void checkFavoriteStatusComplete(Boolean isFavorite, Boolean isLocal) {
+        if(isFavorite != null && mMenuItemCacheChapters != null) {
+            if(isFavorite && (isLocal != null && !isLocal))
+                mMenuItemCacheChapters.setVisible(true);
+            else
+                mMenuItemCacheChapters.setVisible(false);
+        }
     }
 
     @Override
@@ -292,11 +314,6 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         return mListView.getSwipeToRefresh().isRefreshing() || mListView.isLoadingMore();
     }
 
-    @Override
-    public void showToast(String text, ToastType toastType) {
-        ToastProxy.showToast(this, text, toastType);
-    }
-
     public NovelChaptersPresenter getPresenter() {
         return mPresenter;
     }
@@ -309,7 +326,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     private void chaptersOfflineCache() {
         if(mServiceBinder != null) {
             mServiceBinder.addToCacheQueue(mNovel);
-            ToastProxy.showToast(this, getString(R.string.toast_chapter_contents_add_to_cache_queue, mNovel.getTitle()), ToastType.TOAST_INFO);
+            showSnackbar(getString(R.string.toast_chapter_contents_add_to_cache_queue, mNovel.getTitle()), SimpleSnackbarType.INFO);
         }
     }
 
@@ -321,5 +338,11 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
             }
         }
         throw new IllegalStateException("ChapterIndex not found.");
+    }
+
+    @Override
+    public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
+        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, type, Snackbar.LENGTH_SHORT);
+        snackbar.show();
     }
 }

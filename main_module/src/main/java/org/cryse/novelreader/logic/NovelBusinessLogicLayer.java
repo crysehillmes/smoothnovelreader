@@ -24,6 +24,8 @@ public interface NovelBusinessLogicLayer {
      */
     public Observable<Boolean> isFavorite(String id);
 
+    public Observable<Boolean[]> isFavoriteLocal(String id);
+
     /**
      * Get favorites.
      *

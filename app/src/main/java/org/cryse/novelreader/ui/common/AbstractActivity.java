@@ -31,6 +31,7 @@ public abstract class AbstractActivity extends AppCompatActivity {
     private View mPreLShadow;
     private ActionMode mActionMode;
     private Subscription mEventBusSubscription;
+    private View mSnackbarRootView;
     @Inject
     RxEventBus mEventBus;
 
@@ -42,6 +43,12 @@ public abstract class AbstractActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onEvent);
+    }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        mSnackbarRootView =  findViewById(android.R.id.content);
     }
 
     protected void setUpToolbar(int toolbarLayoutId, int customToolbarShadowId) {
@@ -160,11 +167,23 @@ public abstract class AbstractActivity extends AppCompatActivity {
     }
 
     public ActionMode getActionMode() {
+        Log.d("WWW", String.format("getActionMode: mActionMode == null = %b", mActionMode == null));
         return mActionMode;
     }
 
     public void setActionMode(ActionMode actionMode) {
+        Log.d("WWW", String.format("setActionMode: mActionMode == null = %b", actionMode == null));
         this.mActionMode = actionMode;
+    }
+
+    @Override
+    public ActionMode startSupportActionMode(final ActionMode.Callback callback) {
+        // Fix for bug https://code.google.com/p/android/issues/detail?id=159527
+        final ActionMode mode = super.startSupportActionMode(callback);
+        if (mode != null) {
+            mode.invalidate();
+        }
+        return mode;
     }
 
     public void setPreLShadowVisibility(boolean visibility) {
@@ -190,5 +209,11 @@ public abstract class AbstractActivity extends AppCompatActivity {
 
     protected RxEventBus getEventBus() {
         return mEventBus;
+    }
+
+    protected View getSnackbarRootView() {
+        if(mSnackbarRootView == null)
+            mSnackbarRootView = findViewById(android.R.id.content);
+        return mSnackbarRootView;
     }
 }

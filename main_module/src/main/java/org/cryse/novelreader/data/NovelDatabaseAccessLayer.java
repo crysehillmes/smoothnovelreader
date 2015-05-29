@@ -11,28 +11,30 @@ import java.util.List;
 
 public interface NovelDatabaseAccessLayer {
     // Favorite novel operation
-    public boolean isFavorite(String id);
-    public void addToFavorite(NovelModel novel);
-    public void updateFavoritesStatus(Collection<NovelModel> novels);
-    public void removeFavorite(String... ids);
-    public List<NovelModel> loadAllFavorites();
+    boolean isFavorite(String id);
+    NovelModel loadFavorite(String id);
+    void addToFavorite(NovelModel novel);
+    void updateFavoritesStatus(Collection<NovelModel> novels);
+    void removeFavorite(String... ids);
+    List<NovelModel> loadAllFavorites();
 
     // Chapter list operation
-    public List<NovelChapterModel> loadChapters(String novelId);
-    public void insertChapters(String novelId, List<NovelChapterModel> chapters);
-    public void updateChapters(String novelId, List<NovelChapterModel> chapters);
+    List<NovelChapterModel> loadChapters(String novelId);
+    void insertChapter(String novelId, NovelChapterModel chapter);
+    void insertChapters(String novelId, List<NovelChapterModel> chapters);
+    void updateChapters(String novelId, List<NovelChapterModel> chapters);
 
     // Chapter content operation
-    public NovelChapterContentModel loadChapterContent(String chapterId);
-    public void removeChapterContent(String chapterId);
-    public void updateChapterContent(NovelChapterContentModel chapterContent);
+    NovelChapterContentModel loadChapterContent(String chapterId);
+    void removeChapterContent(String chapterId);
+    void updateChapterContent(NovelChapterContentModel chapterContent);
 
     // Bookmark operation
-    public void addBookMark(NovelBookMarkModel bookMark);
-    public void insertOrUpdateLastReadBookMark(NovelBookMarkModel bookMark);
-    public NovelBookMarkModel loadLastReadBookMark(String novelId);
-    public List<NovelBookMarkModel> loadBookMarks(String novelId);
-    public NovelBookMarkModel checkLastReadBookMarkState(String novelId);
+    void addBookMark(NovelBookMarkModel bookMark);
+    void insertOrUpdateLastReadBookMark(NovelBookMarkModel bookMark);
+    NovelBookMarkModel loadLastReadBookMark(String novelId);
+    List<NovelBookMarkModel> loadBookMarks(String novelId);
+    NovelBookMarkModel checkLastReadBookMarkState(String novelId);
 
     // Change chapter source
     public NovelChapterModel changeChapterSource(NovelChapterModel chapterModel, NovelChangeSrcModel changeSrcModel);

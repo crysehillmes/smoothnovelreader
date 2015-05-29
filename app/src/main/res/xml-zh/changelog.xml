@@ -1,30 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
     <changelogversion
-        changeDate="May 22, 2015"
-        versionCode="703"
-        versionName="0.7.3">
-        <changelogbug>修复一个小 Bug</changelogbug>
+        changeDate="2015年5月30日"
+        versionCode="800"
+        versionName="0.8.0">
+        <changelogtext><![CDATA[<b><font color=red>新功能：</font></b>添加本地txt到书架]]>
+        </changelogtext>
     </changelogversion>
     <changelogversion
-        changeDate="May 22, 2015"
+        changeDate="2015年5月22日"
+        versionCode="703"
+        versionName="0.7.3">
+        <changelogbug>修复：一个小 Bug</changelogbug>
+    </changelogversion>
+    <changelogversion
+        changeDate="2015年5月22日"
         versionCode="702"
         versionName="0.7.2">
-        <changelogtext>新功能：更新模块</changelogtext>
+        <changelogtext>新功能：添加应用检查更新功能</changelogtext>
     </changelogversion>
     <changelogversion
         changeDate="2015年5月22日"
         versionCode="701"
         versionName="0.7.1">
-        <changelogbug>修复一些错误</changelogbug>
+        <changelogbug>修复：一些错误</changelogbug>
     </changelogversion>
     <changelogversion
         changeDate="2015年5月1日"
         versionCode="700"
         versionName="0.7.0">
-        <changelogtext><![CDATA[<b><font color=red>新功能！</font></b> 主题切换]]>
+        <changelogtext><![CDATA[<b><font color=red>新功能：</font></b>主题切换]]>
         </changelogtext>
-        <changelogbug>修复页面导航错误</changelogbug>
-        <changelogbug>修复章节目录更新时出现重复项的错误</changelogbug>
+        <changelogbug>修复：页面导航错误</changelogbug>
+        <changelogbug>修复：章节目录更新时出现重复项的错误</changelogbug>
     </changelogversion>
 </changelog>

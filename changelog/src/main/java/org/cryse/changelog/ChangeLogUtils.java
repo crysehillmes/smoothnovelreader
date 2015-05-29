@@ -24,13 +24,17 @@ public class ChangeLogUtils {
     public CharSequence toSpannable() {
         LinkedList<ChangeLogRow> rows = mChangeLog.getRows();
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
+        boolean isFirstRow = true;
         for (ChangeLogRow row : rows) {
             if(row.isHeader()) {
+                if(!isFirstRow)
+                    stringBuilder.append("\n");
                 int versionStart = stringBuilder.length();
                 int versionEnd = versionStart + row.getVersionName().length();
                 stringBuilder.append(row.getVersionName());
                 stringBuilder.setSpan(new StyleSpan(Typeface.BOLD), versionStart, versionEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 stringBuilder.setSpan(new RelativeSizeSpan(1.5f), versionStart, versionEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                isFirstRow = false;
             } else {
                 CharSequence displayChange = Html.fromHtml(row.getChangeText());
                 int changeStart = stringBuilder.length();

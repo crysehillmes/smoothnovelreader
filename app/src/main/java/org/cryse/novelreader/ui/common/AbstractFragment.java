@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.view.View;
 
 import org.cryse.novelreader.event.AbstractEvent;
 import org.cryse.novelreader.event.RxEventBus;
@@ -111,5 +112,9 @@ public abstract class AbstractFragment extends android.support.v4.app.Fragment {
 
     protected void onEvent(AbstractEvent event) {
 
+    }
+
+    protected View getSnackbarRootView() {
+        return getView();
     }
 }

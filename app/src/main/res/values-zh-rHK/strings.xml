@@ -66,12 +66,17 @@
     <string name="toast_chapter_contents_add_to_cache_queue">《%1$s》已加入緩存隊列</string>
     <string name="toast_chapter_contents_caching_cannot_delete">《%1$s》正在緩存中，無法刪除</string>
     <string name="toast_menu_not_available_in_night_mode">夜間模式不可用</string>
+    <string name="toast_read_local_file_background">正在後臺為您導入書籍，完成後會在通知欄提醒</string>
     <string name="notification_chapter_contents_cache_title">正在緩存《%1$s》</string>
     <string name="notification_chapter_contents_cache_title_finish">完成緩存《%1$s》</string>
     <string name="notification_chapter_contents_cache_content">緩存了 %1$d 章， %2$d 章緩存失敗, %3$d 章未緩存。</string>
     <string name="notification_action_chapter_contents_cancel_current">取消緩存</string>
     <string name="notification_action_chapter_contents_cancel_novel">取消緩存《%1$s》</string>
     <string name="notification_action_chapter_contents_cancel_all">取消全部緩存</string>
+    <string name="notification_read_local_file_title">正在導入 %1$s</string>
+    <string name="notification_read_local_file_content">還有 %1$d 個文件等待導入</string>
+    <string name="notification_read_local_file_finish_title">%1$s 已導入書架</string>
+    <string name="notification_read_local_file_finish_content">可以開始閱讀啦</string>
 
     <!-- Search text -->
     <string name="searchbox_hint">搜索書名或作者名</string>
@@ -136,6 +141,7 @@
     <string name="bottom_sheet_item_chapter_prev">上一章</string>
     <string name="bottom_sheet_item_night_mode">夜間模式</string>
     <string name="bottom_sheet_item_reading_settings">閱讀設置</string>
+    <string name="bottom_sheet_item_back">返回目錄</string>
     <string name="bottom_sheet_item_daylight_mode">日間模式</string>
     <string name="bottom_sheet_item_font_size">文字大小</string>
     <string name="bottom_sheet_item_page_curl_mode">@string/settings_item_scroll_mode_title</string>

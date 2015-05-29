@@ -5,5 +5,6 @@ import org.cryse.novelreader.model.NovelModel;
 import java.util.List;
 
 public interface NovelBookShelfView extends ContentView {
-    public void showBooksOnShelf(List<NovelModel> books);
+    void showBooksOnShelf(List<NovelModel> books);
+    void showAddLocalBookProgressDialog(boolean show);
 }

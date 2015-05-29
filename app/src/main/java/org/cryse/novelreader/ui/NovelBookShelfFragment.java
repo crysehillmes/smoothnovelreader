@@ -9,7 +9,9 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.design.widget.Snackbar;
 import android.support.v7.view.ActionMode;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,9 +20,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.event.AbstractEvent;
+import org.cryse.novelreader.event.LoadLocalFileDoneEvent;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
+import org.cryse.novelreader.service.LoadLocalTextService;
 import org.cryse.novelreader.util.ColorUtils;
+import org.cryse.novelreader.util.PathUriUtils;
+import org.cryse.novelreader.util.SimpleSnackbarType;
+import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.widget.recyclerview.SuperRecyclerView;
@@ -31,8 +41,6 @@ import org.cryse.novelreader.ui.adapter.NovelBookShelfListAdapter;
 import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.presenter.NovelBookShelfPresenter;
 import org.cryse.novelreader.view.NovelBookShelfView;
-import org.cryse.novelreader.util.ToastProxy;
-import org.cryse.novelreader.util.ToastType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,13 +121,13 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                 mShelfListView.getSwipeToRefresh().setRefreshing(false);
         });
         mShelfListView.setOnItemClickListener((view, position, id) -> {
-            if(!bookShelfListAdapter.isAllowSelection())
+            if (!bookShelfListAdapter.isAllowSelection())
                 getPresenter().showNovelChapterList(novelList.get(position));
             else {
                 bookShelfListAdapter.toggleSelection(position);
-                if(getActionMode() != null) {
+                if (getActionMode() != null) {
                     getActionMode().setTitle(getString(R.string.cab_selection_count, bookShelfListAdapter.getSelectedItemCount()));
-                    if(bookShelfListAdapter.getSelectedItemCount() == 0)
+                    if (bookShelfListAdapter.getSelectedItemCount() == 0)
                         getActionMode().finish();
                 }
             }
@@ -127,7 +135,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
 
         mShelfListView.setOnItemLongClickListener((view, position, id) -> {
             if (!bookShelfListAdapter.isAllowSelection()) {
-                ActionMode actionMode = getAppCompatActivity().getSupportActionBar().startActionMode(new ActionMode.Callback() {
+                setActionMode(getAppCompatActivity().startSupportActionMode(new ActionMode.Callback() {
                     @Override
                     public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
                         bookShelfListAdapter.setAllowSelection(true);
@@ -156,17 +164,17 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                     public void onDestroyActionMode(ActionMode actionMode) {
                         bookShelfListAdapter.clearSelections();
                         bookShelfListAdapter.setAllowSelection(false);
+                        Log.d("AAA","AAAAAA");
                         setActionMode(null);
                     }
-                });
-                setActionMode(actionMode);
+                }));
                 bookShelfListAdapter.toggleSelection(position);
                 getActionMode().setTitle(getString(R.string.cab_selection_count, bookShelfListAdapter.getSelectedItemCount()));
             } else {
-                if(getActionMode() != null) {
+                if (getActionMode() != null) {
                     bookShelfListAdapter.toggleSelection(position);
                     getActionMode().setTitle(getString(R.string.cab_selection_count, bookShelfListAdapter.getSelectedItemCount()));
-                    if(bookShelfListAdapter.getSelectedItemCount() == 0)
+                    if (bookShelfListAdapter.getSelectedItemCount() == 0)
                         getActionMode().finish();
                 }
             }
@@ -235,7 +243,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                 getThemedActivity().setNightMode(!isNightMode());
                 return true;
             case R.id.menu_item_add_book:
-                getPresenter().goSearch();
+                showAddBookDialog();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -246,6 +254,24 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         novelList.clear();
         novelList.addAll(books);
         bookShelfListAdapter.notifyDataSetChanged();
+    }
+
+    MaterialDialog mAddLocalFileProgressDialog = null;
+    @Override
+    public void showAddLocalBookProgressDialog(boolean show) {
+        if(show) {
+            if (mAddLocalFileProgressDialog != null && mAddLocalFileProgressDialog.isShowing())
+                mAddLocalFileProgressDialog.dismiss();
+            mAddLocalFileProgressDialog = new MaterialDialog.Builder(getActivity())
+                    .title("Adding")
+                    .content("Please wait...")
+                    .progress(true, 0)
+                    .show();
+        } else {
+            if (mAddLocalFileProgressDialog != null && mAddLocalFileProgressDialog.isShowing())
+                mAddLocalFileProgressDialog.dismiss();
+        }
+
     }
 
     @Override
@@ -265,8 +291,9 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     }
 
     @Override
-    public void showToast(String text, ToastType toastType) {
-        ToastProxy.showToast(getActivity(), text, toastType);
+    public void showSnackbar(CharSequence text, SimpleSnackbarType snackbarType) {
+        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, snackbarType, Snackbar.LENGTH_SHORT);
+        snackbar.show();
     }
 
     private void removeNovels() {
@@ -279,12 +306,12 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         }
         for (int position : reverseSortedPositions) {
             if(currentCachingNovelId != null && currentCachingNovelId.compareTo(novelList.get(position).getId()) == 0) {
-                ToastProxy.showToast(getActivity(), getString(R.string.toast_chapter_contents_caching_cannot_delete, novelList.get(position).getTitle()), ToastType.TOAST_ALERT);
+                showSnackbar(getString(R.string.toast_chapter_contents_caching_cannot_delete, novelList.get(position).getTitle()), SimpleSnackbarType.WARNING);
             } else {
                 removeIds.add(novelList.get(position).getId());
                 if(mServiceBinder != null) {
                     if(mServiceBinder.removeFromQueueIfExist(novelList.get(position).getId())) {
-                    ToastProxy.showToast(getActivity(), getString(R.string.notification_action_chapter_contents_cancel_novel, novelList.get(position).getTitle()), ToastType.TOAST_INFO);
+                        showSnackbar(getString(R.string.notification_action_chapter_contents_cancel_novel, novelList.get(position).getTitle()), SimpleSnackbarType.INFO);
                 }
                 }
                 ((NovelBookShelfListAdapter) mShelfListView.getAdapter()).remove(position);
@@ -297,5 +324,51 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
 
     public NovelBookShelfPresenter getPresenter() {
         return presenter;
+    }
+
+    protected void showAddBookDialog() {
+        new MaterialDialog.Builder(getActivity())
+                .title(R.string.action_add_book_source_dialog_title)
+                .items(R.array.action_add_book_sources)
+                .itemsCallback((dialog, view, which, text) -> {
+                    if (which == 0) {
+                        getPresenter().goSearch();
+                    } else {
+                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                        intent.setType("text/plain");
+                        startActivityForResult(intent, OPEN_TEXT_FILE_RESULT_CODE);
+                    }
+                })
+                .show();
+    }
+
+    private static final int OPEN_TEXT_FILE_RESULT_CODE = 10010;
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == OPEN_TEXT_FILE_RESULT_CODE && data != null) {
+            String filePath = PathUriUtils.getPath(getActivity(), data.getData());
+            /*getPresenter().addLocalTextFile(filePath, null);
+            showAddLocalBookProgressDialog(true);*/
+            readLocalTextFile(filePath, null);
+        }
+    }
+
+    public void readLocalTextFile(String textFilePath, String customTitle) {
+        if(getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            LoadLocalTextService.ReadLocalTextFileBinder binder = activity.getReadLocalTextFileBinder();
+            binder.addToCacheQueue(textFilePath, customTitle);
+            showSnackbar(getString(R.string.toast_read_local_file_background), SimpleSnackbarType.INFO);
+        }
+
+    }
+
+    @Override
+    protected void onEvent(AbstractEvent event) {
+        super.onEvent(event);
+        if(event instanceof LoadLocalFileDoneEvent) {
+            getPresenter().loadFavoriteNovels();
+        }
     }
 }

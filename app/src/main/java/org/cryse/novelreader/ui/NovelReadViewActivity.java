@@ -2,11 +2,10 @@ package org.cryse.novelreader.ui;
 
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.text.TextPaint;
 import android.util.TypedValue;
 import android.view.MenuItem;
@@ -41,8 +40,8 @@ import org.cryse.novelreader.ui.widget.ReadWidgetAdapter;
 
 import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.PreferenceConverter;
-import org.cryse.novelreader.util.ToastProxy;
-import org.cryse.novelreader.util.ToastType;
+import org.cryse.novelreader.util.SimpleSnackbarType;
+import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.gesture.SimpleGestureDetector;
@@ -266,11 +265,11 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                         1.3f,
                         0f,
                         textPaint);
-                if(finalHasSavedStated) {
+                if (finalHasSavedStated) {
                     getPresenter().splitChapterAndDisplay(mNovelChapters.get(chapterIndex).getTitle(),
                             mCurrentContent);
                 } else {
-                    if(chapterIndex > mNovelChapters.size() - 1) {
+                    if (chapterIndex > mNovelChapters.size() - 1) {
                         chapterIndex = 0;
                         chapterOffset = 0;
                     }
@@ -404,8 +403,8 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         BottomSheet.Builder bottomSheetBuilder = new BottomSheet.Builder(NovelReadViewActivity.this)
                 .title(getString(R.string.bottom_sheet_title))
                 .sheet(R.menu.menu_readview)
-                .applyColorFilter(isNightMode() ? getResources().getColor(R.color.white_54_percent) : Color.BLACK)
                 .grid()
+                .limit(R.integer.readview_bottom_sheet_item_limit)
                 .listener((dialog, which) -> {
                     switch (which) {
                         case R.id.menu_bottomsheet_chapter_prev:
@@ -417,32 +416,15 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                         case R.id.menu_bottomsheet_chapter_next:
                             onMenuItemNextChapterClick();
                             break;
+                        /*case R.id.menu_bottomsheet_back:
+                            finish();
+                            break;*/
                         case R.id.menu_bottomsheet_changesrc:
                             onMenuItemChangeSrcClick();
                             break;
                         case R.id.menu_bottomsheet_nightmode:
                             onMenuItemNightModeClick();
                             break;
-                        case R.id.menu_bottomsheet_reading_settings:
-                            showBottomReadingSettingsMenu();
-                            break;
-                    }
-                    dialog.dismiss();
-                });
-        if(isNightMode())
-            bottomSheetBuilder.darkTheme();
-        BottomSheet bottomSheet = bottomSheetBuilder.show();
-        bottomSheet.setOnDismissListener(dialog -> hideSystemUI());
-    }
-
-    private void showBottomReadingSettingsMenu() {
-        BottomSheet.Builder bottomSheetBuilder = new BottomSheet.Builder(NovelReadViewActivity.this)
-                .title(getString(R.string.bottom_sheet_title))
-                .sheet(R.menu.menu_readview_read_settings)
-                .applyColorFilter(isNightMode() ? getResources().getColor(R.color.white_54_percent) : Color.BLACK)
-                .grid()
-                .listener((dialog, which) -> {
-                    switch (which) {
                         case R.id.menu_bottomsheet_textsize:
                             onMenuItemFontSizeClick();
                             break;
@@ -450,8 +432,8 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                             onMenuItemPageCurlModeClick();
                             break;
                         case R.id.menu_bottomsheet_background_color:
-                            if(isNightMode())
-                                ToastProxy.showToast(this, getString(R.string.toast_menu_not_available_in_night_mode), ToastType.TOAST_INFO);
+                            if (isNightMode())
+                                showSnackbar(getString(R.string.toast_menu_not_available_in_night_mode), SimpleSnackbarType.INFO);
                             else
                                 onMenuItemChooseReadBackground();
                             break;
@@ -461,7 +443,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         if(isNightMode())
             bottomSheetBuilder.darkTheme();
         BottomSheet bottomSheet = bottomSheetBuilder.show();
-        bottomSheet.setOnDismissListener(dialog -> hideSystemUI());
+        bottomSheet.setOnDismissListener(dialog -> mHandler.postDelayed(() -> hideSystemUI(), 1500));
     }
 
     private synchronized void setViewContent(String title, List<CharSequence> content) {
@@ -588,11 +570,6 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         return mIsLoading;
     }
 
-    @Override
-    public void showToast(String text, ToastType toastType) {
-        ToastProxy.showToast(this, text, toastType);
-    }
-
     private void goNextChapter() {
         if(chapterIndex + 1 >= mNovelChapters.size())
             return;
@@ -645,11 +622,12 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         return mPresenter;
     }
 
-    public void onMenuItemChangeSrcClick(){
-        getPresenter().getOtherSrc(mNovelChapters.get(chapterIndex));
+    public void onMenuItemChangeSrcClick() {
+        if(checkIfLocal(chapterIndex))
+            getPresenter().getOtherSrc(mNovelChapters.get(chapterIndex));
     }
 
-    public void onMenuItemNightModeClick(){
+    public void onMenuItemNightModeClick() {
         setNightMode(!isNightMode());
     }
 
@@ -708,7 +686,8 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     }
 
     public void onMenuItemReloadClick() {
-        getPresenter().loadChapter(mNovelChapters.get(chapterIndex), true);
+        if(checkIfLocal(chapterIndex))
+            getPresenter().loadChapter(mNovelChapters.get(chapterIndex), true);
     }
 
     public void onMenuItemChooseReadBackground() {
@@ -728,5 +707,15 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
             }
         }
         throw new IllegalStateException("ChapterIndex not found.");
+    }
+
+    private boolean checkIfLocal(int chapterIndex) {
+        return mNovelChapters.get(chapterIndex).getSrc().contains("://");
+    }
+
+    @Override
+    public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
+        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, type, Snackbar.LENGTH_SHORT);
+        snackbar.show();
     }
 }

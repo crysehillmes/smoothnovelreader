@@ -58,6 +58,7 @@
         <item name="smooth_theme_spinner_style">@style/SmoothTheme.Light.Spinner</item>
         <item name="smooth_theme_spinner_foreground">@color/spinner_dropdown_foreground_color_light</item>
         <item name="smooth_theme_search_close">@drawable/ic_action_close</item>
+        <item name="bottomSheetStyle">@style/BottomSheet.ReadViewSettings</item>
     </style>
 
     <style name="SmoothTheme.Light.Spinner" parent="FrameworkRoot.Light.Spinner">
@@ -68,5 +69,11 @@
         <item name="android:dividerHeight">0dp</item>
         <item name="overlapAnchor">true</item>
         <item name="android:overlapAnchor">true</item>
+    </style>
+
+    <style name="BottomSheet.ReadViewSettings" parent="BottomSheet.Dialog">
+        <item name="android:textColorPrimary">@color/text_color_primary</item>
+        <item name="android:textColorSecondary">@color/text_color_primary</item>
+        <item name="bs_numColumns">@integer/readview_bottom_sheet_column</item>
     </style>
 </resources>

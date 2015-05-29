@@ -19,4 +19,7 @@ public class DataContract {
     public static final String NOVEL_INTRODUCTION_CONTRACT_ORIENTATION = NOVEL_INTRODUCTION_CONTRACT + ".orientation";
     public static final String NOVEL_INTRODUCTION_CONTRACT_NOVEL = NOVEL_INTRODUCTION_CONTRACT + ".novel";
     public static final String NOVEL_INTRODUCTION_CONTRACT_SHOW_START_READING = NOVEL_INTRODUCTION_CONTRACT + ".showStartReading";
+
+
+    public static final String LOCAL_FILE_PREFIX = "LOCAL_FILE";
 }

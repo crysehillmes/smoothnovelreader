@@ -16,9 +16,9 @@ import org.cryse.novelreader.presenter.impl.NovelChaptersPresenterImpl;
 import org.cryse.novelreader.presenter.impl.NovelDetailPresenterImpl;
 import org.cryse.novelreader.qualifier.PrefsNightMode;
 import org.cryse.novelreader.qualifier.PrefsThemeColor;
+import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.ThemeEngine;
-import org.cryse.novelreader.util.ToastUtil;
-import org.cryse.novelreader.util.ToastTextGenerator;
+import org.cryse.novelreader.util.SnackbarTextDelegate;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 import org.cryse.novelreader.util.prefs.BooleanPreference;
 import org.cryse.novelreader.util.prefs.IntegerPreference;
@@ -36,37 +36,37 @@ import dagger.Provides;
 )
 public class PresenterProvider {
     @Provides
-    ToastTextGenerator provideToastTextGenerator(@ApplicationContext Context context) {
-        return new ToastTextGenerator(context);
+    SnackbarTextDelegate provideToastTextGenerator(@ApplicationContext Context context) {
+        return new SnackbarTextDelegate(context);
     }
 
-    ToastUtil provideExceptionToastHelper(ToastTextGenerator generator) {
-        return new ToastUtil(generator);
-    }
-
-    @Provides
-    NovelChaptersPresenter provideNovelChaptersPresenter(NovelBusinessLogicLayer dataService, AndroidNavigation display, ToastUtil toastUtil) {
-        return new NovelChaptersPresenterImpl(dataService, display, toastUtil);
+    SnackbarUtils provideExceptionToastHelper(SnackbarTextDelegate generator) {
+        return new SnackbarUtils(generator);
     }
 
     @Provides
-    NovelListPresenter provideNovelListPresenter(NovelBusinessLogicLayer dataService, AndroidNavigation display, ToastUtil toastUtil) {
-        return new NovelListPresenterImpl(dataService, display, toastUtil);
+    NovelChaptersPresenter provideNovelChaptersPresenter(NovelBusinessLogicLayer dataService, AndroidNavigation display, SnackbarUtils snackbarUtils) {
+        return new NovelChaptersPresenterImpl(dataService, display, snackbarUtils);
     }
 
     @Provides
-    NovelChapterContentPresenter provideNovelChapterContentPresenter(NovelBusinessLogicLayer dataService, AndroidNavigation display, ToastUtil toastUtil) {
-        return new NovelChapterContentPresenterImpl(dataService, display, toastUtil);
+    NovelListPresenter provideNovelListPresenter(NovelBusinessLogicLayer dataService, AndroidNavigation display, SnackbarUtils snackbarUtils) {
+        return new NovelListPresenterImpl(dataService, display, snackbarUtils);
     }
 
     @Provides
-    NovelBookShelfPresenter provideNovelBookShelfPresenter(NovelBusinessLogicLayer dataService, AndroidNavigation display, ToastUtil toastUtil) {
-        return new NovelBookShelfPresenterImpl(dataService, display, toastUtil);
+    NovelChapterContentPresenter provideNovelChapterContentPresenter(NovelBusinessLogicLayer dataService, AndroidNavigation display, SnackbarUtils snackbarUtils) {
+        return new NovelChapterContentPresenterImpl(dataService, display, snackbarUtils);
     }
 
     @Provides
-    NovelDetailPresenter provideNovelDetailPresenter(NovelBusinessLogicLayer dataService, AndroidNavigation display, ToastUtil toastUtil) {
-        return new NovelDetailPresenterImpl(dataService, display, toastUtil);
+    NovelBookShelfPresenter provideNovelBookShelfPresenter(NovelBusinessLogicLayer dataService, AndroidNavigation display, SnackbarUtils snackbarUtils) {
+        return new NovelBookShelfPresenterImpl(dataService, display, snackbarUtils);
+    }
+
+    @Provides
+    NovelDetailPresenter provideNovelDetailPresenter(NovelBusinessLogicLayer dataService, AndroidNavigation display, SnackbarUtils snackbarUtils) {
+        return new NovelDetailPresenterImpl(dataService, display, snackbarUtils);
     }
 
     @Provides

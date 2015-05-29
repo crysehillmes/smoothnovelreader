@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -43,8 +44,8 @@ import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.DataContract;
-import org.cryse.novelreader.util.ToastProxy;
-import org.cryse.novelreader.util.ToastType;
+import org.cryse.novelreader.util.SimpleSnackbarType;
+import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.view.NovelDetailView;
@@ -228,13 +229,13 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
                 if(mServiceBinder != null && mServiceBinder.isCaching() && mServiceBinder.getCurrentCachingNovelId() != null) {
                     String currentCachingNovelId = mServiceBinder.getCurrentCachingNovelId();
                     if(mIsFavorited && currentCachingNovelId.compareTo(mNovel.getId()) == 0) {
-                        ToastProxy.showToast(NovelDetailActivity.this, getString(R.string.toast_chapter_contents_caching_cannot_delete, mNovel.getTitle()), ToastType.TOAST_ALERT);
+                        showSnackbar(getString(R.string.toast_chapter_contents_caching_cannot_delete, mNovel.getTitle()), SimpleSnackbarType.WARNING);
                         return;
                     }
                 }
                 if(mIsFavorited && mServiceBinder != null) {
                    if(mServiceBinder.removeFromQueueIfExist(mNovel.getId())) {
-                       ToastProxy.showToast(NovelDetailActivity.this, getString(R.string.notification_action_chapter_contents_cancel_novel, mNovel.getTitle()), ToastType.TOAST_INFO);
+                       showSnackbar(getString(R.string.notification_action_chapter_contents_cancel_novel, mNovel.getTitle()), SimpleSnackbarType.INFO);
                    }
                 }
                 boolean isFavorite = !mIsFavorited;
@@ -675,7 +676,8 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
     }
 
     @Override
-    public void showToast(String text, ToastType toastType) {
-        ToastProxy.showToast(this, text, toastType);
+    public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
+        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, type, Snackbar.LENGTH_SHORT);
+        snackbar.show();
     }
 }

@@ -1,13 +1,18 @@
 package org.cryse.novelreader.ui;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import android.os.IBinder;
 import android.view.View;
-import android.widget.AdapterView;
 
 import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
+import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
@@ -21,6 +26,7 @@ import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.event.AbstractEvent;
 import org.cryse.novelreader.event.ThemeColorChangedEvent;
+import org.cryse.novelreader.service.LoadLocalTextService;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
@@ -34,8 +40,8 @@ public class MainActivity extends AbstractThemeableActivity {
     @Inject
     AndroidNavigation mNavigation;
 
-    AccountHeader.Result mAccountHeader;
-    Drawer.Result mNaviagtionDrawer;
+    AccountHeader mAccountHeader;
+    Drawer mNaviagtionDrawer;
 
     Picasso mPicasso;
 
@@ -46,6 +52,9 @@ public class MainActivity extends AbstractThemeableActivity {
      */
     private Handler mHandler = new Handler();
     private Runnable mPendingRunnable = null;
+
+    ServiceConnection mBackgroundServiceConnection;
+    private LoadLocalTextService.ReadLocalTextFileBinder mServiceBinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,16 +75,26 @@ public class MainActivity extends AbstractThemeableActivity {
             mIsRestorePosition = false;
         }
         initDrawer();
+        mBackgroundServiceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                mServiceBinder = (LoadLocalTextService.ReadLocalTextFileBinder) service;
+            }
 
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mServiceBinder = null;
+            }
+        };
     }
 
     private void initDrawer() {
-        AccountHeader accountHeader = new AccountHeader()
+        AccountHeaderBuilder accountHeaderBuilder = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(isNightMode() ? R.drawable.drawer_top_image_dark : R.drawable.drawer_top_image_light);
         //Now create your drawer and pass the AccountHeader.Result
-        mAccountHeader = accountHeader.build();
-        mNaviagtionDrawer = new Drawer()
+        mAccountHeader = accountHeaderBuilder.build();
+        mNaviagtionDrawer = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(getToolbar())
                 .withAccountHeader(mAccountHeader)
@@ -115,6 +134,7 @@ public class MainActivity extends AbstractThemeableActivity {
                     if (drawerItem.getType().equalsIgnoreCase("PRIMARY_ITEM"))
                         mCurrentSelection = drawerItem.getIdentifier();
                     mPendingRunnable = () ->  onNavigationSelected(drawerItem);
+                    return false;
                 })
                 .build();
         if(mCurrentSelection == 1001 && !mIsRestorePosition) {
@@ -149,6 +169,19 @@ public class MainActivity extends AbstractThemeableActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("selection_item_position", mCurrentSelection);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent service = new Intent(this.getApplicationContext(), LoadLocalTextService.class);
+        this.bindService(service, mBackgroundServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.unbindService(mBackgroundServiceConnection);
     }
 
     @Override
@@ -231,5 +264,9 @@ public class MainActivity extends AbstractThemeableActivity {
                 })
                 .build()
                 .show();
+    }
+
+    public LoadLocalTextService.ReadLocalTextFileBinder getReadLocalTextFileBinder() {
+        return mServiceBinder;
     }
 }
