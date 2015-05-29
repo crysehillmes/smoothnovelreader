@@ -118,6 +118,4 @@ public interface NovelBusinessLogicLayer {
     public Observable<List<NovelChangeSrcModel>> getOtherChapterSrc(String novelId, String currentChapterSrc, String chapterTitle);
 
     public Observable<NovelChapterModel> changeChapterSrc(NovelChapterModel chapterModel, NovelChangeSrcModel changeSrcModel);
-
-    public Observable<Void> addLocalTextFile(String filePath, String customTitle);
 }

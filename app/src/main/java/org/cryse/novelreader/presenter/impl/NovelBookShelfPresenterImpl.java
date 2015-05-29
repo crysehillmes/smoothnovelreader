@@ -23,7 +23,6 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
     NovelBookShelfView mView;
 
     Subscription subscription;
-    Subscription addLocalBookSubscription;
 
     NovelBusinessLogicLayer mNovelBusinessLogicLayer;
 
@@ -37,29 +36,6 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
         this.mDisplay = display;
         this.mToastUtil = snackbarUtils;
         this.mView = new EmptyBookShelfView();
-    }
-
-    @Override
-    public void addLocalTextFile(String filePath, String customTitle) {
-        SubscriptionUtils.checkAndUnsubscribe(addLocalBookSubscription);
-        addLocalBookSubscription = mNovelBusinessLogicLayer.addLocalTextFile(filePath, customTitle)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result -> {
-                            loadFavoriteNovels();
-                        },
-                        error -> {
-
-                            mView.showAddLocalBookProgressDialog(false);
-                            Timber.e(error, error.getMessage(), LOG_TAG);
-                            mToastUtil.showExceptionToast(mView, error);
-                        },
-                        () -> {
-                            mView.showAddLocalBookProgressDialog(false);
-                            Timber.d("Load completed!", LOG_TAG);
-                        }
-                );
     }
 
     @Override
@@ -152,7 +128,6 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
     @Override
     public void destroy() {
         SubscriptionUtils.checkAndUnsubscribe(subscription);
-        SubscriptionUtils.checkAndUnsubscribe(addLocalBookSubscription);
     }
 
     private class EmptyBookShelfView implements NovelBookShelfView {
