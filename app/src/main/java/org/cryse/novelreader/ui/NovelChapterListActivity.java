@@ -56,6 +56,9 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     NovelChapterListAdapter mChapterListAdapter;
     private MenuItem mMenuItemCacheChapters;
+    private MenuItem mMenuItemDetail;
+    private MenuItem mMenuItemRefresh;
+
     ServiceConnection mBackgroundServiceConnection;
     private ChapterContentsCacheService.ChapterContentsCacheBinder mServiceBinder;
 
@@ -186,8 +189,22 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_chapterlist, menu);
         mMenuItemCacheChapters = menu.findItem(R.id.menu_item_chapters_offline_cache);
+        mMenuItemDetail = menu.findItem(R.id.menu_item_chapters_detail);
+        mMenuItemRefresh = menu.findItem(R.id.menu_item_chapters_refresh);
         getPresenter().checkNovelFavoriteStatus(mNovel);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean isLocalBook = mNovel.getSrc().startsWith(DataContract.LOCAL_FILE_PREFIX);
+        if(mMenuItemRefresh != null) {
+            mMenuItemRefresh.setVisible(!isLocalBook);
+        }
+        if(mMenuItemDetail != null) {
+            mMenuItemDetail.setVisible(!isLocalBook);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -271,9 +288,13 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     }
 
     @Override
-    public void checkFavoriteStatusComplete(Boolean isFavorite) {
-        if(isFavorite != null)
-            mMenuItemCacheChapters.setVisible(isFavorite);
+    public void checkFavoriteStatusComplete(Boolean isFavorite, Boolean isLocal) {
+        if(isFavorite != null && mMenuItemCacheChapters != null) {
+            if(isFavorite && (isLocal != null && !isLocal))
+                mMenuItemCacheChapters.setVisible(true);
+            else
+                mMenuItemCacheChapters.setVisible(false);
+        }
     }
 
     @Override

@@ -3,12 +3,17 @@ package org.cryse.novelreader.util;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.StringRes;
 import android.widget.Toast;
 
 import com.nispok.snackbar.Snackbar;
 
 
 public class ToastProxy {
+    public static void showToast(Context context, @StringRes int textResId, ToastType toastType) {
+        showToast(context, context.getString(textResId), toastType);
+    }
+
     public static void showToast(Context context, String text, ToastType toastType) {
         int textColor;
         int backgroundColor;

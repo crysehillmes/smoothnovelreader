@@ -5,6 +5,7 @@ import android.app.Application;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayerImpl;
 import org.cryse.novelreader.logic.impl.NovelBusinessLogicLayerImpl;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
+import org.cryse.novelreader.service.LoadLocalTextService;
 import org.cryse.novelreader.ui.NovelCategoryFragment;
 import org.cryse.novelreader.ui.FadeTransitionActivity;
 import org.cryse.novelreader.ui.MainActivity;
@@ -64,7 +65,8 @@ import dagger.Provides;
                 NovelCategoryFragment.CategorySubListFragment.class,
                 SettingsFragment.class,
 
-                ChapterContentsCacheService.class
+                ChapterContentsCacheService.class,
+                LoadLocalTextService.class
         },
         includes = {
                 ContextProvider.class,

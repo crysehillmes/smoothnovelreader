@@ -24,6 +24,8 @@ public interface NovelBusinessLogicLayer {
      */
     public Observable<Boolean> isFavorite(String id);
 
+    public Observable<Boolean[]> isFavoriteLocal(String id);
+
     /**
      * Get favorites.
      *
@@ -116,4 +118,6 @@ public interface NovelBusinessLogicLayer {
     public Observable<List<NovelChangeSrcModel>> getOtherChapterSrc(String novelId, String currentChapterSrc, String chapterTitle);
 
     public Observable<NovelChapterModel> changeChapterSrc(NovelChapterModel chapterModel, NovelChangeSrcModel changeSrcModel);
+
+    public Observable<Void> addLocalTextFile(String filePath, String customTitle);
 }
