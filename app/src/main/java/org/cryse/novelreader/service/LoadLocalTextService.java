@@ -38,6 +38,7 @@ import javax.inject.Inject;
 public class LoadLocalTextService extends Service {
     private static final String LOG_TAG = LoadLocalTextService.class.getName();
     public static final String LOCAL_FILE_PREFIX = DataContract.LOCAL_FILE_PREFIX;
+    public static final int MAX_CHAPTER_CHAR_COUNT_LIMIT = 100000;
     @Inject
     NovelDatabaseAccessLayer mNovelDatabase;
 
@@ -189,23 +190,36 @@ public class LoadLocalTextService extends Service {
                 int chapterIndex = 0;
                 @Override
                 public void onChapterRead(TextChapter chapter, String content) {
-                    String chapterHash = HashUtils.md5(chapter.getChapterName() + String.format("%06d", chapterIndex));
-
-                    mNovelDatabase.insertChapter(novelId, new NovelChapterModel(
-                            novelId,
-                            chapterHash,
-                            LOCAL_FILE_PREFIX,
-                            chapter.getChapterName(),
-                            chapterIndex
-                    ));
-
-                    chapterIndex++;
-                    mNovelDatabase.updateChapterContent(new NovelChapterContentModel(
-                            novelId,
-                            chapterHash,
-                            novelTextFilter.filter(content),
-                            LOCAL_FILE_PREFIX + ":" + chapterHash
-                    ));
+                    if(content.length() > MAX_CHAPTER_CHAR_COUNT_LIMIT) {
+                        StringBuilder stringBuilder = new StringBuilder(content);
+                        int subChapterId = 1;
+                        while(stringBuilder.length() > MAX_CHAPTER_CHAR_COUNT_LIMIT) {
+                            for(int charIndex = MAX_CHAPTER_CHAR_COUNT_LIMIT; charIndex >= 0; charIndex--) {
+                                if(stringBuilder.charAt(charIndex) == '\n') {
+                                    addChapterToDatabase(
+                                            novelId,
+                                            chapterIndex,
+                                            chapter.getChapterName() + " [" + Integer.valueOf(subChapterId) + "]",
+                                            stringBuilder.substring(0, charIndex)
+                                    );
+                                    subChapterId++;
+                                    chapterIndex++;
+                                    stringBuilder.delete(0, charIndex);
+                                    break;
+                                }
+                            }
+                        }
+                        addChapterToDatabase(
+                                novelId,
+                                chapterIndex,
+                                chapter.getChapterName() + "[" + Integer.valueOf(subChapterId) + "]",
+                                stringBuilder.toString()
+                        );
+                        chapterIndex++;
+                    } else {
+                        addChapterToDatabase(novelId, chapterIndex, chapter.getChapterName(), content);
+                        chapterIndex++;
+                    }
                 }
             });
             Log.d("CHAPTERS", String.format("Chapter count: %d", chapterCount));
@@ -228,6 +242,23 @@ public class LoadLocalTextService extends Service {
                 fileName,
                 customTitle
         );
+    }
+
+    private void addChapterToDatabase(String novelId, int chapterIndex, String chapterTitle, String chapterContent) {
+        String chapterHash = HashUtils.md5(chapterTitle + String.format("%06d", chapterIndex));
+        mNovelDatabase.insertChapter(novelId, new NovelChapterModel(
+                novelId,
+                chapterHash,
+                LOCAL_FILE_PREFIX,
+                chapterTitle,
+                chapterIndex
+        ));
+        mNovelDatabase.updateChapterContent(new NovelChapterContentModel(
+                novelId,
+                chapterHash,
+                novelTextFilter.filter(chapterContent),
+                LOCAL_FILE_PREFIX + ":" + chapterHash
+        ));
     }
 
     private void showTaskResultNotification(String textFilePath, String fileName, String customTitle) {
