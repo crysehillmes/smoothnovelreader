@@ -2,6 +2,12 @@
 <changelog bulletedList="true">
     <changelogversion
         changeDate="2015年5月30日"
+        versionCode="801"
+        versionName="0.8.1">
+        <changelogbug>修复：导入一些本地txt时崩溃的问题</changelogbug>
+    </changelogversion>
+    <changelogversion
+        changeDate="2015年5月30日"
         versionCode="800"
         versionName="0.8.0">
         <changelogtext><![CDATA[<b><font color=red>新功能：</font></b>添加本地txt到书架]]>
