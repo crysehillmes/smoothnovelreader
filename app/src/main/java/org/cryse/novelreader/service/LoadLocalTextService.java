@@ -284,7 +284,8 @@ public class LoadLocalTextService extends Service {
     }
 
     protected void updateQueueCountInNotification() {
-
+        if(mCurrentTask == null)
+            return;
         String filePath = mCurrentTask.getTextFilePath();
         File file = new File(filePath);
         String fileName = file.getName();

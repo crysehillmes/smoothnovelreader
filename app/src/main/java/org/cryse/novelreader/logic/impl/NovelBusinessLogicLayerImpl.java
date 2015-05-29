@@ -233,6 +233,10 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                     novelIds.add(id);
                     hashtable.put(id, novelModel);
                 }
+                if(novelIds.size() == 0) {
+                    subscriber.onNext(novelModels);
+                    subscriber.onCompleted();
+                }
                 List<NovelSyncBookShelfModel> syncShelfItems = novelSource.getNovelUpdatesSync(novelIds.toArray(new String[novelIds.size()]));
 
                 for (NovelSyncBookShelfModel syncBookShelfModel : syncShelfItems) {
