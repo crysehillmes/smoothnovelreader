@@ -403,6 +403,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                 .title(getString(R.string.bottom_sheet_title))
                 .sheet(R.menu.menu_readview)
                 .grid()
+                .limit(R.integer.readview_bottom_sheet_item_limit)
                 .listener((dialog, which) -> {
                     switch (which) {
                         case R.id.menu_bottomsheet_chapter_prev:
@@ -414,9 +415,9 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                         case R.id.menu_bottomsheet_chapter_next:
                             onMenuItemNextChapterClick();
                             break;
-                        case R.id.menu_bottomsheet_back:
+                        /*case R.id.menu_bottomsheet_back:
                             finish();
-                            break;
+                            break;*/
                         case R.id.menu_bottomsheet_changesrc:
                             onMenuItemChangeSrcClick();
                             break;
@@ -430,7 +431,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                             onMenuItemPageCurlModeClick();
                             break;
                         case R.id.menu_bottomsheet_background_color:
-                            if(isNightMode())
+                            if (isNightMode())
                                 ToastProxy.showToast(this, getString(R.string.toast_menu_not_available_in_night_mode), ToastType.TOAST_INFO);
                             else
                                 onMenuItemChooseReadBackground();
@@ -441,7 +442,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         if(isNightMode())
             bottomSheetBuilder.darkTheme();
         BottomSheet bottomSheet = bottomSheetBuilder.show();
-        bottomSheet.setOnDismissListener(dialog -> hideSystemUI());
+        bottomSheet.setOnDismissListener(dialog -> mHandler.postDelayed(() -> hideSystemUI(), 1500));
     }
 
     private synchronized void setViewContent(String title, List<CharSequence> content) {

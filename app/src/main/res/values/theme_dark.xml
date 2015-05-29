@@ -69,4 +69,10 @@
         <item name="overlapAnchor">true</item>
         <item name="android:overlapAnchor">true</item>
     </style>
+
+    <style name="BottomSheet.ReadViewSettings.Dark" parent="BottomSheet.Dialog.Dark">
+        <item name="android:textColorPrimary">@color/text_color_primary_white</item>
+        <item name="android:textColorSecondary">@color/text_color_primary_white</item>
+        <item name="bs_numColumns">@integer/readview_bottom_sheet_column</item>
+    </style>
 </resources>
