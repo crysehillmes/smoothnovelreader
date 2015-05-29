@@ -63,6 +63,7 @@ dependencies {
     compile "com.android.support:support-v13:$supportlibraryVersion"
     compile "com.android.support:gridlayout-v7:$supportlibraryVersion"
     compile "com.android.support:appcompat-v7:$supportlibraryVersion"
+    compile "com.android.support:design:$supportlibraryVersion"
     compile "com.android.support:support-annotations:$supportlibraryVersion"
     compile "com.android.support:cardview-v7:$supportlibraryVersion"
     compile "com.android.support:recyclerview-v7:$supportlibraryVersion"
@@ -92,7 +93,6 @@ dependencies {
     retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.0.2'
 
     // UI elements
-    compile 'com.nispok:snackbar:2.10.8'
     compile ('com.navercorp.pulltorefresh:library:3.2.3@aar') {
         exclude module: 'support-v4'
     }
@@ -103,7 +103,7 @@ dependencies {
     compile 'com.github.castorflex.smoothprogressbar:library:1.1.0'
     compile 'com.github.castorflex.smoothprogressbar:library-circular:1.1.0'
     compile 'com.afollestad:material-dialogs:0.7.4.1'
-    compile('com.mikepenz.materialdrawer:library:2.9.7') {
+    compile('com.mikepenz:materialdrawer:3.0.4') {
         transitive = true
     }
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'

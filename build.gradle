@@ -2,7 +2,7 @@
 
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
         maven { url 'http://download.crashlytics.com/maven' }
     }
     dependencies {
@@ -108,7 +108,7 @@ def generateVersionCode = { ->
 
 allprojects {
     repositories {
-        mavenCentral()
+        jcenter()
         maven { url 'http://download.crashlytics.com/maven' }
         jcenter()
         maven {
