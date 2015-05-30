@@ -84,13 +84,16 @@ public class LocalTextReader {
                     if(count > 1) {
                         TextChapter prevChapter = textChapters.get(count - 2);
                         prevChapter.setChapterSize(chapterContentBuilder.length());
+                        String chapterContent = chapterContentBuilder.toString();
+                        if(trimNoSymbolEqual(prevChapter.getChapterName(), chapterContent))
+                            continue;
                         if(callback != null)
-                            callback.onChapterRead(prevChapter, chapterContentBuilder.toString());
+                            callback.onChapterRead(prevChapter, chapterContent);
                     }
                     chapterContentBuilder.delete(0, chapterContentBuilder.length());
                 }
                 // if(trim(line).length() > 0)
-                    chapterContentBuilder.append(line).append('\n');
+                chapterContentBuilder.append(line).append('\n');
 
             }
         }
@@ -114,12 +117,13 @@ public class LocalTextReader {
             String trimLine = line.trim().replace("\u3000", "");
             if (trimLine != null && trimLine.length() < 50) {
                 Matcher matchResult = chapterNumberPattern.matcher(trimLine);
-                if (matchResult.find() && matchResult.start() < 5 && countSymbolsCount(line) < 3) {
+                int symbolCount = countSymbolsCount(line);
+                if (matchResult.find() && matchResult.start() < 5 && symbolCount < 3) {
                     Matcher excludeMatcher = chapterNumberExcludePattern.matcher(line);
                     if(excludeMatcher.find()) {
                         return false;
                     }
-                    if(matchResult.find(0) && matchResult.start() > 0) {
+                    if(matchResult.find(0) && matchResult.start() > 0 && countSymbolsCount(line) > 1) {
                         return false;
                     }
                     return addToChapterList(chapterList, lineCount, line);
@@ -141,7 +145,7 @@ public class LocalTextReader {
             int last = count - 1;
             TextChapter lastChapter = chapterList.get(last);
             String lastChapterName = lastChapter.getChapterName();
-            if(!lastChapterName.equals(currentChapter) && !lastChapterName.contains(currentChapter) && !currentChapter.contains(lastChapterName)) {
+            if(!lastChapterName.equals(currentChapter) && !containsMutual(currentChapter, lastChapterName)) {
                 if(startLine - 1 >= 0) {
                     lastChapter.setEndLineNumber(startLine - 1);
                     chapterList.add(new TextChapter(currentChapter, startLine, -1));
@@ -177,6 +181,21 @@ public class LocalTextReader {
 
     public void setListCacheSize(int listCacheSize) {
         this.mListCacheSize = listCacheSize;
+    }
+
+    public static boolean containsMutual(String one, String two) {
+        String trimmedOne = replaceSymbols(trim(one));
+        String trimmedTwo = replaceSymbols(trim(two));
+        return trimmedOne.contains(trimmedTwo) || trimmedTwo.contains(trimmedOne);
+    }
+
+    public static boolean trimNoSymbolEqual(String one, String two) {
+        if((((float)Math.max(one.length(), two.length()) / ((float)Math.min(one.length(), two.length())))) > 3) {
+            return false;
+        }
+        String trimmedOne = replaceSymbols(trim(one));
+        String trimmedTwo = replaceSymbols(trim(two));
+        return trimmedOne.equals(trimmedTwo);
     }
 
     public interface OnChapterReadCallback {

@@ -38,7 +38,7 @@ import javax.inject.Inject;
 public class LoadLocalTextService extends Service {
     private static final String LOG_TAG = LoadLocalTextService.class.getName();
     public static final String LOCAL_FILE_PREFIX = DataContract.LOCAL_FILE_PREFIX;
-    public static final int MAX_CHAPTER_CHAR_COUNT_LIMIT = 100000;
+    public static final int MAX_CHAPTER_CHAR_COUNT_LIMIT = 20000;
     @Inject
     NovelDatabaseAccessLayer mNovelDatabase;
 
@@ -190,6 +190,8 @@ public class LoadLocalTextService extends Service {
                 int chapterIndex = 0;
                 @Override
                 public void onChapterRead(TextChapter chapter, String content) {
+                    if(LocalTextReader.trimNoSymbolEqual(chapter.getChapterName(),content))
+                        return;
                     if(content.length() > MAX_CHAPTER_CHAR_COUNT_LIMIT) {
                         StringBuilder stringBuilder = new StringBuilder(content);
                         int subChapterId = 1;
