@@ -18,6 +18,7 @@ import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.event.LoadLocalFileDoneEvent;
+import org.cryse.novelreader.event.LoadLocalFileStartEvent;
 import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.model.NovelChapterContentModel;
 import org.cryse.novelreader.model.NovelChapterModel;
@@ -38,7 +39,7 @@ import javax.inject.Inject;
 public class LoadLocalTextService extends Service {
     private static final String LOG_TAG = LoadLocalTextService.class.getName();
     public static final String LOCAL_FILE_PREFIX = DataContract.LOCAL_FILE_PREFIX;
-    public static final int MAX_CHAPTER_CHAR_COUNT_LIMIT = 100000;
+    public static final int MAX_CHAPTER_CHAR_COUNT_LIMIT = 20000;
     @Inject
     NovelDatabaseAccessLayer mNovelDatabase;
 
@@ -168,7 +169,7 @@ public class LoadLocalTextService extends Service {
             File textFile = new File(filePath);
             localTextReader = new LocalTextReader(filePath);
             localTextReader.open();
-            String novelId = HashUtils.md5(filePath);
+            String novelId = LOCAL_FILE_PREFIX + ":" + HashUtils.md5(filePath);
             mNovelDatabase.addToFavorite(new NovelModel(
                     novelId,
                     LOCAL_FILE_PREFIX + ":" + filePath,
@@ -185,11 +186,14 @@ public class LoadLocalTextService extends Service {
                     0,
                     new Date().getTime()
             ));
+            mEventBus.sendEvent(new LoadLocalFileStartEvent());
             int chapterCount = localTextReader.readChapters(new LocalTextReader.OnChapterReadCallback() {
 
                 int chapterIndex = 0;
                 @Override
                 public void onChapterRead(TextChapter chapter, String content) {
+                    if(LocalTextReader.trimNoSymbolEqual(chapter.getChapterName(),content))
+                        return;
                     if(content.length() > MAX_CHAPTER_CHAR_COUNT_LIMIT) {
                         StringBuilder stringBuilder = new StringBuilder(content);
                         int subChapterId = 1;
