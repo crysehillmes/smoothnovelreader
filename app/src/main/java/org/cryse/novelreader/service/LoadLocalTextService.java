@@ -169,7 +169,7 @@ public class LoadLocalTextService extends Service {
             File textFile = new File(filePath);
             localTextReader = new LocalTextReader(filePath);
             localTextReader.open();
-            String novelId = HashUtils.md5(filePath);
+            String novelId = LOCAL_FILE_PREFIX + ":" + HashUtils.md5(filePath);
             mNovelDatabase.addToFavorite(new NovelModel(
                     novelId,
                     LOCAL_FILE_PREFIX + ":" + filePath,

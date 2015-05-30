@@ -55,10 +55,7 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
 
     @Override
     public void addToFavorite(NovelModel novel) {
-        if (!isFavorite(novel.getId())) {
-            novel.setSortWeight((new Date()).getTime());
-            novelModelDao.insert(novel);
-        }
+        novelModelDao.insertOrReplace(novel);
     }
 
     @Override
