@@ -18,6 +18,7 @@ import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.event.LoadLocalFileDoneEvent;
+import org.cryse.novelreader.event.LoadLocalFileStartEvent;
 import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.model.NovelChapterContentModel;
 import org.cryse.novelreader.model.NovelChapterModel;
@@ -185,6 +186,7 @@ public class LoadLocalTextService extends Service {
                     0,
                     new Date().getTime()
             ));
+            mEventBus.sendEvent(new LoadLocalFileStartEvent());
             int chapterCount = localTextReader.readChapters(new LocalTextReader.OnChapterReadCallback() {
 
                 int chapterIndex = 0;
