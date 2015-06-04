@@ -440,8 +440,6 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                     }
                     dialog.dismiss();
                 });
-        if(isNightMode())
-            bottomSheetBuilder.darkTheme();
         BottomSheet bottomSheet = bottomSheetBuilder.show();
         bottomSheet.setOnDismissListener(dialog -> mHandler.postDelayed(() -> hideSystemUI(), 1500));
     }
