@@ -217,4 +217,6 @@
     <string name="settings_item_change_log_title">Changelog</string>
     <string name="copyright_statement">[声明：本应用内小说来自手机百度页面，本应用不爬取或存储任何小说内容]</string>
     <string name="action_add_local_text_file">本地 txt 文件</string>
+    <string name="dialog_error_mime_title">错误的文件类型</string>
+    <string name="dialog_error_mime_content">目前只支持 txt 文件</string>
 </resources>

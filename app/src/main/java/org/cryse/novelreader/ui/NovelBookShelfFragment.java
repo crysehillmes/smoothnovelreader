@@ -22,6 +22,12 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.apache.tika.Tika;
+import org.apache.tika.detect.DefaultDetector;
+import org.apache.tika.detect.Detector;
+import org.apache.tika.io.TikaInputStream;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MimeTypes;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.event.AbstractEvent;
 import org.cryse.novelreader.event.LoadLocalFileDoneEvent;
@@ -43,6 +49,8 @@ import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.presenter.NovelBookShelfPresenter;
 import org.cryse.novelreader.view.NovelBookShelfView;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +58,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import timber.log.Timber;
 
 public class NovelBookShelfFragment extends AbstractFragment implements NovelBookShelfView {
     private static final String LOG_TAG = NovelBookShelfFragment.class.getName();
@@ -348,10 +357,49 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         if(getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
             LoadLocalTextService.ReadLocalTextFileBinder binder = activity.getReadLocalTextFileBinder();
-            binder.addToCacheQueue(textFilePath, customTitle);
-            showSnackbar(getString(R.string.toast_read_local_file_background), SimpleSnackbarType.INFO);
+            String mime = detectMimeType(textFilePath);
+            if(MimeTypes.PLAIN_TEXT.equalsIgnoreCase(mime)) {
+                binder.addToCacheQueue(textFilePath, customTitle);
+                showSnackbar(getString(R.string.toast_read_local_file_background), SimpleSnackbarType.INFO);
+            } else {
+                new MaterialDialog.Builder(getActivity())
+                        .title(R.string.dialog_error_mime_title)
+                        .content(R.string.dialog_error_mime_content)
+                        .positiveText(android.R.string.ok).build().show();
+            }
         }
 
+    }
+
+    private static final Detector DETECTOR = new DefaultDetector(
+            MimeTypes.getDefaultMimeTypes());
+    public static String detectMimeType(final String filePath) {
+        TikaInputStream tikaIS = null;
+        try {
+            tikaIS = TikaInputStream.get(new File(filePath));
+
+        /*
+         * You might not want to provide the file's name. If you provide an Excel
+         * document with a .xls extension, it will get it correct right away; but
+         * if you provide an Excel document with .doc extension, it will guess it
+         * to be a Word document
+         */
+            final Metadata metadata = new Metadata();
+            // metadata.set(Metadata.RESOURCE_NAME_KEY, file.getName());
+
+            return DETECTOR.detect(tikaIS, metadata).toString();
+        } catch (IOException ex) {
+            return "UNKNOWN";
+        }
+        finally {
+            if (tikaIS != null) {
+                try {
+                    tikaIS.close();
+                } catch (IOException e) {
+                    Timber.d(e, e.getMessage(), LOG_TAG);
+                }
+            }
+        }
     }
 
     @Override

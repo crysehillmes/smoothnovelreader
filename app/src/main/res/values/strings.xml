@@ -19,6 +19,8 @@
     <string name="dialog_exit_content"></string>
     <string name="dialog_exit_confirm">退出</string>
     <string name="dialog_exit_cancel">继续阅读</string>
+    <string name="dialog_error_mime_title">错误的文件类型</string>
+    <string name="dialog_error_mime_content">目前只支持 txt 文件</string>
 
     <string name="dialog_button_start_read">开始阅读</string>
     <string name="dialog_button_add_favorite">加入书架</string>
