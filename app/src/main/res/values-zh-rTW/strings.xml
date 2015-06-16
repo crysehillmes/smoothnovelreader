@@ -48,8 +48,8 @@
     <string name="action_offline_chapters_cache">離線閱讀</string>
     <string name="action_refresh">刷新目錄</string>
     <string name="action_novel_detail">小說詳情</string>
-    <string name="action_bar_search_tip">搜索</string>
-    <string name="action_bar_add_novel_tip">添加小說</string>
+    <string name="action_search_tip">搜索</string>
+    <string name="action_add_novel_tip">添加小說</string>
     <string name="action_remove_from_bookshelf">移除</string>
     <string name="action_change_theme">切換日/夜模式</string>
 
@@ -173,4 +173,5 @@
     <string name="settings_item_email_address_title">聯繫作者</string>
     <string name="settings_item_author_blog_site">作者主頁</string>
     <string name="settings_item_version">版本</string>
+    <string name="action_add_local_text_file">本地 txt 文件</string>
 </resources>

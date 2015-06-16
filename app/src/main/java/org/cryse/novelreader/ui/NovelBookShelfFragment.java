@@ -243,8 +243,13 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
             case R.id.menu_item_change_theme:
                 getThemedActivity().setNightMode(!isNightMode());
                 return true;
-            case R.id.menu_item_add_book:
-                showAddBookDialog();
+            case R.id.menu_item_add_online_book:
+                getPresenter().goSearch();
+                return true;
+            case R.id.menu_item_add_local_text_book:
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("text/plain");
+                startActivityForResult(intent, OPEN_TEXT_FILE_RESULT_CODE);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -325,22 +330,6 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
 
     public NovelBookShelfPresenter getPresenter() {
         return presenter;
-    }
-
-    protected void showAddBookDialog() {
-        new MaterialDialog.Builder(getActivity())
-                .title(R.string.action_add_book_source_dialog_title)
-                .items(R.array.action_add_book_sources)
-                .itemsCallback((dialog, view, which, text) -> {
-                    if (which == 0) {
-                        getPresenter().goSearch();
-                    } else {
-                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                        intent.setType("text/plain");
-                        startActivityForResult(intent, OPEN_TEXT_FILE_RESULT_CODE);
-                    }
-                })
-                .show();
     }
 
     private static final int OPEN_TEXT_FILE_RESULT_CODE = 10010;
