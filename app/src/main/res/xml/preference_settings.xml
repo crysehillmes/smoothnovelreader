@@ -9,24 +9,27 @@
             android:defaultValue="false"
             android:key="is_night_mode"
             android:summary="@string/settings_item_is_night_mode_summary"
-            android:title="@string/settings_item_is_night_mode_title" />
+            android:title="@string/settings_item_is_night_mode_title"
+            android:widgetLayout="@layout/layout_switch_preference_compat"/>
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="grayscale_in_night_mode"
             android:summary="@string/settings_item_gray_scale_in_night_mode_summary"
-            android:title="@string/settings_item_gray_scale_in_night_mode_title" />
+            android:title="@string/settings_item_gray_scale_in_night_mode_title"
+            android:widgetLayout="@layout/layout_switch_preference_compat"/>
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="show_cover_img"
             android:summary="@string/settings_item_show_cover_img_summary"
-            android:title="@string/settings_item_show_cover_img_title" />
+            android:title="@string/settings_item_show_cover_img_title"
+            android:widgetLayout="@layout/layout_switch_preference_compat"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_category_reading_title">
 
-        <ListPreference
+        <com.afollestad.materialdialogs.prefs.MaterialListPreference
             android:key="scroll_mode"
             android:defaultValue="2"
             android:dialogTitle="@string/settings_item_font_size_dialog_title"
@@ -35,7 +38,7 @@
             android:summary="@string/settings_item_scroll_mode_summary"
             android:title="@string/settings_item_scroll_mode_title" />
 
-        <ListPreference
+        <com.afollestad.materialdialogs.prefs.MaterialListPreference
             android:key="read_font_size"
             android:defaultValue="16"
             android:dialogTitle="@string/settings_item_font_size_dialog_title"
