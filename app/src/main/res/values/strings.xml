@@ -227,5 +227,5 @@
 
 
     <string name="action_add_book_source_dialog_title">选择来源</string>
-    <string name="action_add_local_text_file">本地 txt 文件</string>
+    <string name="action_add_local_text_file">导入本地 txt 文件</string>
 </resources>

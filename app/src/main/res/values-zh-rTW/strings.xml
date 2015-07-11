@@ -173,7 +173,7 @@
     <string name="settings_item_email_address_title">聯繫作者</string>
     <string name="settings_item_author_blog_site">作者主頁</string>
     <string name="settings_item_version">版本</string>
-    <string name="action_add_local_text_file">本地 txt 文件</string>
+    <string name="action_add_local_text_file">導入本地 txt 文件</string>
     <string name="dialog_error_mime_title">錯誤的文件類型</string>
     <string name="dialog_error_mime_content">目前只支持 txt 文件</string>
 </resources>
