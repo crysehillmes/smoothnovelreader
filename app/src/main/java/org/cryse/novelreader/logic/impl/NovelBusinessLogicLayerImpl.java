@@ -1,10 +1,5 @@
 package org.cryse.novelreader.logic.impl;
 
-import android.text.TextUtils;
-import android.util.Log;
-
-import org.cryse.chaptersplitter.LocalTextReader;
-import org.cryse.chaptersplitter.TextChapter;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelBookMarkModel;
@@ -16,14 +11,10 @@ import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.model.NovelSyncBookShelfModel;
 import org.cryse.novelreader.source.NovelSource;
 import org.cryse.novelreader.util.DataContract;
-import org.cryse.novelreader.util.HashUtils;
 import org.cryse.novelreader.util.NovelTextFilter;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -234,6 +225,7 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                     hashtable.put(id, novelModel);
                 }
                 if(novelIds.size() == 0) {
+                    Collections.sort(novelModels);
                     subscriber.onNext(novelModels);
                     subscriber.onCompleted();
                 }
@@ -247,8 +239,9 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                     novelModel.setLatestChapterTitle(syncBookShelfModel.getLastChapterTitle());
                 }
                 novelDataBase.updateFavoritesStatus(hashtable.values());
-
-                subscriber.onNext(novelDataBase.loadAllFavorites());
+                List<NovelModel> novelModel = novelDataBase.loadAllFavorites();
+                Collections.sort(novelModel);
+                subscriber.onNext(novelModel);
                 hashtable.clear();
                 subscriber.onCompleted();
             } catch (Exception ex) {
