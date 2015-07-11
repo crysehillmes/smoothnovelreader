@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.Snackbar;
 import android.support.v7.view.ActionMode;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,7 +21,6 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import org.apache.tika.Tika;
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.detect.Detector;
 import org.apache.tika.io.TikaInputStream;
@@ -174,7 +172,6 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                     public void onDestroyActionMode(ActionMode actionMode) {
                         bookShelfListAdapter.clearSelections();
                         bookShelfListAdapter.setAllowSelection(false);
-                        Log.d("AAA","AAAAAA");
                         setActionMode(null);
                     }
                 }));
@@ -376,7 +373,8 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     public static String detectMimeType(final String filePath) {
         TikaInputStream tikaIS = null;
         try {
-            tikaIS = TikaInputStream.get(new File(filePath));
+            File targetFile = new File(filePath);
+            tikaIS = TikaInputStream.get(targetFile);
 
         /*
          * You might not want to provide the file's name. If you provide an Excel
@@ -385,7 +383,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
          * to be a Word document
          */
             final Metadata metadata = new Metadata();
-            // metadata.set(Metadata.RESOURCE_NAME_KEY, file.getName());
+            metadata.set(Metadata.RESOURCE_NAME_KEY, targetFile.getName());
 
             return DETECTOR.detect(tikaIS, metadata).toString();
         } catch (IOException ex) {
