@@ -140,7 +140,7 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             ChapterModel chapter = new Chapter(cursor);
-            chapter.setCached(cursor.getBooleanOrNull("CACHED"));
+            chapter.setIsCached(cursor.getBooleanOrNull("CACHED"));
             chapterModels.add(chapter);
             cursor.moveToNext();
         }

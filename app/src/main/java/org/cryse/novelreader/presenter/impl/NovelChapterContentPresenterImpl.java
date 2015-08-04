@@ -3,9 +3,9 @@ package org.cryse.novelreader.presenter.impl;
 import android.text.TextPaint;
 
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
-import org.cryse.novelreader.model.NovelBookMarkModel;
+import org.cryse.novelreader.model.BookmarkModel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
-import org.cryse.novelreader.model.NovelChapterModel;
+import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.presenter.NovelChapterContentPresenter;
 import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.view.NovelChapterContentView;
@@ -50,17 +50,17 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     }
 
     @Override
-    public void loadChapter(NovelChapterModel novelChapterModel, boolean forceUpdate) {
+    public void loadChapter(ChapterModel novelChapterModel, boolean forceUpdate) {
         loadChapter(novelChapterModel, CURRENT, forceUpdate, null);
     }
 
     @Override
-    public void loadNextChapter(NovelChapterModel novelChapterModel) {
+    public void loadNextChapter(ChapterModel novelChapterModel) {
         loadChapter(novelChapterModel, NEXT, false, null);
     }
 
     @Override
-    public void loadPrevChapter(NovelChapterModel novelChapterModel, boolean jumpToLast) {
+    public void loadPrevChapter(ChapterModel novelChapterModel, boolean jumpToLast) {
         loadChapter(novelChapterModel, PREV, false, jumpToLast);
     }
 
@@ -68,7 +68,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     private static final int CURRENT = 1;
     private static final int NEXT = 2;
 
-    private void loadChapter(final NovelChapterModel novelChapterModel, final int type, boolean forceUpdate, Boolean autoJump) {
+    private void loadChapter(final ChapterModel novelChapterModel, final int type, boolean forceUpdate, Boolean autoJump) {
         mView.setLoading(true);
         SubscriptionUtils.checkAndUnsubscribe(mSubscription);
         mSubscription = mNovelBusinessLogicLayer.getChapterContent(novelChapterModel, forceUpdate)
@@ -129,7 +129,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
 
 
     @Override
-    public void addBookMark(NovelBookMarkModel bookMarkModel) {
+    public void addBookMark(BookmarkModel bookMarkModel) {
         SubscriptionUtils.checkAndUnsubscribe(mSubscription);
         mSubscription = mNovelBusinessLogicLayer.addBookMark(bookMarkModel)
                 .subscribeOn(Schedulers.newThread())
@@ -138,17 +138,17 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                         result -> {
                         },
                         error -> {
-                            mView.onBookMarkSaved(NovelBookMarkModel.BOOKMARK_TYPE_NORMAL, false);
+                            mView.onBookMarkSaved(BookmarkModel.BOOKMARK_TYPE_NORMAL, false);
                             mSnackbarUtils.showExceptionToast(mView, error);
                         },
                         () -> {
-                            mView.onBookMarkSaved(NovelBookMarkModel.BOOKMARK_TYPE_NORMAL, true);
+                            mView.onBookMarkSaved(BookmarkModel.BOOKMARK_TYPE_NORMAL, true);
                         }
                 );
     }
 
     @Override
-    public void saveLastReadBookMark(NovelBookMarkModel bookMarkModel) {
+    public void saveLastReadBookMark(BookmarkModel bookMarkModel) {
         SubscriptionUtils.checkAndUnsubscribe(mSubscription);
         mSubscription = mNovelBusinessLogicLayer.saveLastReadBookMark(bookMarkModel)
                 .subscribeOn(Schedulers.newThread())
@@ -157,17 +157,17 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                         result -> {
                         },
                         error -> {
-                            mView.onBookMarkSaved(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD, false);
+                            mView.onBookMarkSaved(BookmarkModel.BOOKMARK_TYPE_LASTREAD, false);
                             mSnackbarUtils.showExceptionToast(mView, error);
                         },
                         () -> {
-                            mView.onBookMarkSaved(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD, true);
+                            mView.onBookMarkSaved(BookmarkModel.BOOKMARK_TYPE_LASTREAD, true);
                         }
                 );
     }
 
     @Override
-    public List<NovelChapterModel> getChaptersState() {
+    public List<ChapterModel> getChaptersState() {
         return mDisplay.getChaptersInRunTimeStore();
     }
 
@@ -177,7 +177,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     }
 
     @Override
-    public void saveChaptersState(List<NovelChapterModel> chapters) {
+    public void saveChaptersState(List<ChapterModel> chapters) {
         mDisplay.saveChaptersInRunTimeStore(chapters);
     }
 
@@ -230,11 +230,11 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     }
 
     @Override
-    public void getOtherSrc(NovelChapterModel novelChapterModel) {
+    public void getOtherSrc(ChapterModel novelChapterModel) {
         SubscriptionUtils.checkAndUnsubscribe(mGetOtherSrcSubscription);
         mGetOtherSrcSubscription = mNovelBusinessLogicLayer.getOtherChapterSrc(
-                novelChapterModel.getId(),
-                novelChapterModel.getSrc(),
+                novelChapterModel.getNovelId(),
+                novelChapterModel.getSource(),
                 novelChapterModel.getTitle()).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -252,7 +252,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     }
 
     @Override
-    public void changeSrc(NovelChapterModel novelChapterModel, NovelChangeSrcModel changeSrcModel) {
+    public void changeSrc(ChapterModel novelChapterModel, NovelChangeSrcModel changeSrcModel) {
         mView.setLoading(true);
         SubscriptionUtils.checkAndUnsubscribe(mGetOtherSrcSubscription);
         mGetOtherSrcSubscription = mNovelBusinessLogicLayer.changeChapterSrc(novelChapterModel, changeSrcModel)
@@ -322,7 +322,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
         }
 
         @Override
-        public void onChangeSrc(NovelChapterModel chapterModel) {
+        public void onChangeSrc(ChapterModel chapterModel) {
 
         }
 

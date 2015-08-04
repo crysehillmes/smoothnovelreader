@@ -1,6 +1,8 @@
 package org.cryse.novelreader.model;
 
-public interface ChapterContentModel extends ChapterContentReadableModel {
+import android.os.Parcelable;
+
+public interface ChapterContentModel extends ChapterContentReadableModel, Parcelable {
     void setNovelId(String novelId);
     void setChapterId(String chapterId);
     void setContent(String content);

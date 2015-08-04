@@ -17,12 +17,12 @@ import android.widget.TextView;
 import com.quentindommerc.superlistview.SuperListview;
 
 import org.cryse.novelreader.application.SmoothReaderApplication;
-import org.cryse.novelreader.model.NovelBookMarkModel;
+import org.cryse.novelreader.model.BookmarkModel;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.util.ColorUtils;
 
 import org.cryse.novelreader.R;
-import org.cryse.novelreader.model.NovelChapterModel;
+import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.ui.adapter.NovelChapterListAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
@@ -53,7 +53,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     TextView mEmptyViewText;
 
     NovelModel mNovel;
-    ArrayList<NovelChapterModel> mNovelChapterList;
+    ArrayList<ChapterModel> mNovelChapterList;
 
     NovelChapterListAdapter mChapterListAdapter;
     private MenuItem mMenuItemCacheChapters;
@@ -99,7 +99,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     @SuppressLint("ResourceAsColor")
     private void initListView() {
         if(mNovelChapterList == null)
-            mNovelChapterList = new ArrayList<NovelChapterModel>();
+            mNovelChapterList = new ArrayList<ChapterModel>();
         mChapterListAdapter = new NovelChapterListAdapter(this, mNovelChapterList);
         mListView.setAdapter(mChapterListAdapter);
         mListView.getSwipeToRefresh().setColorSchemeResources(
@@ -113,8 +113,8 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
             if(truePosition == mChapterListAdapter.getLastReadIndicator())
                 getPresenter().readLastPosition(mNovel, mNovelChapterList);
             else {
-                NovelChapterModel item = mChapterListAdapter.getItem(truePosition);
-                getPresenter().readChapter(mNovel, item.getSecondId(), mNovelChapterList);
+                ChapterModel item = mChapterListAdapter.getItem(truePosition);
+                getPresenter().readChapter(mNovel, item.getChapterId(), mNovelChapterList);
             }
         });
         mListView.getList().setFastScrollEnabled(true);
@@ -198,7 +198,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean isLocalBook = mNovel.getSrc().startsWith(DataContract.LOCAL_FILE_PREFIX);
+        boolean isLocalBook = mNovel.getSource().startsWith(DataContract.LOCAL_FILE_PREFIX);
         if(mMenuItemRefresh != null) {
             mMenuItemRefresh.setVisible(!isLocalBook);
         }
@@ -251,7 +251,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     }
 
     @Override
-    public void showChapterList(List<NovelChapterModel> chapterList) {
+    public void showChapterList(List<ChapterModel> chapterList) {
         mNovelChapterList.clear();
         mNovelChapterList.addAll(chapterList);
         mChapterListAdapter.notifyDataSetChanged();
@@ -260,7 +260,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     }
 
     @Override
-    public void canGoToLastRead(NovelBookMarkModel bookMark) {
+    public void canGoToLastRead(BookmarkModel bookMark) {
         if (bookMark != null) {
             int index = findChapterIndex(bookMark.getChapterId());
             if (index >= 0 && index < mNovelChapterList.size()) {
@@ -332,8 +332,8 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     private int findChapterIndex(String chapterId) {
         for (int i = 0; i < mNovelChapterList.size(); i++) {
-            NovelChapterModel chapterModel = mNovelChapterList.get(i);
-            if (chapterModel.getSecondId().equals(chapterId)) {
+            ChapterModel chapterModel = mNovelChapterList.get(i);
+            if (chapterModel.getChapterId().equals(chapterId)) {
                 return i;
             }
         }

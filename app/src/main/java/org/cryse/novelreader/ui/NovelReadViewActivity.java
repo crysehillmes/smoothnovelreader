@@ -24,9 +24,10 @@ import com.example.android.systemuivis.SystemUiHelper;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
-import org.cryse.novelreader.model.NovelBookMarkModel;
+import org.cryse.novelreader.model.Bookmark;
+import org.cryse.novelreader.model.BookmarkModel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
-import org.cryse.novelreader.model.NovelChapterModel;
+import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelChapterContentPresenter;
 import org.cryse.novelreader.qualifier.PrefsFontSize;
@@ -103,7 +104,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     int mFlipHeight = 0;
     ReadWidgetAdapter mNovelReadAdapter;
 
-    ArrayList<NovelChapterModel> mNovelChapters;
+    ArrayList<ChapterModel> mNovelChapters;
 
     NovelModel novelModel;
     int chapterIndex = 0;
@@ -227,7 +228,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
             chapterOffset = savedInstanceState.getInt(DataContract.NOVEL_CHAPTER_OFFSET_NAME);
         } else {
             Intent intent = getIntent();
-            mNovelChapters = new ArrayList<NovelChapterModel>(getPresenter().getChaptersState());
+            mNovelChapters = new ArrayList<ChapterModel>(getPresenter().getChaptersState());
             novelModel = intent.getParcelableExtra(DataContract.NOVEL_OBJECT_NAME);
             String startChapterId = intent.getStringExtra(DataContract.NOVEL_CHAPTER_ID_NAME);
             chapterIndex = findChapterIndex(startChapterId);
@@ -514,7 +515,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
 
     @Override
     public void onBookMarkSaved(int type, boolean isSuccess) {
-        if(isSuccess && type == NovelBookMarkModel.BOOKMARK_TYPE_NORMAL) {
+        if(isSuccess && type == BookmarkModel.BOOKMARK_TYPE_NORMAL) {
         } else {
         }
     }
@@ -543,10 +544,10 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     }
 
     @Override
-    public void onChangeSrc(NovelChapterModel chapterModel) {
-        for(NovelChapterModel chapter : mNovelChapters) {
+    public void onChangeSrc(ChapterModel chapterModel) {
+        for(ChapterModel chapter : mNovelChapters) {
             if(chapter.getChapterIndex() == chapterModel.getChapterIndex()) {
-                chapter.setSrc(chapterModel.getSrc());
+                chapter.setSource(chapterModel.getSource());
                 break;
             }
         }
@@ -604,13 +605,13 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         int currentPage = mReadWidget.getCurrentPage();
         if(mNovelChapters == null || mNovelReadAdapter == null)
             return;
-        NovelBookMarkModel lastReadBookMark = new NovelBookMarkModel(
-                novelModel.getId(),
-                mNovelChapters.get(chapterIndex).getSecondId(),
+        BookmarkModel lastReadBookMark = new Bookmark(
+                novelModel.getNovelId(),
+                mNovelChapters.get(chapterIndex).getChapterId(),
                 novelModel.getTitle(),
                 mNovelChapters.get(chapterIndex).getTitle(),
                 mNovelReadAdapter.getStringOffsetFromPage(currentPage),
-                NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD,
+                BookmarkModel.BOOKMARK_TYPE_LASTREAD,
                 new Date()
         );
         getPresenter().saveLastReadBookMark(lastReadBookMark);
@@ -699,8 +700,8 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
 
     private int findChapterIndex(String chapterId) {
         for (int i = 0; i < mNovelChapters.size(); i++) {
-            NovelChapterModel chapterModel = mNovelChapters.get(i);
-            if (chapterModel.getSecondId().equals(chapterId)) {
+            ChapterModel chapterModel = mNovelChapters.get(i);
+            if (chapterModel.getChapterId().equals(chapterId)) {
                 return i;
             }
         }
@@ -708,7 +709,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     }
 
     private boolean checkIfLocal(int chapterIndex) {
-        return mNovelChapters.get(chapterIndex).getSrc().contains("://");
+        return mNovelChapters.get(chapterIndex).getSource().contains("://");
     }
 
     @Override

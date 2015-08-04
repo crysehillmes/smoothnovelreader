@@ -3,18 +3,18 @@ package org.cryse.novelreader.source.baidu;
 import com.google.gson.Gson;
 import com.squareup.okhttp.OkHttpClient;
 
+import org.cryse.novelreader.source.baidu.converter.ToChapterContent;
 import org.cryse.novelreader.source.baidu.converter.ToNovelDetailModel;
 import org.cryse.novelreader.source.baidu.converter.ToNovelModel;
 import org.cryse.novelreader.source.baidu.parser.gson.CustomGsonConverter;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
-import org.cryse.novelreader.model.NovelChapterContentModel;
-import org.cryse.novelreader.model.NovelChapterModel;
+import org.cryse.novelreader.model.ChapterContentModel;
+import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.model.NovelSyncBookShelfModel;
 import org.cryse.novelreader.source.NovelSource;
-import org.cryse.novelreader.source.baidu.converter.ToNovelChapterContent;
-import org.cryse.novelreader.source.baidu.converter.ToNovelChapterModel;
+import org.cryse.novelreader.source.baidu.converter.ToChapterModel;
 import org.cryse.novelreader.source.baidu.converter.ToNovelModelFromSearch;
 import org.cryse.novelreader.source.baidu.converter.ToNovelSyncBookShelfModel;
 import org.cryse.novelreader.source.baidu.entity.BaiduNovelSource;
@@ -82,7 +82,7 @@ public class BaiduNovelSourceImpl implements NovelSource {
     }
 
     @Override
-    public Observable<List<NovelChapterModel>> getChapterList(String id, String src) {
+    public Observable<List<ChapterModel>> getChapterList(String id, String src) {
         String dataString = String.format("{\"gid\":%s,\"cpsrc\":\"%s\"}", id, src);
         return novelSource.getChapterList(
                 SEARCHBOX_ACTION,
@@ -92,11 +92,11 @@ public class BaiduNovelSourceImpl implements NovelSource {
                 SEARCHBOX_OSBRANCH,
                 SEARCHBOX_PKGNAME,
                 dataString
-        ).map(new ToNovelChapterModel(id));
+        ).map(new ToChapterModel(id));
     }
 
     @Override
-    public Observable<NovelChapterContentModel> getChapterContent(String id, String secondId, String src) {
+    public Observable<ChapterContentModel> getChapterContent(String id, String secondId, String src) {
         String dataString = String.format("{\"gid\":%s,\"dir\":\"0\",\"cid\":\"%s\",\"ctsrc\":\"%s\"}", id, secondId, src);
         return novelSource.getChapterContent(
                 SEARCHBOX_ACTION,
@@ -105,7 +105,7 @@ public class BaiduNovelSourceImpl implements NovelSource {
                 SEARCHBOX_OSNAME,
                 SEARCHBOX_OSBRANCH,
                 SEARCHBOX_PKGNAME,
-                dataString).map(new ToNovelChapterContent(id, secondId));
+                dataString).map(new ToChapterContent(id, secondId));
     }
 
     @Override
@@ -122,7 +122,7 @@ public class BaiduNovelSourceImpl implements NovelSource {
     }
 
     @Override
-    public NovelChapterContentModel getChapterContentSync(String id, String secondId, String src) {
+    public ChapterContentModel getChapterContentSync(String id, String secondId, String src) {
         String dataString = String.format("{\"gid\":%s,\"dir\":\"0\",\"cid\":\"%s\",\"ctsrc\":\"%s\"}", id, secondId, src);
         ChapterContentItem item = novelSource.getChapterContentSync(
                 SEARCHBOX_ACTION,
@@ -132,11 +132,11 @@ public class BaiduNovelSourceImpl implements NovelSource {
                 SEARCHBOX_OSBRANCH,
                 SEARCHBOX_PKGNAME,
                 dataString);
-        return new ToNovelChapterContent(id, secondId).call(item);
+        return new ToChapterContent(id, secondId).call(item);
     }
 
     @Override
-    public List<NovelChapterModel> getChapterListSync(String id, String src) {
+    public List<ChapterModel> getChapterListSync(String id, String src) {
         String dataString = String.format("{\"gid\":%s,\"cpsrc\":\"%s\"}", id, src);
         ChapterListDataset dataset = novelSource.getChapterListSync(
                 SEARCHBOX_ACTION,
@@ -147,7 +147,7 @@ public class BaiduNovelSourceImpl implements NovelSource {
                 SEARCHBOX_PKGNAME,
                 dataString
         );
-        return new ToNovelChapterModel(id).call(dataset);
+        return new ToChapterModel(id).call(dataset);
     }
 
     @Override

@@ -1,8 +1,10 @@
 package org.cryse.novelreader.model;
 
+import android.os.Parcelable;
+
 import java.util.Date;
 
-public interface BookmarkModel extends BookmarkReadableModel {
+public interface BookmarkModel extends BookmarkReadableModel, Parcelable {
     public static final int BOOKMARK_TYPE_LASTREAD = 3;
     public static final int BOOKMARK_TYPE_NORMAL = 5;
 

@@ -1,6 +1,10 @@
 package org.cryse.novelreader.model;
 
-public interface NovelModel extends NovelReadableModel {
+import android.os.Parcelable;
+
+public interface NovelModel extends NovelReadableModel, Parcelable {
+    public static final int TYPE_BAIDU_SOURCE = 12;
+    public static final int TYPE_LOCAL_FILE = 22;
     void setNovelId(String novelId);
     void setTitle(String title);
     void setAuthor(String author);

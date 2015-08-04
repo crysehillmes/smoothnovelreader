@@ -15,7 +15,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import org.cryse.novelreader.R;
-import org.cryse.novelreader.model.NovelChapterModel;
+import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.UIUtils;
 
@@ -26,7 +26,7 @@ import butterknife.InjectView;
 
 public class NovelChapterListAdapter extends BaseAdapter{
     private Context mContext = null;
-    private List<NovelChapterModel> mContentList = null;
+    private List<ChapterModel> mContentList = null;
     private LayoutInflater mInflater = null;
     private int mTagColorDotSize;
     private int mTagColorDotPadding;
@@ -34,7 +34,7 @@ public class NovelChapterListAdapter extends BaseAdapter{
     private int mLastReadPosition = -1;
 
     public NovelChapterListAdapter(Context context,
-                                   List<NovelChapterModel> novelContents) {
+                                   List<ChapterModel> novelContents) {
         this.mContext = context;
         this.mContentList = novelContents;
         mInflater = LayoutInflater.from(this.mContext);
@@ -49,7 +49,7 @@ public class NovelChapterListAdapter extends BaseAdapter{
     }
 
     @Override
-    public NovelChapterModel getItem(int position) {
+    public ChapterModel getItem(int position) {
         return mContentList.get(position);
     }
 
@@ -80,7 +80,7 @@ public class NovelChapterListAdapter extends BaseAdapter{
         {
             viewHolder = (NovelIntroItemViewHolder)convertView.getTag();
         }
-        NovelChapterModel item = mContentList.get(position);
+        ChapterModel item = mContentList.get(position);
 
         ShapeDrawable colorDrawable = new ShapeDrawable(new OvalShape());
         colorDrawable.setIntrinsicWidth(mTagColorDotSize);

@@ -1,5 +1,6 @@
 package org.cryse.novelreader.model;
 
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -86,4 +87,38 @@ public class Chapter implements ChapterModel {
     public void setIsCached(Boolean isCached) {
         this.isCached = isCached;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.novelId);
+        dest.writeString(this.chapterId);
+        dest.writeString(this.source);
+        dest.writeString(this.title);
+        dest.writeValue(this.chapterIndex);
+        dest.writeValue(this.isCached);
+    }
+
+    protected Chapter(Parcel in) {
+        this.novelId = in.readString();
+        this.chapterId = in.readString();
+        this.source = in.readString();
+        this.title = in.readString();
+        this.chapterIndex = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.isCached = (Boolean) in.readValue(Boolean.class.getClassLoader());
+    }
+
+    public static final Creator<Chapter> CREATOR = new Creator<Chapter>() {
+        public Chapter createFromParcel(Parcel source) {
+            return new Chapter(source);
+        }
+
+        public Chapter[] newArray(int size) {
+            return new Chapter[size];
+        }
+    };
 }

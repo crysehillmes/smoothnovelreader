@@ -1,5 +1,6 @@
 package org.cryse.novelreader.model;
 
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -118,4 +119,41 @@ public class Bookmark implements BookmarkModel {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.novelId);
+        dest.writeString(this.chapterId);
+        dest.writeString(this.novelTitle);
+        dest.writeString(this.chapterTitle);
+        dest.writeValue(this.chapterOffset);
+        dest.writeValue(this.markType);
+        dest.writeLong(createTime != null ? createTime.getTime() : -1);
+    }
+
+    protected Bookmark(Parcel in) {
+        this.novelId = in.readString();
+        this.chapterId = in.readString();
+        this.novelTitle = in.readString();
+        this.chapterTitle = in.readString();
+        this.chapterOffset = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.markType = (Integer) in.readValue(Integer.class.getClassLoader());
+        long tmpCreateTime = in.readLong();
+        this.createTime = tmpCreateTime == -1 ? null : new Date(tmpCreateTime);
+    }
+
+    public static final Creator<Bookmark> CREATOR = new Creator<Bookmark>() {
+        public Bookmark createFromParcel(Parcel source) {
+            return new Bookmark(source);
+        }
+
+        public Bookmark[] newArray(int size) {
+            return new Bookmark[size];
+        }
+    };
 }
