@@ -1,43 +1,45 @@
 package org.cryse.novelreader.data;
 
-        import android.content.ContentProviderClient;
-        import android.content.ContentResolver;
-        import android.content.ContentValues;
-        import android.content.Context;
-        import android.database.sqlite.SQLiteDatabase;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
-        import org.cryse.novelreader.data.provider.ContentValuesUtils;
-        import org.cryse.novelreader.data.provider.NovelReaderContentProvider;
-        import org.cryse.novelreader.data.provider.bookmark.BookmarkContentValues;
-        import org.cryse.novelreader.data.provider.bookmark.BookmarkCursor;
-        import org.cryse.novelreader.data.provider.bookmark.BookmarkSelection;
-        import org.cryse.novelreader.data.provider.chapter.ChapterColumns;
-        import org.cryse.novelreader.data.provider.chapter.ChapterContentValues;
-        import org.cryse.novelreader.data.provider.chapter.ChapterSelection;
-        import org.cryse.novelreader.data.provider.chaptercontent.ChapterContentContentValues;
-        import org.cryse.novelreader.data.provider.chaptercontent.ChapterContentCursor;
-        import org.cryse.novelreader.data.provider.chaptercontent.ChapterContentSelection;
-        import org.cryse.novelreader.data.provider.novel.NovelContentValues;
-        import org.cryse.novelreader.data.provider.novel.NovelCursor;
-        import org.cryse.novelreader.data.provider.novel.NovelSelection;
-        import org.cryse.novelreader.model.Bookmark;
-        import org.cryse.novelreader.model.BookmarkModel;
-        import org.cryse.novelreader.model.Chapter;
-        import org.cryse.novelreader.model.ChapterContent;
-        import org.cryse.novelreader.model.Novel;
-        import org.cryse.novelreader.model.NovelChangeSrcModel;
-        import org.cryse.novelreader.model.ChapterContentModel;
-        import org.cryse.novelreader.model.ChapterModel;
-        import org.cryse.novelreader.model.NovelModel;
-        import org.cryse.novelreader.qualifier.ApplicationContext;
-        import org.cryse.novelreader.util.comparator.NovelSortKeyComparator;
+import org.cryse.novelreader.data.provider.ContentValuesUtils;
+import org.cryse.novelreader.data.provider.NovelReaderSQLiteOpenHelper;
+import org.cryse.novelreader.data.provider.bookmark.BookmarkContentValues;
+import org.cryse.novelreader.data.provider.bookmark.BookmarkCursor;
+import org.cryse.novelreader.data.provider.bookmark.BookmarkSelection;
+import org.cryse.novelreader.data.provider.chapter.ChapterColumns;
+import org.cryse.novelreader.data.provider.chapter.ChapterContentValues;
+import org.cryse.novelreader.data.provider.chapter.ChapterCursor;
+import org.cryse.novelreader.data.provider.chapter.ChapterSelection;
+import org.cryse.novelreader.data.provider.chaptercontent.ChapterContentColumns;
+import org.cryse.novelreader.data.provider.chaptercontent.ChapterContentContentValues;
+import org.cryse.novelreader.data.provider.chaptercontent.ChapterContentCursor;
+import org.cryse.novelreader.data.provider.chaptercontent.ChapterContentSelection;
+import org.cryse.novelreader.data.provider.novel.NovelContentValues;
+import org.cryse.novelreader.data.provider.novel.NovelCursor;
+import org.cryse.novelreader.data.provider.novel.NovelSelection;
+import org.cryse.novelreader.model.Bookmark;
+import org.cryse.novelreader.model.BookmarkModel;
+import org.cryse.novelreader.model.Chapter;
+import org.cryse.novelreader.model.ChapterContent;
+import org.cryse.novelreader.model.Novel;
+import org.cryse.novelreader.model.NovelChangeSrcModel;
+import org.cryse.novelreader.model.ChapterContentModel;
+import org.cryse.novelreader.model.ChapterModel;
+import org.cryse.novelreader.model.NovelModel;
+import org.cryse.novelreader.qualifier.ApplicationContext;
+import org.cryse.novelreader.util.comparator.NovelSortKeyComparator;
 
-        import java.util.ArrayList;
-        import java.util.Collection;
-        import java.util.Collections;
-        import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-        import javax.inject.Inject;
+import javax.inject.Inject;
 
 public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
     @ApplicationContext
@@ -119,9 +121,33 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
         return result;
     }
 
+    private static final String QUERY_CHAPTERS_SQL =
+            "SELECT " + ChapterColumns._ID + ", " + ChapterColumns.NOVEL_ID + ", " + ChapterColumns.CHAPTER_ID + ", " + ChapterColumns.TITLE + ", " + ChapterColumns.SOURCE + ", " + ChapterColumns.CHAPTER_INDEX + ", " +
+            "CASE WHEN EXISTS (SELECT " + ChapterContentColumns.CHAPTER_ID + " FROM " + ChapterContentColumns.TABLE_NAME + " WHERE " + ChapterContentColumns.TABLE_NAME + "." + ChapterContentColumns.CHAPTER_ID + " = " + ChapterColumns.TABLE_NAME + "." + ChapterColumns.CHAPTER_ID + ") " +
+            "THEN 1 " +
+            "ELSE 0 " +
+            "END AS CACHED " +
+            "FROM " + ChapterColumns.TABLE_NAME + " " +
+            "WHERE id=?";
+
     @Override
     public List<ChapterModel> loadChapters(String novelId) {
-        return ChapterModelDao.deepQueryList(novelId);
+        NovelReaderSQLiteOpenHelper helper = NovelReaderSQLiteOpenHelper.getInstance(mContext);
+        SQLiteDatabase database = helper.getReadableDatabase();
+        List<ChapterModel> chapterModels = new ArrayList<>();
+        Cursor rawCursor = database.rawQuery(QUERY_CHAPTERS_SQL, new String[]{novelId});
+        ChapterCursor cursor = new ChapterCursor(rawCursor);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            ChapterModel chapter = new Chapter(cursor);
+            chapter.setCached(cursor.getBooleanOrNull("CACHED"));
+            chapterModels.add(chapter);
+            cursor.moveToNext();
+        }
+        // make sure to close the cursor
+        cursor.close();
+        rawCursor.close();
+        return chapterModels;
     }
 
     @Override

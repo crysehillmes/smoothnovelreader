@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.util.Log;
 
-import org.cryse.novelreader.data.BuildConfig;
+import org.cryse.novelreader.BuildConfig;
 import org.cryse.novelreader.data.provider.bookmark.BookmarkColumns;
 import org.cryse.novelreader.data.provider.chapter.ChapterColumns;
 import org.cryse.novelreader.data.provider.chaptercontent.ChapterContentColumns;
