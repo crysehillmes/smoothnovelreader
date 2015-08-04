@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 public class Novel implements NovelModel {
     private String novelId;
     private String title;
+    private String author;
     private int type;
     private String source;
     private String coverImage;
@@ -23,17 +24,18 @@ public class Novel implements NovelModel {
         this.coverImage = coverImage;
     }
 
-    public Novel(NovelModel novelModel) {
-        this.novelId = novelModel.getNovelId();
-        this.title = novelModel.getTitle();
-        this.type = novelModel.getType();
-        this.source = novelModel.getSource();
-        this.coverImage = novelModel.getCoverImage();
-        this.chapterCount = novelModel.getChapterCount();
-        this.lastReadChapterTitle = novelModel.getLastReadChapterTitle();
-        this.latestChapterTitle = novelModel.getLatestChapterTitle();
-        this.latestUpdateChapterCount = novelModel.getLatestUpdateChapterCount();
-        this.sortKey = novelModel.getSortKey();
+    public Novel(NovelReadableModel model) {
+        this.novelId = model.getNovelId();
+        this.title = model.getTitle();
+        this.author = model.getAuthor();
+        this.type = model.getType();
+        this.source = model.getSource();
+        this.coverImage = model.getCoverImage();
+        this.chapterCount = model.getChapterCount();
+        this.lastReadChapterTitle = model.getLastReadChapterTitle();
+        this.latestChapterTitle = model.getLatestChapterTitle();
+        this.latestUpdateChapterCount = model.getLatestUpdateChapterCount();
+        this.sortKey = model.getSortKey();
     }
 
     @NonNull
@@ -54,6 +56,16 @@ public class Novel implements NovelModel {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @Nullable
+    @Override
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     @Override

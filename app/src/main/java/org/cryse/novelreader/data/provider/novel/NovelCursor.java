@@ -5,12 +5,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.cryse.novelreader.data.provider.base.AbstractCursor;
-import org.cryse.novelreader.model.NovelModel;
+import org.cryse.novelreader.model.NovelReadableModel;
 
 /**
  * Cursor wrapper for the {@code novel} table.
  */
-public class NovelCursor extends AbstractCursor implements NovelModel {
+public class NovelCursor extends AbstractCursor implements NovelReadableModel {
     public NovelCursor(Cursor cursor) {
         super(cursor);
     }
@@ -46,6 +46,16 @@ public class NovelCursor extends AbstractCursor implements NovelModel {
         String res = getStringOrNull(NovelColumns.TITLE);
         if (res == null)
             throw new NullPointerException("The value of 'title' in the database was null, which is not allowed according to the model definition");
+        return res;
+    }
+
+    /**
+     * Get the {@code author} value.
+     * Can be {@code null}.
+     */
+    @Nullable
+    public String getAuthor() {
+        String res = getStringOrNull(NovelColumns.AUTHOR);
         return res;
     }
 

@@ -81,6 +81,7 @@ public class NovelReaderSQLiteOpenHelper extends SQLiteOpenHelper {
             + NovelColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + NovelColumns.NOVEL_ID + " TEXT NOT NULL, "
             + NovelColumns.TITLE + " TEXT NOT NULL, "
+            + NovelColumns.AUTHOR + " TEXT, "
             + NovelColumns.TYPE + " INTEGER NOT NULL, "
             + NovelColumns.SOURCE + " TEXT, "
             + NovelColumns.COVER_IMAGE + " TEXT, "
@@ -97,6 +98,9 @@ public class NovelReaderSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public static final String SQL_CREATE_INDEX_NOVEL_TITLE = "CREATE INDEX IDX_NOVEL_TITLE "
             + " ON " + NovelColumns.TABLE_NAME + " ( " + NovelColumns.TITLE + " );";
+
+    public static final String SQL_CREATE_INDEX_NOVEL_AUTHOR = "CREATE INDEX IDX_NOVEL_AUTHOR "
+            + " ON " + NovelColumns.TABLE_NAME + " ( " + NovelColumns.AUTHOR + " );";
 
     public static final String SQL_CREATE_INDEX_NOVEL_TYPE = "CREATE INDEX IDX_NOVEL_TYPE "
             + " ON " + NovelColumns.TABLE_NAME + " ( " + NovelColumns.TYPE + " );";
@@ -170,6 +174,7 @@ public class NovelReaderSQLiteOpenHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_TABLE_NOVEL);
         db.execSQL(SQL_CREATE_INDEX_NOVEL_NOVEL_ID);
         db.execSQL(SQL_CREATE_INDEX_NOVEL_TITLE);
+        db.execSQL(SQL_CREATE_INDEX_NOVEL_AUTHOR);
         db.execSQL(SQL_CREATE_INDEX_NOVEL_TYPE);
         db.execSQL(SQL_CREATE_INDEX_NOVEL_SOURCE);
         mOpenHelperCallbacks.onPostCreate(mContext, db);

@@ -5,12 +5,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.cryse.novelreader.data.provider.base.AbstractCursor;
-import org.cryse.novelreader.model.BookmarkModel;
+import org.cryse.novelreader.model.BookmarkReadableModel;
 
 /**
  * Cursor wrapper for the {@code bookmark} table.
  */
-public class BookmarkCursor extends AbstractCursor implements BookmarkModel {
+public class BookmarkCursor extends AbstractCursor implements BookmarkReadableModel {
     public BookmarkCursor(Cursor cursor) {
         super(cursor);
     }

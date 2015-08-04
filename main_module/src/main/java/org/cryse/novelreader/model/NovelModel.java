@@ -1,78 +1,15 @@
 package org.cryse.novelreader.model;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
-/**
- * A human being which is part of a team.
- */
-public interface NovelModel extends BaseModel {
-
-    /**
-     * Get the {@code novel_id} value.
-     * Cannot be {@code null}.
-     */
-    @NonNull
-    String getNovelId();
-
-    /**
-     * Get the {@code title} value.
-     * Cannot be {@code null}.
-     */
-    @NonNull
-    String getTitle();
-
-    /**
-     * Get the {@code type} value.
-     */
-    int getType();
-
-    /**
-     * Get the {@code source} value.
-     * Can be {@code null}.
-     */
-    @Nullable
-    String getSource();
-
-    /**
-     * Get the {@code cover_image} value.
-     * Can be {@code null}.
-     */
-    @Nullable
-    String getCoverImage();
-
-    /**
-     * Get the {@code chapter_count} value.
-     * Can be {@code null}.
-     */
-    @Nullable
-    Integer getChapterCount();
-
-    /**
-     * Get the {@code last_read_chapter_title} value.
-     * Can be {@code null}.
-     */
-    @Nullable
-    String getLastReadChapterTitle();
-
-    /**
-     * Get the {@code latest_chapter_title} value.
-     * Can be {@code null}.
-     */
-    @Nullable
-    String getLatestChapterTitle();
-
-    /**
-     * Get the {@code latest_update_chapter_count} value.
-     * Can be {@code null}.
-     */
-    @Nullable
-    Integer getLatestUpdateChapterCount();
-
-    /**
-     * Get the {@code sort_key} value.
-     * Can be {@code null}.
-     */
-    @Nullable
-    Long getSortKey();
+public interface NovelModel extends NovelReadableModel {
+    void setNovelId(String novelId);
+    void setTitle(String title);
+    void setAuthor(String author);
+    void setType(int type);
+    void setSource(String source);
+    void setCoverImage(String coverImage);
+    void setChapterCount(Integer chapterCount);
+    void setLastReadChapterTitle(String lastReadChapterTitle);
+    void setLatestChapterTitle(String latestChapterTitle);
+    void setLatestUpdateChapterCount(Integer latestUpdateChapterCount);
+    void setSortKey(Long sortKey);
 }

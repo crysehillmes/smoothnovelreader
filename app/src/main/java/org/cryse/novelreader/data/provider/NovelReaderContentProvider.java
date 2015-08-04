@@ -10,7 +10,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import org.cryse.novelreader.data.BuildConfig;
+import org.cryse.novelreader.BuildConfig;
 import org.cryse.novelreader.data.provider.base.BaseContentProvider;
 import org.cryse.novelreader.data.provider.bookmark.BookmarkColumns;
 import org.cryse.novelreader.data.provider.chapter.ChapterColumns;

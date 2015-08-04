@@ -1,6 +1,10 @@
 package org.cryse.novelreader.data;
 
+import org.cryse.novelreader.model.Bookmark;
 import org.cryse.novelreader.model.BookmarkModel;
+import org.cryse.novelreader.model.Chapter;
+import org.cryse.novelreader.model.ChapterContent;
+import org.cryse.novelreader.model.Novel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.ChapterContentModel;
 import org.cryse.novelreader.model.ChapterModel;

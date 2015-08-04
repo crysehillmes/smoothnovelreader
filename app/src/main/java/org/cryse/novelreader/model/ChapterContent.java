@@ -9,7 +9,7 @@ public class ChapterContent implements ChapterContentModel{
     private String source;
     private String content;
 
-    public ChapterContent(ChapterContentModel model) {
+    public ChapterContent(ChapterContentReadableModel model) {
         this.novelId = model.getNovelId();
         this.chapterId = model.getChapterId();
         this.source = model.getSource();

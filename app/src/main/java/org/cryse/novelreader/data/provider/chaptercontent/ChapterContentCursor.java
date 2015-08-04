@@ -5,12 +5,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.cryse.novelreader.data.provider.base.AbstractCursor;
-import org.cryse.novelreader.model.ChapterContentModel;
+import org.cryse.novelreader.model.ChapterContentReadableModel;
 
 /**
  * Cursor wrapper for the {@code chapter_content} table.
  */
-public class ChapterContentCursor extends AbstractCursor implements ChapterContentModel {
+public class ChapterContentCursor extends AbstractCursor implements ChapterContentReadableModel {
     public ChapterContentCursor(Cursor cursor) {
         super(cursor);
     }

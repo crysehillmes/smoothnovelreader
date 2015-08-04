@@ -25,6 +25,8 @@ public class NovelColumns implements BaseColumns {
 
     public static final String TITLE = "title";
 
+    public static final String AUTHOR = "author";
+
     public static final String TYPE = "type";
 
     public static final String SOURCE = "source";
@@ -49,6 +51,7 @@ public class NovelColumns implements BaseColumns {
             _ID,
             NOVEL_ID,
             TITLE,
+            AUTHOR,
             TYPE,
             SOURCE,
             COVER_IMAGE,
@@ -65,6 +68,7 @@ public class NovelColumns implements BaseColumns {
         for (String c : projection) {
             if (c.equals(NOVEL_ID) || c.contains("." + NOVEL_ID)) return true;
             if (c.equals(TITLE) || c.contains("." + TITLE)) return true;
+            if (c.equals(AUTHOR) || c.contains("." + AUTHOR)) return true;
             if (c.equals(TYPE) || c.contains("." + TYPE)) return true;
             if (c.equals(SOURCE) || c.contains("." + SOURCE)) return true;
             if (c.equals(COVER_IMAGE) || c.contains("." + COVER_IMAGE)) return true;

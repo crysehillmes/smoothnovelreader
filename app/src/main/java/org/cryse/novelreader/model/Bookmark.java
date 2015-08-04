@@ -31,7 +31,7 @@ public class Bookmark implements BookmarkModel {
         this.createTime = createTime;
     }
 
-    public Bookmark(BookmarkModel model) {
+    public Bookmark(BookmarkReadableModel model) {
         this.novelId = model.getNovelId();
         this.chapterId = model.getChapterId();
         this.novelTitle = model.getNovelTitle();

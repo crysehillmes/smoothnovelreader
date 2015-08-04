@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import android.util.Log;
 
-import org.cryse.novelreader.data.BuildConfig;
+import org.cryse.novelreader.BuildConfig;
 
 /**
  * Implement your custom database creation or upgrade code here.

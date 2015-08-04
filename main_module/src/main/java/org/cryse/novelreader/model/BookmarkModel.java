@@ -1,59 +1,24 @@
 package org.cryse.novelreader.model;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import java.util.Date;
 
-/**
- * A human being which is part of a team.
- */
-public interface BookmarkModel extends BaseModel {
+public interface BookmarkModel extends BookmarkReadableModel {
+    public static final int BOOKMARK_TYPE_LASTREAD = 3;
+    public static final int BOOKMARK_TYPE_NORMAL = 5;
 
-    /**
-     * Get the {@code novel_id} value.
-     * Cannot be {@code null}.
-     */
-    @NonNull
-    String getNovelId();
+    void setNovelId(String novelId);
 
-    /**
-     * Get the {@code chapter_id} value.
-     * Cannot be {@code null}.
-     */
-    @NonNull
-    String getChapterId();
+    void setChapterId(String chapterId);
 
-    /**
-     * Get the {@code novel_title} value.
-     * Can be {@code null}.
-     */
-    @Nullable
-    String getNovelTitle();
+    void setNovelTitle(String novelTitle);
 
-    /**
-     * Get the {@code chapter_title} value.
-     * Can be {@code null}.
-     */
-    @Nullable
-    String getChapterTitle();
+    void setChapterTitle(String chapterTitle);
 
-    /**
-     * Get the {@code chapter_offset} value.
-     * Can be {@code null}.
-     */
-    @Nullable
-    Integer getChapterOffset();
+    void setChapterOffset(Integer chapterOffset);
 
-    /**
-     * Get the {@code mark_type} value.
-     * Can be {@code null}.
-     */
-    @Nullable
-    Integer getMarkType();
+    void setMarkType(Integer markType);
 
-    /**
-     * Get the {@code create_time} value.
-     * Can be {@code null}.
-     */
-    @Nullable
-    Long getCreateTime();
+    void setCreateTime(long createTime);
+
+    void setCreateTime(Date createTime);
 }

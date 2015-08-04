@@ -10,7 +10,7 @@ public class Chapter implements ChapterModel {
     private String title;
     private Integer chapterIndex;
 
-    public Chapter(ChapterModel chapterModel) {
+    public Chapter(ChapterReadableModel chapterModel) {
         this.novelId = chapterModel.getNovelId();
         this.chapterId = chapterModel.getChapterId();
         this.source = chapterModel.getSource();

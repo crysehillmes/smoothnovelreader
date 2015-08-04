@@ -158,6 +158,46 @@ public class NovelSelection extends AbstractSelection<NovelSelection> {
         return this;
     }
 
+    public NovelSelection author(String... value) {
+        addEquals(NovelColumns.AUTHOR, value);
+        return this;
+    }
+
+    public NovelSelection authorNot(String... value) {
+        addNotEquals(NovelColumns.AUTHOR, value);
+        return this;
+    }
+
+    public NovelSelection authorLike(String... value) {
+        addLike(NovelColumns.AUTHOR, value);
+        return this;
+    }
+
+    public NovelSelection authorContains(String... value) {
+        addContains(NovelColumns.AUTHOR, value);
+        return this;
+    }
+
+    public NovelSelection authorStartsWith(String... value) {
+        addStartsWith(NovelColumns.AUTHOR, value);
+        return this;
+    }
+
+    public NovelSelection authorEndsWith(String... value) {
+        addEndsWith(NovelColumns.AUTHOR, value);
+        return this;
+    }
+
+    public NovelSelection orderByAuthor(boolean desc) {
+        orderBy(NovelColumns.AUTHOR, desc);
+        return this;
+    }
+
+    public NovelSelection orderByAuthor() {
+        orderBy(NovelColumns.AUTHOR, false);
+        return this;
+    }
+
     public NovelSelection type(int... value) {
         addEquals(NovelColumns.TYPE, toObjectArray(value));
         return this;

@@ -53,6 +53,16 @@ public class NovelContentValues extends AbstractContentValues {
     }
 
 
+    public NovelContentValues putAuthor(@Nullable String value) {
+        mContentValues.put(NovelColumns.AUTHOR, value);
+        return this;
+    }
+
+    public NovelContentValues putAuthorNull() {
+        mContentValues.putNull(NovelColumns.AUTHOR);
+        return this;
+    }
+
     public NovelContentValues putType(int value) {
         mContentValues.put(NovelColumns.TYPE, value);
         return this;
