@@ -71,31 +71,31 @@ public class BookmarkCursor extends AbstractCursor implements BookmarkReadableMo
 
     /**
      * Get the {@code chapter_offset} value.
-     * Can be {@code null}.
      */
-    @Nullable
-    public Integer getChapterOffset() {
+    public int getChapterOffset() {
         Integer res = getIntegerOrNull(BookmarkColumns.CHAPTER_OFFSET);
+        if (res == null)
+            throw new NullPointerException("The value of 'chapter_offset' in the database was null, which is not allowed according to the model definition");
         return res;
     }
 
     /**
      * Get the {@code mark_type} value.
-     * Can be {@code null}.
      */
-    @Nullable
-    public Integer getMarkType() {
+    public int getMarkType() {
         Integer res = getIntegerOrNull(BookmarkColumns.MARK_TYPE);
+        if (res == null)
+            throw new NullPointerException("The value of 'mark_type' in the database was null, which is not allowed according to the model definition");
         return res;
     }
 
     /**
      * Get the {@code create_time} value.
-     * Can be {@code null}.
      */
-    @Nullable
-    public Long getCreateTime() {
+    public long getCreateTime() {
         Long res = getLongOrNull(BookmarkColumns.CREATE_TIME);
+        if (res == null)
+            throw new NullPointerException("The value of 'create_time' in the database was null, which is not allowed according to the model definition");
         return res;
     }
 }

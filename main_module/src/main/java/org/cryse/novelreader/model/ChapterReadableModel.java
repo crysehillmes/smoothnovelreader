@@ -35,8 +35,6 @@ public interface ChapterReadableModel extends BaseModel {
 
     /**
      * Get the {@code chapter_index} value.
-     * Can be {@code null}.
      */
-    @Nullable
-    Integer getChapterIndex();
+    int getChapterIndex();
 }

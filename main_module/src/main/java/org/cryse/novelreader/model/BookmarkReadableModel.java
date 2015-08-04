@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 public interface BookmarkReadableModel extends BaseModel {
+
     /**
      * Get the {@code novel_id} value.
      * Cannot be {@code null}.
@@ -34,22 +35,16 @@ public interface BookmarkReadableModel extends BaseModel {
 
     /**
      * Get the {@code chapter_offset} value.
-     * Can be {@code null}.
      */
-    @Nullable
-    Integer getChapterOffset();
+    int getChapterOffset();
 
     /**
      * Get the {@code mark_type} value.
-     * Can be {@code null}.
      */
-    @Nullable
-    Integer getMarkType();
+    int getMarkType();
 
     /**
      * Get the {@code create_time} value.
-     * Can be {@code null}.
      */
-    @Nullable
-    Long getCreateTime();
+    long getCreateTime();
 }

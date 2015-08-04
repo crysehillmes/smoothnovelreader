@@ -9,8 +9,8 @@ public class Chapter implements ChapterModel {
     private String chapterId;
     private String source;
     private String title;
-    private Integer chapterIndex;
-    private Boolean isCached;
+    private int chapterIndex;
+    private boolean isCached;
 
     public Chapter(ChapterReadableModel chapterModel) {
         this.novelId = chapterModel.getNovelId();
@@ -20,7 +20,7 @@ public class Chapter implements ChapterModel {
         this.chapterIndex = chapterModel.getChapterIndex();
     }
 
-    public Chapter(String novelId, String chapterId, String source, String title, Integer chapterIndex) {
+    public Chapter(String novelId, String chapterId, String source, String title, int chapterIndex) {
         this.novelId = novelId;
         this.chapterId = chapterId;
         this.source = source;
@@ -68,23 +68,22 @@ public class Chapter implements ChapterModel {
         this.title = title;
     }
 
-    @Nullable
     @Override
-    public Integer getChapterIndex() {
+    public int getChapterIndex() {
         return chapterIndex;
     }
 
-    public void setChapterIndex(Integer chapterIndex) {
+    public void setChapterIndex(int chapterIndex) {
         this.chapterIndex = chapterIndex;
     }
 
     @Override
-    public Boolean isCached() {
+    public boolean isCached() {
         return isCached;
     }
 
     @Override
-    public void setIsCached(Boolean isCached) {
+    public void setIsCached(boolean isCached) {
         this.isCached = isCached;
     }
 

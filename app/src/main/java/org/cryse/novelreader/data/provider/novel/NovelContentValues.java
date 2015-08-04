@@ -69,15 +69,12 @@ public class NovelContentValues extends AbstractContentValues {
     }
 
 
-    public NovelContentValues putSource(@Nullable String value) {
+    public NovelContentValues putSource(@NonNull String value) {
+        if (value == null) throw new IllegalArgumentException("source must not be null");
         mContentValues.put(NovelColumns.SOURCE, value);
         return this;
     }
 
-    public NovelContentValues putSourceNull() {
-        mContentValues.putNull(NovelColumns.SOURCE);
-        return this;
-    }
 
     public NovelContentValues putCoverImage(@Nullable String value) {
         mContentValues.put(NovelColumns.COVER_IMAGE, value);
@@ -89,15 +86,11 @@ public class NovelContentValues extends AbstractContentValues {
         return this;
     }
 
-    public NovelContentValues putChapterCount(@Nullable Integer value) {
+    public NovelContentValues putChapterCount(int value) {
         mContentValues.put(NovelColumns.CHAPTER_COUNT, value);
         return this;
     }
 
-    public NovelContentValues putChapterCountNull() {
-        mContentValues.putNull(NovelColumns.CHAPTER_COUNT);
-        return this;
-    }
 
     public NovelContentValues putLastReadChapterTitle(@Nullable String value) {
         mContentValues.put(NovelColumns.LAST_READ_CHAPTER_TITLE, value);
@@ -119,23 +112,15 @@ public class NovelContentValues extends AbstractContentValues {
         return this;
     }
 
-    public NovelContentValues putLatestUpdateChapterCount(@Nullable Integer value) {
+    public NovelContentValues putLatestUpdateChapterCount(int value) {
         mContentValues.put(NovelColumns.LATEST_UPDATE_CHAPTER_COUNT, value);
         return this;
     }
 
-    public NovelContentValues putLatestUpdateChapterCountNull() {
-        mContentValues.putNull(NovelColumns.LATEST_UPDATE_CHAPTER_COUNT);
-        return this;
-    }
 
-    public NovelContentValues putSortKey(@Nullable Long value) {
+    public NovelContentValues putSortKey(long value) {
         mContentValues.put(NovelColumns.SORT_KEY, value);
         return this;
     }
 
-    public NovelContentValues putSortKeyNull() {
-        mContentValues.putNull(NovelColumns.SORT_KEY);
-        return this;
-    }
 }

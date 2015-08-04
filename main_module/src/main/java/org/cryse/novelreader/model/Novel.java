@@ -13,11 +13,11 @@ public class Novel implements NovelModel {
     private int type;
     private String source;
     private String coverImage;
-    private Integer chapterCount;
+    private int chapterCount;
     private String lastReadChapterTitle;
     private String latestChapterTitle;
-    private Integer latestUpdateChapterCount;
-    private Long sortKey;
+    private int latestUpdateChapterCount;
+    private long sortKey;
 
     public Novel(String novelId, String title, String author, int type, String source, String coverImage) {
         this.novelId = novelId;
@@ -84,7 +84,7 @@ public class Novel implements NovelModel {
         this.type = type;
     }
 
-    @Nullable
+    @NonNull
     @Override
     public String getSource() {
         return source;
@@ -104,13 +104,12 @@ public class Novel implements NovelModel {
         this.coverImage = coverImage;
     }
 
-    @Nullable
     @Override
-    public Integer getChapterCount() {
+    public int getChapterCount() {
         return chapterCount;
     }
 
-    public void setChapterCount(Integer chapterCount) {
+    public void setChapterCount(int chapterCount) {
         this.chapterCount = chapterCount;
     }
 
@@ -136,21 +135,20 @@ public class Novel implements NovelModel {
 
 
     @Override
-    public Integer getLatestUpdateChapterCount() {
+    public int getLatestUpdateChapterCount() {
         return latestUpdateChapterCount;
     }
 
-    public void setLatestUpdateChapterCount(Integer latestUpdateChapterCount) {
+    public void setLatestUpdateChapterCount(int latestUpdateChapterCount) {
         this.latestUpdateChapterCount = latestUpdateChapterCount;
     }
 
-    @Nullable
     @Override
-    public Long getSortKey() {
+    public long getSortKey() {
         return sortKey;
     }
 
-    public void setSortKey(Long sortKey) {
+    public void setSortKey(long sortKey) {
         this.sortKey = sortKey;
     }
 

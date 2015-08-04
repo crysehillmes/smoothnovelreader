@@ -73,11 +73,11 @@ public class ChapterCursor extends AbstractCursor implements ChapterReadableMode
 
     /**
      * Get the {@code chapter_index} value.
-     * Can be {@code null}.
      */
-    @Nullable
-    public Integer getChapterIndex() {
+    public int getChapterIndex() {
         Integer res = getIntegerOrNull(ChapterColumns.CHAPTER_INDEX);
+        if (res == null)
+            throw new NullPointerException("The value of 'chapter_index' in the database was null, which is not allowed according to the model definition");
         return res;
     }
 }

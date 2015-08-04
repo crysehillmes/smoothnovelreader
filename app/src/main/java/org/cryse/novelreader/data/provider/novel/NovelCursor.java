@@ -71,11 +71,13 @@ public class NovelCursor extends AbstractCursor implements NovelReadableModel {
 
     /**
      * Get the {@code source} value.
-     * Can be {@code null}.
+     * Cannot be {@code null}.
      */
-    @Nullable
+    @NonNull
     public String getSource() {
         String res = getStringOrNull(NovelColumns.SOURCE);
+        if (res == null)
+            throw new NullPointerException("The value of 'source' in the database was null, which is not allowed according to the model definition");
         return res;
     }
 
@@ -91,11 +93,11 @@ public class NovelCursor extends AbstractCursor implements NovelReadableModel {
 
     /**
      * Get the {@code chapter_count} value.
-     * Can be {@code null}.
      */
-    @Nullable
-    public Integer getChapterCount() {
+    public int getChapterCount() {
         Integer res = getIntegerOrNull(NovelColumns.CHAPTER_COUNT);
+        if (res == null)
+            throw new NullPointerException("The value of 'chapter_count' in the database was null, which is not allowed according to the model definition");
         return res;
     }
 
@@ -121,21 +123,21 @@ public class NovelCursor extends AbstractCursor implements NovelReadableModel {
 
     /**
      * Get the {@code latest_update_chapter_count} value.
-     * Can be {@code null}.
      */
-    @Nullable
-    public Integer getLatestUpdateChapterCount() {
+    public int getLatestUpdateChapterCount() {
         Integer res = getIntegerOrNull(NovelColumns.LATEST_UPDATE_CHAPTER_COUNT);
+        if (res == null)
+            throw new NullPointerException("The value of 'latest_update_chapter_count' in the database was null, which is not allowed according to the model definition");
         return res;
     }
 
     /**
      * Get the {@code sort_key} value.
-     * Can be {@code null}.
      */
-    @Nullable
-    public Long getSortKey() {
+    public long getSortKey() {
         Long res = getLongOrNull(NovelColumns.SORT_KEY);
+        if (res == null)
+            throw new NullPointerException("The value of 'sort_key' in the database was null, which is not allowed according to the model definition");
         return res;
     }
 }

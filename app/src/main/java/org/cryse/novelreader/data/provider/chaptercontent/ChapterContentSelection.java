@@ -158,46 +158,6 @@ public class ChapterContentSelection extends AbstractSelection<ChapterContentSel
         return this;
     }
 
-    public ChapterContentSelection content(String... value) {
-        addEquals(ChapterContentColumns.CONTENT, value);
-        return this;
-    }
-
-    public ChapterContentSelection contentNot(String... value) {
-        addNotEquals(ChapterContentColumns.CONTENT, value);
-        return this;
-    }
-
-    public ChapterContentSelection contentLike(String... value) {
-        addLike(ChapterContentColumns.CONTENT, value);
-        return this;
-    }
-
-    public ChapterContentSelection contentContains(String... value) {
-        addContains(ChapterContentColumns.CONTENT, value);
-        return this;
-    }
-
-    public ChapterContentSelection contentStartsWith(String... value) {
-        addStartsWith(ChapterContentColumns.CONTENT, value);
-        return this;
-    }
-
-    public ChapterContentSelection contentEndsWith(String... value) {
-        addEndsWith(ChapterContentColumns.CONTENT, value);
-        return this;
-    }
-
-    public ChapterContentSelection orderByContent(boolean desc) {
-        orderBy(ChapterContentColumns.CONTENT, desc);
-        return this;
-    }
-
-    public ChapterContentSelection orderByContent() {
-        orderBy(ChapterContentColumns.CONTENT, false);
-        return this;
-    }
-
     public ChapterContentSelection source(String... value) {
         addEquals(ChapterContentColumns.SOURCE, value);
         return this;
@@ -235,6 +195,46 @@ public class ChapterContentSelection extends AbstractSelection<ChapterContentSel
 
     public ChapterContentSelection orderBySource() {
         orderBy(ChapterContentColumns.SOURCE, false);
+        return this;
+    }
+
+    public ChapterContentSelection content(String... value) {
+        addEquals(ChapterContentColumns.CONTENT, value);
+        return this;
+    }
+
+    public ChapterContentSelection contentNot(String... value) {
+        addNotEquals(ChapterContentColumns.CONTENT, value);
+        return this;
+    }
+
+    public ChapterContentSelection contentLike(String... value) {
+        addLike(ChapterContentColumns.CONTENT, value);
+        return this;
+    }
+
+    public ChapterContentSelection contentContains(String... value) {
+        addContains(ChapterContentColumns.CONTENT, value);
+        return this;
+    }
+
+    public ChapterContentSelection contentStartsWith(String... value) {
+        addStartsWith(ChapterContentColumns.CONTENT, value);
+        return this;
+    }
+
+    public ChapterContentSelection contentEndsWith(String... value) {
+        addEndsWith(ChapterContentColumns.CONTENT, value);
+        return this;
+    }
+
+    public ChapterContentSelection orderByContent(boolean desc) {
+        orderBy(ChapterContentColumns.CONTENT, desc);
+        return this;
+    }
+
+    public ChapterContentSelection orderByContent() {
+        orderBy(ChapterContentColumns.CONTENT, false);
         return this;
     }
 }

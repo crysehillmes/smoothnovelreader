@@ -7,6 +7,6 @@ import java.util.Comparator;
 public class NovelSortKeyComparator implements Comparator<NovelModel> {
     @Override
     public int compare(NovelModel lhs, NovelModel rhs) {
-        return lhs.getSortKey().compareTo(rhs.getSortKey());
+        return Long.compare(lhs.getSortKey(), rhs.getSortKey());
     }
 }

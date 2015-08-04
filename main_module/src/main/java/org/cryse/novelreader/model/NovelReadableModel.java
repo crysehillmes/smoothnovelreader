@@ -33,9 +33,9 @@ public interface NovelReadableModel extends BaseModel {
 
     /**
      * Get the {@code source} value.
-     * Can be {@code null}.
+     * Cannot be {@code null}.
      */
-    @Nullable
+    @NonNull
     String getSource();
 
     /**
@@ -47,10 +47,8 @@ public interface NovelReadableModel extends BaseModel {
 
     /**
      * Get the {@code chapter_count} value.
-     * Can be {@code null}.
      */
-    @Nullable
-    Integer getChapterCount();
+    int getChapterCount();
 
     /**
      * Get the {@code last_read_chapter_title} value.
@@ -68,15 +66,11 @@ public interface NovelReadableModel extends BaseModel {
 
     /**
      * Get the {@code latest_update_chapter_count} value.
-     * Can be {@code null}.
      */
-    @Nullable
-    Integer getLatestUpdateChapterCount();
+    int getLatestUpdateChapterCount();
 
     /**
      * Get the {@code sort_key} value.
-     * Can be {@code null}.
      */
-    @Nullable
-    Long getSortKey();
+    long getSortKey();
 }

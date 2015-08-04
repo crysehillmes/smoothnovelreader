@@ -53,16 +53,6 @@ public class ChapterContentContentValues extends AbstractContentValues {
     }
 
 
-    public ChapterContentContentValues putContent(@Nullable String value) {
-        mContentValues.put(ChapterContentColumns.CONTENT, value);
-        return this;
-    }
-
-    public ChapterContentContentValues putContentNull() {
-        mContentValues.putNull(ChapterContentColumns.CONTENT);
-        return this;
-    }
-
     public ChapterContentContentValues putSource(@Nullable String value) {
         mContentValues.put(ChapterContentColumns.SOURCE, value);
         return this;
@@ -70,6 +60,16 @@ public class ChapterContentContentValues extends AbstractContentValues {
 
     public ChapterContentContentValues putSourceNull() {
         mContentValues.putNull(ChapterContentColumns.SOURCE);
+        return this;
+    }
+
+    public ChapterContentContentValues putContent(@Nullable String value) {
+        mContentValues.put(ChapterContentColumns.CONTENT, value);
+        return this;
+    }
+
+    public ChapterContentContentValues putContentNull() {
+        mContentValues.putNull(ChapterContentColumns.CONTENT);
         return this;
     }
 }

@@ -238,13 +238,13 @@ public class BookmarkSelection extends AbstractSelection<BookmarkSelection> {
         return this;
     }
 
-    public BookmarkSelection chapterOffset(Integer... value) {
-        addEquals(BookmarkColumns.CHAPTER_OFFSET, value);
+    public BookmarkSelection chapterOffset(int... value) {
+        addEquals(BookmarkColumns.CHAPTER_OFFSET, toObjectArray(value));
         return this;
     }
 
-    public BookmarkSelection chapterOffsetNot(Integer... value) {
-        addNotEquals(BookmarkColumns.CHAPTER_OFFSET, value);
+    public BookmarkSelection chapterOffsetNot(int... value) {
+        addNotEquals(BookmarkColumns.CHAPTER_OFFSET, toObjectArray(value));
         return this;
     }
 
@@ -278,13 +278,13 @@ public class BookmarkSelection extends AbstractSelection<BookmarkSelection> {
         return this;
     }
 
-    public BookmarkSelection markType(Integer... value) {
-        addEquals(BookmarkColumns.MARK_TYPE, value);
+    public BookmarkSelection markType(int... value) {
+        addEquals(BookmarkColumns.MARK_TYPE, toObjectArray(value));
         return this;
     }
 
-    public BookmarkSelection markTypeNot(Integer... value) {
-        addNotEquals(BookmarkColumns.MARK_TYPE, value);
+    public BookmarkSelection markTypeNot(int... value) {
+        addNotEquals(BookmarkColumns.MARK_TYPE, toObjectArray(value));
         return this;
     }
 
@@ -318,13 +318,13 @@ public class BookmarkSelection extends AbstractSelection<BookmarkSelection> {
         return this;
     }
 
-    public BookmarkSelection createTime(Long... value) {
-        addEquals(BookmarkColumns.CREATE_TIME, value);
+    public BookmarkSelection createTime(long... value) {
+        addEquals(BookmarkColumns.CREATE_TIME, toObjectArray(value));
         return this;
     }
 
-    public BookmarkSelection createTimeNot(Long... value) {
-        addNotEquals(BookmarkColumns.CREATE_TIME, value);
+    public BookmarkSelection createTimeNot(long... value) {
+        addNotEquals(BookmarkColumns.CREATE_TIME, toObjectArray(value));
         return this;
     }
 

@@ -70,13 +70,9 @@ public class ChapterContentValues extends AbstractContentValues {
     }
 
 
-    public ChapterContentValues putChapterIndex(@Nullable Integer value) {
+    public ChapterContentValues putChapterIndex(int value) {
         mContentValues.put(ChapterColumns.CHAPTER_INDEX, value);
         return this;
     }
 
-    public ChapterContentValues putChapterIndexNull() {
-        mContentValues.putNull(ChapterColumns.CHAPTER_INDEX);
-        return this;
-    }
 }

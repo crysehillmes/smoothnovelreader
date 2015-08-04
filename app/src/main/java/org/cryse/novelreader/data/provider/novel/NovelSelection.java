@@ -318,13 +318,13 @@ public class NovelSelection extends AbstractSelection<NovelSelection> {
         return this;
     }
 
-    public NovelSelection chapterCount(Integer... value) {
-        addEquals(NovelColumns.CHAPTER_COUNT, value);
+    public NovelSelection chapterCount(int... value) {
+        addEquals(NovelColumns.CHAPTER_COUNT, toObjectArray(value));
         return this;
     }
 
-    public NovelSelection chapterCountNot(Integer... value) {
-        addNotEquals(NovelColumns.CHAPTER_COUNT, value);
+    public NovelSelection chapterCountNot(int... value) {
+        addNotEquals(NovelColumns.CHAPTER_COUNT, toObjectArray(value));
         return this;
     }
 
@@ -438,13 +438,13 @@ public class NovelSelection extends AbstractSelection<NovelSelection> {
         return this;
     }
 
-    public NovelSelection latestUpdateChapterCount(Integer... value) {
-        addEquals(NovelColumns.LATEST_UPDATE_CHAPTER_COUNT, value);
+    public NovelSelection latestUpdateChapterCount(int... value) {
+        addEquals(NovelColumns.LATEST_UPDATE_CHAPTER_COUNT, toObjectArray(value));
         return this;
     }
 
-    public NovelSelection latestUpdateChapterCountNot(Integer... value) {
-        addNotEquals(NovelColumns.LATEST_UPDATE_CHAPTER_COUNT, value);
+    public NovelSelection latestUpdateChapterCountNot(int... value) {
+        addNotEquals(NovelColumns.LATEST_UPDATE_CHAPTER_COUNT, toObjectArray(value));
         return this;
     }
 
@@ -478,13 +478,13 @@ public class NovelSelection extends AbstractSelection<NovelSelection> {
         return this;
     }
 
-    public NovelSelection sortKey(Long... value) {
-        addEquals(NovelColumns.SORT_KEY, value);
+    public NovelSelection sortKey(long... value) {
+        addEquals(NovelColumns.SORT_KEY, toObjectArray(value));
         return this;
     }
 
-    public NovelSelection sortKeyNot(Long... value) {
-        addNotEquals(NovelColumns.SORT_KEY, value);
+    public NovelSelection sortKeyNot(long... value) {
+        addNotEquals(NovelColumns.SORT_KEY, toObjectArray(value));
         return this;
     }
 

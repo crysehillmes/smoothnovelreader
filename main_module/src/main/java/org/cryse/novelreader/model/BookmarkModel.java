@@ -5,8 +5,8 @@ import android.os.Parcelable;
 import java.util.Date;
 
 public interface BookmarkModel extends BookmarkReadableModel, Parcelable {
-    public static final int BOOKMARK_TYPE_LASTREAD = 3;
-    public static final int BOOKMARK_TYPE_NORMAL = 5;
+    int BOOKMARK_TYPE_LASTREAD = 3;
+    int BOOKMARK_TYPE_NORMAL = 5;
 
     void setNovelId(String novelId);
 
@@ -16,9 +16,9 @@ public interface BookmarkModel extends BookmarkReadableModel, Parcelable {
 
     void setChapterTitle(String chapterTitle);
 
-    void setChapterOffset(Integer chapterOffset);
+    void setChapterOffset(int chapterOffset);
 
-    void setMarkType(Integer markType);
+    void setMarkType(int markType);
 
     void setCreateTime(long createTime);
 

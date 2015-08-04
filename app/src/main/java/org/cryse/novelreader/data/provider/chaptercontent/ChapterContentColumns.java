@@ -25,9 +25,9 @@ public class ChapterContentColumns implements BaseColumns {
 
     public static final String CHAPTER_ID = "chapter_id";
 
-    public static final String CONTENT = "content";
-
     public static final String SOURCE = "source";
+
+    public static final String CONTENT = "content";
 
 
     public static final String DEFAULT_ORDER = TABLE_NAME + "." +_ID;
@@ -37,8 +37,8 @@ public class ChapterContentColumns implements BaseColumns {
             _ID,
             NOVEL_ID,
             CHAPTER_ID,
-            CONTENT,
-            SOURCE
+            SOURCE,
+            CONTENT
     };
     // @formatter:on
 
@@ -47,8 +47,8 @@ public class ChapterContentColumns implements BaseColumns {
         for (String c : projection) {
             if (c.equals(NOVEL_ID) || c.contains("." + NOVEL_ID)) return true;
             if (c.equals(CHAPTER_ID) || c.contains("." + CHAPTER_ID)) return true;
-            if (c.equals(CONTENT) || c.contains("." + CONTENT)) return true;
             if (c.equals(SOURCE) || c.contains("." + SOURCE)) return true;
+            if (c.equals(CONTENT) || c.contains("." + CONTENT)) return true;
         }
         return false;
     }

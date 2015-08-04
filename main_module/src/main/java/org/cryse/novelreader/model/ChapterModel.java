@@ -7,7 +7,7 @@ public interface ChapterModel extends ChapterReadableModel, Parcelable {
     void setChapterId(String chapterId);
     void setSource(String source);
     void setTitle(String title);
-    void setChapterIndex(Integer chapterIndex);
-    Boolean isCached();
-    void setIsCached(Boolean isCached);
+    void setChapterIndex(int chapterIndex);
+    boolean isCached();
+    void setIsCached(boolean isCached);
 }

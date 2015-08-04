@@ -73,33 +73,21 @@ public class BookmarkContentValues extends AbstractContentValues {
         return this;
     }
 
-    public BookmarkContentValues putChapterOffset(@Nullable Integer value) {
+    public BookmarkContentValues putChapterOffset(int value) {
         mContentValues.put(BookmarkColumns.CHAPTER_OFFSET, value);
         return this;
     }
 
-    public BookmarkContentValues putChapterOffsetNull() {
-        mContentValues.putNull(BookmarkColumns.CHAPTER_OFFSET);
-        return this;
-    }
 
-    public BookmarkContentValues putMarkType(@Nullable Integer value) {
+    public BookmarkContentValues putMarkType(int value) {
         mContentValues.put(BookmarkColumns.MARK_TYPE, value);
         return this;
     }
 
-    public BookmarkContentValues putMarkTypeNull() {
-        mContentValues.putNull(BookmarkColumns.MARK_TYPE);
-        return this;
-    }
 
-    public BookmarkContentValues putCreateTime(@Nullable Long value) {
+    public BookmarkContentValues putCreateTime(long value) {
         mContentValues.put(BookmarkColumns.CREATE_TIME, value);
         return this;
     }
 
-    public BookmarkContentValues putCreateTimeNull() {
-        mContentValues.putNull(BookmarkColumns.CREATE_TIME);
-        return this;
-    }
 }

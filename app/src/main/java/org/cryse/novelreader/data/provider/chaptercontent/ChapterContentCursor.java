@@ -50,22 +50,22 @@ public class ChapterContentCursor extends AbstractCursor implements ChapterConte
     }
 
     /**
-     * Get the {@code content} value.
-     * Can be {@code null}.
-     */
-    @Nullable
-    public String getContent() {
-        String res = getStringOrNull(ChapterContentColumns.CONTENT);
-        return res;
-    }
-
-    /**
      * Get the {@code source} value.
      * Can be {@code null}.
      */
     @Nullable
     public String getSource() {
         String res = getStringOrNull(ChapterContentColumns.SOURCE);
+        return res;
+    }
+
+    /**
+     * Get the {@code content} value.
+     * Can be {@code null}.
+     */
+    @Nullable
+    public String getContent() {
+        String res = getStringOrNull(ChapterContentColumns.CONTENT);
         return res;
     }
 }

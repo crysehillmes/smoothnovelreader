@@ -20,16 +20,16 @@ public interface ChapterContentReadableModel extends BaseModel {
     String getChapterId();
 
     /**
-     * Get the {@code content} value.
-     * Can be {@code null}.
-     */
-    @Nullable
-    String getContent();
-
-    /**
      * Get the {@code source} value.
      * Can be {@code null}.
      */
     @Nullable
     String getSource();
+
+    /**
+     * Get the {@code content} value.
+     * Can be {@code null}.
+     */
+    @Nullable
+    String getContent();
 }

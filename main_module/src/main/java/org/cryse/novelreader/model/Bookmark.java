@@ -11,16 +11,16 @@ public class Bookmark implements BookmarkModel {
     private String chapterId;
     private String novelTitle;
     private String chapterTitle;
-    private Integer chapterOffset;
-    private Integer markType;
+    private int chapterOffset;
+    private int markType;
     private Date createTime;
 
     public Bookmark(String novelId,
                     String chapterId,
                     String novelTitle,
                     String chapterTitle,
-                    Integer chapterOffset,
-                    Integer markType,
+                    int chapterOffset,
+                    int markType,
                     Date createTime
     ) {
         this.novelId = novelId;
@@ -39,7 +39,7 @@ public class Bookmark implements BookmarkModel {
         this.chapterTitle = model.getChapterTitle();
         this.chapterOffset = model.getChapterOffset();
         this.markType = model.getMarkType();
-        this.createTime = model.getCreateTime() == null ? new Date() : new Date(model.getCreateTime());
+        this.createTime = new Date(model.getCreateTime());
     }
 
     @NonNull
@@ -82,23 +82,21 @@ public class Bookmark implements BookmarkModel {
         this.chapterTitle = chapterTitle;
     }
 
-    @Nullable
     @Override
-    public Integer getChapterOffset() {
+    public int getChapterOffset() {
         return chapterOffset;
     }
 
-    public void setChapterOffset(Integer chapterOffset) {
+    public void setChapterOffset(int chapterOffset) {
         this.chapterOffset = chapterOffset;
     }
 
-    @Nullable
     @Override
-    public Integer getMarkType() {
+    public int getMarkType() {
         return markType;
     }
 
-    public void setMarkType(Integer markType) {
+    public void setMarkType(int markType) {
         this.markType = markType;
     }
 
@@ -106,9 +104,8 @@ public class Bookmark implements BookmarkModel {
         return createTime;
     }
 
-    @Nullable
     @Override
-    public Long getCreateTime() {
+    public long getCreateTime() {
         return createTime.getTime();
     }
 

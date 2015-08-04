@@ -32,9 +32,9 @@ public class NovelReaderSQLiteOpenHelper extends SQLiteOpenHelper {
             + BookmarkColumns.CHAPTER_ID + " TEXT NOT NULL, "
             + BookmarkColumns.NOVEL_TITLE + " TEXT, "
             + BookmarkColumns.CHAPTER_TITLE + " TEXT, "
-            + BookmarkColumns.CHAPTER_OFFSET + " INTEGER, "
-            + BookmarkColumns.MARK_TYPE + " INTEGER, "
-            + BookmarkColumns.CREATE_TIME + " INTEGER "
+            + BookmarkColumns.CHAPTER_OFFSET + " INTEGER NOT NULL, "
+            + BookmarkColumns.MARK_TYPE + " INTEGER NOT NULL, "
+            + BookmarkColumns.CREATE_TIME + " INTEGER NOT NULL "
             + " );";
 
     public static final String SQL_CREATE_INDEX_BOOKMARK_NOVEL_ID = "CREATE INDEX IDX_BOOKMARK_NOVEL_ID "
@@ -50,7 +50,7 @@ public class NovelReaderSQLiteOpenHelper extends SQLiteOpenHelper {
             + ChapterColumns.CHAPTER_ID + " TEXT NOT NULL, "
             + ChapterColumns.SOURCE + " TEXT, "
             + ChapterColumns.TITLE + " TEXT NOT NULL, "
-            + ChapterColumns.CHAPTER_INDEX + " INTEGER "
+            + ChapterColumns.CHAPTER_INDEX + " INTEGER NOT NULL "
             + ", CONSTRAINT unique_chapter UNIQUE (novel_id, chapter_id) ON CONFLICT REPLACE"
             + " );";
 
@@ -65,9 +65,9 @@ public class NovelReaderSQLiteOpenHelper extends SQLiteOpenHelper {
             + ChapterContentColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + ChapterContentColumns.NOVEL_ID + " TEXT NOT NULL, "
             + ChapterContentColumns.CHAPTER_ID + " TEXT NOT NULL, "
-            + ChapterContentColumns.CONTENT + " TEXT, "
-            + ChapterContentColumns.SOURCE + " TEXT "
-            + ", CONSTRAINT unique_chapter_content UNIQUE (novel_id, chapter_id) ON CONFLICT REPLACE"
+            + ChapterContentColumns.SOURCE + " TEXT, "
+            + ChapterContentColumns.CONTENT + " TEXT "
+            + ", CONSTRAINT unique_chapter_content UNIQUE (chapter_id, source) ON CONFLICT REPLACE"
             + " );";
 
     public static final String SQL_CREATE_INDEX_CHAPTER_CONTENT_NOVEL_ID = "CREATE INDEX IDX_CHAPTER_CONTENT_NOVEL_ID "
@@ -76,6 +76,9 @@ public class NovelReaderSQLiteOpenHelper extends SQLiteOpenHelper {
     public static final String SQL_CREATE_INDEX_CHAPTER_CONTENT_CHAPTER_ID = "CREATE INDEX IDX_CHAPTER_CONTENT_CHAPTER_ID "
             + " ON " + ChapterContentColumns.TABLE_NAME + " ( " + ChapterContentColumns.CHAPTER_ID + " );";
 
+    public static final String SQL_CREATE_INDEX_CHAPTER_CONTENT_SOURCE = "CREATE INDEX IDX_CHAPTER_CONTENT_SOURCE "
+            + " ON " + ChapterContentColumns.TABLE_NAME + " ( " + ChapterContentColumns.SOURCE + " );";
+
     public static final String SQL_CREATE_TABLE_NOVEL = "CREATE TABLE IF NOT EXISTS "
             + NovelColumns.TABLE_NAME + " ( "
             + NovelColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -83,13 +86,13 @@ public class NovelReaderSQLiteOpenHelper extends SQLiteOpenHelper {
             + NovelColumns.TITLE + " TEXT NOT NULL, "
             + NovelColumns.AUTHOR + " TEXT, "
             + NovelColumns.TYPE + " INTEGER NOT NULL, "
-            + NovelColumns.SOURCE + " TEXT, "
+            + NovelColumns.SOURCE + " TEXT NOT NULL, "
             + NovelColumns.COVER_IMAGE + " TEXT, "
-            + NovelColumns.CHAPTER_COUNT + " INTEGER, "
+            + NovelColumns.CHAPTER_COUNT + " INTEGER NOT NULL, "
             + NovelColumns.LAST_READ_CHAPTER_TITLE + " TEXT, "
             + NovelColumns.LATEST_CHAPTER_TITLE + " TEXT, "
-            + NovelColumns.LATEST_UPDATE_CHAPTER_COUNT + " INTEGER, "
-            + NovelColumns.SORT_KEY + " INTEGER "
+            + NovelColumns.LATEST_UPDATE_CHAPTER_COUNT + " INTEGER NOT NULL, "
+            + NovelColumns.SORT_KEY + " INTEGER NOT NULL "
             + ", CONSTRAINT unique_novel_id UNIQUE (novel_id) ON CONFLICT REPLACE"
             + " );";
 
@@ -171,6 +174,7 @@ public class NovelReaderSQLiteOpenHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_TABLE_CHAPTER_CONTENT);
         db.execSQL(SQL_CREATE_INDEX_CHAPTER_CONTENT_NOVEL_ID);
         db.execSQL(SQL_CREATE_INDEX_CHAPTER_CONTENT_CHAPTER_ID);
+        db.execSQL(SQL_CREATE_INDEX_CHAPTER_CONTENT_SOURCE);
         db.execSQL(SQL_CREATE_TABLE_NOVEL);
         db.execSQL(SQL_CREATE_INDEX_NOVEL_NOVEL_ID);
         db.execSQL(SQL_CREATE_INDEX_NOVEL_TITLE);

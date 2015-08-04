@@ -238,13 +238,13 @@ public class ChapterSelection extends AbstractSelection<ChapterSelection> {
         return this;
     }
 
-    public ChapterSelection chapterIndex(Integer... value) {
-        addEquals(ChapterColumns.CHAPTER_INDEX, value);
+    public ChapterSelection chapterIndex(int... value) {
+        addEquals(ChapterColumns.CHAPTER_INDEX, toObjectArray(value));
         return this;
     }
 
-    public ChapterSelection chapterIndexNot(Integer... value) {
-        addNotEquals(ChapterColumns.CHAPTER_INDEX, value);
+    public ChapterSelection chapterIndexNot(int... value) {
+        addNotEquals(ChapterColumns.CHAPTER_INDEX, toObjectArray(value));
         return this;
     }
 
