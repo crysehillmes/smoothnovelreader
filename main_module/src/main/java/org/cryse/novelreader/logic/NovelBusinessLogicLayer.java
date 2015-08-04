@@ -1,9 +1,9 @@
 package org.cryse.novelreader.logic;
 
-import org.cryse.novelreader.model.NovelBookMarkModel;
+import org.cryse.novelreader.model.BookmarkModel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
-import org.cryse.novelreader.model.NovelChapterContentModel;
-import org.cryse.novelreader.model.NovelChapterModel;
+import org.cryse.novelreader.model.ChapterContentModel;
+import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 
@@ -72,7 +72,7 @@ public interface NovelBusinessLogicLayer {
      * @param novel the novel
      * @return the chapter list
      */
-    public Observable<List<NovelChapterModel>> getChapterList(NovelModel novel, final boolean forceUpdate);
+    public Observable<List<ChapterModel>> getChapterList(NovelModel novel, final boolean forceUpdate);
 
     /**
      * Gets chapter list.
@@ -81,7 +81,7 @@ public interface NovelBusinessLogicLayer {
      * @param chapterModels the novel chapter List
      * @return the Observable, would call onNext for many times
      */
-    public Observable<Boolean> preloadChapterContents(NovelModel novel, List<NovelChapterModel> chapterModels);
+    public Observable<Boolean> preloadChapterContents(NovelModel novel, List<ChapterModel> chapterModels);
 
     /**
      * Gets chapter content.
@@ -89,7 +89,7 @@ public interface NovelBusinessLogicLayer {
      * @param novel       the novel
      * @return the chapter content
      */
-    public Observable<NovelChapterContentModel> getChapterContent(NovelChapterModel novel, boolean forceUpdate);
+    public Observable<ChapterContentModel> getChapterContent(ChapterModel novel, boolean forceUpdate);
 
     /**
      * Search observable.
@@ -103,19 +103,19 @@ public interface NovelBusinessLogicLayer {
 
     public Observable<List<NovelModel>> getNovelUpdate();
 
-    public Observable<Void> addBookMark(NovelBookMarkModel model);
+    public Observable<Void> addBookMark(BookmarkModel model);
 
-    public Observable<Void> saveLastReadBookMark(NovelBookMarkModel bookMarkModel);
+    public Observable<Void> saveLastReadBookMark(BookmarkModel bookMarkModel);
 
-    public Observable<NovelBookMarkModel> getLastReadBookMark(String novelId);
+    public Observable<BookmarkModel> getLastReadBookMark(String novelId);
 
-    public Observable<List<NovelBookMarkModel>> getBookMarks(String novelId);
+    public Observable<List<BookmarkModel>> getBookMarks(String novelId);
 
-    public Observable<NovelBookMarkModel> checkLastReadBookMarkState(String novelId);
+    public Observable<BookmarkModel> checkLastReadBookMarkState(String novelId);
 
     public Observable<NovelDetailModel> getNovelDetail(String id, String src);
 
     public Observable<List<NovelChangeSrcModel>> getOtherChapterSrc(String novelId, String currentChapterSrc, String chapterTitle);
 
-    public Observable<NovelChapterModel> changeChapterSrc(NovelChapterModel chapterModel, NovelChangeSrcModel changeSrcModel);
+    public Observable<ChapterModel> changeChapterSrc(ChapterModel chapterModel, NovelChangeSrcModel changeSrcModel);
 }
