@@ -26,6 +26,8 @@ public class Novel implements NovelModel {
         this.type = type;
         this.source = source;
         this.coverImage = coverImage;
+        this.chapterCount = 0;
+        this.latestUpdateChapterCount = 0;
         this.sortKey = new Date().getTime();
     }
 

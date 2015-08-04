@@ -128,7 +128,7 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
             "ELSE 0 " +
             "END AS CACHED " +
             "FROM " + ChapterColumns.TABLE_NAME + " " +
-            "WHERE id=?";
+            "WHERE " + ChapterColumns.NOVEL_ID + "=?";
 
     @Override
     public List<ChapterModel> loadChapters(String novelId) {

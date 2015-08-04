@@ -255,8 +255,8 @@ public class LoadLocalTextService extends Service {
         mNovelDatabase.updateChapterContent(new ChapterContent(
                 novelId,
                 chapterHash,
-                novelTextFilter.filter(chapterContent),
-                LOCAL_FILE_PREFIX + ":" + chapterHash
+                LOCAL_FILE_PREFIX + ":" + chapterHash,
+                novelTextFilter.filter(chapterContent)
         ));
     }
 

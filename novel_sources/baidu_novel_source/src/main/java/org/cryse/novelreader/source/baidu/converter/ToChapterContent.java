@@ -16,6 +16,6 @@ public class ToChapterContent implements Func1<ChapterContentItem, ChapterConten
     }
     @Override
     public ChapterContentModel call(ChapterContentItem content) {
-        return new ChapterContent(mNovelId, mChapterId, content.getContent(), content.getCtsrc());
+        return new ChapterContent(mNovelId, mChapterId, content.getCtsrc(), content.getContent());
     }
 }
