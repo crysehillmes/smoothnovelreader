@@ -12,23 +12,23 @@ import java.util.List;
 import rx.Observable;
 
 public interface NovelSource {
-    public Observable<List<NovelModel>> getCategories(String query, String subQuery, int page, int status, boolean isByTag);
+    Observable<List<NovelModel>> getCategories(String query, String subQuery, int page, int status, boolean isByTag);
 
-    public Observable<List<NovelModel>> getRanks(String cid, int page);
+    Observable<List<NovelModel>> getRanks(String cid, int page);
 
-    public Observable<List<ChapterModel>> getChapterList(String id, String src);
+    Observable<List<ChapterModel>> getChapterList(String id, String src);
 
-    public Observable<ChapterContentModel> getChapterContent(String id, String secondId, String src);
+    Observable<ChapterContentModel> getChapterContent(String id, String secondId, String src);
 
-    public Observable<List<NovelModel>> search(String queryString, int page);
+    Observable<List<NovelModel>> search(String queryString, int page);
 
-    public ChapterContentModel getChapterContentSync(String id, String secondId, String src);
+    ChapterContentModel getChapterContentSync(String id, String secondId, String src);
 
-    public List<ChapterModel> getChapterListSync(String id, String src);
+    List<ChapterModel> getChapterListSync(String id, String src);
 
-    public List<NovelSyncBookShelfModel> getNovelUpdatesSync(String ... novelIds);
+    List<NovelSyncBookShelfModel> getNovelUpdatesSync(String ... novelIds);
 
-    public Observable<NovelDetailModel> getNovelDetail(String id, String src);
+    Observable<NovelDetailModel> getNovelDetail(String id, String src);
 
-    public Observable<List<NovelChangeSrcModel>> getOtherChapterSrc(String novelId, String chapterSrc, String title);
+    Observable<List<NovelChangeSrcModel>> getOtherChapterSrc(String novelId, String chapterSrc, String title);
 }
