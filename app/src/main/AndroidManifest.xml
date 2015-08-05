@@ -53,6 +53,10 @@
             android:label="@string/app_name"
             android:theme="@style/TransparentActivity"/>
 
+        <provider
+            android:name="org.cryse.novelreader.data.provider.NovelReaderContentProvider"
+            android:authorities="org.cryse.novelreader.data.provider"
+            android:exported="false" />
         <service android:name=".service.ChapterContentsCacheService"/>
         <service android:name=".service.LoadLocalTextService"/>
         <service

@@ -228,13 +228,13 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
             public void onClick(View view) {
                 if(mServiceBinder != null && mServiceBinder.isCaching() && mServiceBinder.getCurrentCachingNovelId() != null) {
                     String currentCachingNovelId = mServiceBinder.getCurrentCachingNovelId();
-                    if(mIsFavorited && currentCachingNovelId.compareTo(mNovel.getId()) == 0) {
+                    if(mIsFavorited && currentCachingNovelId.compareTo(mNovel.getNovelId()) == 0) {
                         showSnackbar(getString(R.string.toast_chapter_contents_caching_cannot_delete, mNovel.getTitle()), SimpleSnackbarType.WARNING);
                         return;
                     }
                 }
                 if(mIsFavorited && mServiceBinder != null) {
-                   if(mServiceBinder.removeFromQueueIfExist(mNovel.getId())) {
+                   if(mServiceBinder.removeFromQueueIfExist(mNovel.getNovelId())) {
                        showSnackbar(getString(R.string.notification_action_chapter_contents_cancel_novel, mNovel.getTitle()), SimpleSnackbarType.INFO);
                    }
                 }
@@ -434,7 +434,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
     }
 
     private void showNovelInformation() {
-        mDetailPrimaryColor = ColorUtils.getPreDefinedColorFromId(getThemedContext(), mNovel.getId(), mNovel.getTitle().length());
+        mDetailPrimaryColor = ColorUtils.getPreDefinedColorFromId(getThemedContext(), mNovel.getNovelId(), mNovel.getTitle().length());
         mTitleString = mNovel.getTitle();
 
         if (mDetailPrimaryColor == 0) {
@@ -498,7 +498,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
 
     private void showNovelDetailInformation() {
         setDetailSectionHeaderColor();
-        mStatusTextView.setText(getString(R.string.novel_detail_status_fomat, mNovel.getStatus()));
+        // TODO: mStatusTextView.setText(getString(R.string.novel_detail_status_fomat, mNovel.getStatus()));
         if(mNovelDetail.getChapterNumber() <= 0) {
             mChapterCountTextView.setText(getString(R.string.novel_detail_chapter_count_unknown));
         } else {

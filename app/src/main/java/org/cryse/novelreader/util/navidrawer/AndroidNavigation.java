@@ -12,7 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
-import org.cryse.novelreader.model.NovelChapterModel;
+import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.ui.NovelCategoryFragment;
 import org.cryse.novelreader.ui.NovelBookShelfFragment;
@@ -158,7 +158,7 @@ public class AndroidNavigation {
         startActivity(context, intent);
     }
 
-    public void showNovelReadActivity(Object currentView, NovelModel novelModel, String chapterId, int chapterOffset, List<NovelChapterModel> chapterList) {
+    public void showNovelReadActivity(Object currentView, NovelModel novelModel, String chapterId, int chapterOffset, List<ChapterModel> chapterList) {
         Context context = getContextFromView(currentView);
         Intent intent = new Intent(context, NovelReadViewActivity.class);
         //intent.putParcelableArrayListExtra(DataContract.NOVEL_CHAPTER_LIST_NAME, mNovelChapterList);
@@ -171,7 +171,7 @@ public class AndroidNavigation {
         context.startActivity(intent);
     }
 
-    public void saveChaptersInRunTimeStore(List<NovelChapterModel> chapters) {
+    public void saveChaptersInRunTimeStore(List<ChapterModel> chapters) {
         try {
             if(mRunTimeStore.containsKey(DataContract.NOVEL_CHAPTER_LIST_NAME)) {
                 mRunTimeStore.remove(DataContract.NOVEL_CHAPTER_LIST_NAME);
@@ -182,10 +182,10 @@ public class AndroidNavigation {
         }
     }
 
-    public List<NovelChapterModel> getChaptersInRunTimeStore() {
+    public List<ChapterModel> getChaptersInRunTimeStore() {
         try {
             if (mRunTimeStore.containsKey(DataContract.NOVEL_CHAPTER_LIST_NAME)) {
-                List<NovelChapterModel> result = (List<NovelChapterModel>) mRunTimeStore.get(DataContract.NOVEL_CHAPTER_LIST_NAME);
+                List<ChapterModel> result = (List<ChapterModel>) mRunTimeStore.get(DataContract.NOVEL_CHAPTER_LIST_NAME);
                 mRunTimeStore.remove(DataContract.NOVEL_CHAPTER_LIST_NAME);
                 return result;
             } else {

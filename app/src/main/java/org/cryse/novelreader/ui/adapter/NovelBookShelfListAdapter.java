@@ -51,7 +51,7 @@ public class NovelBookShelfListAdapter extends NovelModelListAdapter {
         }
         viewHolder.mNovelInfo2TextView.setText(latestChapterLabel);
 
-        if (item.getLatestUpdateCount() > 0) {
+        if (item.getLatestUpdateChapterCount() > 0) {
             viewHolder.mUnreadTextView.setText(getContext().getString(R.string.has_updates));
         } else {
             viewHolder.mUnreadTextView.setText("");
@@ -122,7 +122,7 @@ public class NovelBookShelfListAdapter extends NovelModelListAdapter {
         String[] items =
                 new String[mSelectedItems.size()];
         for (int i = 0; i < mSelectedItems.size(); i++) {
-            items[i] = getItem(mSelectedItems.keyAt(i)).getId();
+            items[i] = getItem(mSelectedItems.keyAt(i)).getNovelId();
         }
         return items;
     }

@@ -49,16 +49,16 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
             }
         }
 
-        if(viewHolder.mNovelInfo2TextView != null && item.getStatus() != null && !TextUtils.isEmpty(item.getStatus())) {
+        /* TODO: if(viewHolder.mNovelInfo2TextView != null && item.getStatus() != null && !TextUtils.isEmpty(item.getStatus())) {
             viewHolder.mNovelInfo2TextView.setText(item.getStatus());
             viewHolder.mNovelInfo2TextView.setVisibility(View.GONE);
-        }
+        }*/
 
         if(viewHolder.mBackCoverLayout != null && !(mIsNightMode && mGrayScale))
-            viewHolder.mBackCoverLayout.setBackgroundColor(ColorUtils.getPreDefinedColorFromId(getContext(), item.getId(), item.getTitle().length()));
+            viewHolder.mBackCoverLayout.setBackgroundColor(ColorUtils.getPreDefinedColorFromId(getContext(), item.getNovelId(), item.getTitle().length()));
 
         if(viewHolder.mNovelImageImageView != null) {
-            PicassoHelper.load(getContext(), item.getImageUrl(), viewHolder.mNovelImageImageView, mIsNightMode && mGrayScale);
+            PicassoHelper.load(getContext(), item.getCoverImage(), viewHolder.mNovelImageImageView, mIsNightMode && mGrayScale);
         }
     }
 }

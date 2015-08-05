@@ -2,16 +2,18 @@ package org.cryse.novelreader.logic.impl;
 
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
-import org.cryse.novelreader.model.NovelBookMarkModel;
+import org.cryse.novelreader.model.BookmarkModel;
+import org.cryse.novelreader.model.ChapterContent;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
-import org.cryse.novelreader.model.NovelChapterContentModel;
-import org.cryse.novelreader.model.NovelChapterModel;
+import org.cryse.novelreader.model.ChapterContentModel;
+import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.model.NovelSyncBookShelfModel;
 import org.cryse.novelreader.source.NovelSource;
 import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.NovelTextFilter;
+import org.cryse.novelreader.util.comparator.NovelSortKeyComparator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,7 +67,7 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                     result[1] = false;
                 } else {
                     result[0] = true;
-                    result[1] = novelModel.getSrc().startsWith(LOCAL_FILE_PREFIX + ":");
+                    result[1] = novelModel.getSource().startsWith(LOCAL_FILE_PREFIX + ":");
                 }
                 subscriber.onNext(result);
                 subscriber.onCompleted();
@@ -124,27 +126,27 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     }
 
     @Override
-    public Observable<List<NovelChapterModel>> getChapterList(final NovelModel novel, final boolean forceUpdate) {
-        return Observable.create((Subscriber<? super List<NovelChapterModel>> subscriber) -> {
+    public Observable<List<ChapterModel>> getChapterList(final NovelModel novel, final boolean forceUpdate) {
+        return Observable.create((Subscriber<? super List<ChapterModel>> subscriber) -> {
             try {
-                List<NovelChapterModel> chapterList;
-                if (novelDataBase.isFavorite(novel.getId())) {
-                    if (forceUpdate || novel.getLatestUpdateCount() != 0) {
-                        chapterList = novelSource.getChapterListSync(novel.getId(), novel.getSrc());
-                        novelDataBase.updateChapters(novel.getId(), chapterList);
-                        chapterList = novelDataBase.loadChapters(novel.getId());
+                List<ChapterModel> chapterList;
+                if (novelDataBase.isFavorite(novel.getNovelId())) {
+                    if (forceUpdate || novel.getLatestUpdateChapterCount() != 0) {
+                        chapterList = novelSource.getChapterListSync(novel.getNovelId(), novel.getSource());
+                        novelDataBase.updateChapters(novel.getNovelId(), chapterList);
+                        chapterList = novelDataBase.loadChapters(novel.getNovelId());
                     } else {
-                        chapterList = novelDataBase.loadChapters(novel.getId());
+                        chapterList = novelDataBase.loadChapters(novel.getNovelId());
                         if (chapterList.size() == 0) {
-                            chapterList = novelSource.getChapterListSync(novel.getId(), novel.getSrc());
-                            novelDataBase.updateChapters(novel.getId(), chapterList);
-                            chapterList = novelDataBase.loadChapters(novel.getId());
+                            chapterList = novelSource.getChapterListSync(novel.getNovelId(), novel.getSource());
+                            novelDataBase.updateChapters(novel.getNovelId(), chapterList);
+                            chapterList = novelDataBase.loadChapters(novel.getNovelId());
                         }
                     }
                     subscriber.onNext(chapterList);
                     subscriber.onCompleted();
                 } else {
-                    chapterList = novelSource.getChapterListSync(novel.getId(), novel.getSrc());
+                    chapterList = novelSource.getChapterListSync(novel.getNovelId(), novel.getSource());
                     subscriber.onNext(chapterList);
                     subscriber.onCompleted();
                 }
@@ -154,12 +156,12 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
         });
     }
 
-    public Observable<Boolean> preloadChapterContents(NovelModel novel, List<NovelChapterModel> chapterModels) {
+    public Observable<Boolean> preloadChapterContents(NovelModel novel, List<ChapterModel> chapterModels) {
         return Observable.create((Subscriber<? super Boolean> subscriber) -> {
             try {
-                if (novelDataBase.isFavorite(novel.getId())) {
-                    for (NovelChapterModel chapterModel : chapterModels) {
-                        NovelChapterContentModel chapterContentModel = novelSource.getChapterContentSync(novel.getId(), chapterModel.getSecondId(), chapterModel.getSrc());
+                if (novelDataBase.isFavorite(novel.getNovelId())) {
+                    for (ChapterModel chapterModel : chapterModels) {
+                        ChapterContentModel chapterContentModel = novelSource.getChapterContentSync(novel.getNovelId(), chapterModel.getChapterId(), chapterModel.getSource());
                         if (chapterContentModel != null) {
                             novelDataBase.updateChapterContent(chapterContentModel);
                             subscriber.onNext(true);
@@ -176,22 +178,22 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     }
 
     @Override
-    public Observable<NovelChapterContentModel> getChapterContent(final NovelChapterModel novelChapter, boolean forceUpdate) {
-        return Observable.create((Subscriber<? super NovelChapterContentModel> subscriber) -> {
+    public Observable<ChapterContentModel> getChapterContent(final ChapterModel novelChapter, boolean forceUpdate) {
+        return Observable.create((Subscriber<? super ChapterContentModel> subscriber) -> {
             try {
-                NovelChapterContentModel chapterContent;
-                Boolean isFavorite = novelDataBase.isFavorite(novelChapter.getId());
+                ChapterContentModel chapterContent;
+                Boolean isFavorite = novelDataBase.isFavorite(novelChapter.getNovelId());
                 if (isFavorite && !forceUpdate) {
-                    chapterContent = novelDataBase.loadChapterContent(novelChapter.getSecondId());
+                    chapterContent = novelDataBase.loadChapterContent(novelChapter.getChapterId());
                     if (chapterContent == null) {
-                        chapterContent = novelSource.getChapterContentSync(novelChapter.getId(), novelChapter.getSecondId(), novelChapter.getSrc());
+                        chapterContent = novelSource.getChapterContentSync(novelChapter.getNovelId(), novelChapter.getChapterId(), novelChapter.getSource());
                         chapterContent.setContent(novelTextFilter.filter(chapterContent.getContent()));
                         novelDataBase.updateChapterContent(chapterContent);
                     }
                     subscriber.onNext(chapterContent);
                     subscriber.onCompleted();
                 } else {
-                    chapterContent = novelSource.getChapterContentSync(novelChapter.getId(), novelChapter.getSecondId(), novelChapter.getSrc());
+                    chapterContent = novelSource.getChapterContentSync(novelChapter.getNovelId(), novelChapter.getChapterId(), novelChapter.getSource());
                     chapterContent.setContent(novelTextFilter.filter(chapterContent.getContent()));
                     // if(isFavorited) updateChapterContentInDB(novelChapter.getSecondId(), novelChapter.getSrc(), chapterContent);
                     subscriber.onNext(chapterContent);
@@ -218,14 +220,14 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
 
                 for (int i = 0; i < novelModels.size(); i++) {
                     NovelModel novelModel = novelModels.get(i);
-                    if(novelModel.getSrc().startsWith(LOCAL_FILE_PREFIX + ":"))
+                    if(novelModel.getSource().startsWith(LOCAL_FILE_PREFIX + ":"))
                         continue;
-                    String id = novelModel.getId();
+                    String id = novelModel.getNovelId();
                     novelIds.add(id);
                     hashtable.put(id, novelModel);
                 }
                 if(novelIds.size() == 0) {
-                    Collections.sort(novelModels);
+                    Collections.sort(novelModels, new NovelSortKeyComparator());
                     subscriber.onNext(novelModels);
                     subscriber.onCompleted();
                 }
@@ -234,13 +236,13 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                 for (NovelSyncBookShelfModel syncBookShelfModel : syncShelfItems) {
                     String gid = syncBookShelfModel.getId();
                     NovelModel novelModel = hashtable.get(gid);
-                    if (novelModel.getLatestUpdateCount() == 0 && novelModel.getLatestChapterTitle().compareTo(syncBookShelfModel.getLastChapterTitle()) != 0)
-                        novelModel.setLatestUpdateCount(1);
+                    if (novelModel.getLatestUpdateChapterCount() == 0 && novelModel.getLatestChapterTitle().compareTo(syncBookShelfModel.getLastChapterTitle()) != 0)
+                        novelModel.setLatestUpdateChapterCount(1);
                     novelModel.setLatestChapterTitle(syncBookShelfModel.getLastChapterTitle());
                 }
                 novelDataBase.updateFavoritesStatus(hashtable.values());
                 List<NovelModel> novelModel = novelDataBase.loadAllFavorites();
-                Collections.sort(novelModel);
+                Collections.sort(novelModel, new NovelSortKeyComparator());
                 subscriber.onNext(novelModel);
                 hashtable.clear();
                 subscriber.onCompleted();
@@ -251,7 +253,7 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     }
 
     @Override
-    public Observable<Void> addBookMark(final NovelBookMarkModel model) {
+    public Observable<Void> addBookMark(final BookmarkModel model) {
         return Observable.create((Subscriber<? super Void> subscriber) -> {
             try {
                 novelDataBase.addBookMark(model);
@@ -264,7 +266,7 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     }
 
     @Override
-    public Observable<Void> saveLastReadBookMark(final NovelBookMarkModel bookMarkModel) {
+    public Observable<Void> saveLastReadBookMark(final BookmarkModel bookMarkModel) {
         return Observable.create((Subscriber<? super Void> subscriber) -> {
             try {
                 novelDataBase.insertOrUpdateLastReadBookMark(bookMarkModel);
@@ -277,8 +279,8 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     }
 
     @Override
-    public Observable<NovelBookMarkModel> getLastReadBookMark(final String novelId) {
-        return Observable.create((Subscriber<? super NovelBookMarkModel> subscriber) -> {
+    public Observable<BookmarkModel> getLastReadBookMark(final String novelId) {
+        return Observable.create((Subscriber<? super BookmarkModel> subscriber) -> {
             try {
                 subscriber.onNext(novelDataBase.loadLastReadBookMark(novelId));
                 subscriber.onCompleted();
@@ -289,8 +291,8 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     }
 
     @Override
-    public Observable<List<NovelBookMarkModel>> getBookMarks(final String novelId) {
-        return Observable.create((Subscriber<? super List<NovelBookMarkModel>> subscriber) -> {
+    public Observable<List<BookmarkModel>> getBookMarks(final String novelId) {
+        return Observable.create((Subscriber<? super List<BookmarkModel>> subscriber) -> {
             try {
                 subscriber.onNext(novelDataBase.loadBookMarks(novelId));
                 subscriber.onCompleted();
@@ -301,8 +303,8 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     }
 
     @Override
-    public Observable<NovelBookMarkModel> checkLastReadBookMarkState(final String novelId) {
-        return Observable.create((Subscriber<? super NovelBookMarkModel> subscriber) -> {
+    public Observable<BookmarkModel> checkLastReadBookMarkState(final String novelId) {
+        return Observable.create((Subscriber<? super BookmarkModel> subscriber) -> {
             try {
                 subscriber.onNext(novelDataBase.checkLastReadBookMarkState(novelId));
                 subscriber.onCompleted();
@@ -323,8 +325,8 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     }
 
     @Override
-    public Observable<NovelChapterModel> changeChapterSrc(NovelChapterModel chapterModel, NovelChangeSrcModel changeSrcModel) {
-        return Observable.create((Subscriber<? super NovelChapterModel> subscriber) -> {
+    public Observable<ChapterModel> changeChapterSrc(ChapterModel chapterModel, NovelChangeSrcModel changeSrcModel) {
+        return Observable.create((Subscriber<? super ChapterModel> subscriber) -> {
             try {
                 subscriber.onNext(novelDataBase.changeChapterSource(chapterModel, changeSrcModel));
                 subscriber.onCompleted();

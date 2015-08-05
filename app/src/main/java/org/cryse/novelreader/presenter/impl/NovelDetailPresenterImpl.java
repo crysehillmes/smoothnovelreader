@@ -56,7 +56,7 @@ public class NovelDetailPresenterImpl implements NovelDetailPresenter {
     @Override
      public void loadNovelDetail(NovelModel novelModel) {
         SubscriptionUtils.checkAndUnsubscribe(mLoadDetailSubscription);
-        mLoadDetailSubscription = dataService.getNovelDetail(novelModel.getId(), novelModel.getSrc())
+        mLoadDetailSubscription = dataService.getNovelDetail(novelModel.getNovelId(), novelModel.getSource())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -78,7 +78,7 @@ public class NovelDetailPresenterImpl implements NovelDetailPresenter {
     @Override
     public void checkNovelFavoriteStatus(NovelModel novelModel) {
         SubscriptionUtils.checkAndUnsubscribe(mCheckFavoriteStatusSubscription);
-        mCheckFavoriteStatusSubscription = dataService.isFavorite(novelModel.getId())
+        mCheckFavoriteStatusSubscription = dataService.isFavorite(novelModel.getNovelId())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -97,7 +97,7 @@ public class NovelDetailPresenterImpl implements NovelDetailPresenter {
     @Override
     public void addOrRemoveFavorite(NovelModel novelModel, boolean isAdd) {
         SubscriptionUtils.checkAndUnsubscribe(mAddFavoriteSubscription);
-        Observable<Void> observable = isAdd ? dataService.addToFavorite(novelModel) : dataService.removeFromFavorite(novelModel.getId());
+        Observable<Void> observable = isAdd ? dataService.addToFavorite(novelModel) : dataService.removeFromFavorite(novelModel.getNovelId());
         mAddFavoriteSubscription = observable.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

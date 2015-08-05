@@ -14,8 +14,8 @@ import android.util.Log;
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
-import org.cryse.novelreader.model.NovelChapterContentModel;
-import org.cryse.novelreader.model.NovelChapterModel;
+import org.cryse.novelreader.model.ChapterContentModel;
+import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.source.NovelSource;
 import org.cryse.novelreader.util.NovelTextFilter;
@@ -84,7 +84,7 @@ public class ChapterContentsCacheService extends Service {
         return new ChapterContentsCacheBinder();
     }
 
-    private NovelChapterContentModel loadChapterContentFromWeb(String id, String secondId, String src) {
+    private ChapterContentModel loadChapterContentFromWeb(String id, String secondId, String src) {
         return novelSource.getChapterContentSync(id, secondId, src);
     }
 
@@ -131,9 +131,9 @@ public class ChapterContentsCacheService extends Service {
 
         int index = 0;
         int successCount = 0, failureCount = 0;
-        List<NovelChapterModel> items = mNovelDatabase.loadChapters(cacheTask.getNovelId());
+        List<ChapterModel> items = mNovelDatabase.loadChapters(cacheTask.getNovelId());
         int chapterCount = items.size();
-        for (NovelChapterModel chapterModel : items) {
+        for (ChapterModel chapterModel : items) {
             if (stopCurrentTask) {
                 stopCurrentTask = false;
                 break;
@@ -144,7 +144,7 @@ public class ChapterContentsCacheService extends Service {
                     successCount++;
                     continue;
                 }
-                NovelChapterContentModel chapterContentModel = loadChapterContentFromWeb(cacheTask.getNovelId(), chapterModel.getSecondId(), chapterModel.getSrc());
+                ChapterContentModel chapterContentModel = loadChapterContentFromWeb(cacheTask.getNovelId(), chapterModel.getChapterId(), chapterModel.getSource());
                 if (chapterContentModel != null) {
                     chapterContentModel.setContent(novelTextFilter.filter(chapterContentModel.getContent()));
                     mNovelDatabase.updateChapterContent(chapterContentModel);
@@ -200,9 +200,9 @@ public class ChapterContentsCacheService extends Service {
         }
 
         public void addToCacheQueue(NovelModel novelModel) {
-            NovelCacheTask novelCacheTask = new NovelCacheTask(novelModel.getId(), novelModel.getTitle());
+            NovelCacheTask novelCacheTask = new NovelCacheTask(novelModel.getNovelId(), novelModel.getTitle());
             for(NovelCacheTask task : mTaskQueue) {
-                if(task.getNovelId().equalsIgnoreCase(novelModel.getId())) {
+                if(task.getNovelId().equalsIgnoreCase(novelModel.getNovelId())) {
                     return;
                 }
             }

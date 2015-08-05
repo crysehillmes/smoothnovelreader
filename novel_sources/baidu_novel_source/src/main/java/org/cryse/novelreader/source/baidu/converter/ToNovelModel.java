@@ -1,5 +1,6 @@
 package org.cryse.novelreader.source.baidu.converter;
 
+import org.cryse.novelreader.model.Novel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.source.baidu.entity.categorylist.CategoryDataset;
 import org.cryse.novelreader.source.baidu.entity.categorylist.CategoryNovelItem;
@@ -16,27 +17,13 @@ public final class ToNovelModel implements Func1<CategoryDataset, List<NovelMode
         CategoryNovelItem[] novelArray = dataset.getCatelist();
         ArrayList<NovelModel> result = new ArrayList<>(novelArray.length);
         for(CategoryNovelItem item : novelArray) {
-            Long follower;
-            try {
-                follower = Long.parseLong(item.getFollow());
-            } catch (NumberFormatException e) {
-                follower = 0l;
-            }
-            result.add(new NovelModel(
+            result.add(new Novel(
                     item.getGid(),
-                    item.getSrc(),
                     item.getTitle(),
                     item.getAuthor(),
-                    item.getReason(),
-                    follower,
-                    item.getStatus(),
-                    "",
-                    item.getCoverImage(),
-                    0,
-                    "",
-                    "",
-                    0,
-                    0l
+                    NovelModel.TYPE_BAIDU_SOURCE,
+                    item.getSrc(),
+                    item.getCoverImage()
             ));
         }
         return result;

@@ -317,12 +317,12 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
             currentCachingNovelId = mServiceBinder.getCurrentCachingNovelId();
         }
         for (int position : reverseSortedPositions) {
-            if(currentCachingNovelId != null && currentCachingNovelId.compareTo(novelList.get(position).getId()) == 0) {
+            if(currentCachingNovelId != null && currentCachingNovelId.compareTo(novelList.get(position).getNovelId()) == 0) {
                 showSnackbar(getString(R.string.toast_chapter_contents_caching_cannot_delete, novelList.get(position).getTitle()), SimpleSnackbarType.WARNING);
             } else {
-                removeIds.add(novelList.get(position).getId());
+                removeIds.add(novelList.get(position).getNovelId());
                 if(mServiceBinder != null) {
-                    if(mServiceBinder.removeFromQueueIfExist(novelList.get(position).getId())) {
+                    if(mServiceBinder.removeFromQueueIfExist(novelList.get(position).getNovelId())) {
                         showSnackbar(getString(R.string.notification_action_chapter_contents_cancel_novel, novelList.get(position).getTitle()), SimpleSnackbarType.INFO);
                 }
                 }

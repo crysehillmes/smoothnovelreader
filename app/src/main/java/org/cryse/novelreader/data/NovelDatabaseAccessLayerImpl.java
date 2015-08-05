@@ -1,240 +1,299 @@
 package org.cryse.novelreader.data;
 
-import org.cryse.novelreader.model.NovelBookMarkModel;
-import org.cryse.novelreader.model.NovelChangeSrcModel;
-import org.cryse.novelreader.model.NovelChapterContentModel;
-import org.cryse.novelreader.model.NovelChapterModel;
-import org.cryse.novelreader.model.NovelModel;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
-import java.util.Arrays;
+import org.cryse.novelreader.data.provider.ContentValuesUtils;
+import org.cryse.novelreader.data.provider.NovelReaderSQLiteOpenHelper;
+import org.cryse.novelreader.data.provider.bookmark.BookmarkContentValues;
+import org.cryse.novelreader.data.provider.bookmark.BookmarkCursor;
+import org.cryse.novelreader.data.provider.bookmark.BookmarkSelection;
+import org.cryse.novelreader.data.provider.chapter.ChapterColumns;
+import org.cryse.novelreader.data.provider.chapter.ChapterContentValues;
+import org.cryse.novelreader.data.provider.chapter.ChapterCursor;
+import org.cryse.novelreader.data.provider.chapter.ChapterSelection;
+import org.cryse.novelreader.data.provider.chaptercontent.ChapterContentColumns;
+import org.cryse.novelreader.data.provider.chaptercontent.ChapterContentContentValues;
+import org.cryse.novelreader.data.provider.chaptercontent.ChapterContentCursor;
+import org.cryse.novelreader.data.provider.chaptercontent.ChapterContentSelection;
+import org.cryse.novelreader.data.provider.novel.NovelContentValues;
+import org.cryse.novelreader.data.provider.novel.NovelCursor;
+import org.cryse.novelreader.data.provider.novel.NovelSelection;
+import org.cryse.novelreader.model.Bookmark;
+import org.cryse.novelreader.model.BookmarkModel;
+import org.cryse.novelreader.model.Chapter;
+import org.cryse.novelreader.model.ChapterContent;
+import org.cryse.novelreader.model.Novel;
+import org.cryse.novelreader.model.NovelChangeSrcModel;
+import org.cryse.novelreader.model.ChapterContentModel;
+import org.cryse.novelreader.model.ChapterModel;
+import org.cryse.novelreader.model.NovelModel;
+import org.cryse.novelreader.qualifier.ApplicationContext;
+import org.cryse.novelreader.util.comparator.NovelSortKeyComparator;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import de.greenrobot.dao.query.DeleteQuery;
-import de.greenrobot.dao.query.QueryBuilder;
-
 public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
-    NovelModelDao novelModelDao;
-
-    NovelChapterModelDao novelChapterModelDao;
-
-    NovelChapterContentModelDao novelChapterContentModelDao;
-
-    NovelBookMarkModelDao novelBookMarkModelDao;
+    @ApplicationContext
+    Context mContext;
+    ContentResolver mContentResolver;
 
     @Inject
-    public NovelDatabaseAccessLayerImpl(
-            NovelModelDao novelModelDao,
-            NovelChapterModelDao novelChapterModelDao,
-            NovelChapterContentModelDao novelChapterContentModelDao,
-            NovelBookMarkModelDao novelBookMarkModelDao
-    ) {
-        this.novelModelDao = novelModelDao;
-        this.novelChapterModelDao = novelChapterModelDao;
-        this.novelChapterContentModelDao = novelChapterContentModelDao;
-        this.novelBookMarkModelDao = novelBookMarkModelDao;
+    public NovelDatabaseAccessLayerImpl(@ApplicationContext Context context) {
+        this.mContext = context;
+        this.mContentResolver = context.getContentResolver();
     }
 
     @Override
     public boolean isFavorite(String id) {
-        Boolean isExist;
-        QueryBuilder<NovelModel> qb = novelModelDao.queryBuilder().where(NovelModelDao.Properties.Id.eq(id));
-        isExist = qb.count() != 0;
-        return isExist;
+        NovelSelection novelSelection = new NovelSelection();
+        NovelCursor cursor = novelSelection.novelId(id).query(mContentResolver);
+        boolean exist = cursor.getCount() > 0;
+        cursor.close();
+        return exist;
     }
 
     @Override
     public NovelModel loadFavorite(String id) {
-        QueryBuilder<NovelModel> qb = novelModelDao.queryBuilder().where(NovelModelDao.Properties.Id.eq(id));
-        return qb.count() != 0 ? qb.unique() : null;
+        NovelSelection novelSelection = new NovelSelection();
+        novelSelection.novelId(id);
+        NovelCursor cursor = novelSelection.query(mContentResolver);
+        Novel novel = null;
+        if(cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            novel = new Novel(cursor);
+            cursor.close();
+        }
+        return novel;
     }
 
     @Override
     public void addToFavorite(NovelModel novel) {
-        novelModelDao.insertOrReplace(novel);
+        NovelContentValues values = ContentValuesUtils.toNovelContentValues(novel);
+        values.insert(mContentResolver);
     }
 
     @Override
     public void updateFavoritesStatus(Collection<NovelModel> novels) {
-        novelModelDao.insertOrReplaceInTx(novels);
-        clearDaoSession();
+        for(NovelModel model : novels) {
+            NovelContentValues values = ContentValuesUtils.toNovelContentValues(model);
+            values.insert(mContentResolver);
+        }
     }
 
     @Override
     public void removeFavorite(String... novelIds) {
-        List novelsList = Arrays.asList(novelIds);
-
         // Clear BookMark
-        DeleteQuery deleteBookMarksQuery = novelBookMarkModelDao.queryBuilder().where(NovelBookMarkModelDao.Properties.NovelId.in(novelsList)).buildDelete();
-        deleteBookMarksQuery.executeDeleteWithoutDetachingEntities();
+        BookmarkSelection bookmarkSelection = new BookmarkSelection();
+        bookmarkSelection.novelId(novelIds).delete(mContentResolver);
 
         // Clear ChapterContents
-        DeleteQuery deleteChapterContentsQuery = novelChapterContentModelDao.queryBuilder().where(NovelChapterContentModelDao.Properties.Id.in(novelsList)).buildDelete();
-        deleteChapterContentsQuery.executeDeleteWithoutDetachingEntities();
+        ChapterContentSelection contentSelection = new ChapterContentSelection();
+        contentSelection.novelId(novelIds).delete(mContentResolver);
 
         // Clear Chapters
-        DeleteQuery deleteChaptersQuery = novelChapterModelDao.queryBuilder().where(NovelChapterModelDao.Properties.Id.in(novelsList)).buildDelete();
-        deleteChaptersQuery.executeDeleteWithoutDetachingEntities();
+        ChapterSelection chapterSelection = new ChapterSelection();
+        chapterSelection.novelId(novelIds).delete(mContentResolver);
 
         // Remove NovelModel
-        novelModelDao.deleteByKeyInTx(novelIds);
-
-        // Clear DaoSession
-        clearDaoSession();
+        NovelSelection novelSelection = new NovelSelection();
+        novelSelection.novelId(novelIds).delete(mContentResolver);
     }
 
     @Override
     public List<NovelModel> loadAllFavorites() {
-        clearDaoSession();
-        List<NovelModel> favoriteNovels = novelModelDao.loadAll();
-        Collections.sort(favoriteNovels);
-        return favoriteNovels;
+        NovelSelection novelSelection = new NovelSelection();
+        NovelCursor cursor = novelSelection.query(mContentResolver);
+        List<NovelModel> result = new ArrayList<>(cursor.getCount());
+        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            result.add(new Novel(cursor));
+        }
+        cursor.close();
+        Collections.sort(result, new NovelSortKeyComparator());
+        return result;
+    }
+
+    private static final String QUERY_CHAPTERS_SQL =
+            "SELECT " + ChapterColumns._ID + ", " + ChapterColumns.NOVEL_ID + ", " + ChapterColumns.CHAPTER_ID + ", " + ChapterColumns.TITLE + ", " + ChapterColumns.SOURCE + ", " + ChapterColumns.CHAPTER_INDEX + ", " +
+            "CASE WHEN EXISTS (SELECT " + ChapterContentColumns.CHAPTER_ID + " FROM " + ChapterContentColumns.TABLE_NAME + " WHERE " + ChapterContentColumns.TABLE_NAME + "." + ChapterContentColumns.CHAPTER_ID + " = " + ChapterColumns.TABLE_NAME + "." + ChapterColumns.CHAPTER_ID + ") " +
+            "THEN 1 " +
+            "ELSE 0 " +
+            "END AS CACHED " +
+            "FROM " + ChapterColumns.TABLE_NAME + " " +
+            "WHERE " + ChapterColumns.NOVEL_ID + "=?";
+
+    @Override
+    public List<ChapterModel> loadChapters(String novelId) {
+        NovelReaderSQLiteOpenHelper helper = NovelReaderSQLiteOpenHelper.getInstance(mContext);
+        SQLiteDatabase database = helper.getReadableDatabase();
+        List<ChapterModel> chapterModels = new ArrayList<>();
+        Cursor rawCursor = database.rawQuery(QUERY_CHAPTERS_SQL, new String[]{novelId});
+        ChapterCursor cursor = new ChapterCursor(rawCursor);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            ChapterModel chapter = new Chapter(cursor);
+            chapter.setIsCached(cursor.getBooleanOrNull("CACHED"));
+            chapterModels.add(chapter);
+            cursor.moveToNext();
+        }
+        // make sure to close the cursor
+        cursor.close();
+        rawCursor.close();
+        return chapterModels;
     }
 
     @Override
-    public List<NovelChapterModel> loadChapters(String novelId) {
-        return novelChapterModelDao.deepQueryList(novelId);
+    public void insertChapter(String novelId, ChapterModel chapter) {
+        ChapterContentValues values = ContentValuesUtils.toChapterValues(chapter);
+        values.insert(mContentResolver);
+        Novel novel = (Novel)loadFavorite(novelId);
+        novel.setLatestUpdateChapterCount(0);
+        novel.setLatestChapterTitle(chapter.getTitle());
+        NovelContentValues novelContentValues = ContentValuesUtils.toNovelContentValues(novel);
+        novelContentValues.insert(mContentResolver);
     }
 
     @Override
-    public void insertChapter(String novelId, NovelChapterModel chapter) {
-        novelChapterModelDao.insertOrReplace(chapter);
-        NovelModel novelModel = novelModelDao.load(novelId);
-        novelModel.setLatestUpdateCount(0);
-        novelModel.setLatestChapterTitle(chapter.getTitle());
-        novelModelDao.update(novelModel);
+    public void insertChapters(String novelId, List<ChapterModel> chapters) {
+        ContentValues[] values = new ContentValues[chapters.size()];
+        for(int i = 0; i < chapters.size(); i++) {
+            values[i] = ContentValuesUtils.toChapterValues(chapters.get(i)).values();
+        }
+        mContentResolver.bulkInsert(ChapterColumns.CONTENT_URI, values);
+
+        Novel novel = (Novel)loadFavorite(novelId);
+        novel.setLatestUpdateChapterCount(0);
+        novel.setLatestChapterTitle(chapters.get(chapters.size() - 1).getTitle());
+        NovelContentValues novelContentValues = ContentValuesUtils.toNovelContentValues(novel);
+        novelContentValues.insert(mContentResolver);
     }
 
     @Override
-    public void insertChapters(String novelId, List<NovelChapterModel> chapters) {
-        novelChapterModelDao.insertOrReplaceInTx(chapters);
-        NovelModel novelModel = novelModelDao.load(novelId);
-        novelModel.setLatestUpdateCount(0);
-        novelModel.setLatestChapterTitle(chapters.get(chapters.size() - 1).getTitle());
-        novelModelDao.update(novelModel);
-    }
-
-    @Override
-    public void updateChapters(String novelId, List<NovelChapterModel> chapters) {
-        DeleteQuery deleteQuery = novelChapterModelDao.queryBuilder().where(NovelChapterModelDao.Properties.Id.eq(novelId)).buildDelete();
-        deleteQuery.executeDeleteWithoutDetachingEntities();
-        clearDaoSession();
+    public void updateChapters(String novelId, List<ChapterModel> chapters) {
+        ChapterSelection chapterSelection = new ChapterSelection();
+        chapterSelection.novelId(novelId).delete(mContentResolver);
         insertChapters(novelId, chapters);
     }
 
     @Override
-    public NovelChapterContentModel loadChapterContent(String chapterId) {
-        QueryBuilder<NovelChapterContentModel> queryBuilder = novelChapterContentModelDao.queryBuilder().where(NovelChapterContentModelDao.Properties.SecondId.eq(chapterId));
-        if(queryBuilder.count() <= 0) {
-            return null;
-        } else {
-            return queryBuilder.list().get(0);
+    public ChapterContentModel loadChapterContent(String chapterId) {
+        ChapterContentSelection contentSelection = new ChapterContentSelection();
+        contentSelection.chapterId(chapterId);
+        ChapterContentCursor cursor = contentSelection.query(mContentResolver);
+        ChapterContent chapterContent = null;
+        if(cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            chapterContent = new ChapterContent(cursor);
         }
+        return chapterContent;
     }
 
     @Override
     public void removeChapterContent(String chapterId) {
-        DeleteQuery deleteQuery = novelChapterContentModelDao.queryBuilder().where(NovelChapterModelDao.Properties.SecondId.eq(chapterId)).buildDelete();
-        deleteQuery.executeDeleteWithoutDetachingEntities();
-        clearDaoSession();
+        ChapterContentSelection contentSelection = new ChapterContentSelection();
+        contentSelection.chapterId(chapterId);
+        contentSelection.delete(mContentResolver);
     }
 
     @Override
-    public void updateChapterContent(NovelChapterContentModel chapterContent) {
-        DeleteQuery deleteQuery = novelChapterContentModelDao.queryBuilder().whereOr(
-                NovelChapterContentModelDao.Properties.SecondId.eq(chapterContent.getSecondId()),
-                NovelChapterContentModelDao.Properties.Src.eq(chapterContent.getSrc())
-        ).buildDelete();
-        deleteQuery.executeDeleteWithoutDetachingEntities();
-        clearDaoSession();
-        novelChapterContentModelDao.insert(chapterContent);
+    public void updateChapterContent(ChapterContentModel chapterContent) {
+        /*ChapterContentSelection contentSelection = new ChapterContentSelection();
+        contentSelection.chapterId(chapterContent.getChapterId());
+        contentSelection.delete(mContentResolver);*/
+        ChapterContentContentValues values = ContentValuesUtils.toChapterContentValues(chapterContent);
+        values.insert(mContentResolver);
     }
 
     @Override
-    public void addBookMark(NovelBookMarkModel bookMark) {
-        novelBookMarkModelDao.insert(bookMark);
+    public void addBookMark(BookmarkModel bookMark) {
+        BookmarkContentValues contentValues = ContentValuesUtils.toBookmarkContentValues(bookMark);
+        contentValues.insert(mContentResolver);
     }
 
     @Override
-    public void insertOrUpdateLastReadBookMark(NovelBookMarkModel bookMark) {
+    public void insertOrUpdateLastReadBookMark(BookmarkModel bookmark) {
         // Replace existing last read bookmark and by the new one.
-        DeleteQuery deleteQuery = novelBookMarkModelDao.queryBuilder().where(
-                NovelBookMarkModelDao.Properties.NovelId.eq(bookMark.getNovelId()),
-                NovelBookMarkModelDao.Properties.BookMarkType.eq(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD)
-        ).buildDelete();
-        deleteQuery.executeDeleteWithoutDetachingEntities();
-        novelBookMarkModelDao.insertOrReplace(bookMark);
+        BookmarkSelection bookmarkSelection = new BookmarkSelection();
+        bookmarkSelection.novelId(bookmark.getNovelId()).and().markType(BookmarkModel.BOOKMARK_TYPE_LASTREAD);
+        bookmarkSelection.delete(mContentResolver);
+        BookmarkContentValues contentValues = ContentValuesUtils.toBookmarkContentValues(bookmark);
+        contentValues.insert(mContentResolver);
 
         // Update NovelModel lastReadChapterTitle field.
-        NovelModel novelModel = novelModelDao.load(bookMark.getNovelId());
-        novelModel.setLastReadChapterTitle(bookMark.getChapterTitle());
-        novelModelDao.update(novelModel);
+        Novel novel = (Novel) loadFavorite(bookmark.getNovelId());
+        novel.setLastReadChapterTitle(bookmark.getChapterTitle());
+        NovelContentValues novelContentValues = ContentValuesUtils.toNovelContentValues(novel);
+        novelContentValues.insert(mContentResolver);
     }
 
     @Override
-    public NovelBookMarkModel loadLastReadBookMark(String novelId) {
+    public BookmarkModel loadLastReadBookMark(String novelId) {
         // get last read bookmark according to novelId.
-        QueryBuilder queryBuilder = novelBookMarkModelDao.queryBuilder().where(
-                NovelBookMarkModelDao.Properties.NovelId.eq(novelId),
-                NovelBookMarkModelDao.Properties.BookMarkType.eq(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD)
-        );
-        return (NovelBookMarkModel)queryBuilder.unique();
-    }
-
-    @Override
-    public List<NovelBookMarkModel> loadBookMarks(String novelId) {
-        // get all bookmarks according to novelId.
-        QueryBuilder queryBuilder = novelBookMarkModelDao.queryBuilder().where(
-                NovelBookMarkModelDao.Properties.NovelId.eq(novelId),
-                NovelBookMarkModelDao.Properties.BookMarkType.notEq(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD)
-        );
-        return (List<NovelBookMarkModel>)queryBuilder.list();
-    }
-
-    @Override
-    public NovelBookMarkModel checkLastReadBookMarkState(String novelId) {
-        Boolean isFavorite = isFavorite(novelId);
-        QueryBuilder queryBuilder = novelBookMarkModelDao.queryBuilder().where(
-                NovelBookMarkModelDao.Properties.NovelId.eq(novelId),
-                NovelBookMarkModelDao.Properties.BookMarkType.eq(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD)
-        );
-        Boolean hasLastRead = queryBuilder.count() == 1;
-        if(isFavorite && hasLastRead)
-            return (NovelBookMarkModel)queryBuilder.list().get(0);
-        else
-            return null;
-    }
-
-    @Override
-    public NovelChapterModel changeChapterSource(NovelChapterModel chapterModel, NovelChangeSrcModel changeSrcModel) {
-        if(isFavorite(chapterModel.getId())) {
-            DeleteQuery deleteChapterQuery = novelChapterModelDao.queryBuilder().where(
-                    NovelChapterModelDao.Properties.Id.eq(chapterModel.getId()),
-                    NovelChapterModelDao.Properties.Src.eq(chapterModel.getSrc())
-            ).buildDelete();
-            deleteChapterQuery.executeDeleteWithoutDetachingEntities();
-            DeleteQuery deleteChapterContentQuery = novelChapterContentModelDao.queryBuilder().where(
-                    NovelChapterContentModelDao.Properties.Id.eq(chapterModel.getId()),
-                    NovelChapterContentModelDao.Properties.Src.eq(chapterModel.getSrc())
-            ).buildDelete();
-            deleteChapterContentQuery.executeDeleteWithoutDetachingEntities();
-            clearDaoSession();
-            chapterModel.setSrc(changeSrcModel.getSrc());
-            chapterModel.setSecondId("");
-            novelChapterModelDao.insert(chapterModel);
-        } else {
-            chapterModel.setSrc(changeSrcModel.getSrc());
-            chapterModel.setSecondId("");
+        BookmarkSelection bookmarkSelection = new BookmarkSelection();
+        bookmarkSelection.novelId(novelId).and().markType(BookmarkModel.BOOKMARK_TYPE_LASTREAD);
+        BookmarkCursor cursor = bookmarkSelection.query(mContentResolver);
+        Bookmark bookmark = null;
+        if(cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            bookmark = new Bookmark(cursor);
+            cursor.close();
         }
-        return chapterModel;
+        return bookmark;
     }
 
-    private void clearDaoSession() {
-        DaoSession daoSession = (DaoSession)novelModelDao.getSession();
-        daoSession.clear();
+    @Override
+    public List<BookmarkModel> loadBookMarks(String novelId) {
+        // get all bookmarks according to novelId.
+        BookmarkSelection bookmarkSelection = new BookmarkSelection();
+        bookmarkSelection.novelId(novelId).and().markType(BookmarkModel.BOOKMARK_TYPE_LASTREAD);
+        BookmarkCursor cursor = bookmarkSelection.query(mContentResolver);
+        List<BookmarkModel> bookmarks = new ArrayList<>(cursor.getCount());
+        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            bookmarks.add(new Bookmark(cursor));
+        }
+        cursor.close();
+        return bookmarks;
+    }
+
+    @Override
+    public BookmarkModel checkLastReadBookMarkState(String novelId) {
+        Boolean isFavorite = isFavorite(novelId);
+        BookmarkSelection selection = new BookmarkSelection();
+        selection.novelId(novelId).and().markType(BookmarkModel.BOOKMARK_TYPE_LASTREAD);
+        BookmarkCursor cursor = selection.query(mContentResolver);
+        Boolean hasLastRead = cursor.getCount() > 0;
+        Bookmark bookmark = null;
+        if(isFavorite && hasLastRead) {
+            cursor.moveToFirst();
+            bookmark = new Bookmark(cursor);
+        }
+        return bookmark;
+    }
+
+    @Override
+    public ChapterModel changeChapterSource(ChapterModel chapterModel, NovelChangeSrcModel changeSrcModel) {
+        if(isFavorite(chapterModel.getNovelId())) {
+            ChapterSelection chapterSelection = new ChapterSelection();
+            chapterSelection.novelId(chapterModel.getNovelId()).and().source(chapterModel.getSource());
+            chapterSelection.delete(mContentResolver);
+            ChapterContentSelection contentSelection = new ChapterContentSelection();
+            contentSelection.novelId(chapterModel.getNovelId()).and().source(chapterModel.getSource());
+            contentSelection.delete(mContentResolver);
+
+            ChapterContentValues values = ContentValuesUtils.toChapterValues(chapterModel);
+            values.putSource(changeSrcModel.getSrc());
+            values.insert(mContentResolver);
+        }
+        Chapter chapter = new Chapter(chapterModel);
+        chapter.setSource(changeSrcModel.getSrc());
+        return chapter;
     }
 }

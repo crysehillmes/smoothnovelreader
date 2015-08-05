@@ -1,8 +1,8 @@
 package org.cryse.novelreader.source;
 
 import org.cryse.novelreader.model.NovelChangeSrcModel;
-import org.cryse.novelreader.model.NovelChapterContentModel;
-import org.cryse.novelreader.model.NovelChapterModel;
+import org.cryse.novelreader.model.ChapterContentModel;
+import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.model.NovelSyncBookShelfModel;
@@ -16,15 +16,15 @@ public interface NovelSource {
 
     public Observable<List<NovelModel>> getRanks(String cid, int page);
 
-    public Observable<List<NovelChapterModel>> getChapterList(String id, String src);
+    public Observable<List<ChapterModel>> getChapterList(String id, String src);
 
-    public Observable<NovelChapterContentModel> getChapterContent(String id, String secondId, String src);
+    public Observable<ChapterContentModel> getChapterContent(String id, String secondId, String src);
 
     public Observable<List<NovelModel>> search(String queryString, int page);
 
-    public NovelChapterContentModel getChapterContentSync(String id, String secondId, String src);
+    public ChapterContentModel getChapterContentSync(String id, String secondId, String src);
 
-    public List<NovelChapterModel> getChapterListSync(String id, String src);
+    public List<ChapterModel> getChapterListSync(String id, String src);
 
     public List<NovelSyncBookShelfModel> getNovelUpdatesSync(String ... novelIds);
 

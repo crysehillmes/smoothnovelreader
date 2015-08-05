@@ -20,8 +20,11 @@ import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.event.LoadLocalFileDoneEvent;
 import org.cryse.novelreader.event.LoadLocalFileStartEvent;
 import org.cryse.novelreader.event.RxEventBus;
-import org.cryse.novelreader.model.NovelChapterContentModel;
-import org.cryse.novelreader.model.NovelChapterModel;
+import org.cryse.novelreader.model.Chapter;
+import org.cryse.novelreader.model.ChapterContent;
+import org.cryse.novelreader.model.ChapterContentModel;
+import org.cryse.novelreader.model.ChapterModel;
+import org.cryse.novelreader.model.Novel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.source.NovelSource;
 import org.cryse.novelreader.util.DataContract;
@@ -99,7 +102,7 @@ public class LoadLocalTextService extends Service {
         return new ReadLocalTextFileBinder();
     }
 
-    private NovelChapterContentModel loadChapterContentFromWeb(String id, String secondId, String src) {
+    private ChapterContentModel loadChapterContentFromWeb(String id, String secondId, String src) {
         return novelSource.getChapterContentSync(id, secondId, src);
     }
 
@@ -170,21 +173,13 @@ public class LoadLocalTextService extends Service {
             localTextReader = new LocalTextReader(filePath);
             localTextReader.open();
             String novelId = LOCAL_FILE_PREFIX + ":" + HashUtils.md5(filePath);
-            mNovelDatabase.addToFavorite(new NovelModel(
+            mNovelDatabase.addToFavorite(new Novel(
                     novelId,
-                    LOCAL_FILE_PREFIX + ":" + filePath,
                     TextUtils.isEmpty(customTitle) ? textFile.getName() : customTitle,
                     "",
-                    "",
-                    0l,
-                    "",
-                    "",
-                    "",
-                    0,
-                    "",
-                    "",
-                    0,
-                    new Date().getTime()
+                    NovelModel.TYPE_LOCAL_FILE,
+                    LOCAL_FILE_PREFIX + ":" + filePath,
+                    ""
             ));
             mEventBus.sendEvent(new LoadLocalFileStartEvent());
             int chapterCount = localTextReader.readChapters(new LocalTextReader.OnChapterReadCallback() {
@@ -250,18 +245,18 @@ public class LoadLocalTextService extends Service {
 
     private void addChapterToDatabase(String novelId, int chapterIndex, String chapterTitle, String chapterContent) {
         String chapterHash = HashUtils.md5(chapterTitle + String.format("%06d", chapterIndex));
-        mNovelDatabase.insertChapter(novelId, new NovelChapterModel(
+        mNovelDatabase.insertChapter(novelId, new Chapter(
                 novelId,
                 chapterHash,
                 LOCAL_FILE_PREFIX,
                 chapterTitle,
                 chapterIndex
         ));
-        mNovelDatabase.updateChapterContent(new NovelChapterContentModel(
+        mNovelDatabase.updateChapterContent(new ChapterContent(
                 novelId,
                 chapterHash,
-                novelTextFilter.filter(chapterContent),
-                LOCAL_FILE_PREFIX + ":" + chapterHash
+                LOCAL_FILE_PREFIX + ":" + chapterHash,
+                novelTextFilter.filter(chapterContent)
         ));
     }
 
