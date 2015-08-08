@@ -131,3 +131,5 @@
 # Tika's optional deps
 -dontwarn aQute.**
 -dontwarn org.osgi.**
+# For gradle-retrolambda
+-dontwarn java.lang.invoke.*

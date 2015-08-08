@@ -7,7 +7,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.3'
-        classpath 'me.tatarka:gradle-retrolambda:3.1.0'
+        classpath 'me.tatarka:gradle-retrolambda:3.2.0'
         classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -122,5 +122,6 @@ allprojects {
     ext.appCompileSdkVersion=22
     ext.appBuildToolsVersion='22.0.1'
 
-    ext.supportlibraryVersion = '22.2.0'
+    ext.supportlibraryVersion = '22.2.1'
+    ext.retrolambdaVersion = '2.0.5'
 }

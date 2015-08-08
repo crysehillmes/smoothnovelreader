@@ -38,12 +38,13 @@ dependencies {
     compile 'io.reactivex:rxjava:1.0.10'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'org.jsoup:jsoup:1.8.2'
-    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.0.2'
+    retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:$retrolambdaVersion"
 }
 
 retrolambda {
     jdk System.getenv("JAVA8_HOME")
     oldJdk System.getenv("JAVA7_HOME")
     javaVersion JavaVersion.VERSION_1_7
-    jvmArgs '-noverify'
+    defaultMethods false
+    incremental true
 }

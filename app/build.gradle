@@ -90,7 +90,7 @@ dependencies {
         exclude group: 'com.squareup.okhttp', module: 'okhttp-urlconnection'
     }
 
-    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.0.2'
+    retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:$retrolambdaVersion"
 
     // UI elements
     compile ('com.navercorp.pulltorefresh:library:3.2.3@aar') {
@@ -121,7 +121,8 @@ retrolambda {
     jdk System.getenv('JAVA8_HOME')
     oldJdk System.getenv('JAVA7_HOME')
     javaVersion JavaVersion.VERSION_1_7
-    jvmArgs '-noverify'
+    defaultMethods false
+    incremental true
 }
 
 def Properties props = new Properties()
