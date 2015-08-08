@@ -100,8 +100,6 @@ dependencies {
         exclude module: 'support-v4'
     }
     compile 'com.quentindommerc.superlistview:library:1.5.2'
-    compile 'com.github.castorflex.smoothprogressbar:library:1.1.0'
-    compile 'com.github.castorflex.smoothprogressbar:library-circular:1.1.0'
     compile 'com.afollestad:material-dialogs:0.7.4.1'
     compile('com.mikepenz:materialdrawer:3.0.4') {
         transitive = true
@@ -109,6 +107,7 @@ dependencies {
     }
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     compile 'com.cocosw:bottomsheet:1.1.1'
+    compile 'me.zhanghai.android.materialprogressbar:library:1.0.2'
 
     compile 'org.apache.tika:tika-core:1.8'
     compile 'com.googlecode.juniversalchardet:juniversalchardet:1.0.3'

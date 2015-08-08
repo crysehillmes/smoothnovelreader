@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -26,8 +27,8 @@ import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.model.Bookmark;
 import org.cryse.novelreader.model.BookmarkModel;
-import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.ChapterModel;
+import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelChapterContentPresenter;
 import org.cryse.novelreader.qualifier.PrefsFontSize;
@@ -38,7 +39,6 @@ import org.cryse.novelreader.ui.adapter.ReadViewPagerAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.ui.widget.ReadWidget;
 import org.cryse.novelreader.ui.widget.ReadWidgetAdapter;
-
 import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.PreferenceConverter;
 import org.cryse.novelreader.util.SimpleSnackbarType;
@@ -49,6 +49,7 @@ import org.cryse.novelreader.util.gesture.SimpleGestureDetector;
 import org.cryse.novelreader.util.prefs.IntegerPreference;
 import org.cryse.novelreader.util.prefs.StringPreference;
 import org.cryse.novelreader.view.NovelChapterContentView;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -58,8 +59,6 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
-import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 
 public class NovelReadViewActivity extends AbstractThemeableActivity implements NovelChapterContentView {
     private static final String LOG_TAG = NovelReadViewActivity.class.getName();
@@ -81,7 +80,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     protected TextView mChapterPositionTextView = null;
 
     @InjectView(R.id.activity_chapter_read_progressbar)
-    SmoothProgressBar mProgressBar;
+    ProgressBar mProgressBar;
 
     @Inject
     NovelChapterContentPresenter mPresenter;
@@ -127,8 +126,8 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         mReadWidget.setOnContentRequestListener(new ReadWidget.OnContentRequestListener() {
             @Override
             public void onRequestPrevious() {
-                if(!isLoading()) {
-                    if(chapterIndex - 1 < 0) {
+                if (!isLoading()) {
+                    if (chapterIndex - 1 < 0) {
                         mReadWidget.setLoading(false);
                         return;
                     }
@@ -139,8 +138,8 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
 
             @Override
             public void onRequestNext() {
-                if(!isLoading()) {
-                    if(chapterIndex + 1 >= mNovelChapters.size()) {
+                if (!isLoading()) {
+                    if (chapterIndex + 1 >= mNovelChapters.size()) {
                         mReadWidget.setLoading(false);
                         return;
                     }
@@ -163,7 +162,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                 hideSystemUI();
             }
         });
-        mProgressBar.setSmoothProgressDrawableCallbacks(new SmoothProgressDrawable.Callbacks() {
+        /*mProgressBar.setSmoothProgressDrawableCallbacks(new SmoothProgressDrawable.Callbacks() {
             @Override
             public void onStop() {
                 mProgressBar.setVisibility(View.INVISIBLE);
@@ -173,7 +172,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
             public void onStart() {
                 mProgressBar.setVisibility(View.VISIBLE);
             }
-        });
+        });*/
         addClickEventListener();
     }
 
@@ -557,10 +556,14 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     public synchronized void setLoading(Boolean isLoading) {
         mIsLoading = isLoading;
         if(isLoading)
-            mProgressBar.progressiveStart();
+            mProgressBar.animate()
+                    .alpha(1.0f)
+                    .setDuration(300);
         else {
             mReadWidget.setLoading(false);
-            mProgressBar.progressiveStop();
+            mProgressBar.animate()
+                    .alpha(0.0f)
+                    .setDuration(300);
         }
     }
 

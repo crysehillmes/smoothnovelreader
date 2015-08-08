@@ -1,15 +1,4 @@
 <resources>
-    <style name="LoadChapterContentProgressBar" parent="SmoothProgressBar">
-        <item name="spb_stroke_separator_length">0dp</item>
-        <item name="spb_sections_count">4</item>
-        <item name="spb_stroke_width">3dp</item>
-        <item name="spb_mirror_mode">false</item>
-        <item name="spb_speed">1.5</item>
-        <item name="spb_interpolator">spb_interpolator_acceleratedecelerate</item>
-        <item name="spb_colors">@array/gplus_colors</item>
-        <item name="spb_progressiveStart_activated">false</item>
-    </style>
-
     <integer-array name="gplus_colors">
         <item>@color/refresh_progress_1</item>
         <item>@color/refresh_progress_2</item>
