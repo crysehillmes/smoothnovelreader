@@ -2,8 +2,8 @@ package org.cryse.novelreader.source.baidu.converter;
 
 
 import org.cryse.novelreader.model.Novel;
-import org.cryse.novelreader.source.baidu.entity.search.SearchDataset;
 import org.cryse.novelreader.model.NovelModel;
+import org.cryse.novelreader.source.baidu.entity.search.SearchDataset;
 import org.cryse.novelreader.source.baidu.entity.search.SearchItem;
 
 import java.util.ArrayList;

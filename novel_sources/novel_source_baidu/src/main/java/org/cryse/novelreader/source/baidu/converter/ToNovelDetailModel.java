@@ -3,7 +3,6 @@ package org.cryse.novelreader.source.baidu.converter;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import rx.functions.Func1;

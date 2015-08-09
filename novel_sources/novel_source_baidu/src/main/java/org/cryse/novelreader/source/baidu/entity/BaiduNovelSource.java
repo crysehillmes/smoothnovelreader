@@ -5,7 +5,6 @@ import org.cryse.novelreader.source.baidu.entity.changesrc.ChangeSrcItem;
 import org.cryse.novelreader.source.baidu.entity.chapterlist.ChapterContentItem;
 import org.cryse.novelreader.source.baidu.entity.chapterlist.ChapterListDataset;
 import org.cryse.novelreader.source.baidu.entity.search.SearchDataset;
-import org.cryse.novelreader.source.baidu.entity.syncshelf.SyncShelfDataset;
 import org.cryse.novelreader.source.baidu.entity.syncshelf.SyncShelfItem;
 
 import retrofit.http.Field;
@@ -15,11 +14,11 @@ import retrofit.http.Query;
 import rx.Observable;
 
 public interface BaiduNovelSource {
-    static final String BAIDU_SEARCHBOX_URL = "/searchbox";
+    String BAIDU_SEARCHBOX_URL = "/searchbox";
 
     @FormUrlEncoded
     @POST(BAIDU_SEARCHBOX_URL)
-    Observable<SyncShelfDataset> getNovelUpdate(
+    Observable<SyncShelfItem[]> getNovelUpdate(
             @Query("action") String action,
             @Query("type") String type,
             @Query("service") String service,

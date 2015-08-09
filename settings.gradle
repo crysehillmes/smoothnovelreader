@@ -1,1 +1,1 @@
-include ':app', ':main_module', ':novel_sources:baidu_novel_source', ':changelog'
+include ':app', ':main_module', ':novel_sources:novel_source_baidu', ':changelog'
