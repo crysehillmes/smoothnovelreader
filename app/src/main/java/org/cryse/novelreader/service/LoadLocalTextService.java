@@ -23,7 +23,6 @@ import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.model.Chapter;
 import org.cryse.novelreader.model.ChapterContent;
 import org.cryse.novelreader.model.ChapterContentModel;
-import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.Novel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.source.NovelSource;
@@ -33,7 +32,6 @@ import org.cryse.novelreader.util.NovelTextFilter;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -158,7 +156,7 @@ public class LoadLocalTextService extends Service {
                 )
                 .setSmallIcon(R.drawable.ic_notification_open_local)
                 .setOngoing(true)
-                .setProgress(0, 0, true);
+                .setProgress(100, 0, false);
                 //.addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cancel_current), cancelCurrentPendingIntent)
                 //.addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cancel_all), cancelAllPendingIntent);
 
@@ -182,6 +180,18 @@ public class LoadLocalTextService extends Service {
                     ""
             ));
             mEventBus.sendEvent(new LoadLocalFileStartEvent());
+            localTextReader.setOnReadProgressListener(percent -> {
+                progressNotificationBuilder
+                        .setProgress(100, percent, false)
+                        .setContentText(
+                                getResources().getString(
+                                        R.string.notification_read_local_file_content_progress,
+                                        percent,
+                                        mTaskQueue.size()
+                                )
+                        );
+                startForeground(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
+            });
             int chapterCount = localTextReader.readChapters(new LocalTextReader.OnChapterReadCallback() {
 
                 int chapterIndex = 0;
@@ -198,7 +208,7 @@ public class LoadLocalTextService extends Service {
                                     addChapterToDatabase(
                                             novelId,
                                             chapterIndex,
-                                            chapter.getChapterName() + " [" + Integer.valueOf(subChapterId) + "]",
+                                            chapter.getChapterName() + " [" + Integer.toString(subChapterId) + "]",
                                             stringBuilder.substring(0, charIndex)
                                     );
                                     subChapterId++;
@@ -211,7 +221,7 @@ public class LoadLocalTextService extends Service {
                         addChapterToDatabase(
                                 novelId,
                                 chapterIndex,
-                                chapter.getChapterName() + "[" + Integer.valueOf(subChapterId) + "]",
+                                chapter.getChapterName() + "[" + Integer.toString(subChapterId) + "]",
                                 stringBuilder.toString()
                         );
                         chapterIndex++;

@@ -3,7 +3,14 @@ package org.cryse.chaptersplitter;
 import org.apache.tika.metadata.Metadata;
 import org.cryse.util.UniversalEncodingDetector;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,28 +24,28 @@ public class LocalTextReader {
     static final Pattern symbol2Pattern = Pattern.compile("[,./`!@#$%^&*-=_+;:\\{\\}，。、！￥…<>？：；a-zA-z]+");
     public static final int DEFAULT_MAX_CHAPTERS_CACHE_SIZE = 10;
     private int mListCacheSize = DEFAULT_MAX_CHAPTERS_CACHE_SIZE;
+    private File mFile;
     private InputStream mInputStream;
+    private BufferedInputStream mBufferedInputStream;
     private BufferedReader mBufferedReader;
+    private OnReadProgressListener mOnReadProgressListener;
 
     public LocalTextReader(String textFilePath) throws FileNotFoundException {
         this(new File(textFilePath));
     }
 
     public LocalTextReader(File textFile) throws FileNotFoundException {
-        this.mInputStream = new FileInputStream(textFile);
-    }
-
-    public LocalTextReader(InputStream in) {
-        this.mInputStream = in;
+        this.mFile = textFile;
     }
 
     public void open() throws IOException {
+        this.mInputStream = new FileInputStream(mFile);
         UniversalEncodingDetector detector = new UniversalEncodingDetector();
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(mInputStream);
-        Charset charset = detector.detect(bufferedInputStream, new Metadata());
-        bufferedInputStream.reset();
-        InputStreamReader reader = new InputStreamReader(bufferedInputStream, charset);
-        mBufferedReader = new BufferedReader(reader);
+        this.mBufferedInputStream = new BufferedInputStream(mInputStream);
+        Charset charset = detector.detect(mBufferedInputStream, new Metadata());
+        this.mBufferedInputStream.reset();
+        InputStreamReader reader = new InputStreamReader(mBufferedInputStream, charset);
+        this.mBufferedReader = new BufferedReader(reader);
     }
 
     public boolean isOpen() {
@@ -66,14 +73,22 @@ public class LocalTextReader {
         int mChapterCount = 0;
         List<TextChapter> textChapters = new ArrayList<TextChapter>(256);
         String line;
+        final int totalLineCount = countLines(mBufferedInputStream, true, false);
         int lineCount = 1;
+        int percent = 0;
         line = mBufferedReader.readLine();
         StringBuilder chapterContentBuilder = new StringBuilder();
         while (line != null) {
             line = mBufferedReader.readLine(); // 一次读入一行数据
             if(line != null) {
                 lineCount++;
-
+                if(mOnReadProgressListener != null) {
+                    int newPercent = (int)Math.floor((((float)lineCount)/((float)totalLineCount)) * 100);
+                    if(newPercent > percent) {
+                        percent = newPercent;
+                        mOnReadProgressListener.onReadProgress(percent);
+                    }
+                }
                 boolean isChapterTitle = checkChapterTitle(textChapters, lineCount, line);
                 if(textChapters.size() > mListCacheSize) {
                     textChapters.remove(0);
@@ -198,7 +213,47 @@ public class LocalTextReader {
         return trimmedOne.equals(trimmedTwo);
     }
 
+    public void setOnReadProgressListener(OnReadProgressListener onReadProgressListener) {
+        this.mOnReadProgressListener = onReadProgressListener;
+    }
+
     public interface OnChapterReadCallback {
         void onChapterRead(TextChapter chapter, String content);
+    }
+
+    public int countLines(BufferedInputStream is, boolean reset, boolean close) throws IOException {
+        int lineCount = 0;
+        try {
+            byte[] c = new byte[1024];
+            int count = 0;
+            int readChars = 0;
+            boolean empty = true;
+            while ((readChars = is.read(c)) != -1) {
+                empty = false;
+                for (int i = 0; i < readChars; ++i) {
+                    if (c[i] == '\n') {
+                        ++count;
+                    }
+                }
+            }
+            lineCount = (count == 0 && !empty) ? 1 : count;
+        } finally {
+            if(reset) {
+                try{
+                // this gives error for larger images taken by camera
+                    is.reset();
+                } catch(IOException e){
+                    is.close();
+                    open();
+                }
+            }
+            if(close)
+                is.close();
+        }
+        return lineCount;
+    }
+
+    public interface OnReadProgressListener {
+        void onReadProgress(int percent);
     }
 }
