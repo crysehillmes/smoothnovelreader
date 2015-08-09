@@ -6,6 +6,7 @@ import org.cryse.novelreader.source.baidu.entity.chapterlist.ChapterContentItem;
 import org.cryse.novelreader.source.baidu.entity.chapterlist.ChapterListDataset;
 import org.cryse.novelreader.source.baidu.entity.search.SearchDataset;
 import org.cryse.novelreader.source.baidu.entity.syncshelf.SyncShelfDataset;
+import org.cryse.novelreader.source.baidu.entity.syncshelf.SyncShelfItem;
 
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
@@ -18,7 +19,7 @@ public interface BaiduNovelSource {
 
     @FormUrlEncoded
     @POST(BAIDU_SEARCHBOX_URL)
-    public Observable<SyncShelfDataset> getNovelUpdate(
+    Observable<SyncShelfDataset> getNovelUpdate(
             @Query("action") String action,
             @Query("type") String type,
             @Query("service") String service,
@@ -30,7 +31,7 @@ public interface BaiduNovelSource {
 
     @FormUrlEncoded
     @POST(BAIDU_SEARCHBOX_URL)
-    public SyncShelfDataset getNovelUpdateSync(
+    SyncShelfItem[] getNovelUpdateSync(
             @Query("action") String action,
             @Query("type") String type,
             @Query("service") String service,
@@ -42,7 +43,7 @@ public interface BaiduNovelSource {
 
     @FormUrlEncoded
     @POST(BAIDU_SEARCHBOX_URL)
-    public Observable<CategoryDataset> getCategoryList(
+    Observable<CategoryDataset> getCategoryList(
             @Query("action") String action,
             @Query("type") String type,
             @Query("service") String service,
@@ -54,7 +55,7 @@ public interface BaiduNovelSource {
 
     @FormUrlEncoded
     @POST(BAIDU_SEARCHBOX_URL)
-    public Observable<ChapterListDataset> getChapterList(
+    Observable<ChapterListDataset> getChapterList(
             @Query("action") String action,
             @Query("type") String type,
             @Query("service") String service,
@@ -66,7 +67,7 @@ public interface BaiduNovelSource {
 
     @FormUrlEncoded
     @POST(BAIDU_SEARCHBOX_URL)
-    public ChapterListDataset getChapterListSync(
+    ChapterListDataset getChapterListSync(
             @Query("action") String action,
             @Query("type") String type,
             @Query("service") String service,
@@ -78,7 +79,7 @@ public interface BaiduNovelSource {
 
     @FormUrlEncoded
     @POST(BAIDU_SEARCHBOX_URL)
-    public Observable<ChapterContentItem> getChapterContent(
+    Observable<ChapterContentItem> getChapterContent(
             @Query("action") String action,
             @Query("type") String type,
             @Query("service") String service,
@@ -90,7 +91,7 @@ public interface BaiduNovelSource {
 
     @FormUrlEncoded
     @POST(BAIDU_SEARCHBOX_URL)
-    public ChapterContentItem getChapterContentSync(
+    ChapterContentItem getChapterContentSync(
             @Query("action") String action,
             @Query("type") String type,
             @Query("service") String service,
@@ -102,7 +103,7 @@ public interface BaiduNovelSource {
 
     @FormUrlEncoded
     @POST(BAIDU_SEARCHBOX_URL)
-    public Observable<SearchDataset> search(
+    Observable<SearchDataset> search(
             @Query("action") String action,
             @Query("type") String type,
             @Query("service") String service,
@@ -114,7 +115,7 @@ public interface BaiduNovelSource {
 
     @FormUrlEncoded
     @POST(BAIDU_SEARCHBOX_URL)
-    public Observable<String> getNovelDetail(
+    Observable<String> getNovelDetail(
             @Query("action") String action,
             @Query("type") String type,
             @Query("service") String service,
@@ -126,7 +127,7 @@ public interface BaiduNovelSource {
 
     @FormUrlEncoded
     @POST(BAIDU_SEARCHBOX_URL)
-    public Observable<ChangeSrcItem[]> getOtherSource(
+    Observable<ChangeSrcItem[]> getOtherSource(
             @Query("action") String action,
             @Query("type") String type,
             @Query("service") String service,

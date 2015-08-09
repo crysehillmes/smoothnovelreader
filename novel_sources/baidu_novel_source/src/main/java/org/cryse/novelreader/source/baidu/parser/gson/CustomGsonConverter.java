@@ -1,7 +1,10 @@
 package org.cryse.novelreader.source.baidu.parser.gson;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,10 +15,11 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.lang.reflect.Type;
+import java.util.Iterator;
+import java.util.Map;
 
 import retrofit.converter.ConversionException;
 import retrofit.converter.Converter;
-import retrofit.mime.MimeUtil;
 import retrofit.mime.TypedInput;
 import retrofit.mime.TypedOutput;
 
@@ -26,7 +30,6 @@ import retrofit.mime.TypedOutput;
 public class CustomGsonConverter implements Converter {
     private final Gson gson;
     private String encoding;
-    private JsonPreprocessor jsonPreprocessor = new JsonPreprocessor();
     /**
      * Create an instance using the supplied {@link com.google.gson.Gson} object for conversion. Encoding to JSON and
      * decoding from JSON (when no charset is specified by a header) will use UTF-8.
@@ -49,8 +52,20 @@ public class CustomGsonConverter implements Converter {
             String responseBodyString = MiniIOUtils.toString(body.in());
             if(responseBodyString.contains("<!DOCTYPE html>"))
                 return responseBodyString;
-            String filteredString = jsonPreprocessor.process(responseBodyString);
-            return gson.fromJson(filteredString, type);
+            JsonParser parser = new JsonParser();
+            JsonObject element = (JsonObject)parser.parse(responseBodyString);
+            JsonObject novelDataObject = element.getAsJsonObject("data").getAsJsonObject("novel");
+            Iterator<Map.Entry<String, JsonElement>> iter = novelDataObject.entrySet().iterator();
+            JsonElement dataSetObject = null;
+            if(iter.hasNext()) {
+                Map.Entry<String, JsonElement> entry = iter.next();
+                JsonObject object = (JsonObject) entry.getValue();
+                dataSetObject = object.get("dataset");
+            } else {
+                dataSetObject = element;
+            }
+            // String filteredString = jsonPreprocessor.process(responseBodyString);
+            return gson.fromJson(dataSetObject, type);
         } catch (JsonParseException | IOException e) {
             throw new ConversionException(e);
         } finally {

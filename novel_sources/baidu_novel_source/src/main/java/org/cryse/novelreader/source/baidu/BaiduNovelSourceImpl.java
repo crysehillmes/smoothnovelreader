@@ -3,25 +3,26 @@ package org.cryse.novelreader.source.baidu;
 import com.google.gson.Gson;
 import com.squareup.okhttp.OkHttpClient;
 
-import org.cryse.novelreader.source.baidu.converter.ToChapterContent;
-import org.cryse.novelreader.source.baidu.converter.ToNovelDetailModel;
-import org.cryse.novelreader.source.baidu.converter.ToNovelModel;
-import org.cryse.novelreader.source.baidu.parser.gson.CustomGsonConverter;
-import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.ChapterContentModel;
 import org.cryse.novelreader.model.ChapterModel;
+import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.model.NovelSyncBookShelfModel;
 import org.cryse.novelreader.source.NovelSource;
+import org.cryse.novelreader.source.baidu.converter.ToChapterContent;
 import org.cryse.novelreader.source.baidu.converter.ToChapterModel;
+import org.cryse.novelreader.source.baidu.converter.ToNovelDetailModel;
+import org.cryse.novelreader.source.baidu.converter.ToNovelModel;
 import org.cryse.novelreader.source.baidu.converter.ToNovelModelFromSearch;
 import org.cryse.novelreader.source.baidu.converter.ToNovelSyncBookShelfModel;
 import org.cryse.novelreader.source.baidu.entity.BaiduNovelSource;
 import org.cryse.novelreader.source.baidu.entity.changesrc.ChangeSrcItem;
 import org.cryse.novelreader.source.baidu.entity.chapterlist.ChapterContentItem;
 import org.cryse.novelreader.source.baidu.entity.chapterlist.ChapterListDataset;
-import org.cryse.novelreader.source.baidu.entity.syncshelf.SyncShelfDataset;
+import org.cryse.novelreader.source.baidu.entity.syncshelf.SyncShelfItem;
+import org.cryse.novelreader.source.baidu.parser.gson.CustomGsonConverter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -153,7 +154,7 @@ public class BaiduNovelSourceImpl implements NovelSource {
     @Override
     public List<NovelSyncBookShelfModel> getNovelUpdatesSync(String... novelIds) {
         String dataString = buildSyncShelfDataString(novelIds);
-        SyncShelfDataset dataset = novelSource.getNovelUpdateSync(
+        SyncShelfItem[] dataset = novelSource.getNovelUpdateSync(
                 SEARCHBOX_ACTION,
                 SEARCHBOX_SYNCSHELF,
                 SEARCHBOX_SERVICE,
