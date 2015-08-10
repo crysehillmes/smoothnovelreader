@@ -14,10 +14,13 @@ import android.util.Log;
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
+import org.cryse.novelreader.event.ImportChapterContentEvent;
+import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.model.ChapterContentModel;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.source.NovelSource;
+import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.NovelTextFilter;
 
 import java.util.List;
@@ -33,6 +36,9 @@ public class ChapterContentsCacheService extends Service {
 
     @Inject
     NovelSource novelSource;
+
+    @Inject
+    RxEventBus mEventBus;
 
     @Inject
     NovelTextFilter novelTextFilter;
@@ -133,6 +139,7 @@ public class ChapterContentsCacheService extends Service {
         int successCount = 0, failureCount = 0;
         List<ChapterModel> items = mNovelDatabase.loadChapters(cacheTask.getNovelId());
         int chapterCount = items.size();
+        int importBulkCount = 0;
         for (ChapterModel chapterModel : items) {
             if (stopCurrentTask) {
                 stopCurrentTask = false;
@@ -140,6 +147,7 @@ public class ChapterContentsCacheService extends Service {
             }
             try {
                 index++;
+                importBulkCount++;
                 if (chapterModel.isCached()) {
                     successCount++;
                     continue;
@@ -155,6 +163,10 @@ public class ChapterContentsCacheService extends Service {
             } catch (Exception ex) {
                 failureCount++;
             } finally {
+                if(importBulkCount >= DataContract.NOVEL_IMPORT_BULK_COUNT) {
+                    mEventBus.sendEvent(new ImportChapterContentEvent(DataContract.NOVEL_IMPORT_BULK_COUNT));
+                    importBulkCount = 0;
+                }
                 progressNotificationBuilder
                         .setProgress(chapterCount, index, false)
                         .setContentText(getResources().getString(R.string.novel_chapter_contents_cache_progress, index, chapterCount, mTaskQueue.size()));

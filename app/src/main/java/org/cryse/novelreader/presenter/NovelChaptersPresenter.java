@@ -10,8 +10,8 @@ import java.util.List;
 import rx.Observable;
 
 public interface NovelChaptersPresenter extends BasePresenter<NovelChaptersView> {
-    void loadChapters(NovelModel novelModel, boolean hideRedundantTitle);
-    void loadChapters(NovelModel novelModel, boolean forceUpdate, boolean hideRedundantTitle);
+    void loadChapters(NovelModel novelModel, boolean hideRedundantTitle, boolean scrollToLastRead);
+    void loadChapters(NovelModel novelModel, boolean forceUpdate, boolean hideRedundantTitle, boolean scrollToLastRead);
     void checkNovelFavoriteStatus(NovelModel novelModel);
     void checkLastReadState(NovelModel novelModel);
     void readChapter(NovelModel novelModel, String chapterId, List<ChapterModel> chapterList);

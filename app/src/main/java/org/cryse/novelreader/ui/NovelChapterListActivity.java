@@ -17,6 +17,8 @@ import com.quentindommerc.superlistview.SuperListview;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.event.AbstractEvent;
+import org.cryse.novelreader.event.ImportChapterContentEvent;
 import org.cryse.novelreader.model.BookmarkModel;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
@@ -139,7 +141,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         if(mNovelChapterList.size() == 0) {
             mListView.getSwipeToRefresh().measure(1,1);
             mListView.getSwipeToRefresh().setRefreshing(true);
-            getPresenter().loadChapters(mNovel, mHideRedundantChapterTitle.get());
+            getPresenter().loadChapters(mNovel, mHideRedundantChapterTitle.get(), true);
         }
         if(index != -1) {
             mListView.getList().setSelectionFromTop(index, top);
@@ -165,7 +167,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     protected void onResume() {
         super.onResume();
         getPresenter().checkNovelFavoriteStatus(mNovel);
-        getPresenter().loadChapters(mNovel, mHideRedundantChapterTitle.get());
+        getPresenter().loadChapters(mNovel, mHideRedundantChapterTitle.get(), true);
     }
 
     @Override
@@ -254,11 +256,19 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     }
 
     @Override
-    public void showChapterList(List<ChapterModel> chapterList) {
+    protected void onEvent(AbstractEvent event) {
+        super.onEvent(event);
+        if(event instanceof ImportChapterContentEvent) {
+            getPresenter().loadChapters(mNovel, mHideRedundantChapterTitle.get(), false);
+        }
+    }
+
+    @Override
+    public void showChapterList(List<ChapterModel> chapterList, boolean scrollToLastRead) {
         mNovelChapterList.clear();
         mNovelChapterList.addAll(chapterList);
         mChapterListAdapter.notifyDataSetChanged();
-        if(mNovelChapterList.size() > 0)
+        if(mNovelChapterList.size() > 0 && scrollToLastRead)
             getPresenter().checkLastReadState(mNovel);
     }
 
@@ -323,7 +333,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     private void refreshChapters() {
         mListView.getSwipeToRefresh().setRefreshing(true);
-        getPresenter().loadChapters(mNovel, true);
+        getPresenter().loadChapters(mNovel, true, false);
     }
 
     private void chaptersOfflineCache() {

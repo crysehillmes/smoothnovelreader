@@ -17,6 +17,7 @@ import org.cryse.chaptersplitter.TextChapter;
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
+import org.cryse.novelreader.event.ImportChapterContentEvent;
 import org.cryse.novelreader.event.LoadLocalFileDoneEvent;
 import org.cryse.novelreader.event.LoadLocalFileStartEvent;
 import org.cryse.novelreader.event.RxEventBus;
@@ -195,8 +196,10 @@ public class LoadLocalTextService extends Service {
             int chapterCount = localTextReader.readChapters(new LocalTextReader.OnChapterReadCallback() {
 
                 int chapterIndex = 0;
+                int importBulkCount = 0;
                 @Override
                 public void onChapterRead(TextChapter chapter, String content) {
+
                     if(LocalTextReader.trimNoSymbolEqual(chapter.getChapterName(),content))
                         return;
                     if(content.length() > MAX_CHAPTER_CHAR_COUNT_LIMIT) {
@@ -213,6 +216,7 @@ public class LoadLocalTextService extends Service {
                                     );
                                     subChapterId++;
                                     chapterIndex++;
+                                    importBulkCount++;
                                     stringBuilder.delete(0, charIndex);
                                     break;
                                 }
@@ -225,9 +229,15 @@ public class LoadLocalTextService extends Service {
                                 stringBuilder.toString()
                         );
                         chapterIndex++;
+                        importBulkCount++;
                     } else {
                         addChapterToDatabase(novelId, chapterIndex, chapter.getChapterName(), content);
                         chapterIndex++;
+                        importBulkCount++;
+                    }
+                    if(importBulkCount >= DataContract.NOVEL_IMPORT_BULK_COUNT) {
+                        mEventBus.sendEvent(new ImportChapterContentEvent(DataContract.NOVEL_IMPORT_BULK_COUNT));
+                        importBulkCount = 0;
                     }
                 }
             });

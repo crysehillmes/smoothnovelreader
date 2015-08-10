@@ -47,19 +47,19 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
     }
 
     @Override
-    public void loadChapters(NovelModel novelModel, boolean hideRedundantTitle) {
-        loadChapters(novelModel, false, hideRedundantTitle);
+    public void loadChapters(NovelModel novelModel, boolean hideRedundantTitle, boolean scrollToLastRead) {
+        loadChapters(novelModel, false, hideRedundantTitle, scrollToLastRead);
     }
 
     @Override
-    public void loadChapters(NovelModel novelModel, boolean forceUpdate, boolean hideRedundantTitle) {
+    public void loadChapters(NovelModel novelModel, boolean forceUpdate, boolean hideRedundantTitle, boolean scrollToLastRead) {
         SubscriptionUtils.checkAndUnsubscribe(mLoadChaptersSubscription);
         mLoadChaptersSubscription = mNovelBusinessLogicLayer.getChapterList(novelModel, forceUpdate, hideRedundantTitle)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            mView.showChapterList(result);
+                            mView.showChapterList(result, scrollToLastRead);
                         },
                         error -> {
                             mView.setLoading(false);
@@ -167,7 +167,7 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
     private class EmptyNovelChaptersView implements NovelChaptersView {
 
         @Override
-        public void showChapterList(List<ChapterModel> chapterList) {
+        public void showChapterList(List<ChapterModel> chapterList, boolean scrollToLastRead) {
 
         }
 
