@@ -19,6 +19,8 @@
     <string name="dialog_exit_content"></string>
     <string name="dialog_exit_confirm">退出</string>
     <string name="dialog_exit_cancel">继续阅读</string>
+    <string name="dialog_error_mime_title">错误的文件类型</string>
+    <string name="dialog_error_mime_content">目前只支持 txt 文件</string>
 
     <string name="dialog_button_start_read">开始阅读</string>
     <string name="dialog_button_add_favorite">加入书架</string>
@@ -74,6 +76,7 @@
     <string name="notification_action_chapter_contents_cancel_novel">取消缓存《%1$s》</string>
     <string name="notification_action_chapter_contents_cancel_all">取消全部缓存</string>
     <string name="notification_read_local_file_title">正在导入 %1$s</string>
+    <string name="notification_read_local_file_content_progress">已导入 %1$d %%, 还有 %2$d 本书等待导入。</string>
     <string name="notification_read_local_file_content">还有 %1$d 个文件等待导入</string>
     <string name="notification_read_local_file_finish_title">%1$s 已导入书架</string>
     <string name="notification_read_local_file_finish_content">可以开始阅读啦</string>
@@ -209,14 +212,21 @@
     <!-- About -->
     <string name="settings_about_activity_title">关于</string>
     <string name="settings_category_author_title">关于</string>
+    <string name="settings_item_author_name_value" translatable="false">Cryse Hillmes</string>
     <string name="settings_item_author_name_title">作者</string>
+    <string name="settings_item_email_address_value" translatable="false">tyk5555@hotmail.com</string>
     <string name="settings_item_email_address_title">联系作者</string>
+    <string name="settings_item_author_blog_site_value" translatable="false">http://www.cryse.org</string>
     <string name="settings_item_author_blog_site">作者网站</string>
     <string name="settings_item_version">版本</string>
     <string name="settings_item_change_log_summary">最近各个版本的改进</string>
     <string name="settings_item_change_log_title">Changelog</string>
     <string name="copyright_statement">[声明：本应用内小说来自手机百度页面，本应用不爬取或存储任何小说内容]</string>
+
+    <string name="settings_category_chapter_list_title">章节列表</string>
+    <string name="settings_item_hide_redundant_chapter_title_title">简化章节标题</string>
+    <string name="settings_item_hide_redundant_chapter_title_summary">简化章节标题显示，如第一篇第一章这类长标题</string>
+
+    <string name="action_add_book_source_dialog_title">选择来源</string>
     <string name="action_add_local_text_file">导入本地 txt 文件</string>
-    <string name="dialog_error_mime_title">错误的文件类型</string>
-    <string name="dialog_error_mime_content">目前只支持 txt 文件</string>
 </resources>

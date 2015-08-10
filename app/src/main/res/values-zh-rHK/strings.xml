@@ -19,6 +19,8 @@
     <string name="dialog_exit_content"></string>
     <string name="dialog_exit_confirm">退出</string>
     <string name="dialog_exit_cancel">繼續閱讀</string>
+    <string name="dialog_error_mime_content">目前衹支持 txt 文件</string>
+    <string name="dialog_error_mime_title">錯誤的文件類型</string>
 
     <string name="dialog_button_start_read">開始閱讀</string>
     <string name="dialog_button_add_favorite">加入書架</string>
@@ -74,6 +76,7 @@
     <string name="notification_action_chapter_contents_cancel_novel">取消緩存《%1$s》</string>
     <string name="notification_action_chapter_contents_cancel_all">取消全部緩存</string>
     <string name="notification_read_local_file_title">正在導入 %1$s</string>
+    <string name="notification_read_local_file_content_progress">已導入 %1$d %%, 還有 %2$d 本書等待導入。</string>
     <string name="notification_read_local_file_content">還有 %1$d 個文件等待導入</string>
     <string name="notification_read_local_file_finish_title">%1$s 已導入書架</string>
     <string name="notification_read_local_file_finish_content">可以開始閱讀啦</string>
@@ -173,7 +176,14 @@
     <string name="settings_item_email_address_title">聯繫作者</string>
     <string name="settings_item_author_blog_site">作者主頁</string>
     <string name="settings_item_version">版本</string>
+    <string name="settings_item_change_log_summary">最近各個版本的改進</string>
+    <string name="settings_item_change_log_title">Changelog</string>
+    <string name="copyright_statement">[聲明：本應用内小説來自於網頁解析，本應用本身不提供任何小説内容]</string>
+
+    <string name="settings_category_chapter_list_title">章節列表</string>
+    <string name="settings_item_hide_redundant_chapter_title_title">简化章节标题</string>
+    <string name="settings_item_hide_redundant_chapter_title_summary">简化章节标题显示，如第一篇第一章这类长标题</string>
+
+    <string name="action_add_book_source_dialog_title">選擇來源</string>
     <string name="action_add_local_text_file">導入本地 txt 文件</string>
-    <string name="dialog_error_mime_content">目前只支持 txt 文件</string>
-    <string name="dialog_error_mime_title">錯誤的文件類型</string>
 </resources>
