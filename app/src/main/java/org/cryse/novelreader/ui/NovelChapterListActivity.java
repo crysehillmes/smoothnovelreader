@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.Snackbar;
@@ -16,22 +15,23 @@ import android.widget.TextView;
 
 import com.quentindommerc.superlistview.SuperListview;
 
+import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.model.BookmarkModel;
-import org.cryse.novelreader.service.ChapterContentsCacheService;
-import org.cryse.novelreader.util.ColorUtils;
-
-import org.cryse.novelreader.R;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
+import org.cryse.novelreader.presenter.NovelChaptersPresenter;
+import org.cryse.novelreader.qualifier.PrefsHideRedundantChapterTitle;
+import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.ui.adapter.NovelChapterListAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
-import org.cryse.novelreader.presenter.NovelChaptersPresenter;
+import org.cryse.novelreader.util.ColorUtils;
+import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
+import org.cryse.novelreader.util.prefs.BooleanPreference;
 import org.cryse.novelreader.view.NovelChaptersView;
-import org.cryse.novelreader.util.DataContract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +45,9 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     private static final String LOG_TAG = NovelChapterListActivity.class.getName();
     @Inject
     NovelChaptersPresenter mPresenter;
+    @Inject
+    @PrefsHideRedundantChapterTitle
+    BooleanPreference mHideRedundantChapterTitle;
 
     @InjectView(R.id.novel_chapter_list_listview)
     SuperListview mListView;
@@ -136,7 +139,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         if(mNovelChapterList.size() == 0) {
             mListView.getSwipeToRefresh().measure(1,1);
             mListView.getSwipeToRefresh().setRefreshing(true);
-            getPresenter().loadChapters(mNovel);
+            getPresenter().loadChapters(mNovel, mHideRedundantChapterTitle.get());
         }
         if(index != -1) {
             mListView.getList().setSelectionFromTop(index, top);
@@ -162,7 +165,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     protected void onResume() {
         super.onResume();
         getPresenter().checkNovelFavoriteStatus(mNovel);
-        getPresenter().loadChapters(mNovel);
+        getPresenter().loadChapters(mNovel, mHideRedundantChapterTitle.get());
     }
 
     @Override

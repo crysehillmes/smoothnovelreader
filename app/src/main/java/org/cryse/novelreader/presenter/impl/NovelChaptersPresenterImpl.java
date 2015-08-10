@@ -7,9 +7,9 @@ import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelChaptersPresenter;
 import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.SnackbarUtils;
-import org.cryse.novelreader.view.NovelChaptersView;
 import org.cryse.novelreader.util.SubscriptionUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
+import org.cryse.novelreader.view.NovelChaptersView;
 
 import java.util.List;
 
@@ -47,14 +47,14 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
     }
 
     @Override
-    public void loadChapters(NovelModel novelModel) {
-        loadChapters(novelModel, false);
+    public void loadChapters(NovelModel novelModel, boolean hideRedundantTitle) {
+        loadChapters(novelModel, false, hideRedundantTitle);
     }
 
     @Override
-    public void loadChapters(NovelModel novelModel, boolean forceUpdate) {
+    public void loadChapters(NovelModel novelModel, boolean forceUpdate, boolean hideRedundantTitle) {
         SubscriptionUtils.checkAndUnsubscribe(mLoadChaptersSubscription);
-        mLoadChaptersSubscription = mNovelBusinessLogicLayer.getChapterList(novelModel, forceUpdate)
+        mLoadChaptersSubscription = mNovelBusinessLogicLayer.getChapterList(novelModel, forceUpdate, hideRedundantTitle)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

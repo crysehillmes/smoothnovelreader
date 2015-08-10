@@ -8,6 +8,7 @@ import org.cryse.novelreader.qualifier.ApplicationContext;
 import org.cryse.novelreader.qualifier.PrefsFontLineHeight;
 import org.cryse.novelreader.qualifier.PrefsFontSize;
 import org.cryse.novelreader.qualifier.PrefsGrayScaleInNight;
+import org.cryse.novelreader.qualifier.PrefsHideRedundantChapterTitle;
 import org.cryse.novelreader.qualifier.PrefsNightMode;
 import org.cryse.novelreader.qualifier.PrefsReadBackground;
 import org.cryse.novelreader.qualifier.PrefsScrollMode;
@@ -89,5 +90,11 @@ public class PreferenceProvider {
     @PrefsThemeColor
     IntegerPreference provideThemeColorIndex(SharedPreferences preferences) {
         return new IntegerPreference(preferences, PreferenceConstant.SHARED_PREFERENCE_THEME_COLOR, PreferenceConstant.SHARED_PREFERENCE_THEME_COLOR_VALUE);
+    }
+
+    @Provides
+    @PrefsHideRedundantChapterTitle
+    BooleanPreference provideHideRedundantChapterTitle(SharedPreferences preferences) {
+        return new BooleanPreference(preferences, PreferenceConstant.SHARED_PREFERENCE_HIDE_REDUNDANT_CHAPTER_TITLE, PreferenceConstant.SHARED_PREFERENCE_HIDE_REDUNDANT_CHAPTER_TITLE_VALUE);
     }
 }

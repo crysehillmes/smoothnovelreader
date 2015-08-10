@@ -1,9 +1,9 @@
 package org.cryse.novelreader.logic;
 
 import org.cryse.novelreader.model.BookmarkModel;
-import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.ChapterContentModel;
 import org.cryse.novelreader.model.ChapterModel;
+import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 
@@ -22,30 +22,30 @@ public interface NovelBusinessLogicLayer {
      * @param id the id
      * @return the boolean
      */
-    public Observable<Boolean> isFavorite(String id);
+    Observable<Boolean> isFavorite(String id);
 
-    public Observable<Boolean[]> isFavoriteLocal(String id);
+    Observable<Boolean[]> isFavoriteLocal(String id);
 
     /**
      * Get favorites.
      *
      * @return the favorited
      */
-    public Observable<List<NovelModel>> getFavorites();
+    Observable<List<NovelModel>> getFavorites();
 
     /**
      * Add to favorite.
      *
      * @param novels the novels
      */
-    public Observable<Void> addToFavorite(NovelModel novels);
+    Observable<Void> addToFavorite(NovelModel novels);
 
     /**
      * Remove from favorite.
      *
      * @param novelId the novel id
      */
-    public Observable<Void> removeFromFavorite(String... novelId);
+    Observable<Void> removeFromFavorite(String... novelId);
 
     /**
      * Gets recommends.
@@ -55,7 +55,7 @@ public interface NovelBusinessLogicLayer {
      * @param page    the page
      * @return the recommends
      */
-    public Observable<List<NovelModel>> getCategories(String cid, String subcate, int page, int status, boolean isByTag);
+    Observable<List<NovelModel>> getCategories(String cid, String subcate, int page, int status, boolean isByTag);
 
     /**
      * Gets ranks.
@@ -64,7 +64,7 @@ public interface NovelBusinessLogicLayer {
      * @param page the page
      * @return the ranks
      */
-    public Observable<List<NovelModel>> getRanks(String cid, int page);
+    Observable<List<NovelModel>> getRanks(String cid, int page);
 
     /**
      * Gets chapter list.
@@ -72,7 +72,7 @@ public interface NovelBusinessLogicLayer {
      * @param novel the novel
      * @return the chapter list
      */
-    public Observable<List<ChapterModel>> getChapterList(NovelModel novel, final boolean forceUpdate);
+    Observable<List<ChapterModel>> getChapterList(NovelModel novel, final boolean forceUpdate, final boolean hideRedundantTitle);
 
     /**
      * Gets chapter list.
@@ -81,7 +81,7 @@ public interface NovelBusinessLogicLayer {
      * @param chapterModels the novel chapter List
      * @return the Observable, would call onNext for many times
      */
-    public Observable<Boolean> preloadChapterContents(NovelModel novel, List<ChapterModel> chapterModels);
+    Observable<Boolean> preloadChapterContents(NovelModel novel, List<ChapterModel> chapterModels);
 
     /**
      * Gets chapter content.
@@ -89,7 +89,7 @@ public interface NovelBusinessLogicLayer {
      * @param novel       the novel
      * @return the chapter content
      */
-    public Observable<ChapterContentModel> getChapterContent(ChapterModel novel, boolean forceUpdate);
+    Observable<ChapterContentModel> getChapterContent(ChapterModel novel, boolean forceUpdate);
 
     /**
      * Search observable.
@@ -98,24 +98,24 @@ public interface NovelBusinessLogicLayer {
      * @param page        the page
      * @return the observable
      */
-    public Observable<List<NovelModel>> search(String queryString, int page);
+    Observable<List<NovelModel>> search(String queryString, int page);
 
 
-    public Observable<List<NovelModel>> getNovelUpdate();
+    Observable<List<NovelModel>> getNovelUpdate();
 
-    public Observable<Void> addBookMark(BookmarkModel model);
+    Observable<Void> addBookMark(BookmarkModel model);
 
-    public Observable<Void> saveLastReadBookMark(BookmarkModel bookMarkModel);
+    Observable<Void> saveLastReadBookMark(BookmarkModel bookMarkModel);
 
-    public Observable<BookmarkModel> getLastReadBookMark(String novelId);
+    Observable<BookmarkModel> getLastReadBookMark(String novelId);
 
-    public Observable<List<BookmarkModel>> getBookMarks(String novelId);
+    Observable<List<BookmarkModel>> getBookMarks(String novelId);
 
-    public Observable<BookmarkModel> checkLastReadBookMarkState(String novelId);
+    Observable<BookmarkModel> checkLastReadBookMarkState(String novelId);
 
-    public Observable<NovelDetailModel> getNovelDetail(String id, String src);
+    Observable<NovelDetailModel> getNovelDetail(String id, String src);
 
-    public Observable<List<NovelChangeSrcModel>> getOtherChapterSrc(String novelId, String currentChapterSrc, String chapterTitle);
+    Observable<List<NovelChangeSrcModel>> getOtherChapterSrc(String novelId, String currentChapterSrc, String chapterTitle);
 
-    public Observable<ChapterModel> changeChapterSrc(ChapterModel chapterModel, NovelChangeSrcModel changeSrcModel);
+    Observable<ChapterModel> changeChapterSrc(ChapterModel chapterModel, NovelChangeSrcModel changeSrcModel);
 }

@@ -3,14 +3,14 @@ package org.cryse.novelreader.logic.impl;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.BookmarkModel;
-import org.cryse.novelreader.model.ChapterContent;
-import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.ChapterContentModel;
 import org.cryse.novelreader.model.ChapterModel;
+import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.model.NovelSyncBookShelfModel;
 import org.cryse.novelreader.source.NovelSource;
+import org.cryse.novelreader.util.ChapterTitleUtils;
 import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.NovelTextFilter;
 import org.cryse.novelreader.util.comparator.NovelSortKeyComparator;
@@ -126,7 +126,7 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     }
 
     @Override
-    public Observable<List<ChapterModel>> getChapterList(final NovelModel novel, final boolean forceUpdate) {
+    public Observable<List<ChapterModel>> getChapterList(final NovelModel novel, final boolean forceUpdate, final boolean hideRedundantTitle) {
         return Observable.create((Subscriber<? super List<ChapterModel>> subscriber) -> {
             try {
                 List<ChapterModel> chapterList;
@@ -143,10 +143,12 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                             chapterList = novelDataBase.loadChapters(novel.getNovelId());
                         }
                     }
+                    ChapterTitleUtils.shrinkTitles(chapterList);
                     subscriber.onNext(chapterList);
                     subscriber.onCompleted();
                 } else {
                     chapterList = novelSource.getChapterListSync(novel.getNovelId(), novel.getSource());
+                    ChapterTitleUtils.shrinkTitles(chapterList);
                     subscriber.onNext(chapterList);
                     subscriber.onCompleted();
                 }
