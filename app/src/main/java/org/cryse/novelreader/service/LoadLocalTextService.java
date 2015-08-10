@@ -171,10 +171,11 @@ public class LoadLocalTextService extends Service {
             File textFile = new File(filePath);
             localTextReader = new LocalTextReader(filePath);
             localTextReader.open();
+            String bookName = localTextReader.getBookName();
             String novelId = LOCAL_FILE_PREFIX + ":" + HashUtils.md5(filePath);
             mNovelDatabase.addToFavorite(new Novel(
                     novelId,
-                    TextUtils.isEmpty(customTitle) ? textFile.getName() : customTitle,
+                    TextUtils.isEmpty(bookName) ? textFile.getName() : bookName,
                     "",
                     NovelModel.TYPE_LOCAL_FILE,
                     LOCAL_FILE_PREFIX + ":" + filePath,

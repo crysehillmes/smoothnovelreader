@@ -22,9 +22,11 @@ public class LocalTextReader {
     static final Pattern chapterNumberExcludePattern = Pattern.compile("(第[0-9〇一二三四五六七八九十百千万壹贰叁肆伍陆柒捌玖零拾佰仟 ]+[章回节卷集幕计部]?[完终])|([第]?[0-9〇一二三四五六七八九十百千万壹贰叁肆伍陆柒捌玖零拾佰仟 ]+[章回节卷集幕计部][完终])");
     static final Pattern symbolPattern = Pattern.compile("[,./`!@#$%^&*()-=_+;:'\"\\{\\}，。、！￥…（）《》<>？：“”；a-zA-z]+");
     static final Pattern symbol2Pattern = Pattern.compile("[,./`!@#$%^&*-=_+;:\\{\\}，。、！￥…<>？：；a-zA-z]+");
+    static final Pattern bookNamePattern = Pattern.compile("(?<=《).+(?=》)");
     public static final int DEFAULT_MAX_CHAPTERS_CACHE_SIZE = 10;
     private int mListCacheSize = DEFAULT_MAX_CHAPTERS_CACHE_SIZE;
     private File mFile;
+    private String mBookName = null;
     private InputStream mInputStream;
     private BufferedInputStream mBufferedInputStream;
     private BufferedReader mBufferedReader;
@@ -36,6 +38,22 @@ public class LocalTextReader {
 
     public LocalTextReader(File textFile) throws FileNotFoundException {
         this.mFile = textFile;
+        parseBookName();
+    }
+
+    private void parseBookName() {
+        String fileName = this.mFile.getName();
+        Matcher matcher = bookNamePattern.matcher(fileName);
+        while (matcher.find()) {
+            mBookName = matcher.group();
+        }
+        if(mBookName == null) {
+            int lastIndexOfDot = fileName.lastIndexOf(".");
+            if(lastIndexOfDot > 0 && lastIndexOfDot < fileName.length())
+                mBookName = fileName.substring(0, lastIndexOfDot);
+            else
+                mBookName = fileName;
+        }
     }
 
     public void open() throws IOException {
@@ -67,6 +85,10 @@ public class LocalTextReader {
                 e.printStackTrace();
             }
         }
+    }
+
+    public String getBookName() {
+        return mBookName;
     }
 
     public int readChapters(OnChapterReadCallback callback) throws IOException {
