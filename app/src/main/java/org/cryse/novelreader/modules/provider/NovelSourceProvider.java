@@ -4,11 +4,11 @@ import android.content.Context;
 
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayerImpl;
-import org.cryse.novelreader.lib.novelsource.baidubrowser.BaiduBrowserNovelSourceImpl;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.logic.impl.NovelBusinessLogicLayerImpl;
 import org.cryse.novelreader.qualifier.ApplicationContext;
 import org.cryse.novelreader.source.NovelSource;
+import org.cryse.novelreader.source.baidu.BaiduNovelSourceImpl;
 import org.cryse.novelreader.util.NovelTextFilter;
 
 import javax.inject.Singleton;
@@ -28,7 +28,7 @@ public class NovelSourceProvider {
     @Provides
     @Singleton
     NovelSource provideNovelSource() {
-        return new BaiduBrowserNovelSourceImpl();
+        return new BaiduNovelSourceImpl();
     }
 
 

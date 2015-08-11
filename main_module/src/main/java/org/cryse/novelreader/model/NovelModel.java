@@ -4,6 +4,7 @@ import android.os.Parcelable;
 
 public interface NovelModel extends NovelReadableModel, Parcelable {
     int TYPE_BAIDU_SOURCE = 12;
+    int TYPE_BAIDU_BROWSER_SOURCE = 14;
     int TYPE_LOCAL_FILE = 22;
     void setNovelId(String novelId);
     void setTitle(String title);

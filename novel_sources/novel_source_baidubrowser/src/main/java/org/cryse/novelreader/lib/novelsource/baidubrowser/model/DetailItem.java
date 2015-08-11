@@ -28,7 +28,7 @@ public class DetailItem {
     private String chapterNumber;
 
     @SerializedName("link")
-    private int source;
+    private String source;
 
     @SerializedName("catalog")
     private ChapterItem[] catalog;
@@ -100,11 +100,11 @@ public class DetailItem {
         this.chapterNumber = chapterNumber;
     }
 
-    public int getSource() {
+    public String getSource() {
         return source;
     }
 
-    public void setSource(int source) {
+    public void setSource(String source) {
         this.source = source;
     }
 
@@ -122,5 +122,18 @@ public class DetailItem {
 
     public void setUpdate(ChapterItem[] update) {
         this.update = update;
+    }
+
+
+    public String getLatestChapterTitle() {
+        if(update != null && update.length > 0) {
+            return update[0].getTitle();
+        } else {
+            if(catalog != null && catalog.length > 0) {
+                return catalog[catalog.length - 1].getTitle();
+            } else {
+                return "";
+            }
+        }
     }
 }

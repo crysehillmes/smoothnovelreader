@@ -14,44 +14,43 @@ import retrofit.http.Query;
 import rx.Observable;
 
 public interface BaiduBrowserNovelSource {
-    String BAIDU_BROWSER_NOVEL_URL = "http://uil.cbs.baidu.com/novel/";
+    String BAIDU_BROWSER_NOVEL_URL = "http://uil.cbs.baidu.com/novel";
     @FormUrlEncoded
-    @POST("update")
+    @POST("/update")
     NovelUpdateItem[] getNovelUpdateSync(
             @Field("list") String dataString
     );
 
-    @GET("catalog")
+    @GET("/catalog")
     Observable<ChapterItem[]> getChapters(
             @Query("id") String novelId
     );
 
-    @GET("catalog")
+    @GET("/catalog")
     ChapterItem[] getChaptersSync(
             @Query("id") String novelId
     );
 
     @FormUrlEncoded
-    @POST("text")
+    @POST("/text")
     Observable<ChapterContentItem[]> getChapterContent(
             @Field("list") String dataString
     );
 
 
     @FormUrlEncoded
-    @POST("text")
+    @POST("/text")
     ChapterContentItem[] getChapterContentSync(
             @Field("list") String dataString
     );
 
-    @GET("GET")
+    @GET("/search")
     Observable<SearchNovelItem[]> search(
             @Query("kw") String keyword,
             @Query("pn") int page
     );
 
-    @FormUrlEncoded
-    @GET("detail")
+    @GET("/detail")
     Observable<DetailItem> getNovelDetail(
             @Query("id") String novelId,
             @Query("catalog") int catalog,

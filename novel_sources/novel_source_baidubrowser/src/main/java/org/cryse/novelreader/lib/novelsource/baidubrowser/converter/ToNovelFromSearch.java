@@ -19,7 +19,7 @@ public class ToNovelFromSearch implements Func1<SearchNovelItem[], List<NovelMod
                     item.getNovelId(),
                     item.getTitle(),
                     item.getAuthor(),
-                    NovelModel.TYPE_BAIDU_SOURCE,
+                    NovelModel.TYPE_BAIDU_BROWSER_SOURCE,
                     item.getSource(),
                     item.getCoverImage()
             ));

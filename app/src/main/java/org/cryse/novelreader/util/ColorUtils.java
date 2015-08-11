@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.util.TypedValue;
+import android.text.TextUtils;
 
 import org.cryse.novelreader.R;
 
@@ -72,8 +72,17 @@ public class ColorUtils {
     }
 
     public static int getPreDefinedColorFromId(Context context, String idString, int offset) {
-        long id = Long.parseLong(idString) + offset;
-        return getPreDefinedBackgroundColor(context, (int) (id % IMAGEVIEW_BG_COLORS.length));
+        long colorBase;
+        if (!TextUtils.isEmpty(idString) && TextUtils.isDigitsOnly(idString)) {
+            colorBase = Long.parseLong(idString) + offset;
+        } else if (!TextUtils.isEmpty(idString)) {
+            colorBase = idString.hashCode();
+        } else {
+            Random random = new Random(System.currentTimeMillis());
+            colorBase = random.nextLong();
+        }
+        if(colorBase < 0) colorBase = -colorBase;
+        return getPreDefinedBackgroundColor(context, (int) (colorBase % IMAGEVIEW_BG_COLORS.length));
     }
 
     public static int getRandomPreDefinedColor(Context context) {

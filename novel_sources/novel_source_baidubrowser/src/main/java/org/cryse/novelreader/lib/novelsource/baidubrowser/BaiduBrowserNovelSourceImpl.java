@@ -50,7 +50,7 @@ public class BaiduBrowserNovelSourceImpl implements NovelSource {
                     request.addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19");
                     request.addHeader("Accept", "application/json,text/html");
                 })
-                .setEndpoint("http://m.baidu.com")
+                .setEndpoint(BaiduBrowserNovelSource.BAIDU_BROWSER_NOVEL_URL)
                 .setClient(new OkClient(mOkHttpClient)).setConverter(new CustomGsonConverter(new Gson())).build().create(BaiduBrowserNovelSource.class);
 
     }
