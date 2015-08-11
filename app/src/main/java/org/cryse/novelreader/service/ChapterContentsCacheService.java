@@ -127,7 +127,7 @@ public class ChapterContentsCacheService extends Service {
         progressNotificationBuilder = new NotificationCompat.Builder(ChapterContentsCacheService.this);
         progressNotificationBuilder.setContentTitle(getResources().getString(R.string.notification_chapter_contents_cache_title, cacheTask.getNovelTitle()))
                 .setContentText("")
-                .setSmallIcon(R.drawable.ic_action_chapter_cache)
+                .setSmallIcon(R.drawable.ic_notification_download)
                 .setOngoing(true)
                 .addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cancel_current), cancelCurrentPendingIntent)
                 .addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cancel_all), cancelAllPendingIntent);
