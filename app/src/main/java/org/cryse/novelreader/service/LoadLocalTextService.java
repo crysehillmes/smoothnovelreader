@@ -27,6 +27,7 @@ import org.cryse.novelreader.model.ChapterContentModel;
 import org.cryse.novelreader.model.Novel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.source.NovelSource;
+import org.cryse.novelreader.ui.NovelChapterListActivity;
 import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.HashUtils;
 import org.cryse.novelreader.util.NovelTextFilter;
@@ -163,7 +164,7 @@ public class LoadLocalTextService extends Service {
 
         startForeground(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
 
-
+        NovelModel newLocalNovel = null;
 
 
         LocalTextReader localTextReader = null;
@@ -173,14 +174,15 @@ public class LoadLocalTextService extends Service {
             localTextReader.open();
             String bookName = localTextReader.getBookName();
             String novelId = LOCAL_FILE_PREFIX + ":" + HashUtils.md5(filePath);
-            mNovelDatabase.addToFavorite(new Novel(
+            newLocalNovel = new Novel(
                     novelId,
                     TextUtils.isEmpty(bookName) ? textFile.getName() : bookName,
                     "",
                     NovelModel.TYPE_LOCAL_FILE,
                     LOCAL_FILE_PREFIX + ":" + filePath,
                     ""
-            ));
+            );
+            mNovelDatabase.addToFavorite(newLocalNovel);
             mEventBus.sendEvent(new LoadLocalFileStartEvent());
             localTextReader.setOnReadProgressListener(percent -> {
                 progressNotificationBuilder
@@ -259,8 +261,7 @@ public class LoadLocalTextService extends Service {
         // TODO: Show a notification here to let user know one book is cached.
         showTaskResultNotification(
                 filePath,
-                fileName,
-                customTitle
+                newLocalNovel
         );
     }
 
@@ -281,22 +282,30 @@ public class LoadLocalTextService extends Service {
         ));
     }
 
-    private void showTaskResultNotification(String textFilePath, String fileName, String customTitle) {
+    private void showTaskResultNotification(String filePath, NovelModel novelModel) {
         notification_count = notification_count + 1;
+
+        Intent openChaptersActivityIntent = new Intent(this, NovelChapterListActivity.class);
+        openChaptersActivityIntent.putExtra(DataContract.NOVEL_OBJECT_NAME, novelModel);
+        PendingIntent chaptersListIntent =
+                PendingIntent.getActivity(this, 0, openChaptersActivityIntent, PendingIntent.FLAG_ONE_SHOT);
+
+
         NotificationCompat.Builder mResultBuilder = new NotificationCompat.Builder(this);
         Bundle extras = new Bundle();
-        extras.putString("text_file_path", textFilePath);
-        extras.putString("custom_title", customTitle);
+        extras.putString("text_file_path", filePath);
+        extras.putString("custom_title", novelModel.getTitle());
         mResultBuilder
                 .setContentTitle(
                         getString(
                                 R.string.notification_read_local_file_finish_title,
-                                customTitle == null ? fileName : customTitle
+                                novelModel.getTitle()
                         )
                 )
                 .setContentText(getString(R.string.notification_read_local_file_finish_content))
                 .setSmallIcon(R.drawable.ic_notification_done)
                 .setExtras(extras)
+                .setContentIntent(chaptersListIntent)
                 .setAutoCancel(true);
         mNotifyManager.notify(NOTIFICATION_START_ID + notification_count, mResultBuilder.build());
     }

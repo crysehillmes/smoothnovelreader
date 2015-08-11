@@ -20,6 +20,7 @@ import org.cryse.novelreader.model.ChapterContentModel;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.source.NovelSource;
+import org.cryse.novelreader.ui.NovelChapterListActivity;
 import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.NovelTextFilter;
 
@@ -180,24 +181,31 @@ public class ChapterContentsCacheService extends Service {
 
         // TODO: Show a notification here to let user know one book is cached.
         showTaskResultNotification(
-                cacheTask.getNovelId(),
-                cacheTask.getNovelTitle(),
+                cacheTask,
                 successCount,
                 failureCount,
                 chapterCount
         );
     }
 
-    private void showTaskResultNotification(String novelId, String novelTitle, int successCount, int failureCount, int chapterCount) {
+    private void showTaskResultNotification(NovelCacheTask cacheTask, int successCount, int failureCount, int chapterCount) {
         notification_count = notification_count + 1;
         NotificationCompat.Builder mResultBuilder = new NotificationCompat.Builder(this);
+        Intent openChaptersActivityIntent = new Intent(this, NovelChapterListActivity.class);
+        Bundle mBundle = new Bundle();
+        mBundle.putParcelable(DataContract.NOVEL_OBJECT_NAME, cacheTask.getNovelModel());
+        openChaptersActivityIntent.putExtras(mBundle);
+        PendingIntent chaptersListIntent =
+                PendingIntent.getActivity(this, 0, openChaptersActivityIntent, PendingIntent.FLAG_ONE_SHOT);
+
         Bundle extras = new Bundle();
-        extras.putString("novel_id", novelId);
-        extras.putString("novel_title", novelTitle);
-        mResultBuilder.setContentTitle(getResources().getString(R.string.notification_chapter_contents_cache_title_finish, novelTitle))
+        extras.putString("novel_id", cacheTask.getNovelId());
+        extras.putString("novel_title", cacheTask.getNovelTitle());
+        mResultBuilder.setContentTitle(getResources().getString(R.string.notification_chapter_contents_cache_title_finish, cacheTask.getNovelTitle()))
                 .setContentText(getResources().getString(R.string.notification_chapter_contents_cache_content, successCount, failureCount, chapterCount - successCount - failureCount))
                 .setSmallIcon(R.drawable.ic_notification_done)
                 .setExtras(extras)
+                .setContentIntent(chaptersListIntent)
                 .setAutoCancel(true);
         mNotifyManager.notify(NOTIFICATION_START_ID + notification_count, mResultBuilder.build());
     }
@@ -212,7 +220,7 @@ public class ChapterContentsCacheService extends Service {
         }
 
         public void addToCacheQueue(NovelModel novelModel) {
-            NovelCacheTask novelCacheTask = new NovelCacheTask(novelModel.getNovelId(), novelModel.getTitle());
+            NovelCacheTask novelCacheTask = new NovelCacheTask(novelModel);
             for(NovelCacheTask task : mTaskQueue) {
                 if(task.getNovelId().equalsIgnoreCase(novelModel.getNovelId())) {
                     return;

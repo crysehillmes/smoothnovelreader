@@ -3,29 +3,25 @@ package org.cryse.novelreader.service;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class NovelCacheTask implements Parcelable {
-    private String novelId;
-    private String novelTitle;
+import org.cryse.novelreader.model.NovelModel;
 
-    public NovelCacheTask(String novelId, String novelTitle) {
-        this.novelId = novelId;
-        this.novelTitle = novelTitle;
+public class NovelCacheTask implements Parcelable {
+    private NovelModel novelModel;
+
+    public NovelCacheTask(NovelModel novelModel) {
+        this.novelModel = novelModel;
+    }
+
+    public NovelModel getNovelModel() {
+        return novelModel;
     }
 
     public String getNovelId() {
-        return novelId;
-    }
-
-    public void setNovelId(String novelId) {
-        this.novelId = novelId;
+        return novelModel.getNovelId();
     }
 
     public String getNovelTitle() {
-        return novelTitle;
-    }
-
-    public void setNovelTitle(String novelTitle) {
-        this.novelTitle = novelTitle;
+        return novelModel.getTitle();
     }
 
     public NovelCacheTask() {
@@ -38,13 +34,11 @@ public class NovelCacheTask implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.novelId);
-        dest.writeString(this.novelTitle);
+        dest.writeParcelable(this.novelModel, 0);
     }
 
-    private NovelCacheTask(Parcel in) {
-        this.novelId = in.readString();
-        this.novelTitle = in.readString();
+    protected NovelCacheTask(Parcel in) {
+        this.novelModel = in.readParcelable(NovelModel.class.getClassLoader());
     }
 
     public static final Creator<NovelCacheTask> CREATOR = new Creator<NovelCacheTask>() {
