@@ -9,6 +9,7 @@ import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.model.NovelSyncBookShelfModel;
+import org.cryse.novelreader.model.UpdateRequestInfo;
 import org.cryse.novelreader.source.NovelSource;
 import org.cryse.novelreader.util.ChapterTitleUtils;
 import org.cryse.novelreader.util.DataContract;
@@ -233,7 +234,12 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                     subscriber.onNext(novelModels);
                     subscriber.onCompleted();
                 }
-                List<NovelSyncBookShelfModel> syncShelfItems = novelSource.getNovelUpdatesSync(novelIds.toArray(new String[novelIds.size()]));
+                UpdateRequestInfo[] updateRequest = new UpdateRequestInfo[novelIds.size()];
+                for (int i = 0; i < novelIds.size(); i++) {
+                    String novelId = novelIds.get(i);
+                    updateRequest[i] = new UpdateRequestInfo(novelId, null);
+                }
+                List<NovelSyncBookShelfModel> syncShelfItems = novelSource.getNovelUpdatesSync(updateRequest);
 
                 for (NovelSyncBookShelfModel syncBookShelfModel : syncShelfItems) {
                     String gid = syncBookShelfModel.getId();

@@ -1,11 +1,12 @@
 package org.cryse.novelreader.source;
 
-import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.ChapterContentModel;
 import org.cryse.novelreader.model.ChapterModel;
+import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.model.NovelSyncBookShelfModel;
+import org.cryse.novelreader.model.UpdateRequestInfo;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public interface NovelSource {
 
     List<ChapterModel> getChapterListSync(String id, String src);
 
-    List<NovelSyncBookShelfModel> getNovelUpdatesSync(String ... novelIds);
+    List<NovelSyncBookShelfModel> getNovelUpdatesSync(UpdateRequestInfo... requestInfos);
 
     Observable<NovelDetailModel> getNovelDetail(String id, String src);
 

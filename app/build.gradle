@@ -57,6 +57,7 @@ dependencies {
     // Modules
     compile project(':main_module')
     compile project(':novel_sources:novel_source_baidu')
+    compile project(':novel_sources:novel_source_baidubrowser')
     compile project(':changelog')
 
     // Android Support Libraries
