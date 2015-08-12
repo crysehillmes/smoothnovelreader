@@ -17,6 +17,7 @@ import com.quentindommerc.superlistview.SuperListview;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.event.AbstractEvent;
 import org.cryse.novelreader.event.ImportChapterContentEvent;
 import org.cryse.novelreader.model.BookmarkModel;
@@ -28,7 +29,6 @@ import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.ui.adapter.NovelChapterListAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ColorUtils;
-import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;

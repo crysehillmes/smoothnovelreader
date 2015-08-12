@@ -214,6 +214,15 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
     }
 
     @Override
+    public void updateChapterContents(List<ChapterContentModel> chapterContents) {
+        ContentValues[] values = new ContentValues[chapterContents.size()];
+        for(int i = 0; i < chapterContents.size(); i++) {
+            values[i] = ContentValuesUtils.toChapterContentValues(chapterContents.get(i)).values();
+        }
+        mContentResolver.bulkInsert(ChapterContentColumns.CONTENT_URI, values);
+    }
+
+    @Override
     public void addBookMark(BookmarkModel bookMark) {
         BookmarkContentValues contentValues = ContentValuesUtils.toBookmarkContentValues(bookMark);
         contentValues.insert(mContentResolver);

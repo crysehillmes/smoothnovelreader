@@ -2,6 +2,7 @@ package org.cryse.novelreader.logic.impl;
 
 import android.text.TextUtils;
 
+import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.BookmarkModel;
@@ -14,7 +15,6 @@ import org.cryse.novelreader.model.NovelSyncBookShelfModel;
 import org.cryse.novelreader.model.UpdateRequestInfo;
 import org.cryse.novelreader.source.NovelSource;
 import org.cryse.novelreader.util.ChapterTitleUtils;
-import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.NovelTextFilter;
 import org.cryse.novelreader.util.comparator.NovelSortKeyComparator;
 

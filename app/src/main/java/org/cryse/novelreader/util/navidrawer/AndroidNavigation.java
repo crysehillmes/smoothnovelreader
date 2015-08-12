@@ -12,10 +12,11 @@ import android.support.v7.app.AppCompatActivity;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
-import org.cryse.novelreader.ui.NovelCategoryFragment;
 import org.cryse.novelreader.ui.NovelBookShelfFragment;
+import org.cryse.novelreader.ui.NovelCategoryFragment;
 import org.cryse.novelreader.ui.NovelChapterListActivity;
 import org.cryse.novelreader.ui.NovelDetailActivity;
 import org.cryse.novelreader.ui.NovelListFragment;
@@ -23,7 +24,6 @@ import org.cryse.novelreader.ui.NovelRankFragment;
 import org.cryse.novelreader.ui.NovelReadViewActivity;
 import org.cryse.novelreader.ui.SearchActivity;
 import org.cryse.novelreader.ui.SettingsActivity;
-import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.RunTimeStore;
 
 import java.util.List;

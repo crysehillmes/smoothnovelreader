@@ -13,6 +13,8 @@ import android.util.Log;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.constant.CacheConstants;
+import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.event.ImportChapterContentEvent;
 import org.cryse.novelreader.event.RxEventBus;
@@ -21,7 +23,6 @@ import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.source.NovelSource;
 import org.cryse.novelreader.ui.NovelChapterListActivity;
-import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.NovelTextFilter;
 
 import java.util.List;
@@ -164,8 +165,8 @@ public class ChapterContentsCacheService extends Service {
             } catch (Exception ex) {
                 failureCount++;
             } finally {
-                if(importBulkCount >= DataContract.NOVEL_IMPORT_BULK_COUNT) {
-                    mEventBus.sendEvent(new ImportChapterContentEvent(cacheTask.getNovelId(), DataContract.NOVEL_IMPORT_BULK_COUNT));
+                if(importBulkCount >= CacheConstants.CONST_BULK_INSERT_COUNT) {
+                    mEventBus.sendEvent(new ImportChapterContentEvent(cacheTask.getNovelId(), importBulkCount));
                     importBulkCount = 0;
                 }
                 progressNotificationBuilder

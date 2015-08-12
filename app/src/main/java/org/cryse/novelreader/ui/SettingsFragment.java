@@ -14,12 +14,12 @@ import com.afollestad.materialdialogs.Theme;
 import org.cryse.changelog.ChangeLogUtils;
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.constant.PreferenceConstant;
 import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.event.ThemeColorChangedEvent;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ThemeEngine;
 import org.cryse.novelreader.util.prefs.IntegerPreference;
-import org.cryse.novelreader.util.prefs.PreferenceConstant;
 
 import javax.inject.Inject;
 
