@@ -198,7 +198,7 @@ public class LoadLocalTextService extends Service {
                                         mTaskQueue.size()
                                 )
                         );
-                startForeground(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
+                mNotifyManager.notify(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
             });
             final NovelModel finalNewLocalNovel = newLocalNovel;
             int chapterCount = localTextReader.readChapters(new LocalTextReader.OnChapterReadCallback() {

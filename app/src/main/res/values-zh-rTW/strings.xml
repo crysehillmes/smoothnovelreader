@@ -121,7 +121,10 @@
     <string name="add_fab_novel">添加至書架</string>
     <string name="listview_last_read_indicator_text">\t[最後閱讀]</string>
 
-    <string name="novel_chapter_contents_cache_progress">正在緩存第 %1$d 章， 共 %2$d 章, %3$d 本書等待緩存。</string>
+    <string name="novel_chapter_contents_cache_progress_0">已緩存 %1$d %%</string>
+    <string name="novel_chapter_contents_cache_progress_1">已緩存 %1$d %%，《%2$s》等待緩存</string>
+    <string name="novel_chapter_contents_cache_progress_2">已緩存 %1$d %%，《%2$s》等 %3$d 本書等待緩存</string>>
+    <string name="novel_chapter_contents_cache_progress_3">已緩存 %1$d %%，%2$d 本書等待緩存</string>
 
     <!-- Novel detail -->
     <string name="novel_details_a11y_novel_added">小說已添加至書架</string>

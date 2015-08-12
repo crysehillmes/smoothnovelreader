@@ -25,6 +25,7 @@ import org.cryse.novelreader.source.NovelSource;
 import org.cryse.novelreader.ui.NovelChapterListActivity;
 import org.cryse.novelreader.util.NovelTextFilter;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -142,6 +143,7 @@ public class ChapterContentsCacheService extends Service {
         List<ChapterModel> items = mNovelDatabase.loadChapters(cacheTask.getNovelId());
         int chapterCount = items.size();
         int importBulkCount = 0;
+        int percent = 0;
         for (ChapterModel chapterModel : items) {
             if (stopCurrentTask) {
                 stopCurrentTask = false;
@@ -169,10 +171,16 @@ public class ChapterContentsCacheService extends Service {
                     mEventBus.sendEvent(new ImportChapterContentEvent(cacheTask.getNovelId(), importBulkCount));
                     importBulkCount = 0;
                 }
-                progressNotificationBuilder
-                        .setProgress(chapterCount, index, false)
-                        .setContentText(getResources().getString(R.string.novel_chapter_contents_cache_progress, index, chapterCount, mTaskQueue.size()));
-                mNotifyManager.notify(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
+
+                int newPercent = (int)Math.floor((((float)index)/((float)chapterCount)) * 100);
+                if(newPercent > percent) {
+                    percent = newPercent;
+                    progressNotificationBuilder
+                            .setProgress(chapterCount, index, false)
+                            .setContentText(buildProgressContentString(percent, index, chapterCount));
+                    mNotifyManager.notify(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
+                }
+
             }
         }
 
@@ -209,6 +217,30 @@ public class ChapterContentsCacheService extends Service {
                 .setContentIntent(chaptersListIntent)
                 .setAutoCancel(true);
         mNotifyManager.notify(NOTIFICATION_START_ID + notification_count, mResultBuilder.build());
+    }
+
+    private String buildProgressContentString(int percent, int index, int chapterCount) {
+        String result;
+        if(mTaskQueue.size() == 0) {
+            result = getResources().getString(R.string.novel_chapter_contents_cache_progress_0, percent);
+        } else if(mTaskQueue.size() == 1) {
+            Iterator<NovelCacheTask> iterator = mTaskQueue.iterator();
+            if(iterator.hasNext()) {
+                NovelCacheTask task = iterator.next();
+                result = getResources().getString(R.string.novel_chapter_contents_cache_progress_1, percent, task.getNovelTitle());
+            } else {
+                result = getResources().getString(R.string.novel_chapter_contents_cache_progress_3, percent, mTaskQueue.size());
+            }
+        } else {
+            Iterator<NovelCacheTask> iterator = mTaskQueue.iterator();
+            if(iterator.hasNext()) {
+                NovelCacheTask task = iterator.next();
+                result = getResources().getString(R.string.novel_chapter_contents_cache_progress_2, percent, task.getNovelTitle(), mTaskQueue.size());
+            } else {
+                result = getResources().getString(R.string.novel_chapter_contents_cache_progress_3, percent, mTaskQueue.size());
+            }
+        }
+        return result;
     }
 
     public class ChapterContentsCacheBinder extends Binder {
