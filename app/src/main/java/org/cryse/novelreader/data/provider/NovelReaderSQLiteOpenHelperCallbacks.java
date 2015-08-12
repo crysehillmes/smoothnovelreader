@@ -2,7 +2,6 @@ package org.cryse.novelreader.data.provider;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-
 import android.util.Log;
 
 import org.cryse.novelreader.BuildConfig;

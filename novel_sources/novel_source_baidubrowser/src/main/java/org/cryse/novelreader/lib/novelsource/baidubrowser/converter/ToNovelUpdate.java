@@ -15,6 +15,7 @@ public class ToNovelUpdate implements Func1<NovelUpdateItem[], List<NovelSyncBoo
         for(NovelUpdateItem item : updateShelfItems) {
             result.add(new NovelSyncBookShelfModel(
                     item.getNovelId(),
+                    item.getChapterId(),
                     item.getLatestChapterTitle(),
                     item.getChapterNumber()
             ));

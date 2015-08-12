@@ -1,6 +1,7 @@
 package org.cryse.novelreader.source.baidu.parser.gson;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -59,6 +60,8 @@ public class CustomGsonConverter implements Converter {
             JsonElement dataSetObject = null;
             if(iter.hasNext()) {
                 Map.Entry<String, JsonElement> entry = iter.next();
+                if(entry.getValue() instanceof JsonArray)
+                    return null;
                 JsonObject object = (JsonObject) entry.getValue();
                 dataSetObject = object.get("dataset");
             } else {

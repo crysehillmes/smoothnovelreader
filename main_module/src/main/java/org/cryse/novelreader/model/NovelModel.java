@@ -15,6 +15,7 @@ public interface NovelModel extends NovelReadableModel, Parcelable {
     void setChapterCount(int chapterCount);
     void setLastReadChapterTitle(String lastReadChapterTitle);
     void setLatestChapterTitle(String latestChapterTitle);
+    void setLatestChapterId(String latestChapterId);
     void setLatestUpdateChapterCount(int latestUpdateChapterCount);
     void setSortKey(long sortKey);
 }

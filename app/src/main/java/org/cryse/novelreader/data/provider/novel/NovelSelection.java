@@ -1,9 +1,7 @@
 package org.cryse.novelreader.data.provider.novel;
 
-import java.util.Date;
-
-import android.content.Context;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -435,6 +433,46 @@ public class NovelSelection extends AbstractSelection<NovelSelection> {
 
     public NovelSelection orderByLatestChapterTitle() {
         orderBy(NovelColumns.LATEST_CHAPTER_TITLE, false);
+        return this;
+    }
+
+    public NovelSelection latestChapterId(String... value) {
+        addEquals(NovelColumns.LATEST_CHAPTER_ID, value);
+        return this;
+    }
+
+    public NovelSelection latestChapterIdNot(String... value) {
+        addNotEquals(NovelColumns.LATEST_CHAPTER_ID, value);
+        return this;
+    }
+
+    public NovelSelection latestChapterIdLike(String... value) {
+        addLike(NovelColumns.LATEST_CHAPTER_ID, value);
+        return this;
+    }
+
+    public NovelSelection latestChapterIdContains(String... value) {
+        addContains(NovelColumns.LATEST_CHAPTER_ID, value);
+        return this;
+    }
+
+    public NovelSelection latestChapterIdStartsWith(String... value) {
+        addStartsWith(NovelColumns.LATEST_CHAPTER_ID, value);
+        return this;
+    }
+
+    public NovelSelection latestChapterIdEndsWith(String... value) {
+        addEndsWith(NovelColumns.LATEST_CHAPTER_ID, value);
+        return this;
+    }
+
+    public NovelSelection orderByLatestChapterId(boolean desc) {
+        orderBy(NovelColumns.LATEST_CHAPTER_ID, desc);
+        return this;
+    }
+
+    public NovelSelection orderByLatestChapterId() {
+        orderBy(NovelColumns.LATEST_CHAPTER_ID, false);
         return this;
     }
 

@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class ChapterContentItem {
     @SerializedName("title")
-    private int title;
+    private String title;
 
     @SerializedName("text")
     private String content;
@@ -15,11 +15,11 @@ public class ChapterContentItem {
     @SerializedName("cid")
     private String cid;
 
-    public int getTitle() {
+    public String getTitle() {
         return title;
     }
 
-    public void setTitle(int title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 

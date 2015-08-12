@@ -91,6 +91,7 @@ public class NovelReaderSQLiteOpenHelper extends SQLiteOpenHelper {
             + NovelColumns.CHAPTER_COUNT + " INTEGER NOT NULL, "
             + NovelColumns.LAST_READ_CHAPTER_TITLE + " TEXT, "
             + NovelColumns.LATEST_CHAPTER_TITLE + " TEXT, "
+            + NovelColumns.LATEST_CHAPTER_ID + " TEXT, "
             + NovelColumns.LATEST_UPDATE_CHAPTER_COUNT + " INTEGER NOT NULL, "
             + NovelColumns.SORT_KEY + " INTEGER NOT NULL "
             + ", CONSTRAINT unique_novel_id UNIQUE (novel_id) ON CONFLICT REPLACE"

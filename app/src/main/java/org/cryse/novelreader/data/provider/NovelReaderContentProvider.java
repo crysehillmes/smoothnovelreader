@@ -1,13 +1,10 @@
 package org.cryse.novelreader.data.provider;
 
-import java.util.Arrays;
-
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.cryse.novelreader.BuildConfig;
@@ -16,6 +13,8 @@ import org.cryse.novelreader.data.provider.bookmark.BookmarkColumns;
 import org.cryse.novelreader.data.provider.chapter.ChapterColumns;
 import org.cryse.novelreader.data.provider.chaptercontent.ChapterContentColumns;
 import org.cryse.novelreader.data.provider.novel.NovelColumns;
+
+import java.util.Arrays;
 
 public class NovelReaderContentProvider extends BaseContentProvider {
     private static final String TAG = NovelReaderContentProvider.class.getSimpleName();
