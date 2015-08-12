@@ -1,5 +1,8 @@
 package org.cryse.novelreader.logic.impl;
 
+import android.text.TextUtils;
+
+import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.BookmarkModel;
@@ -9,9 +12,9 @@ import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.model.NovelSyncBookShelfModel;
+import org.cryse.novelreader.model.UpdateRequestInfo;
 import org.cryse.novelreader.source.NovelSource;
 import org.cryse.novelreader.util.ChapterTitleUtils;
-import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.NovelTextFilter;
 import org.cryse.novelreader.util.comparator.NovelSortKeyComparator;
 
@@ -217,7 +220,7 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
         return Observable.create((Subscriber<? super List<NovelModel>> subscriber) -> {
             try {
                 List<NovelModel> novelModels = novelDataBase.loadAllFavorites();
-                List<String> novelIds = new ArrayList<String>(novelModels.size());
+                List<UpdateRequestInfo> novelIds = new ArrayList<UpdateRequestInfo>(novelModels.size());
                 Hashtable<String, NovelModel> hashtable = new Hashtable<String, NovelModel>();
 
                 for (int i = 0; i < novelModels.size(); i++) {
@@ -225,7 +228,12 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                     if(novelModel.getSource().startsWith(LOCAL_FILE_PREFIX + ":"))
                         continue;
                     String id = novelModel.getNovelId();
-                    novelIds.add(id);
+                    novelIds.add(
+                            new UpdateRequestInfo(
+                                    id,
+                                    TextUtils.isEmpty(novelModel.getLatestChapterId()) ? id + "_1" : novelModel.getLatestChapterId()
+                            )
+                    );
                     hashtable.put(id, novelModel);
                 }
                 if(novelIds.size() == 0) {
@@ -233,13 +241,23 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                     subscriber.onNext(novelModels);
                     subscriber.onCompleted();
                 }
-                List<NovelSyncBookShelfModel> syncShelfItems = novelSource.getNovelUpdatesSync(novelIds.toArray(new String[novelIds.size()]));
+                UpdateRequestInfo[] updateRequests = new UpdateRequestInfo[novelIds.size()];
+                for (int i = 0; i < novelIds.size(); i++) {
+                    UpdateRequestInfo requestInfo = novelIds.get(i);
+                    updateRequests[i] = requestInfo;
+                }
+                List<NovelSyncBookShelfModel> syncShelfItems = novelSource.getNovelUpdatesSync(updateRequests);
 
                 for (NovelSyncBookShelfModel syncBookShelfModel : syncShelfItems) {
                     String gid = syncBookShelfModel.getId();
                     NovelModel novelModel = hashtable.get(gid);
-                    if (novelModel.getLatestUpdateChapterCount() == 0 && novelModel.getLatestChapterTitle().compareTo(syncBookShelfModel.getLastChapterTitle()) != 0)
+                    if (
+                            novelModel.getLatestUpdateChapterCount() == 0 &&
+                                    novelModel.getLatestChapterTitle() != null &&
+                                    novelModel.getLatestChapterTitle().compareTo(syncBookShelfModel.getLastChapterTitle()) != 0
+                            )
                         novelModel.setLatestUpdateChapterCount(1);
+                    novelModel.setLatestChapterId(syncBookShelfModel.getLastChapterId());
                     novelModel.setLatestChapterTitle(syncBookShelfModel.getLastChapterTitle());
                 }
                 novelDataBase.updateFavoritesStatus(hashtable.values());

@@ -2,10 +2,10 @@ package org.cryse.novelreader.data.provider;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-
 import android.util.Log;
 
 import org.cryse.novelreader.BuildConfig;
+import org.cryse.novelreader.constant.DatabaseConstants;
 
 /**
  * Implement your custom database creation or upgrade code here.
@@ -13,25 +13,26 @@ import org.cryse.novelreader.BuildConfig;
  * This file will not be overwritten if you re-run the content provider generator.
  */
 public class NovelReaderSQLiteOpenHelperCallbacks {
+    private static final boolean DEBUG = BuildConfig.DEBUG && DatabaseConstants.DEBUG_DATABASE;
     private static final String TAG = NovelReaderSQLiteOpenHelperCallbacks.class.getSimpleName();
 
     public void onOpen(final Context context, final SQLiteDatabase db) {
-        if (BuildConfig.DEBUG) Log.d(TAG, "onOpen");
+        if (DEBUG) Log.d(TAG, "onOpen");
         // Insert your db open code here.
     }
 
     public void onPreCreate(final Context context, final SQLiteDatabase db) {
-        if (BuildConfig.DEBUG) Log.d(TAG, "onPreCreate");
+        if (DEBUG) Log.d(TAG, "onPreCreate");
         // Insert your db creation code here. This is called before your tables are created.
     }
 
     public void onPostCreate(final Context context, final SQLiteDatabase db) {
-        if (BuildConfig.DEBUG) Log.d(TAG, "onPostCreate");
+        if (DEBUG) Log.d(TAG, "onPostCreate");
         // Insert your db creation code here. This is called after your tables are created.
     }
 
     public void onUpgrade(final Context context, final SQLiteDatabase db, final int oldVersion, final int newVersion) {
-        if (BuildConfig.DEBUG) Log.d(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
+        if (DEBUG) Log.d(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
         // Insert your upgrading code here.
         if(oldVersion < 2) {
             db.execSQL("DROP TABLE IF EXISTS " + "NOVEL_BOOK_MARK_MODEL;");

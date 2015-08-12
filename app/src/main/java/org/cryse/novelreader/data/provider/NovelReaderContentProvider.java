@@ -1,26 +1,26 @@
 package org.cryse.novelreader.data.provider;
 
-import java.util.Arrays;
-
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.cryse.novelreader.BuildConfig;
+import org.cryse.novelreader.constant.DatabaseConstants;
 import org.cryse.novelreader.data.provider.base.BaseContentProvider;
 import org.cryse.novelreader.data.provider.bookmark.BookmarkColumns;
 import org.cryse.novelreader.data.provider.chapter.ChapterColumns;
 import org.cryse.novelreader.data.provider.chaptercontent.ChapterContentColumns;
 import org.cryse.novelreader.data.provider.novel.NovelColumns;
 
+import java.util.Arrays;
+
 public class NovelReaderContentProvider extends BaseContentProvider {
     private static final String TAG = NovelReaderContentProvider.class.getSimpleName();
 
-    private static final boolean DEBUG = BuildConfig.DEBUG;
+    private static final boolean DEBUG = BuildConfig.DEBUG && DatabaseConstants.DEBUG_DATABASE;
 
     private static final String TYPE_CURSOR_ITEM = "vnd.android.cursor.item/";
     private static final String TYPE_CURSOR_DIR = "vnd.android.cursor.dir/";

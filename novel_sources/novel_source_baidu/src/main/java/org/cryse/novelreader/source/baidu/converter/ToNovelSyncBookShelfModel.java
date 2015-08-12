@@ -15,6 +15,7 @@ public class ToNovelSyncBookShelfModel implements Func1<SyncShelfItem[], List<No
         for(SyncShelfItem item : dataset) {
             result.add(new NovelSyncBookShelfModel(
                     item.getGid(),
+                    "",
                     item.getLastchaptitle(),
                     item.getLastupdate()
             ));

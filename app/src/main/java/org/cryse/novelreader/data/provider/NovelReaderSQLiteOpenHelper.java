@@ -10,6 +10,7 @@ import android.os.Build;
 import android.util.Log;
 
 import org.cryse.novelreader.BuildConfig;
+import org.cryse.novelreader.constant.DatabaseConstants;
 import org.cryse.novelreader.data.provider.bookmark.BookmarkColumns;
 import org.cryse.novelreader.data.provider.chapter.ChapterColumns;
 import org.cryse.novelreader.data.provider.chaptercontent.ChapterContentColumns;
@@ -17,6 +18,7 @@ import org.cryse.novelreader.data.provider.novel.NovelColumns;
 
 public class NovelReaderSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String TAG = NovelReaderSQLiteOpenHelper.class.getSimpleName();
+    private static final boolean DEBUG = BuildConfig.DEBUG && DatabaseConstants.DEBUG_DATABASE;
 
     public static final String DATABASE_FILE_NAME = "novelreader.db";
     private static final int DATABASE_VERSION = 2;
@@ -91,6 +93,7 @@ public class NovelReaderSQLiteOpenHelper extends SQLiteOpenHelper {
             + NovelColumns.CHAPTER_COUNT + " INTEGER NOT NULL, "
             + NovelColumns.LAST_READ_CHAPTER_TITLE + " TEXT, "
             + NovelColumns.LATEST_CHAPTER_TITLE + " TEXT, "
+            + NovelColumns.LATEST_CHAPTER_ID + " TEXT, "
             + NovelColumns.LATEST_UPDATE_CHAPTER_COUNT + " INTEGER NOT NULL, "
             + NovelColumns.SORT_KEY + " INTEGER NOT NULL "
             + ", CONSTRAINT unique_novel_id UNIQUE (novel_id) ON CONFLICT REPLACE"
@@ -163,7 +166,7 @@ public class NovelReaderSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        if (BuildConfig.DEBUG) Log.d(TAG, "onCreate");
+        if (DEBUG) Log.d(TAG, "onCreate");
         mOpenHelperCallbacks.onPreCreate(mContext, db);
         db.execSQL(SQL_CREATE_TABLE_BOOKMARK);
         db.execSQL(SQL_CREATE_INDEX_BOOKMARK_NOVEL_ID);

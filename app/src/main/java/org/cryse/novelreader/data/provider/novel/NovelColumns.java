@@ -4,10 +4,6 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 import org.cryse.novelreader.data.provider.NovelReaderContentProvider;
-import org.cryse.novelreader.data.provider.bookmark.BookmarkColumns;
-import org.cryse.novelreader.data.provider.chapter.ChapterColumns;
-import org.cryse.novelreader.data.provider.chaptercontent.ChapterContentColumns;
-import org.cryse.novelreader.data.provider.novel.NovelColumns;
 
 /**
  * A human being which is part of a team.
@@ -39,6 +35,8 @@ public class NovelColumns implements BaseColumns {
 
     public static final String LATEST_CHAPTER_TITLE = "latest_chapter_title";
 
+    public static final String LATEST_CHAPTER_ID = "latest_chapter_id";
+
     public static final String LATEST_UPDATE_CHAPTER_COUNT = "latest_update_chapter_count";
 
     public static final String SORT_KEY = "sort_key";
@@ -58,6 +56,7 @@ public class NovelColumns implements BaseColumns {
             CHAPTER_COUNT,
             LAST_READ_CHAPTER_TITLE,
             LATEST_CHAPTER_TITLE,
+            LATEST_CHAPTER_ID,
             LATEST_UPDATE_CHAPTER_COUNT,
             SORT_KEY
     };
@@ -75,6 +74,7 @@ public class NovelColumns implements BaseColumns {
             if (c.equals(CHAPTER_COUNT) || c.contains("." + CHAPTER_COUNT)) return true;
             if (c.equals(LAST_READ_CHAPTER_TITLE) || c.contains("." + LAST_READ_CHAPTER_TITLE)) return true;
             if (c.equals(LATEST_CHAPTER_TITLE) || c.contains("." + LATEST_CHAPTER_TITLE)) return true;
+            if (c.equals(LATEST_CHAPTER_ID) || c.contains("." + LATEST_CHAPTER_ID)) return true;
             if (c.equals(LATEST_UPDATE_CHAPTER_COUNT) || c.contains("." + LATEST_UPDATE_CHAPTER_COUNT)) return true;
             if (c.equals(SORT_KEY) || c.contains("." + SORT_KEY)) return true;
         }

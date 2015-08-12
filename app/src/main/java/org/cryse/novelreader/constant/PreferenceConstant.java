@@ -1,4 +1,4 @@
-package org.cryse.novelreader.util.prefs;
+package org.cryse.novelreader.constant;
 
 
 import android.graphics.Color;

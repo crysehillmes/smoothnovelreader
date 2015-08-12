@@ -16,6 +16,7 @@ public class Novel implements NovelModel {
     private int chapterCount;
     private String lastReadChapterTitle;
     private String latestChapterTitle;
+    private String latestChapterId;
     private int latestUpdateChapterCount;
     private long sortKey;
 
@@ -133,6 +134,16 @@ public class Novel implements NovelModel {
         this.latestChapterTitle = latestChapterTitle;
     }
 
+    @Nullable
+    @Override
+    public String getLatestChapterId() {
+        return latestChapterId;
+    }
+
+    @Override
+    public void setLatestChapterId(String latestChapterId) {
+        this.latestChapterId = latestChapterId;
+    }
 
     @Override
     public int getLatestUpdateChapterCount() {
@@ -166,11 +177,12 @@ public class Novel implements NovelModel {
         dest.writeInt(this.type);
         dest.writeString(this.source);
         dest.writeString(this.coverImage);
-        dest.writeValue(this.chapterCount);
+        dest.writeInt(this.chapterCount);
         dest.writeString(this.lastReadChapterTitle);
         dest.writeString(this.latestChapterTitle);
-        dest.writeValue(this.latestUpdateChapterCount);
-        dest.writeValue(this.sortKey);
+        dest.writeString(this.latestChapterId);
+        dest.writeInt(this.latestUpdateChapterCount);
+        dest.writeLong(this.sortKey);
     }
 
     protected Novel(Parcel in) {
@@ -180,11 +192,12 @@ public class Novel implements NovelModel {
         this.type = in.readInt();
         this.source = in.readString();
         this.coverImage = in.readString();
-        this.chapterCount = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.chapterCount = in.readInt();
         this.lastReadChapterTitle = in.readString();
         this.latestChapterTitle = in.readString();
-        this.latestUpdateChapterCount = (Integer) in.readValue(Integer.class.getClassLoader());
-        this.sortKey = (Long) in.readValue(Long.class.getClassLoader());
+        this.latestChapterId = in.readString();
+        this.latestUpdateChapterCount = in.readInt();
+        this.sortKey = in.readLong();
     }
 
     public static final Creator<Novel> CREATOR = new Creator<Novel>() {

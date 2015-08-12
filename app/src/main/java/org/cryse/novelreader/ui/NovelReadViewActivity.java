@@ -25,6 +25,7 @@ import com.example.android.systemuivis.SystemUiHelper;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.model.Bookmark;
 import org.cryse.novelreader.model.BookmarkModel;
 import org.cryse.novelreader.model.ChapterModel;
@@ -39,7 +40,6 @@ import org.cryse.novelreader.ui.adapter.ReadViewPagerAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.ui.widget.ReadWidget;
 import org.cryse.novelreader.ui.widget.ReadWidgetAdapter;
-import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.PreferenceConverter;
 import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.SnackbarUtils;

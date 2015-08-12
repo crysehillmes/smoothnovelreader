@@ -155,6 +155,7 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
         values.insert(mContentResolver);
         Novel novel = (Novel)loadFavorite(novelId);
         novel.setLatestUpdateChapterCount(0);
+        novel.setLatestChapterId(chapter.getChapterId());
         novel.setLatestChapterTitle(chapter.getTitle());
         NovelContentValues novelContentValues = ContentValuesUtils.toNovelContentValues(novel);
         novelContentValues.insert(mContentResolver);
@@ -170,6 +171,7 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
 
         Novel novel = (Novel)loadFavorite(novelId);
         novel.setLatestUpdateChapterCount(0);
+        novel.setLatestChapterId(chapters.get(chapters.size() - 1).getChapterId());
         novel.setLatestChapterTitle(chapters.get(chapters.size() - 1).getTitle());
         NovelContentValues novelContentValues = ContentValuesUtils.toNovelContentValues(novel);
         novelContentValues.insert(mContentResolver);
@@ -209,6 +211,15 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
         contentSelection.delete(mContentResolver);*/
         ChapterContentContentValues values = ContentValuesUtils.toChapterContentValues(chapterContent);
         values.insert(mContentResolver);
+    }
+
+    @Override
+    public void updateChapterContents(List<ChapterContentModel> chapterContents) {
+        ContentValues[] values = new ContentValues[chapterContents.size()];
+        for(int i = 0; i < chapterContents.size(); i++) {
+            values[i] = ContentValuesUtils.toChapterContentValues(chapterContents.get(i)).values();
+        }
+        mContentResolver.bulkInsert(ChapterContentColumns.CONTENT_URI, values);
     }
 
     @Override

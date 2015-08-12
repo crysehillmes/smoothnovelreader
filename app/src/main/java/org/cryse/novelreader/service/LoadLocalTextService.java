@@ -16,6 +16,8 @@ import org.cryse.chaptersplitter.LocalTextReader;
 import org.cryse.chaptersplitter.TextChapter;
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.constant.CacheConstants;
+import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.event.ImportChapterContentEvent;
 import org.cryse.novelreader.event.LoadLocalFileDoneEvent;
@@ -24,16 +26,18 @@ import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.model.Chapter;
 import org.cryse.novelreader.model.ChapterContent;
 import org.cryse.novelreader.model.ChapterContentModel;
+import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.Novel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.source.NovelSource;
 import org.cryse.novelreader.ui.NovelChapterListActivity;
-import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.HashUtils;
 import org.cryse.novelreader.util.NovelTextFilter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -194,8 +198,9 @@ public class LoadLocalTextService extends Service {
                                         mTaskQueue.size()
                                 )
                         );
-                startForeground(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
+                mNotifyManager.notify(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
             });
+            final NovelModel finalNewLocalNovel = newLocalNovel;
             int chapterCount = localTextReader.readChapters(new LocalTextReader.OnChapterReadCallback() {
 
                 int chapterIndex = 0;
@@ -238,12 +243,13 @@ public class LoadLocalTextService extends Service {
                         chapterIndex++;
                         importBulkCount++;
                     }
-                    if(importBulkCount >= DataContract.NOVEL_IMPORT_BULK_COUNT) {
-                        mEventBus.sendEvent(new ImportChapterContentEvent(DataContract.NOVEL_IMPORT_BULK_COUNT));
+                    if(importBulkCount >= CacheConstants.CONST_BULK_INSERT_COUNT) {
+                        mEventBus.sendEvent(new ImportChapterContentEvent(finalNewLocalNovel.getNovelId(), importBulkCount));
                         importBulkCount = 0;
                     }
                 }
             });
+            flushCacheToDatabase(novelId);
             Log.d("CHAPTERS", String.format("Chapter count: %d", chapterCount));
         } catch (IOException e) {
             e.printStackTrace();
@@ -265,21 +271,35 @@ public class LoadLocalTextService extends Service {
         );
     }
 
+    private List<ChapterModel> mChapterCache = new ArrayList<>(CacheConstants.CONST_BULK_INSERT_COUNT);
+    private List<ChapterContentModel> mChapterContentCache = new ArrayList<>(CacheConstants.CONST_BULK_INSERT_COUNT);
+
     private void addChapterToDatabase(String novelId, int chapterIndex, String chapterTitle, String chapterContent) {
         String chapterHash = HashUtils.md5(chapterTitle + String.format("%06d", chapterIndex));
-        mNovelDatabase.insertChapter(novelId, new Chapter(
+        mChapterCache.add(new Chapter(
                 novelId,
                 chapterHash,
                 LOCAL_FILE_PREFIX,
                 chapterTitle,
                 chapterIndex
         ));
-        mNovelDatabase.updateChapterContent(new ChapterContent(
+        mChapterContentCache.add(new ChapterContent(
                 novelId,
                 chapterHash,
                 LOCAL_FILE_PREFIX + ":" + chapterHash,
                 novelTextFilter.filter(chapterContent)
         ));
+        if(mChapterCache.size() >= CacheConstants.CONST_BULK_INSERT_COUNT ||
+                mChapterContentCache.size() >= CacheConstants.CONST_BULK_INSERT_COUNT) {
+            flushCacheToDatabase(novelId);
+        }
+    }
+
+    private void flushCacheToDatabase(String novelId) {
+        mNovelDatabase.insertChapters(novelId, mChapterCache);
+        mNovelDatabase.updateChapterContents(mChapterContentCache);
+        mChapterCache.clear();
+        mChapterContentCache.clear();
     }
 
     private void showTaskResultNotification(String filePath, NovelModel novelModel) {

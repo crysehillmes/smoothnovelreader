@@ -122,6 +122,16 @@ public class NovelCursor extends AbstractCursor implements NovelReadableModel {
     }
 
     /**
+     * Get the {@code latest_chapter_id} value.
+     * Can be {@code null}.
+     */
+    @Nullable
+    public String getLatestChapterId() {
+        String res = getStringOrNull(NovelColumns.LATEST_CHAPTER_ID);
+        return res;
+    }
+
+    /**
      * Get the {@code latest_update_chapter_count} value.
      */
     public int getLatestUpdateChapterCount() {

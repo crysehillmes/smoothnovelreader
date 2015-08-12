@@ -65,6 +65,13 @@ public interface NovelReadableModel extends BaseModel {
     String getLatestChapterTitle();
 
     /**
+     * Get the {@code latest_chapter_id} value.
+     * Can be {@code null}.
+     */
+    @Nullable
+    String getLatestChapterId();
+
+    /**
      * Get the {@code latest_update_chapter_count} value.
      */
     int getLatestUpdateChapterCount();

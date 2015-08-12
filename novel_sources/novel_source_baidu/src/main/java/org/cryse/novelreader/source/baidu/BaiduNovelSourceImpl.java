@@ -9,6 +9,7 @@ import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.model.NovelSyncBookShelfModel;
+import org.cryse.novelreader.model.UpdateRequestInfo;
 import org.cryse.novelreader.source.NovelSource;
 import org.cryse.novelreader.source.baidu.converter.ToChapterContent;
 import org.cryse.novelreader.source.baidu.converter.ToChapterModel;
@@ -162,7 +163,8 @@ public class BaiduNovelSourceImpl implements NovelSource {
     }
 
     @Override
-    public List<NovelSyncBookShelfModel> getNovelUpdatesSync(String... novelIds) {
+    public List<NovelSyncBookShelfModel> getNovelUpdatesSync(UpdateRequestInfo... requestInfos) {
+        String[] novelIds = new String[requestInfos.length];
         String dataString = buildSyncShelfDataString(novelIds);
         SyncShelfItem[] dataset = mNovelSource.getNovelUpdateSync(
                 SEARCHBOX_ACTION,

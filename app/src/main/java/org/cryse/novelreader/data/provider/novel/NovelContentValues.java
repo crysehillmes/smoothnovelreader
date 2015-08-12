@@ -1,9 +1,7 @@
 package org.cryse.novelreader.data.provider.novel;
 
-import java.util.Date;
-
-import android.content.Context;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,7 +30,7 @@ public class NovelContentValues extends AbstractContentValues {
     /**
      * Update row(s) using the values stored by this object and the given selection.
      *
-     * @param contentResolver The content resolver to use.
+     * @param context The content resolver to use.
      * @param where The selection to use (can be {@code null}).
      */
     public int update(Context context, @Nullable NovelSelection where) {
@@ -109,6 +107,16 @@ public class NovelContentValues extends AbstractContentValues {
 
     public NovelContentValues putLatestChapterTitleNull() {
         mContentValues.putNull(NovelColumns.LATEST_CHAPTER_TITLE);
+        return this;
+    }
+
+    public NovelContentValues putLatestChapterId(@Nullable String value) {
+        mContentValues.put(NovelColumns.LATEST_CHAPTER_ID, value);
+        return this;
+    }
+
+    public NovelContentValues putLatestChapterIdNull() {
+        mContentValues.putNull(NovelColumns.LATEST_CHAPTER_ID);
         return this;
     }
 

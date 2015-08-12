@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import org.cryse.novelreader.constant.PreferenceConstant;
 import org.cryse.novelreader.qualifier.ApplicationContext;
 import org.cryse.novelreader.qualifier.PrefsFontLineHeight;
 import org.cryse.novelreader.qualifier.PrefsFontSize;
@@ -16,7 +17,6 @@ import org.cryse.novelreader.qualifier.PrefsShowCoverImage;
 import org.cryse.novelreader.qualifier.PrefsThemeColor;
 import org.cryse.novelreader.util.prefs.BooleanPreference;
 import org.cryse.novelreader.util.prefs.IntegerPreference;
-import org.cryse.novelreader.util.prefs.PreferenceConstant;
 import org.cryse.novelreader.util.prefs.StringPreference;
 
 import javax.inject.Singleton;
