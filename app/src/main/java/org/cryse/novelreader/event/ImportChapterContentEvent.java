@@ -1,12 +1,18 @@
 package org.cryse.novelreader.event;
 
 public class ImportChapterContentEvent extends AbstractEvent {
-    private int importedCount;
-    public ImportChapterContentEvent(int importedCount) {
-        this.importedCount = importedCount;
+    private String mNovelId;
+    private int mImportedCount;
+    public ImportChapterContentEvent(String novelId, int importedCount) {
+        this.mNovelId = novelId;
+        this.mImportedCount = importedCount;
+    }
+
+    public String getNovelId() {
+        return mNovelId;
     }
 
     public int getImportedCount() {
-        return importedCount;
+        return mImportedCount;
     }
 }

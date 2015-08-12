@@ -259,7 +259,8 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     protected void onEvent(AbstractEvent event) {
         super.onEvent(event);
         if(event instanceof ImportChapterContentEvent) {
-            getPresenter().loadChapters(mNovel, mHideRedundantChapterTitle.get(), false);
+            if(((ImportChapterContentEvent) event).getNovelId().equals(mNovel.getNovelId()))
+                getPresenter().loadChapters(mNovel, mHideRedundantChapterTitle.get(), false);
         }
     }
 

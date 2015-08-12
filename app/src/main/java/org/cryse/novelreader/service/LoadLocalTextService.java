@@ -196,6 +196,7 @@ public class LoadLocalTextService extends Service {
                         );
                 startForeground(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
             });
+            final NovelModel finalNewLocalNovel = newLocalNovel;
             int chapterCount = localTextReader.readChapters(new LocalTextReader.OnChapterReadCallback() {
 
                 int chapterIndex = 0;
@@ -239,7 +240,7 @@ public class LoadLocalTextService extends Service {
                         importBulkCount++;
                     }
                     if(importBulkCount >= DataContract.NOVEL_IMPORT_BULK_COUNT) {
-                        mEventBus.sendEvent(new ImportChapterContentEvent(DataContract.NOVEL_IMPORT_BULK_COUNT));
+                        mEventBus.sendEvent(new ImportChapterContentEvent(finalNewLocalNovel.getNovelId(), DataContract.NOVEL_IMPORT_BULK_COUNT));
                         importBulkCount = 0;
                     }
                 }

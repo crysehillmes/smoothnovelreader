@@ -165,7 +165,7 @@ public class ChapterContentsCacheService extends Service {
                 failureCount++;
             } finally {
                 if(importBulkCount >= DataContract.NOVEL_IMPORT_BULK_COUNT) {
-                    mEventBus.sendEvent(new ImportChapterContentEvent(DataContract.NOVEL_IMPORT_BULK_COUNT));
+                    mEventBus.sendEvent(new ImportChapterContentEvent(cacheTask.getNovelId(), DataContract.NOVEL_IMPORT_BULK_COUNT));
                     importBulkCount = 0;
                 }
                 progressNotificationBuilder
