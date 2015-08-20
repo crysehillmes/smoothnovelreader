@@ -1,5 +1,6 @@
 package org.cryse.novelreader.ui;
 
+import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
@@ -9,8 +10,10 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.design.widget.Snackbar;
+import android.speech.RecognizerIntent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -39,11 +43,14 @@ import org.cryse.novelreader.ui.adapter.NovelBookShelfListAdapter;
 import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.PathUriUtils;
+import org.cryse.novelreader.util.SimpleAnimationListener;
 import org.cryse.novelreader.util.SimpleSnackbarType;
-import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.view.NovelBookShelfView;
+import org.cryse.widget.persistentsearch.DefaultVoiceRecognizerDelegate;
+import org.cryse.widget.persistentsearch.PersistentSearchView;
+import org.cryse.widget.persistentsearch.VoiceRecognitionDelegate;
 import org.cryse.widget.recyclerview.SuperRecyclerView;
 
 import java.io.File;
@@ -58,21 +65,41 @@ import butterknife.ButterKnife;
 import timber.log.Timber;
 
 public class NovelBookShelfFragment extends AbstractFragment implements NovelBookShelfView {
+    private static final int VOICE_RECOGNITION_REQUEST_CODE = 1023;
     private static final String LOG_TAG = NovelBookShelfFragment.class.getName();
     private static final int OPEN_TEXT_FILE_RESULT_CODE = 10010;
     private static final Detector DETECTOR = new DefaultDetector(
             MimeTypes.getDefaultMimeTypes());
     @Inject
     NovelBookShelfPresenter presenter;
+
     ArrayList<NovelModel> novelList;
+
     NovelBookShelfListAdapter bookShelfListAdapter;
+
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+    @Bind(R.id.searchview)
+    PersistentSearchView mSearchView;
+    @Bind(R.id.view_search_tint)
+    View mSearchTintView;
+
     @Bind(R.id.novel_listview)
     SuperRecyclerView mShelfListView;
+
     @Bind(R.id.empty_view_text_prompt)
     TextView mEmptyViewText;
+
     ServiceConnection mBackgroundServiceConnection;
     MaterialDialog mAddLocalFileProgressDialog = null;
+    private MenuItem mSearchMenuItem;
     private ChapterContentsCacheService.ChapterContentsCacheBinder mServiceBinder;
+
+    public static NovelBookShelfFragment newInstance(Bundle args) {
+        NovelBookShelfFragment fragment = new NovelBookShelfFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     public static String detectMimeType(final String filePath) {
         TikaInputStream tikaIS = null;
@@ -130,7 +157,15 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View contentView = inflater.inflate(R.layout.fragment_bookshelf, null);
         ButterKnife.bind(this, contentView);
+        getThemedActivity().setSupportActionBar(mToolbar);
+        final ActionBar actionBar = getThemedActivity().getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        mToolbar.setBackgroundColor(getPrimaryColor());
         mEmptyViewText.setText(getActivity().getString(R.string.empty_view_no_book_on_shelf_prompt));
+        setUpSearchView();
         initListView();
         UIUtils.setInsets(getActivity(), mShelfListView, false, false, true, Build.VERSION.SDK_INT < 21);
         mShelfListView.setClipToPadding(false);
@@ -273,18 +308,33 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_bookshelf, menu);
+        mSearchMenuItem = menu.findItem(R.id.menu_item_add_online_book);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).getNavigationDrawer().openDrawer();
+                    return true;
+                } else {
+                    return false;
+                }
             case R.id.menu_item_change_theme:
                 getThemedActivity().setNightMode(!isNightMode());
                 return true;
             case R.id.menu_item_add_online_book:
-                getPresenter().goSearch();
-                return true;
+                if (mSearchMenuItem != null) {
+                    View menuItemView = getView().findViewById(R.id.menu_item_add_online_book);
+                    mSearchView.openSearch(menuItemView);
+                    return true;
+                } else {
+                    return false;
+                }
+                /*getPresenter().goSearch();
+                return true;*/
             case R.id.menu_item_add_local_text_book:
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("text/plain");
@@ -292,6 +342,72 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setUpSearchView() {
+        VoiceRecognitionDelegate delegate = new DefaultVoiceRecognizerDelegate(this, VOICE_RECOGNITION_REQUEST_CODE);
+        if (delegate.isVoiceRecognitionAvailable()) {
+            mSearchView.setVoiceRecognitionDelegate(delegate);
+        }
+        mSearchTintView.setOnClickListener(v -> mSearchView.cancelEditing());
+        mSearchView.setSearchListener(new PersistentSearchView.SearchListener() {
+
+            @Override
+            public void onSearchEditOpened() {
+                //Use this to tint the screen
+                mSearchTintView.setVisibility(View.VISIBLE);
+                mSearchTintView
+                        .animate()
+                        .alpha(1.0f)
+                        .setDuration(300)
+                        .setListener(new SimpleAnimationListener())
+                        .start();
+
+            }
+
+            @Override
+            public void onSearchEditClosed() {
+                mSearchTintView
+                        .animate()
+                        .alpha(0.0f)
+                        .setDuration(300)
+                        .setListener(new SimpleAnimationListener() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                mSearchTintView.setVisibility(View.GONE);
+                            }
+                        })
+                        .start();
+            }
+
+            @Override
+            public void onSearchExit() {
+                /*mResultAdapter.clear();
+                if(mRecyclerView.getVisibility() == View.VISIBLE) {
+                    mRecyclerView.setVisibility(View.GONE);
+                }*/
+            }
+
+            @Override
+            public void onSearchTermChanged(String term) {
+
+            }
+
+            @Override
+            public void onSearch(String string) {
+                Toast.makeText(getActivity(), string + " Searched", Toast.LENGTH_LONG).show();
+                /*mRecyclerView.setVisibility(View.VISIBLE);
+                fillResultToRecyclerView(string);*/
+
+            }
+
+            @Override
+            public void onSearchCleared() {
+
+            }
+
+        });
     }
 
     @Override
@@ -334,12 +450,6 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         return mShelfListView.getSwipeToRefresh().isRefreshing() || mShelfListView.isLoadingMore();
     }
 
-    @Override
-    public void showSnackbar(CharSequence text, SimpleSnackbarType snackbarType) {
-        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, snackbarType, Snackbar.LENGTH_SHORT);
-        snackbar.show();
-    }
-
     private void removeNovels() {
         int count = bookShelfListAdapter.getSelectedItemCount();
         List<String> removeIds = new ArrayList<String>();
@@ -373,11 +483,15 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == OPEN_TEXT_FILE_RESULT_CODE && data != null) {
+        if (requestCode == OPEN_TEXT_FILE_RESULT_CODE && resultCode == Activity.RESULT_OK && data != null) {
             String filePath = PathUriUtils.getPath(getActivity(), data.getData());
             /*getPresenter().addLocalTextFile(filePath, null);
             showAddLocalBookProgressDialog(true);*/
             readLocalTextFile(filePath, null);
+        } else if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            ArrayList<String> matches = data
+                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            mSearchView.populateEditText(matches);
         }
     }
 

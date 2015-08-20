@@ -1,11 +1,9 @@
 package org.cryse.novelreader.presenter.impl;
 
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
-import org.cryse.novelreader.model.BookmarkModel;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelChaptersPresenter;
-import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.SubscriptionUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
@@ -59,16 +57,22 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            mView.showChapterList(result, scrollToLastRead);
+                            if (mView != null) {
+                                mView.showChapterList(result, scrollToLastRead);
+                            }
                         },
                         error -> {
-                            mView.setLoading(false);
                             Timber.e("Load chapter list error:", error.getMessage(), LOG_TAG);
-                            mSnackbarUtils.showExceptionToast(mView, error);
+                            if (mView != null) {
+                                mView.setLoading(false);
+                                mSnackbarUtils.showExceptionToast(mView, error);
+                            }
                         },
                         () -> {
-                            mView.setLoading(false);
                             Timber.d("Load chapter list completed!", LOG_TAG);
+                            if (mView != null) {
+                                mView.setLoading(false);
+                            }
                         }
                 );
     }
@@ -80,7 +84,9 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            mView.checkFavoriteStatusComplete(result[0], result[1]);
+                            if (mView != null) {
+                                mView.checkFavoriteStatusComplete(result[0], result[1]);
+                            }
                         },
                         error -> {
                             Timber.e(error, error.getMessage(), LOG_TAG);
@@ -98,7 +104,7 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
 
     @Override
     public void unbindView() {
-        bindView(new EmptyNovelChaptersView());
+        this.mView = null;
     }
 
     @Override
@@ -117,12 +123,16 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            mView.canGoToLastRead(result);
+                            if (mView != null) {
+                                mView.canGoToLastRead(result);
+                            }
                         },
                         error -> {
-                            mView.canGoToLastRead(null);
                             Timber.e(error, error.getMessage(), LOG_TAG);
-                            mSnackbarUtils.showExceptionToast(mView, error);
+                            if (mView != null) {
+                                mView.canGoToLastRead(null);
+                                mSnackbarUtils.showExceptionToast(mView, error);
+                            }
                         },
                         () -> {
                             Timber.d("Check completed.", LOG_TAG);
@@ -142,12 +152,16 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            mDisplay.showNovelReadActivity(mView, novelModel, result.getChapterId(), result.getChapterOffset(), chapterList);
+                            if (mView != null) {
+                                mDisplay.showNovelReadActivity(mView, novelModel, result.getChapterId(), result.getChapterOffset(), chapterList);
+                            }
                         },
                         error -> {
-                            mView.canGoToLastRead(null);
                             Timber.e(error, error.getMessage(), LOG_TAG);
-                            mSnackbarUtils.showExceptionToast(mView, error);
+                            if (mView != null) {
+                                mView.canGoToLastRead(null);
+                                mSnackbarUtils.showExceptionToast(mView, error);
+                            }
                         },
                         () -> {
                             Timber.d("Get read last position completed.", LOG_TAG);
@@ -157,43 +171,12 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
 
     @Override
     public void showNovelIntroduction(NovelModel novelModel) {
-        mDisplay.showNovelDetailView(mView, novelModel, false);
+        if (mView != null) {
+            mDisplay.showNovelDetailView(mView, novelModel, false);
+        }
     }
 
     public Observable<Boolean> preloadChapterContents(NovelModel novel, List<ChapterModel> chapterModels) {
         return mNovelBusinessLogicLayer.preloadChapterContents(novel, chapterModels);
-    }
-
-    private class EmptyNovelChaptersView implements NovelChaptersView {
-
-        @Override
-        public void showChapterList(List<ChapterModel> chapterList, boolean scrollToLastRead) {
-
-        }
-
-        @Override
-        public void canGoToLastRead(BookmarkModel bookMark) {
-
-        }
-
-        @Override
-        public void checkFavoriteStatusComplete(Boolean isFavorite, Boolean isLocal) {
-
-        }
-
-        @Override
-        public void setLoading(Boolean isLoading) {
-
-        }
-
-        @Override
-        public Boolean isLoading() {
-            return null;
-        }
-
-        @Override
-        public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
-
-        }
     }
 }

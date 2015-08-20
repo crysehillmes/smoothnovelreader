@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -105,16 +104,16 @@ public class NovelCategoryFragment extends AbstractFragment {
     @Override
     public void onResume() {
         super.onResume();
-        ViewCompat.setElevation(getThemedActivity().getToolbar(), 0);
-        getThemedActivity().setPreLShadowVisibility(false);
+        /*ViewCompat.setElevation(getThemedActivity().getToolbar(), 0);
+        getThemedActivity().setPreLShadowVisibility(false);*/
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        ViewCompat.setElevation(getThemedActivity().getToolbar(),
+        /*ViewCompat.setElevation(getThemedActivity().getToolbar(),
                 getResources().getDimensionPixelSize(R.dimen.toolbar_elevation));
-        getThemedActivity().setPreLShadowVisibility(true);
+        getThemedActivity().setPreLShadowVisibility(true);*/
     }
 
     @Override

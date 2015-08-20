@@ -7,7 +7,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +31,6 @@ import org.cryse.novelreader.ui.adapter.NovelChapterListAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.SimpleSnackbarType;
-import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.prefs.BooleanPreference;
 import org.cryse.novelreader.view.NovelChaptersView;
@@ -51,6 +51,8 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     @PrefsHideRedundantChapterTitle
     BooleanPreference mHideRedundantChapterTitle;
 
+    @Bind(R.id.my_awesome_toolbar)
+    Toolbar mToolbar;
     @Bind(R.id.novel_chapter_list_listview)
     SuperListview mListView;
 
@@ -72,8 +74,8 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         injectThis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chapter_list);
-        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
         ButterKnife.bind(this);
+        setUpToolbar(mToolbar);
         mEmptyViewText.setText(getString(R.string.empty_view_prompt));
         if(savedInstanceState != null) {
             mNovel = savedInstanceState.getParcelable(DataContract.NOVEL_OBJECT_NAME);
@@ -84,7 +86,10 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
         // UIUtils.setInsets(this, getToolbar(), false);
         initListView();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         setTitle(mNovel.getTitle());
 
         mBackgroundServiceConnection = new ServiceConnection() {
@@ -351,11 +356,5 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
             }
         }
         throw new IllegalStateException("ChapterIndex not found.");
-    }
-
-    @Override
-    public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
-        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, type, Snackbar.LENGTH_SHORT);
-        snackbar.show();
     }
 }

@@ -1,14 +1,12 @@
 package org.cryse.novelreader.presenter.impl;
 
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
-import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelDetailPresenter;
-import org.cryse.novelreader.util.SimpleSnackbarType;
-import org.cryse.novelreader.view.NovelDetailView;
-import org.cryse.novelreader.util.SubscriptionUtils;
 import org.cryse.novelreader.util.SnackbarUtils;
+import org.cryse.novelreader.util.SubscriptionUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
+import org.cryse.novelreader.view.NovelDetailView;
 
 import javax.inject.Inject;
 
@@ -27,12 +25,13 @@ public class NovelDetailPresenterImpl implements NovelDetailPresenter {
     private NovelBusinessLogicLayer dataService;
     private SnackbarUtils mSnackbarUtils;
     private AndroidNavigation mDisplay;
+
     @Inject
     public NovelDetailPresenterImpl(NovelBusinessLogicLayer dataService, AndroidNavigation display, SnackbarUtils snackbarUtils) {
         this.dataService = dataService;
         this.mDisplay = display;
         this.mSnackbarUtils = snackbarUtils;
-        this.mView = new EmptyNovelDetailView();
+        this.mView = null;
     }
 
     @Override
@@ -42,7 +41,7 @@ public class NovelDetailPresenterImpl implements NovelDetailPresenter {
 
     @Override
     public void unbindView() {
-        bindView(new EmptyNovelDetailView());
+        this.mView = null;
     }
 
     @Override
@@ -54,23 +53,29 @@ public class NovelDetailPresenterImpl implements NovelDetailPresenter {
     }
 
     @Override
-     public void loadNovelDetail(NovelModel novelModel) {
+    public void loadNovelDetail(NovelModel novelModel) {
         SubscriptionUtils.checkAndUnsubscribe(mLoadDetailSubscription);
         mLoadDetailSubscription = dataService.getNovelDetail(novelModel.getNovelId(), novelModel.getSource())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            mView.showNovelDetail(result);
+                            if (mView != null) {
+                                mView.showNovelDetail(result);
+                            }
                         },
                         error -> {
-                            mView.setLoading(false);
                             Timber.e(error, error.getMessage(), LOG_TAG);
-                            mSnackbarUtils.showExceptionToast(mView, error);
+                            if (mView != null) {
+                                mView.setLoading(false);
+                                mSnackbarUtils.showExceptionToast(mView, error);
+                            }
                         },
                         () -> {
-                            mView.setLoading(false);
                             Timber.d("loadNovelDetail completed!", LOG_TAG);
+                            if (mView != null) {
+                                mView.setLoading(false);
+                            }
                         }
                 );
     }
@@ -83,7 +88,9 @@ public class NovelDetailPresenterImpl implements NovelDetailPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            mView.setFavoriteButtonStatus(result);
+                            if (mView != null) {
+                                mView.setFavoriteButtonStatus(result);
+                            }
                         },
                         error -> {
                             Timber.e(error, error.getMessage(), LOG_TAG);
@@ -114,34 +121,8 @@ public class NovelDetailPresenterImpl implements NovelDetailPresenter {
 
     @Override
     public void startReading(NovelModel novelModel) {
-        mDisplay.showNovelChapterList(mView, novelModel);
-    }
-
-    private class EmptyNovelDetailView implements NovelDetailView {
-
-        @Override
-        public void showNovelDetail(NovelDetailModel novelDetail) {
-
-        }
-
-        @Override
-        public void setFavoriteButtonStatus(boolean isFavorited) {
-
-        }
-
-        @Override
-        public void setLoading(Boolean isLoading) {
-
-        }
-
-        @Override
-        public Boolean isLoading() {
-            return null;
-        }
-
-        @Override
-        public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
-
+        if (mView != null) {
+            mDisplay.showNovelChapterList(mView, novelModel);
         }
     }
 }

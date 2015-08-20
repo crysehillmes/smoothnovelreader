@@ -14,8 +14,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -45,7 +45,6 @@ import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.SimpleSnackbarType;
-import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.view.NovelDetailView;
@@ -67,6 +66,9 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
 
 
     // View field
+    @Bind(R.id.my_awesome_toolbar)
+    Toolbar mToolbar;
+
     @Bind(R.id.scroll_view)
     ObservableScrollView mScrollView;
 
@@ -171,8 +173,8 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_novel_detail);
-        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
         ButterKnife.bind(this);
+        setUpToolbar(mToolbar);
 
         mBackgroundServiceConnection = new ServiceConnection() {
             @Override
@@ -190,9 +192,8 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         if(shouldBeFloatingWindow()) {
-            getToolbar().setNavigationIcon(R.drawable.ic_ab_close);
+            mToolbar.setNavigationIcon(R.drawable.ic_ab_close);
         }
-        setPreLShadowVisibility(false);
         if (savedInstanceState == null) {
             Uri sessionUri = getIntent().getData();
             /*BeamUtils.setBeamSessionUri(this, sessionUri);*/
@@ -662,11 +663,5 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
     @Override
     public Boolean isLoading() {
         return null;
-    }
-
-    @Override
-    public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
-        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, type, Snackbar.LENGTH_SHORT);
-        snackbar.show();
     }
 }

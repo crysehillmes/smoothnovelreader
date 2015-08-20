@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.view.View;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
@@ -17,9 +19,6 @@ import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
 import com.squareup.picasso.Picasso;
 
 import org.cryse.novelreader.R;
@@ -47,13 +46,12 @@ public class MainActivity extends AbstractThemeableActivity {
 
     int mCurrentSelection = 0;
     boolean mIsRestorePosition = false;
+    ServiceConnection mBackgroundServiceConnection;
     /**
      * Used to post delay navigation action to improve UX
      */
     private Handler mHandler = new Handler();
     private Runnable mPendingRunnable = null;
-
-    ServiceConnection mBackgroundServiceConnection;
     private LoadLocalTextService.ReadLocalTextFileBinder mServiceBinder;
 
     @Override
@@ -61,7 +59,6 @@ public class MainActivity extends AbstractThemeableActivity {
         injectThis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
         mPicasso = new Picasso.Builder(this).executor(Executors.newSingleThreadExecutor()).build();
         setIsOverrideStatusBarColor(false);
         mNavigation.attachMainActivity(this);
@@ -96,7 +93,6 @@ public class MainActivity extends AbstractThemeableActivity {
         mAccountHeader = accountHeaderBuilder.build();
         mNaviagtionDrawer = new DrawerBuilder()
                 .withActivity(this)
-                .withToolbar(getToolbar())
                 .withAccountHeader(mAccountHeader)
                 .withStatusBarColor(getThemeEngine().getPrimaryDarkColor(this))
                 .addDrawerItems(
@@ -268,5 +264,9 @@ public class MainActivity extends AbstractThemeableActivity {
 
     public LoadLocalTextService.ReadLocalTextFileBinder getReadLocalTextFileBinder() {
         return mServiceBinder;
+    }
+
+    public Drawer getNavigationDrawer() {
+        return mNaviagtionDrawer;
     }
 }

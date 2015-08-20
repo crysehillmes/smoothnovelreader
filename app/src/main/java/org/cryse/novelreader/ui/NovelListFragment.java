@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,7 +23,6 @@ import org.cryse.novelreader.ui.adapter.NovelModelListAdapter;
 import org.cryse.novelreader.ui.adapter.NovelOnlineListAdapter;
 import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.util.RecyclerViewUtils;
-import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.SnackbarTextDelegate;
 import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.UIUtils;
@@ -231,7 +229,7 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
         if(activity instanceof MainActivity) {
             MainActivity mainActivity = (MainActivity)activity;
             mainActivity.onSectionAttached(mFragmentTitle);
-            mainActivity.showDrawToggleAsUp(true);
+            // mainActivity.showDrawToggleAsUp(true);
             mainActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             mainActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -255,7 +253,7 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
         Activity activity = getActivity();
         if(activity instanceof MainActivity) {
             MainActivity mainActivity = (MainActivity)activity;
-            mainActivity.showDrawToggleAsUp(false);
+            // mainActivity.showDrawToggleAsUp(false);
             mainActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
@@ -385,11 +383,5 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
                 isNightMode(),
                 mGrayScaleInNight.get()
         );
-    }
-
-    @Override
-    public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
-        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, type, Snackbar.LENGTH_SHORT);
-        snackbar.show();
     }
 }

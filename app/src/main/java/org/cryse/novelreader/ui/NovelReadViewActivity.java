@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
 import android.text.TextPaint;
 import android.util.TypedValue;
 import android.view.MenuItem;
@@ -42,7 +41,6 @@ import org.cryse.novelreader.ui.widget.ReadWidget;
 import org.cryse.novelreader.ui.widget.ReadWidgetAdapter;
 import org.cryse.novelreader.util.PreferenceConverter;
 import org.cryse.novelreader.util.SimpleSnackbarType;
-import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.gesture.SimpleGestureDetector;
@@ -62,6 +60,7 @@ import butterknife.ButterKnife;
 
 public class NovelReadViewActivity extends AbstractThemeableActivity implements NovelChapterContentView {
     private static final String LOG_TAG = NovelReadViewActivity.class.getName();
+
     @Bind(R.id.activity_chapter_read_status_page_pos_textview)
     protected TextView mPagePositionTextView = null;
     @Bind(R.id.activity_chapter_read_status_current_chapter_textview)
@@ -114,7 +113,6 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_novel_readview);
-        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
         requestSystemUiHelper(SystemUiHelper.LEVEL_IMMERSIVE, SystemUiHelper.FLAG_IMMERSIVE_STICKY);
         ButterKnife.bind(this);
         mHandler = new Handler();
@@ -709,11 +707,5 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
 
     private boolean checkIfLocal(int chapterIndex) {
         return mNovelChapters.get(chapterIndex).getSource().contains("://");
-    }
-
-    @Override
-    public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
-        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, type, Snackbar.LENGTH_SHORT);
-        snackbar.show();
     }
 }

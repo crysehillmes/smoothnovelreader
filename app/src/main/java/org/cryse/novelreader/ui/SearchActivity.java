@@ -5,8 +5,9 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +22,6 @@ import org.cryse.novelreader.ui.adapter.NovelModelListAdapter;
 import org.cryse.novelreader.ui.adapter.NovelOnlineListAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ColorUtils;
-import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.SnackbarTextDelegate;
 import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.UIUtils;
@@ -51,6 +51,8 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
     @PrefsGrayScaleInNight
     BooleanPreference mGrayScaleInNight;
 
+    @Bind(R.id.my_awesome_toolbar)
+    Toolbar mToolbar;
     @Bind(R.id.novel_searchlistview)
     SuperRecyclerView mListView;
     SearchView mSearchView = null;
@@ -69,9 +71,12 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
         injectThis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
         ButterKnife.bind(this);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setUpToolbar(mToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         showCoverImage = mIsShowCoverImage.get();
         grayScaleInNight = mGrayScaleInNight.get();
 
@@ -264,11 +269,5 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
             mListView.showMoreProgress();
         else
             mListView.hideMoreProgress();
-    }
-
-    @Override
-    public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
-        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, type, Snackbar.LENGTH_SHORT);
-        snackbar.show();
     }
 }
