@@ -14,6 +14,8 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.lang.reflect.Array;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
 
 import retrofit.converter.ConversionException;
@@ -22,8 +24,10 @@ import retrofit.mime.TypedInput;
 import retrofit.mime.TypedOutput;
 
 public class CustomGsonConverter implements Converter {
+    static String NAME_PREFIX = "class ";
     private final Gson gson;
     private String encoding;
+
     /**
      * Create an instance using the supplied {@link com.google.gson.Gson} object for conversion. Encoding to JSON and
      * decoding from JSON (when no charset is specified by a header) will use UTF-8.
@@ -41,6 +45,13 @@ public class CustomGsonConverter implements Converter {
         this.encoding = encoding;
     }
 
+    private static String getClassName(Type type) {
+        String fullName = type.toString();
+        if (fullName.startsWith(NAME_PREFIX))
+            return fullName.substring(NAME_PREFIX.length());
+        return fullName;
+    }
+
     @Override public Object fromBody(TypedInput body, Type type) throws ConversionException {
         try {
             InputStream stream = body.in();
@@ -50,11 +61,14 @@ public class CustomGsonConverter implements Converter {
             JsonParser parser = new JsonParser();
             JsonObject element = (JsonObject)parser.parse(responseBodyString);
             JsonElement dataObject = element.get("data");
+            if (!dataObject.isJsonArray() && type instanceof GenericArrayType) {
+                Type componentType = ((GenericArrayType) type).getGenericComponentType();
+                Class<?> c = Class.forName(getClassName(componentType));
+                return Array.newInstance(c, 0);
+            }
             return gson.fromJson(dataObject, type);
-        } catch (JsonParseException | IOException e) {
+        } catch (JsonParseException | IOException | ClassNotFoundException e) {
             throw new ConversionException(e);
-        } finally {
-
         }
     }
 
@@ -125,6 +139,5 @@ public class CustomGsonConverter implements Converter {
             return count;
         }
     }
-
 }
 
