@@ -26,26 +26,25 @@ import org.apache.tika.detect.Detector;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MimeTypes;
+import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.event.AbstractEvent;
 import org.cryse.novelreader.event.LoadLocalFileDoneEvent;
 import org.cryse.novelreader.event.LoadLocalFileStartEvent;
+import org.cryse.novelreader.model.NovelModel;
+import org.cryse.novelreader.presenter.NovelBookShelfPresenter;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.service.LoadLocalTextService;
+import org.cryse.novelreader.ui.adapter.NovelBookShelfListAdapter;
+import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.PathUriUtils;
 import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
-import org.cryse.widget.recyclerview.SuperRecyclerView;
-
-import org.cryse.novelreader.R;
-import org.cryse.novelreader.model.NovelModel;
-import org.cryse.novelreader.ui.adapter.NovelBookShelfListAdapter;
-import org.cryse.novelreader.ui.common.AbstractFragment;
-import org.cryse.novelreader.presenter.NovelBookShelfPresenter;
 import org.cryse.novelreader.view.NovelBookShelfView;
+import org.cryse.widget.recyclerview.SuperRecyclerView;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,27 +53,55 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import timber.log.Timber;
 
 public class NovelBookShelfFragment extends AbstractFragment implements NovelBookShelfView {
     private static final String LOG_TAG = NovelBookShelfFragment.class.getName();
+    private static final int OPEN_TEXT_FILE_RESULT_CODE = 10010;
+    private static final Detector DETECTOR = new DefaultDetector(
+            MimeTypes.getDefaultMimeTypes());
     @Inject
     NovelBookShelfPresenter presenter;
-
     ArrayList<NovelModel> novelList;
-
     NovelBookShelfListAdapter bookShelfListAdapter;
-
-    @InjectView(R.id.novel_listview)
+    @Bind(R.id.novel_listview)
     SuperRecyclerView mShelfListView;
-
-    @InjectView(R.id.empty_view_text_prompt)
+    @Bind(R.id.empty_view_text_prompt)
     TextView mEmptyViewText;
-
     ServiceConnection mBackgroundServiceConnection;
+    MaterialDialog mAddLocalFileProgressDialog = null;
     private ChapterContentsCacheService.ChapterContentsCacheBinder mServiceBinder;
+
+    public static String detectMimeType(final String filePath) {
+        TikaInputStream tikaIS = null;
+        try {
+            File targetFile = new File(filePath);
+            tikaIS = TikaInputStream.get(targetFile);
+
+        /*
+         * You might not want to provide the file's name. If you provide an Excel
+         * document with a .xls extension, it will get it correct right away; but
+         * if you provide an Excel document with .doc extension, it will guess it
+         * to be a Word document
+         */
+            final Metadata metadata = new Metadata();
+            metadata.set(Metadata.RESOURCE_NAME_KEY, targetFile.getName());
+
+            return DETECTOR.detect(tikaIS, metadata).toString();
+        } catch (IOException ex) {
+            return "UNKNOWN";
+        } finally {
+            if (tikaIS != null) {
+                try {
+                    tikaIS.close();
+                } catch (IOException e) {
+                    Timber.d(e, e.getMessage(), LOG_TAG);
+                }
+            }
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -102,12 +129,18 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View contentView = inflater.inflate(R.layout.fragment_bookshelf, null);
-        ButterKnife.inject(this, contentView);
+        ButterKnife.bind(this, contentView);
         mEmptyViewText.setText(getActivity().getString(R.string.empty_view_no_book_on_shelf_prompt));
         initListView();
         UIUtils.setInsets(getActivity(), mShelfListView, false, false, true, Build.VERSION.SDK_INT < 21);
         mShelfListView.setClipToPadding(false);
         return contentView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 
     @SuppressLint("ResourceAsColor")
@@ -195,8 +228,8 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         mShelfListView.getSwipeToRefresh().setRefreshing(true);
         getPresenter().loadFavoriteNovels();
         Activity activity = getActivity();
-        if(activity instanceof MainActivity) {
-            ((MainActivity)activity).onSectionAttached(getString(R.string.drawer_bookshelf));
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).onSectionAttached(getString(R.string.drawer_bookshelf));
         }
     }
 
@@ -268,7 +301,6 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         bookShelfListAdapter.notifyDataSetChanged();
     }
 
-    MaterialDialog mAddLocalFileProgressDialog = null;
     @Override
     public void showAddLocalBookProgressDialog(boolean show) {
         if(show) {
@@ -338,7 +370,6 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         return presenter;
     }
 
-    private static final int OPEN_TEXT_FILE_RESULT_CODE = 10010;
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -366,38 +397,6 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
             }
         }
 
-    }
-
-    private static final Detector DETECTOR = new DefaultDetector(
-            MimeTypes.getDefaultMimeTypes());
-    public static String detectMimeType(final String filePath) {
-        TikaInputStream tikaIS = null;
-        try {
-            File targetFile = new File(filePath);
-            tikaIS = TikaInputStream.get(targetFile);
-
-        /*
-         * You might not want to provide the file's name. If you provide an Excel
-         * document with a .xls extension, it will get it correct right away; but
-         * if you provide an Excel document with .doc extension, it will guess it
-         * to be a Word document
-         */
-            final Metadata metadata = new Metadata();
-            metadata.set(Metadata.RESOURCE_NAME_KEY, targetFile.getName());
-
-            return DETECTOR.detect(tikaIS, metadata).toString();
-        } catch (IOException ex) {
-            return "UNKNOWN";
-        }
-        finally {
-            if (tikaIS != null) {
-                try {
-                    tikaIS.close();
-                } catch (IOException e) {
-                    Timber.d(e, e.getMessage(), LOG_TAG);
-                }
-            }
-        }
     }
 
     @Override

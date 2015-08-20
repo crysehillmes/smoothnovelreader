@@ -40,8 +40,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class NovelChapterListActivity extends AbstractThemeableActivity implements NovelChaptersView{
     private static final String LOG_TAG = NovelChapterListActivity.class.getName();
@@ -51,21 +51,20 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     @PrefsHideRedundantChapterTitle
     BooleanPreference mHideRedundantChapterTitle;
 
-    @InjectView(R.id.novel_chapter_list_listview)
+    @Bind(R.id.novel_chapter_list_listview)
     SuperListview mListView;
 
-    @InjectView(R.id.empty_view_text_prompt)
+    @Bind(R.id.empty_view_text_prompt)
     TextView mEmptyViewText;
 
     NovelModel mNovel;
     ArrayList<ChapterModel> mNovelChapterList;
 
     NovelChapterListAdapter mChapterListAdapter;
+    ServiceConnection mBackgroundServiceConnection;
     private MenuItem mMenuItemCacheChapters;
     private MenuItem mMenuItemDetail;
     private MenuItem mMenuItemRefresh;
-
-    ServiceConnection mBackgroundServiceConnection;
     private ChapterContentsCacheService.ChapterContentsCacheBinder mServiceBinder;
 
     @Override
@@ -74,7 +73,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chapter_list);
         setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         mEmptyViewText.setText(getString(R.string.empty_view_prompt));
         if(savedInstanceState != null) {
             mNovel = savedInstanceState.getParcelable(DataContract.NOVEL_OBJECT_NAME);

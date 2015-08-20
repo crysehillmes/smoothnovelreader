@@ -25,8 +25,8 @@ import org.cryse.novelreader.ui.adapter.NovelOnlineListAdapter;
 import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.util.RecyclerViewUtils;
 import org.cryse.novelreader.util.SimpleSnackbarType;
-import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.SnackbarTextDelegate;
+import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.prefs.BooleanPreference;
@@ -39,53 +39,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class NovelListFragment extends AbstractFragment implements NovelOnlineListView {
-    private static final String LOG_TAG = NovelListFragment.class.getName();
-    @Inject
-    NovelListPresenter mPresenter;
-
-    private Handler mHandler;
-
-    private View mContentView;
-    protected ArrayList<NovelModel> mNovelList;
-
-    @Inject
-    @PrefsShowCoverImage
-    BooleanPreference mIsShowCoverImage;
-
-    @Inject
-    @PrefsGrayScaleInNight
-    BooleanPreference mGrayScaleInNight;
-
-    @InjectView(R.id.novel_listview)
-    SuperRecyclerView mListView;
-
-    @InjectView(R.id.empty_view_text_prompt)
-    TextView mEmptyViewText;
-
-    protected NovelModelListAdapter mNovelListAdapter;
-
-    protected int mCurrentListPageNumber = 0;
-    protected boolean isLoadingMore = false;
-    protected boolean isLoading = false;
-    protected boolean isNoMore = false;
-    protected boolean showCoverImage;
-    protected boolean grayScaleInNight;
-
-    protected int mQueryType;
-    protected String mFragmentTitle;
-    protected String mQueryString;
-    protected String mSubQueryString;
-    protected boolean mIsQueryByTag;
-
-
     public static final int QUERY_TYPE_SEARCH = 11;
     public static final int QUERY_TYPE_CATEGORY = 13;
     public static final int QUERY_TYPE_RANK = 19;
-
+    private static final String LOG_TAG = NovelListFragment.class.getName();
     private static final String CONTRACT_LIST_PAGE = "list_page";
     private static final String CONTRACT_LIST_CONTENT = "list_content";
     private static final String CONTRACT_QUERY_TYPE = "query_type";
@@ -93,6 +54,33 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
     private static final String CONTRACT_QUERY_STRING = "query_string";
     private static final String CONTRACT_SUB_QUERY_STRING = "sub_query_string";
     private static final String CONTRACT_IS_QUERY_BY_TAG = "is_query_by_tag";
+    protected ArrayList<NovelModel> mNovelList;
+    protected NovelModelListAdapter mNovelListAdapter;
+    protected int mCurrentListPageNumber = 0;
+    protected boolean isLoadingMore = false;
+    protected boolean isLoading = false;
+    protected boolean isNoMore = false;
+    protected boolean showCoverImage;
+    protected boolean grayScaleInNight;
+    protected int mQueryType;
+    protected String mFragmentTitle;
+    protected String mQueryString;
+    protected String mSubQueryString;
+    protected boolean mIsQueryByTag;
+    @Inject
+    NovelListPresenter mPresenter;
+    @Inject
+    @PrefsShowCoverImage
+    BooleanPreference mIsShowCoverImage;
+    @Inject
+    @PrefsGrayScaleInNight
+    BooleanPreference mGrayScaleInNight;
+    @Bind(R.id.novel_listview)
+    SuperRecyclerView mListView;
+    @Bind(R.id.empty_view_text_prompt)
+    TextView mEmptyViewText;
+    private Handler mHandler;
+    private View mContentView;
 
     public static NovelListFragment newInstance(
             int queryType,
@@ -145,7 +133,7 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContentView = inflater.inflate(R.layout.fragment_novel_list,null);
-        ButterKnife.inject(this, mContentView);
+        ButterKnife.bind(this, mContentView);
         showCoverImage = mIsShowCoverImage.get();
         grayScaleInNight = mGrayScaleInNight.get();
         mEmptyViewText.setText(getActivity().getString(R.string.empty_view_prompt));
@@ -153,6 +141,12 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
         mListView.setClipToPadding(false);
         UIUtils.setInsets(getActivity(), mListView, false, false, true, Build.VERSION.SDK_INT < 21);
         return mContentView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 
     @SuppressLint("ResourceAsColor")
@@ -369,18 +363,18 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
     }
 
     @Override
-    public void setLoadingMore(boolean value) {
-        isLoadingMore = value;
-        mListView.setLoadingMore(value);
-        if(value)
-            mListView.showMoreProgress();
-        else
-            mListView.hideMoreProgress();
+    public boolean isLoadingMore() {
+        return isLoadingMore;
     }
 
     @Override
-    public boolean isLoadingMore() {
-        return isLoadingMore;
+    public void setLoadingMore(boolean value) {
+        isLoadingMore = value;
+        mListView.setLoadingMore(value);
+        if (value)
+            mListView.showMoreProgress();
+        else
+            mListView.hideMoreProgress();
     }
 
     protected NovelModelListAdapter createAdapter() {

@@ -22,8 +22,8 @@ import org.cryse.novelreader.util.UIUtils;
 
 import java.util.List;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class NovelChapterListAdapter extends BaseAdapter{
     private Context mContext = null;
@@ -140,12 +140,12 @@ public class NovelChapterListAdapter extends BaseAdapter{
     public class NovelIntroItemViewHolder
     {
         public View view;
-        @InjectView(R.id.listview_item_novel_chapters_item_chapter_title)
+        @Bind(R.id.listview_item_novel_chapters_item_chapter_title)
         public TextView mNovelChapterTitleTextView;
 
         public NovelIntroItemViewHolder(View view) {
             this.view = view;
-            ButterKnife.inject(this, view);
+            ButterKnife.bind(this, view);
         }
     }
 }

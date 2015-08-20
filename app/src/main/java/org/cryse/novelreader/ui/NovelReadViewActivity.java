@@ -57,29 +57,25 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class NovelReadViewActivity extends AbstractThemeableActivity implements NovelChapterContentView {
     private static final String LOG_TAG = NovelReadViewActivity.class.getName();
-    ReadWidget mReadWidget;
-
-    @InjectView(R.id.activity_chapter_read_container)
-    RelativeLayout mRootContainer;
-
-    @InjectView(R.id.activity_read_view_widget_container)
-    FrameLayout mReadWidgetContainer;
-    @InjectView(R.id.activity_chapter_read_status_layout)
-    RelativeLayout mReadStatusContainer;
-
-    @InjectView(R.id.activity_chapter_read_status_page_pos_textview)
+    @Bind(R.id.activity_chapter_read_status_page_pos_textview)
     protected TextView mPagePositionTextView = null;
-    @InjectView(R.id.activity_chapter_read_status_current_chapter_textview)
+    @Bind(R.id.activity_chapter_read_status_current_chapter_textview)
     protected TextView mCurrentChapterTextView = null;
-    @InjectView(R.id.activity_chapter_read_status_chapter_pos_textview)
+    @Bind(R.id.activity_chapter_read_status_chapter_pos_textview)
     protected TextView mChapterPositionTextView = null;
-
-    @InjectView(R.id.activity_chapter_read_progressbar)
+    ReadWidget mReadWidget;
+    @Bind(R.id.activity_chapter_read_container)
+    RelativeLayout mRootContainer;
+    @Bind(R.id.activity_read_view_widget_container)
+    FrameLayout mReadWidgetContainer;
+    @Bind(R.id.activity_chapter_read_status_layout)
+    RelativeLayout mReadStatusContainer;
+    @Bind(R.id.activity_chapter_read_progressbar)
     ProgressBar mProgressBar;
 
     @Inject
@@ -120,7 +116,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         setContentView(R.layout.activity_novel_readview);
         setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
         requestSystemUiHelper(SystemUiHelper.LEVEL_IMMERSIVE, SystemUiHelper.FLAG_IMMERSIVE_STICKY);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         mHandler = new Handler();
         createReadWidget();
         mReadWidget.setOnContentRequestListener(new ReadWidget.OnContentRequestListener() {

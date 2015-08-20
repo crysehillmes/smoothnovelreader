@@ -54,8 +54,8 @@ import org.cryse.widget.ObservableScrollView;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import timber.log.Timber;
 
 
@@ -67,98 +67,96 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
 
 
     // View field
-    @InjectView(R.id.scroll_view)
+    @Bind(R.id.scroll_view)
     ObservableScrollView mScrollView;
 
-    @InjectView(R.id.scroll_view_child)
+    @Bind(R.id.scroll_view_child)
     FrameLayout mScrollViewChild;
 
-    @InjectView(R.id.session_photo_container)
+    @Bind(R.id.session_photo_container)
     FrameLayout mPhotoViewContainer;
 
-    @InjectView(R.id.session_photo)
+    @Bind(R.id.session_photo)
     ImageView mPhotoView;
 
-    @InjectView(R.id.details_container)
+    @Bind(R.id.details_container)
     LinearLayout mDetailsContainer;
 
-    @InjectView(R.id.novel_brief_info_layout)
+    @Bind(R.id.novel_brief_info_layout)
     LinearLayout mBriefInfoLayout;
 
-    @InjectView(R.id.detail_status_textview)
+    @Bind(R.id.detail_status_textview)
     TextView mStatusTextView;
 
-    @InjectView(R.id.detail_chapter_count_textview)
+    @Bind(R.id.detail_chapter_count_textview)
     TextView mChapterCountTextView;
 
-    @InjectView(R.id.detail_latest_chapter_textview)
+    @Bind(R.id.detail_latest_chapter_textview)
     TextView mLatestChapterTextView;
 
-    @InjectView(R.id.detail_abstract_header)
+    @Bind(R.id.detail_abstract_header)
     TextView mAbstractHeaderTextView;
 
-    @InjectView(R.id.novel_abstract)
+    @Bind(R.id.novel_abstract)
     TextView mAbstractTextView;
 
-    @InjectView(R.id.novel_tags_scrollview)
+    @Bind(R.id.novel_tags_scrollview)
     HorizontalScrollView mTagsScrollView;
 
-    @InjectView(R.id.novel_tags_container)
+    @Bind(R.id.novel_tags_container)
     LinearLayout mTagsContainer;
 
-    @InjectView(R.id.detail_achieve_block)
+    @Bind(R.id.detail_achieve_block)
     LinearLayout mAchieveLayout;
 
-    @InjectView(R.id.detail_achieve_header)
+    @Bind(R.id.detail_achieve_header)
     TextView mAchieveHeaderTextView;
 
-    @InjectView(R.id.detail_achieves_container)
+    @Bind(R.id.detail_achieves_container)
     LinearLayout mAchievesContainer;
 
-    @InjectView(R.id.header_novel)
+    @Bind(R.id.header_novel)
     LinearLayout mHeaderBox;
 
-    @InjectView(R.id.novel_title)
+    @Bind(R.id.novel_title)
     TextView mTitleTextView;
 
-    @InjectView(R.id.novel_subtitle)
+    @Bind(R.id.novel_subtitle)
     TextView mSubtitleTextView;
 
-    @InjectView(R.id.add_novel_button)
+    @Bind(R.id.add_novel_button)
     CheckableFrameLayout mAddNovelButton;
 
-    @InjectView(R.id.detail_loading_progress)
+    @Bind(R.id.detail_loading_progress)
     ProgressBar mLoadingProgress;
-
+    @Inject
+    NovelDetailPresenter mPresenter;
+    MenuItem mStartReadingMenuItem;
+    ServiceConnection mBackgroundServiceConnection;
     private float mMaxHeaderElevation;
     private float mFABElevation;
-
     private int mTagColorDotSize;
-
     private Handler mHandler;
-
     private int mPhotoHeightPixels;
     private int mHeaderHeightPixels;
     private int mAddNovelButtonHeightPixels;
-
     private boolean mHasPhoto;
-
     private String mTitleString;
     private int mDetailPrimaryColor;
     private boolean mHasSummaryContent = false;
-
-    @Inject
-    NovelDetailPresenter mPresenter;
-
-    MenuItem mStartReadingMenuItem;
-
     private NovelModel mNovel;
     private NovelDetailModel mNovelDetail;
     private boolean mIsFavorited = false;
     private boolean mShowStartReadingButton = true;
-
-    ServiceConnection mBackgroundServiceConnection;
     private ChapterContentsCacheService.ChapterContentsCacheBinder mServiceBinder;
+    private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener
+            = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            mAddNovelButtonHeightPixels = mAddNovelButton.getHeight();
+            recomputePhotoAndScrollingMetrics();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,7 +172,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_novel_detail);
         setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         mBackgroundServiceConnection = new ServiceConnection() {
             @Override
@@ -251,18 +249,18 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         });
     }
 
+    /*@Override
+    public Intent getParentActivityIntent() {
+        // TODO: make this Activity navigate up to the right screen depending on how it was launched
+        return new Intent(this, MyScheduleActivity.class);
+    }*/
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if(mNovelDetail != null)
             outState.putParcelable("novel_detail_object", mNovelDetail);
     }
-
-    /*@Override
-    public Intent getParentActivityIntent() {
-        // TODO: make this Activity navigate up to the right screen depending on how it was launched
-        return new Intent(this, MyScheduleActivity.class);
-    }*/
 
     private void setupFloatingWindow() {
         // configure this Activity as a floating window, dimming the background
@@ -356,15 +354,6 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
     protected void analyticsTrackExit() {
         AnalyticsUtils.trackActivityExit(this, LOG_TAG);
     }
-
-    private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener
-            = new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-            mAddNovelButtonHeightPixels = mAddNovelButton.getHeight();
-            recomputePhotoAndScrollingMetrics();
-        }
-    };
 
     @Override
     public void onScrollChanged(int deltaX, int deltaY) {

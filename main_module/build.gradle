@@ -33,7 +33,7 @@ android {
 dependencies {
     compile "com.android.support:support-v13:$supportlibraryVersion"
     compile "com.android.support:support-annotations:$supportlibraryVersion"
-    compile 'io.reactivex:rxjava:1.0.10'
+    compile "io.reactivex:rxjava:$rxJavaVersion"
     retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:$retrolambdaVersion"
 
     compile fileTree(dir: 'libs', include: ['*.jar'])

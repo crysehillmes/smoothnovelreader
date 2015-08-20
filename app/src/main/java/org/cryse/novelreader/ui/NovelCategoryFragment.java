@@ -6,8 +6,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -38,19 +38,17 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class NovelCategoryFragment extends AbstractFragment {
     private static final String LOG_TAG = NovelCategoryFragment.class.getName();
-    private View mContentView;
-
-    @InjectView(R.id.category_group_viewpager)
+    @Bind(R.id.category_group_viewpager)
     ViewPager mViewPager;
-    @InjectView(R.id.fragment_notification_sliding_tabs)
+    @Bind(R.id.fragment_notification_sliding_tabs)
     SlidingTabLayout mTabLayout;
-
     CategoryGroupPagerAdapter mCategoryAdapter;
+    private View mContentView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,11 +65,17 @@ public class NovelCategoryFragment extends AbstractFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContentView = inflater.inflate(R.layout.fragment_category_list,null);
-        ButterKnife.inject(this, mContentView);
+        ButterKnife.bind(this, mContentView);
         UIUtils.setInsets(getActivity(), mContentView, false, false, true, Build.VERSION.SDK_INT < 21);
         //UIUtils.setInsets(getActivity(), mViewPager, true, Build.VERSION.SDK_INT < 21);
         initViewPager();
         return mContentView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 
     @Override
@@ -235,6 +239,14 @@ public class NovelCategoryFragment extends AbstractFragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onEvent(AbstractEvent event) {
+        super.onEvent(event);
+        if (event instanceof ThemeColorChangedEvent) {
+            mTabLayout.setBackgroundColor(((ThemeColorChangedEvent) event).getNewPrimaryColor());
+        }
+    }
+
     public static class CategoryGroupPagerAdapter extends FragmentStatePagerAdapter {
 
         private ArrayList<NovelCategoryItemGroup> mItemGroups;
@@ -276,11 +288,10 @@ public class NovelCategoryFragment extends AbstractFragment {
     }
 
     public static class CategorySubListFragment extends Fragment {
-        private int mPosition;
-        private NovelCategoryItemGroup mItemGroup;
-
         @Inject
         AndroidNavigation mDisplay;
+        private int mPosition;
+        private NovelCategoryItemGroup mItemGroup;
 
         public static CategorySubListFragment newInstance(int position, NovelCategoryItemGroup itemGroup) {
             CategorySubListFragment fragment = new CategorySubListFragment();
@@ -347,14 +358,6 @@ public class NovelCategoryFragment extends AbstractFragment {
             super.onSaveInstanceState(outState);
             outState.putInt("position", mPosition);
             outState.putParcelable("item_group", mItemGroup);
-        }
-    }
-
-    @Override
-    protected void onEvent(AbstractEvent event) {
-        super.onEvent(event);
-        if (event instanceof ThemeColorChangedEvent) {
-            mTabLayout.setBackgroundColor(((ThemeColorChangedEvent) event).getNewPrimaryColor());
         }
     }
 }

@@ -13,31 +13,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.ui.adapter.NovelCategoryItemAdapter;
 import org.cryse.novelreader.ui.adapter.item.NovelCategoryItem;
+import org.cryse.novelreader.ui.common.AbstractFragment;
+import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
-import org.cryse.novelreader.R;
-import org.cryse.novelreader.ui.common.AbstractFragment;
-import org.cryse.novelreader.util.UIUtils;
-
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class NovelRankFragment extends AbstractFragment {
     public static final String LOG_TAG = NovelRankFragment.class.getName();
     protected View mContentView;
+    protected NovelCategoryItemAdapter mNovelListAdapter;
     @Inject
     AndroidNavigation mDisplay;
-
-    @InjectView(R.id.rank_recyclerview)
+    @Bind(R.id.rank_recyclerview)
     RecyclerView mRecyclerView;
-
-    protected NovelCategoryItemAdapter mNovelListAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,11 +51,17 @@ public class NovelRankFragment extends AbstractFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContentView = inflater.inflate(R.layout.fragment_rank_list,null);
-        ButterKnife.inject(this, mContentView);
+        ButterKnife.bind(this, mContentView);
         initListView();
         mRecyclerView.setClipToPadding(false);
         UIUtils.setInsets(getActivity(), mRecyclerView, false, false, true, Build.VERSION.SDK_INT < 21);
         return mContentView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 
     private void initListView() {

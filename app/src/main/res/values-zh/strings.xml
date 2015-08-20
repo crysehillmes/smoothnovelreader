@@ -215,11 +215,8 @@
     <!-- About -->
     <string name="settings_about_activity_title">关于</string>
     <string name="settings_category_author_title">关于</string>
-    <string name="settings_item_author_name_value" translatable="false">Cryse Hillmes</string>
     <string name="settings_item_author_name_title">作者</string>
-    <string name="settings_item_email_address_value" translatable="false">tyk5555@hotmail.com</string>
     <string name="settings_item_email_address_title">联系作者</string>
-    <string name="settings_item_author_blog_site_value" translatable="false">http://www.cryse.org</string>
     <string name="settings_item_author_blog_site">作者网站</string>
     <string name="settings_item_version">版本</string>
     <string name="settings_item_change_log_summary">最近各个版本的改进</string>

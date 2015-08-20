@@ -11,33 +11,32 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.model.NovelModel;
+import org.cryse.novelreader.presenter.NovelListPresenter;
 import org.cryse.novelreader.qualifier.PrefsGrayScaleInNight;
 import org.cryse.novelreader.qualifier.PrefsShowCoverImage;
+import org.cryse.novelreader.ui.adapter.NovelModelListAdapter;
+import org.cryse.novelreader.ui.adapter.NovelOnlineListAdapter;
+import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.SimpleSnackbarType;
-import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.SnackbarTextDelegate;
+import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.prefs.BooleanPreference;
 import org.cryse.novelreader.view.NovelOnlineListView;
 import org.cryse.widget.recyclerview.SuperRecyclerView;
 
-import org.cryse.novelreader.R;
-import org.cryse.novelreader.model.NovelModel;
-import org.cryse.novelreader.ui.adapter.NovelModelListAdapter;
-import org.cryse.novelreader.ui.adapter.NovelOnlineListAdapter;
-import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
-import org.cryse.novelreader.presenter.NovelListPresenter;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class SearchActivity extends AbstractThemeableActivity implements NovelOnlineListView {
     private static final String LOG_TAG = SearchActivity.class.getName();
@@ -52,14 +51,11 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
     @PrefsGrayScaleInNight
     BooleanPreference mGrayScaleInNight;
 
-    @InjectView(R.id.novel_searchlistview)
+    @Bind(R.id.novel_searchlistview)
     SuperRecyclerView mListView;
-
+    SearchView mSearchView = null;
     private NovelModelListAdapter mSearchListAdapter;
     private List<NovelModel> mSearchNovelList;
-
-    SearchView mSearchView = null;
-
     private String mQueryString = null;
     private int currentListPageNumber = 0;
     private boolean isNoMore = false;
@@ -74,7 +70,7 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         showCoverImage = mIsShowCoverImage.get();
         grayScaleInNight = mGrayScaleInNight.get();
@@ -256,18 +252,18 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
     }
 
     @Override
-    public void setLoadingMore(boolean value) {
-        isLoadingMore = value;
-        mListView.setLoadingMore(value);
-        if(value)
-            mListView.showMoreProgress();
-        else
-            mListView.hideMoreProgress();
+    public boolean isLoadingMore() {
+        return isLoadingMore;
     }
 
     @Override
-    public boolean isLoadingMore() {
-        return isLoadingMore;
+    public void setLoadingMore(boolean value) {
+        isLoadingMore = value;
+        mListView.setLoadingMore(value);
+        if (value)
+            mListView.showMoreProgress();
+        else
+            mListView.hideMoreProgress();
     }
 
     @Override
