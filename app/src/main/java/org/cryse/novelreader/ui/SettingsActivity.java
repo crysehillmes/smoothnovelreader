@@ -25,7 +25,7 @@ public class SettingsActivity extends AbstractThemeableActivity {
         injectThis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        ButterKnife.bind(mToolbar);
+        ButterKnife.bind(this);
         setUpToolbar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

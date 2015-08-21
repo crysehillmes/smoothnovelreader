@@ -4,11 +4,17 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.view.View;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
@@ -34,10 +40,9 @@ import timber.log.Timber;
 
 public class AndroidNavigation {
     private static final String TAG = AndroidNavigation.class.getCanonicalName();
-    RunTimeStore mRunTimeStore;
-
     protected AppCompatActivity mActivity;
     protected FragmentManager mFragmentManager;
+    RunTimeStore mRunTimeStore;
 
     @Inject
     public AndroidNavigation(RunTimeStore runTimeStore) {
@@ -129,19 +134,28 @@ public class AndroidNavigation {
 
     public void navigateToCategoryFragment(String title, String queryString, String subQueryString, boolean isQueryByTag) {
         NovelListFragment categoryFragment = NovelListFragment.newInstance(
-            NovelListFragment.QUERY_TYPE_CATEGORY,
-            title,
-            queryString,
-            subQueryString,
-            isQueryByTag
+                NovelListFragment.QUERY_TYPE_CATEGORY,
+                title,
+                queryString,
+                subQueryString,
+                isQueryByTag
         );
         switchContentFragment(categoryFragment, "category_list");
     }
 
-    public void showSearchActivity(Object currentView) {
+    public void showSearchActivity(Object currentView, String queryString, Pair<View, String>... transitionPairs) {
         Context context = getContextFromView(currentView);
         Intent intent = new Intent(context, SearchActivity.class);
-        startActivity(context, intent);
+        if (!TextUtils.isEmpty(queryString)) {
+            intent.putExtra(DataContract.SEARCH_STRING, queryString);
+        }
+        Activity activity = getActivityFromView(currentView);
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+                makeSceneTransitionAnimation(activity, transitionPairs);
+        ActivityCompat.startActivity(activity, intent, options.toBundle());
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            activity.overridePendingTransition(android.R.anim.fade_in, 0);
+        }
     }
 
     public void navigateToSettingsActivity(Context context) {

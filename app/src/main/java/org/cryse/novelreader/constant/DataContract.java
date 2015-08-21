@@ -22,4 +22,5 @@ public class DataContract {
 
 
     public static final String LOCAL_FILE_PREFIX = "LOCAL_FILE";
+    public static final String SEARCH_STRING = "search_string";
 }

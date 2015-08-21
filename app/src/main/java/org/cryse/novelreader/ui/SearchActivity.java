@@ -1,19 +1,20 @@
 package org.cryse.novelreader.ui;
 
+import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.SearchManager;
-import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelListPresenter;
 import org.cryse.novelreader.qualifier.PrefsGrayScaleInNight;
@@ -22,12 +23,16 @@ import org.cryse.novelreader.ui.adapter.NovelModelListAdapter;
 import org.cryse.novelreader.ui.adapter.NovelOnlineListAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ColorUtils;
+import org.cryse.novelreader.util.SimpleAnimationListener;
 import org.cryse.novelreader.util.SnackbarTextDelegate;
 import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.prefs.BooleanPreference;
 import org.cryse.novelreader.view.NovelOnlineListView;
+import org.cryse.widget.persistentsearch.DefaultVoiceRecognizerDelegate;
+import org.cryse.widget.persistentsearch.PersistentSearchView;
+import org.cryse.widget.persistentsearch.VoiceRecognitionDelegate;
 import org.cryse.widget.recyclerview.SuperRecyclerView;
 
 import java.util.ArrayList;
@@ -39,6 +44,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class SearchActivity extends AbstractThemeableActivity implements NovelOnlineListView {
+    private static final int VOICE_RECOGNITION_REQUEST_CODE = 1023;
     private static final String LOG_TAG = SearchActivity.class.getName();
     @Inject
     NovelListPresenter mPresenter;
@@ -51,11 +57,14 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
     @PrefsGrayScaleInNight
     BooleanPreference mGrayScaleInNight;
 
-    @Bind(R.id.my_awesome_toolbar)
-    Toolbar mToolbar;
+    @Bind(R.id.searchview)
+    PersistentSearchView mSearchView;
+
+    @Bind(R.id.view_search_tint)
+    View mSearchTintView;
+
     @Bind(R.id.novel_searchlistview)
     SuperRecyclerView mListView;
-    SearchView mSearchView = null;
     private NovelModelListAdapter mSearchListAdapter;
     private List<NovelModel> mSearchNovelList;
     private String mQueryString = null;
@@ -72,7 +81,7 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
-        setUpToolbar(mToolbar);
+        setStatusBarColor();
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -84,8 +93,12 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
         String query = getIntent().getStringExtra(SearchManager.QUERY);
         query = query == null ? "" : query;
         mQueryString = query;
-
         initListView();
+        setUpSearchView();
+        Intent intent = getIntent();
+        if (intent.hasExtra(DataContract.SEARCH_STRING)) {
+            mSearchView.openSearch(intent.getStringExtra(DataContract.SEARCH_STRING));
+        }
     }
 
     @Override
@@ -158,11 +171,78 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
         });
     }
 
+    public void setUpSearchView() {
+        VoiceRecognitionDelegate delegate = new DefaultVoiceRecognizerDelegate(this, VOICE_RECOGNITION_REQUEST_CODE);
+        if (delegate.isVoiceRecognitionAvailable()) {
+            mSearchView.setVoiceRecognitionDelegate(delegate);
+        }
+        mSearchView.setHomeButtonListener(this::finish);
+        mSearchTintView.setOnClickListener(v -> mSearchView.cancelEditing());
+        mSearchView.setSearchListener(new PersistentSearchView.SearchListener() {
+
+            @Override
+            public void onSearchEditOpened() {
+                //Use this to tint the screen
+                mSearchTintView.setVisibility(View.VISIBLE);
+                mSearchTintView
+                        .animate()
+                        .alpha(1.0f)
+                        .setDuration(300)
+                        .setListener(new SimpleAnimationListener())
+                        .start();
+
+            }
+
+            @Override
+            public void onSearchEditClosed() {
+                mSearchTintView
+                        .animate()
+                        .alpha(0.0f)
+                        .setDuration(300)
+                        .setListener(new SimpleAnimationListener() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                mSearchTintView.setVisibility(View.GONE);
+                            }
+                        })
+                        .start();
+            }
+
+            @Override
+            public void onSearchExit() {
+                /*mResultAdapter.clear();
+                if(mRecyclerView.getVisibility() == View.VISIBLE) {
+                    mRecyclerView.setVisibility(View.GONE);
+                }*/
+            }
+
+            @Override
+            public void onSearchTermChanged(String term) {
+
+            }
+
+            @Override
+            public void onSearch(String string) {
+                Toast.makeText(SearchActivity.this, string + " Searched", Toast.LENGTH_LONG).show();
+                /*mRecyclerView.setVisibility(View.VISIBLE);
+                fillResultToRecyclerView(string);*/
+                search(string);
+            }
+
+            @Override
+            public void onSearchCleared() {
+
+            }
+
+        });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
         final MenuItem searchItem = menu.findItem(R.id.menu_search);
-        if (searchItem != null) {
+        /*if (searchItem != null) {
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
             final SearchView view = (SearchView) searchItem.getActionView();
             mSearchView = view;
@@ -197,7 +277,7 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
             if (!TextUtils.isEmpty(mQueryString)) {
                 view.setQuery(mQueryString, false);
             }
-        }
+        }*/
         return true;
     }
 

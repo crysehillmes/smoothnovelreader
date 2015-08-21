@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.ActionBar;
@@ -70,6 +71,9 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     private static final int OPEN_TEXT_FILE_RESULT_CODE = 10010;
     private static final Detector DETECTOR = new DefaultDetector(
             MimeTypes.getDefaultMimeTypes());
+
+    Handler mHandler = new Handler();
+
     @Inject
     NovelBookShelfPresenter presenter;
 
@@ -399,7 +403,8 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                 Toast.makeText(getActivity(), string + " Searched", Toast.LENGTH_LONG).show();
                 /*mRecyclerView.setVisibility(View.VISIBLE);
                 fillResultToRecyclerView(string);*/
-
+                getPresenter().goSearch(string);
+                mHandler.postDelayed(mSearchView::closeSearch, 300);
             }
 
             @Override

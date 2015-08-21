@@ -19,10 +19,27 @@
         app:srv_moreProgress="@layout/layout_more_progress"
         app:srv_scrollbarStyle="outsideOverlay" />
 
-    <include
-        layout="@layout/toolbar"
+    <View
+        android:id="@+id/view_search_tint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.0"
+        android:background="#88000000"
+        android:elevation="6dp"
+        android:visibility="gone" />
+
+    <org.cryse.widget.persistentsearch.PersistentSearchView
+        android:id="@+id/searchview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top" />
+        android:layout_alignParentTop="true"
+        android:elevation="@dimen/toolbar_elevation"
+        app:persistentSV_displayMode="displayAsToolbarBackArrow"
+        app:persistentSV_editHintText="Search"
+        app:persistentSV_editHintTextColor="?android:textColorHint"
+        app:persistentSV_editTextColor="?android:textColorPrimary"
+        app:persistentSV_logoDrawable="@drawable/ic_launcher"
+        app:persistentSV_searchCardElevation="4dp"
+        app:persistentSV_searchTextColor="?android:textColorPrimary" />
 
 </FrameLayout>

@@ -1,5 +1,8 @@
 package org.cryse.novelreader.presenter.impl;
 
+import android.support.v4.util.Pair;
+import android.view.View;
+
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelBookShelfPresenter;
@@ -122,8 +125,8 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
     }
 
     @Override
-    public void goSearch() {
-        mDisplay.showSearchActivity(mView);
+    public void goSearch(String queryString, Pair<View, String>... transitionPairs) {
+        mDisplay.showSearchActivity(mView, queryString, transitionPairs);
     }
 
     @Override
