@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.malinskiy.superrecyclerview.SuperRecyclerView;
+
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.model.NovelModel;
@@ -29,7 +31,6 @@ import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.prefs.BooleanPreference;
 import org.cryse.novelreader.view.NovelOnlineListView;
-import org.cryse.widget.recyclerview.SuperRecyclerView;
 import org.cryse.widget.recyclerview.animator.ScaleInOutItemAnimator;
 
 import java.util.ArrayList;
@@ -149,7 +150,7 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
 
     @SuppressLint("ResourceAsColor")
     private void initListView() {
-        mListView.getList().setItemAnimator(
+        mListView.getRecyclerView().setItemAnimator(
                 new ScaleInOutItemAnimator(
                         0.1f,
                         350,
@@ -169,7 +170,7 @@ public class NovelListFragment extends AbstractFragment implements NovelOnlineLi
                 mListView.hideMoreProgress();
             }
         });
-        mListView.setOnItemClickListener((view, position, id) -> {
+        mNovelListAdapter.setOnItemClickListener((view, position, id) -> {
             NovelModel novelModel = mNovelListAdapter.getItem(position);
             getPresenter().showNovelIntroduction(novelModel);
         });

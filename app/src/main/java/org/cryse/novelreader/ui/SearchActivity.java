@@ -7,10 +7,15 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
@@ -33,7 +38,6 @@ import org.cryse.novelreader.view.NovelOnlineListView;
 import org.cryse.widget.persistentsearch.DefaultVoiceRecognizerDelegate;
 import org.cryse.widget.persistentsearch.PersistentSearchView;
 import org.cryse.widget.persistentsearch.VoiceRecognitionDelegate;
-import org.cryse.widget.recyclerview.SuperRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +68,8 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
     View mSearchTintView;
 
     @Bind(R.id.novel_searchlistview)
-    SuperRecyclerView mListView;
+    SuperRecyclerView mCollectionView;
+
     private NovelModelListAdapter mSearchListAdapter;
     private List<NovelModel> mSearchNovelList;
     private String mQueryString = null;
@@ -89,7 +94,7 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
         showCoverImage = mIsShowCoverImage.get();
         grayScaleInNight = mGrayScaleInNight.get();
 
-        UIUtils.setInsets(this, mListView, false, false, true, Build.VERSION.SDK_INT < 21);
+        UIUtils.setInsets(this, mCollectionView, false, false, true, Build.VERSION.SDK_INT < 21);
         String query = getIntent().getStringExtra(SearchManager.QUERY);
         query = query == null ? "" : query;
         mQueryString = query;
@@ -118,7 +123,7 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
         super.onResume();
         if(mIsShowCoverImage.get() != showCoverImage || mGrayScaleInNight.get() != grayScaleInNight) {
             mSearchListAdapter = new NovelOnlineListAdapter(this, mSearchNovelList, mIsShowCoverImage.get(), isNightMode(), mGrayScaleInNight.get());
-            mListView.setAdapter(mSearchListAdapter);
+            mCollectionView.setAdapter(mSearchListAdapter);
             mSearchListAdapter.notifyDataSetChanged();
             showCoverImage = mIsShowCoverImage.get();
             grayScaleInNight = mGrayScaleInNight.get();
@@ -146,26 +151,34 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
 
     @SuppressLint("ResourceAsColor")
     private void initListView() {
-        //mListView.getList().setItemAnimator(new ScaleInOutItemAnimator(mListView.getList()));
+        //mCollectionView.getList().setItemAnimator(new ScaleInOutItemAnimator(mCollectionView.getList()));
         mSearchNovelList = new ArrayList<NovelModel>();
+        int columnCount = getResources().getInteger(R.integer.online_list_col);
+        RecyclerView.LayoutManager layoutManager;
+        if (columnCount == 1) {
+            layoutManager = new LinearLayoutManager(this);
+        } else {
+            layoutManager = new GridLayoutManager(this, columnCount);
+        }
+        mCollectionView.setLayoutManager(layoutManager);
         mSearchListAdapter = new NovelOnlineListAdapter(this, mSearchNovelList, mIsShowCoverImage.get(), isNightMode(), mGrayScaleInNight.get());
-        mListView.setAdapter(mSearchListAdapter);
-        mListView.getSwipeToRefresh().setColorSchemeResources(
+        mCollectionView.setAdapter(mSearchListAdapter);
+        mCollectionView.getSwipeToRefresh().setColorSchemeResources(
                 ColorUtils.getRefreshProgressBarColors()[0],
                 ColorUtils.getRefreshProgressBarColors()[1],
                 ColorUtils.getRefreshProgressBarColors()[2],
                 ColorUtils.getRefreshProgressBarColors()[3]
         );
 
-        mListView.setOnMoreListener((numberOfItems, numberBeforeMore, currentItemPos) -> {
+        mCollectionView.setOnMoreListener((numberOfItems, numberBeforeMore, currentItemPos) -> {
             if (!isNoMore && !isLoadingMore && currentListPageNumber < 4) { // load more would load +1, so current must less than 4
                 getPresenter().searchNovel(mQueryString, currentListPageNumber + 1, true);
             } else {
-                mListView.setLoadingMore(false);
-                mListView.hideMoreProgress();
+                mCollectionView.setLoadingMore(false);
+                mCollectionView.hideMoreProgress();
             }
         });
-        mListView.setOnItemClickListener((view, position, id) -> {
+        mSearchListAdapter.setOnItemClickListener((view, position, id) -> {
             NovelModel novelModel = mSearchListAdapter.getItem(position);
             getPresenter().showNovelIntroduction(novelModel);
         });
@@ -296,7 +309,7 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
     private void search(String query) {
         mQueryString = query;
         if(mQueryString != null && mQueryString.length() > 0) {
-            mListView.getSwipeToRefresh().setRefreshing(true);
+            mCollectionView.getSwipeToRefresh().setRefreshing(true);
             getPresenter().searchNovel(mQueryString, 0, false);
         } else {
             mSearchNovelList.clear();
@@ -328,7 +341,7 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
     @Override
     public void setLoading(Boolean value) {
         isLoading = value;
-        mListView.getSwipeToRefresh().setRefreshing(value);
+        mCollectionView.getSwipeToRefresh().setRefreshing(value);
     }
 
     @Override
@@ -344,10 +357,10 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
     @Override
     public void setLoadingMore(boolean value) {
         isLoadingMore = value;
-        mListView.setLoadingMore(value);
+        mCollectionView.setLoadingMore(value);
         if (value)
-            mListView.showMoreProgress();
+            mCollectionView.showMoreProgress();
         else
-            mListView.hideMoreProgress();
+            mCollectionView.hideMoreProgress();
     }
 }
