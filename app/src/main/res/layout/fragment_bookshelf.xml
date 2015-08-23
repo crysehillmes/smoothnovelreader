@@ -7,7 +7,28 @@
     android:layout_height="match_parent"
     tools:context=".ui.NovelBookShelfFragment">
 
-    <include layout="@layout/layout_appbar" />
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbarlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:elevation="@dimen/toolbar_elevation"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/search_toolbar_height"
+            android:minHeight="@dimen/search_toolbar_height"
+            android:background="?attr/colorPrimary"
+            app:contentInsetEnd="0dp"
+            app:contentInsetLeft="72dp"
+            app:contentInsetStart="72dp"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    </android.support.design.widget.AppBarLayout>
+
 
     <org.cryse.widget.recyclerview.SuperRecyclerView
         android:id="@+id/novel_listview"
@@ -43,10 +64,11 @@
         android:layout_alignParentTop="true"
         android:elevation="@dimen/toolbar_elevation"
         android:visibility="gone"
-        app:persistentSV_displayMode="displayAsMenuItem"
+        app:persistentSV_displayMode="menuItem"
         app:persistentSV_editHintText="Search"
         app:persistentSV_editHintTextColor="?smooth_theme_text_color_tint"
         app:persistentSV_editTextColor="?smooth_theme_text_color_primary"
         app:persistentSV_searchCardElevation="4dp"
-        app:persistentSV_searchTextColor="?smooth_theme_text_color_primary" />
+        app:persistentSV_searchTextColor="?smooth_theme_text_color_primary"
+        app:persistentSV_customToolbarHeight="@dimen/search_toolbar_height"/>
 </FrameLayout>

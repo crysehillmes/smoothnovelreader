@@ -106,4 +106,6 @@
     <dimen name="toolbar_elevation">8dp</dimen>
     <dimen name="content_default_elevation">2dp</dimen>
     <dimen name="navigation_drawer_elevation">12dp</dimen>
+
+    <dimen name="search_toolbar_height">56dp</dimen>
 </resources>

@@ -332,7 +332,8 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
             case R.id.menu_item_add_online_book:
                 if (mSearchMenuItem != null) {
                     View menuItemView = getView().findViewById(R.id.menu_item_add_online_book);
-                    mSearchView.openSearch(menuItemView);
+                    mSearchView.setStartPositionFromMenuItem(menuItemView, getView().getMeasuredWidth());
+                    mSearchView.openSearch();
                     return true;
                 } else {
                     return false;

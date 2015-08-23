@@ -114,9 +114,6 @@ allprojects {
         maven {
             url 'http://dl.bintray.com/amulyakhare/maven'
         }
-        maven {
-            url 'http://dl.bintray.com/tyk5555/maven'
-        }
     }
     ext.appVersionCode = generateVersionCode()
     ext.appVersionName = generateVersionName()
