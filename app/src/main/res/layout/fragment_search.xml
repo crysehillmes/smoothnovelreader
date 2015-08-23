@@ -9,7 +9,7 @@
         android:id="@+id/novel_searchlistview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/md_blue_300"
+        android:background="?android:colorBackground"
         app:layout_empty="@layout/layout_empty_view"
         app:layout_moreProgress="@layout/layout_more_progress"
         app:mainLayoutId="@layout/layout_recyclerview_verticalscroll"

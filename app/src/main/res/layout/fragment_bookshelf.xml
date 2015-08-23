@@ -66,9 +66,9 @@
         android:visibility="gone"
         app:persistentSV_customToolbarHeight="@dimen/search_toolbar_height"
         app:persistentSV_displayMode="menuItem"
-        app:persistentSV_editHintText="Search"
-        app:persistentSV_editHintTextColor="?smooth_theme_text_color_tint"
-        app:persistentSV_editTextColor="?smooth_theme_text_color_primary"
+        app:persistentSV_editHintText="@string/search_hint"
+        app:persistentSV_editHintTextColor="@color/text_color_tint"
+        app:persistentSV_editTextColor="@color/text_color_primary"
         app:persistentSV_searchCardElevation="4dp"
-        app:persistentSV_searchTextColor="?smooth_theme_text_color_primary" />
+        app:persistentSV_searchTextColor="@color/text_color_primary" />
 </FrameLayout>

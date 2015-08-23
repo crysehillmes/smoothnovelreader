@@ -14,4 +14,6 @@ public interface NovelBookShelfPresenter extends BaseFragmentPresenter<NovelBook
     void showNovelChapterList(NovelModel novelModel);
 
     void goSearch(String queryString, Pair<View, String>... transitionPairs);
+
+    void showNovelDetail(NovelModel novelModel);
 }

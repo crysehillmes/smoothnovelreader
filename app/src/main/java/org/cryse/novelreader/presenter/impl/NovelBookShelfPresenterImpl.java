@@ -130,6 +130,15 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
     }
 
     @Override
+    public void showNovelDetail(NovelModel novelModel) {
+        mDisplay.showNovelDetailView(
+                mView,
+                novelModel,
+                true
+        );
+    }
+
+    @Override
     public void bindView(NovelBookShelfView view) {
         Timber.d(String.format("bindView: %s", view.getClass().getName()), LOG_TAG);
         this.mView = view;

@@ -19,6 +19,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,9 +27,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
@@ -52,7 +53,6 @@ import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.LayerEnablingAnimatorListener;
 import org.cryse.novelreader.util.PathUriUtils;
-import org.cryse.novelreader.util.SimpleAnimationListener;
 import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
@@ -286,6 +286,24 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         if (activity instanceof MainActivity) {
             ((MainActivity) activity).onSectionAttached(getString(R.string.drawer_bookshelf));
         }
+        if (getView() != null) {
+            getView().setFocusableInTouchMode(true);
+            getView().requestFocus();
+            getView().setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        //Toast.makeText(getContext(), "onBackPressed", Toast.LENGTH_SHORT).show();
+                        if (mSearchView.isSearching()) {
+                            mSearchView.closeSearch();
+                            return true;
+                        }
+                        return false;
+                    }
+                    return false;
+                }
+            });
+        }
     }
 
     @Override
@@ -381,7 +399,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                         .animate()
                         .alpha(1.0f)
                         .setDuration(300)
-                        .setListener(new SimpleAnimationListener())
+                        .setListener(new LayerEnablingAnimatorListener(mSearchTintView))
                         .start();
 
             }
@@ -392,7 +410,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                         .animate()
                         .alpha(0.0f)
                         .setDuration(300)
-                        .setListener(new SimpleAnimationListener() {
+                        .setListener(new LayerEnablingAnimatorListener(mSearchTintView) {
                             @Override
                             public void onAnimationEnd(Animator animation) {
                                 super.onAnimationEnd(animation);
@@ -403,10 +421,24 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
             }
 
             @Override
+            public boolean onSearchEditBackPressed() {
+                if (mSearchView.isEditing()) {
+                    mSearchView.cancelEditing();
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
             public void onSearchExit() {
                 SearchFragment searchFragment = (SearchFragment) getChildFragmentManager().findFragmentByTag(SEARCH_FRAGMENT_TAG);
                 if (searchFragment != null) {
-                    slideOutToButtom(mSearchContainer, true, searchFragment::clearSearch);
+                    slideOutToButtom(mSearchContainer, true, () -> {
+                        //searchFragment::clearSearch
+                        FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+                        fragmentTransaction.remove(searchFragment);
+                        fragmentTransaction.commit();
+                    });
                 } else {
                     slideOutToButtom(mSearchContainer, true, null);
                 }
@@ -419,16 +451,11 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
 
             @Override
             public void onSearch(String string) {
-                Toast.makeText(getActivity(), string + " Searched", Toast.LENGTH_LONG).show();
-                /*mRecyclerView.setVisibility(View.VISIBLE);
-                fillResultToRecyclerView(string);*/
-                //mPresenter.goSearch(string);
-                //mHandler.postDelayed(mSearchView::closeSearch, 300);
                 SearchFragment searchFragment = (SearchFragment) getChildFragmentManager().findFragmentByTag(SEARCH_FRAGMENT_TAG);
                 if (searchFragment == null) {
 
                     searchFragment = SearchFragment.newInstance("", (novelModel, position) -> {
-                        Toast.makeText(getContext(), novelModel.getTitle(), Toast.LENGTH_SHORT).show();
+                        mPresenter.showNovelDetail(novelModel);
                     });
                     FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
                     fragmentTransaction.add(R.id.search_fragment_container, searchFragment, SEARCH_FRAGMENT_TAG);
@@ -590,8 +617,8 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         v.animate().
                 translationY(metrics.heightPixels).
                 alpha(0).
-                setDuration(animated ? 500 : 0).
-                setInterpolator(new AccelerateDecelerateInterpolator())
+                setDuration(animated ? 300 : 0).
+                setInterpolator(new AccelerateInterpolator())
                 .setListener(new LayerEnablingAnimatorListener(v) {
                     @Override
                     public void onAnimationEnd(Animator animation) {

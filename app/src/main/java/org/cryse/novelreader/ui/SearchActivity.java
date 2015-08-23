@@ -223,6 +223,11 @@ public class SearchActivity extends AbstractThemeableActivity implements NovelOn
             }
 
             @Override
+            public boolean onSearchEditBackPressed() {
+                return false;
+            }
+
+            @Override
             public void onSearchExit() {
                 /*mResultAdapter.clear();
                 if(mRecyclerView.getVisibility() == View.VISIBLE) {
