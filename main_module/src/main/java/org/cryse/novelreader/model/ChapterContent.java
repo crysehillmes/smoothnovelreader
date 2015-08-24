@@ -5,10 +5,22 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 public class ChapterContent implements ChapterContentModel {
+    public static final Creator<ChapterContent> CREATOR = new Creator<ChapterContent>() {
+        public ChapterContent createFromParcel(Parcel source) {
+            return new ChapterContent(source);
+        }
+
+        public ChapterContent[] newArray(int size) {
+            return new ChapterContent[size];
+        }
+    };
     private String novelId;
     private String chapterId;
     private String source;
     private String content;
+
+    public ChapterContent() {
+    }
 
     public ChapterContent(ChapterContentReadableModel model) {
         this.novelId = model.getNovelId();
@@ -22,6 +34,13 @@ public class ChapterContent implements ChapterContentModel {
         this.chapterId = chapterId;
         this.source = source;
         this.content = content;
+    }
+
+    protected ChapterContent(Parcel in) {
+        this.novelId = in.readString();
+        this.chapterId = in.readString();
+        this.source = in.readString();
+        this.content = in.readString();
     }
 
     @NonNull
@@ -76,21 +95,4 @@ public class ChapterContent implements ChapterContentModel {
         dest.writeString(this.source);
         dest.writeString(this.content);
     }
-
-    protected ChapterContent(Parcel in) {
-        this.novelId = in.readString();
-        this.chapterId = in.readString();
-        this.source = in.readString();
-        this.content = in.readString();
-    }
-
-    public static final Creator<ChapterContent> CREATOR = new Creator<ChapterContent>() {
-        public ChapterContent createFromParcel(Parcel source) {
-            return new ChapterContent(source);
-        }
-
-        public ChapterContent[] newArray(int size) {
-            return new ChapterContent[size];
-        }
-    };
 }

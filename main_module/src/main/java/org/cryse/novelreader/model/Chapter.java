@@ -5,12 +5,24 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 public class Chapter implements ChapterModel {
+    public static final Creator<Chapter> CREATOR = new Creator<Chapter>() {
+        public Chapter createFromParcel(Parcel source) {
+            return new Chapter(source);
+        }
+
+        public Chapter[] newArray(int size) {
+            return new Chapter[size];
+        }
+    };
     private String novelId;
     private String chapterId;
     private String source;
     private String title;
     private int chapterIndex;
     private boolean isCached;
+
+    public Chapter() {
+    }
 
     public Chapter(ChapterReadableModel chapterModel) {
         this.novelId = chapterModel.getNovelId();
@@ -26,6 +38,15 @@ public class Chapter implements ChapterModel {
         this.source = source;
         this.title = title;
         this.chapterIndex = chapterIndex;
+    }
+
+    protected Chapter(Parcel in) {
+        this.novelId = in.readString();
+        this.chapterId = in.readString();
+        this.source = in.readString();
+        this.title = in.readString();
+        this.chapterIndex = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.isCached = (Boolean) in.readValue(Boolean.class.getClassLoader());
     }
 
     @NonNull
@@ -101,23 +122,4 @@ public class Chapter implements ChapterModel {
         dest.writeValue(this.chapterIndex);
         dest.writeValue(this.isCached);
     }
-
-    protected Chapter(Parcel in) {
-        this.novelId = in.readString();
-        this.chapterId = in.readString();
-        this.source = in.readString();
-        this.title = in.readString();
-        this.chapterIndex = (Integer) in.readValue(Integer.class.getClassLoader());
-        this.isCached = (Boolean) in.readValue(Boolean.class.getClassLoader());
-    }
-
-    public static final Creator<Chapter> CREATOR = new Creator<Chapter>() {
-        public Chapter createFromParcel(Parcel source) {
-            return new Chapter(source);
-        }
-
-        public Chapter[] newArray(int size) {
-            return new Chapter[size];
-        }
-    };
 }

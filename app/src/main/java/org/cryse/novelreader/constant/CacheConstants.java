@@ -1,5 +1,5 @@
 package org.cryse.novelreader.constant;
 
 public class CacheConstants {
-    public static final int CONST_BULK_INSERT_COUNT = 48;
+    public static final int CONST_BULK_INSERT_COUNT = 100;
 }
