@@ -141,14 +141,6 @@ public abstract class AbstractActivity extends AppCompatActivity {
         return getSupportActionBar().getThemedContext();
     }
 
-    public ActionMode getActionMode() {
-        return mActionMode;
-    }
-
-    public void setActionMode(ActionMode actionMode) {
-        this.mActionMode = actionMode;
-    }
-
     protected abstract void analyticsTrackEnter();
 
     protected abstract void analyticsTrackExit();

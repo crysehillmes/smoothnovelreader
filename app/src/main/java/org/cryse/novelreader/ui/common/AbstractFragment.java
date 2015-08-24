@@ -1,11 +1,10 @@
 package org.cryse.novelreader.ui.common;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
 import android.view.View;
 
 import org.cryse.novelreader.R;
@@ -89,17 +88,9 @@ public abstract class AbstractFragment extends android.support.v4.app.Fragment i
         return getClass().getCanonicalName();
     }
 
-    public ActionMode getActionMode() {
-        return ((AbstractActivity)getAppCompatActivity()).getActionMode();
-    }
-
-    public void setActionMode(ActionMode actionMode) {
-        ((AbstractActivity) getAppCompatActivity()).setActionMode(actionMode);
-    }
-
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         getActivity().invalidateOptionsMenu();
     }
 

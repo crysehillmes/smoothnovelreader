@@ -23,7 +23,6 @@ import org.cryse.novelreader.qualifier.PrefsShowCoverImage;
 import org.cryse.novelreader.ui.adapter.NovelModelListAdapter;
 import org.cryse.novelreader.ui.adapter.NovelOnlineListAdapter;
 import org.cryse.novelreader.ui.common.AbstractFragment;
-import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.SnackbarTextDelegate;
 import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
@@ -155,7 +154,6 @@ public class SearchFragment extends AbstractFragment implements NovelOnlineListV
     private void initListView() {
         //mCollectionView.getList().setItemAnimator(new ScaleInOutItemAnimator(mCollectionView.getList()));
         mSearchNovelList = new ArrayList<NovelModel>();
-
         int columnCount = getResources().getInteger(R.integer.online_list_col);
         RecyclerView.LayoutManager layoutManager;
         if (columnCount == 1) {
@@ -166,12 +164,6 @@ public class SearchFragment extends AbstractFragment implements NovelOnlineListV
         mCollectionView.setLayoutManager(layoutManager);
         mSearchListAdapter = new NovelOnlineListAdapter(getContext(), mSearchNovelList, mIsShowCoverImage.get(), isNightMode(), mGrayScaleInNight.get());
         mCollectionView.setAdapter(mSearchListAdapter);
-        mCollectionView.getSwipeToRefresh().setColorSchemeResources(
-                ColorUtils.getRefreshProgressBarColors()[0],
-                ColorUtils.getRefreshProgressBarColors()[1],
-                ColorUtils.getRefreshProgressBarColors()[2],
-                ColorUtils.getRefreshProgressBarColors()[3]
-        );
 
         mCollectionView.setOnMoreListener((numberOfItems, numberBeforeMore, currentItemPos) -> {
             if (!isNoMore && !isLoadingMore && currentListPageNumber < 4) { // load more would load +1, so current must less than 4
@@ -192,7 +184,6 @@ public class SearchFragment extends AbstractFragment implements NovelOnlineListV
 
     private void search() {
         if (!TextUtils.isEmpty(mSearchString)) {
-            mCollectionView.getSwipeToRefresh().setRefreshing(true);
             getPresenter().searchNovel(mSearchString, 0, false);
         }
     }
@@ -236,7 +227,12 @@ public class SearchFragment extends AbstractFragment implements NovelOnlineListV
     @Override
     public void setLoading(Boolean value) {
         isLoading = value;
-        mCollectionView.getSwipeToRefresh().setRefreshing(value);
+        if (isLoading) {
+            mCollectionView.showProgress();
+        } else {
+            mCollectionView.hideProgress();
+            mCollectionView.showRecycler();
+        }
     }
 
     @Override

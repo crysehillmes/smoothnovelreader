@@ -104,6 +104,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
 
     ServiceConnection mBackgroundServiceConnection;
     MaterialDialog mAddLocalFileProgressDialog = null;
+    private ActionMode mActionMode;
     private MenuItem mSearchMenuItem;
     private ChapterContentsCacheService.ChapterContentsCacheBinder mServiceBinder;
 
@@ -221,17 +222,17 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                 mPresenter.showNovelChapterList(mNovelList.get(position));
             else {
                 mCollectionAdapter.toggleSelection(position);
-                if (getActionMode() != null) {
-                    getActionMode().setTitle(getString(R.string.cab_selection_count, mCollectionAdapter.getSelectedItemCount()));
+                if (mActionMode != null) {
+                    mActionMode.setTitle(getString(R.string.cab_selection_count, mCollectionAdapter.getSelectedItemCount()));
                     if (mCollectionAdapter.getSelectedItemCount() == 0)
-                        getActionMode().finish();
+                        mActionMode.finish();
                 }
             }
         });
 
         mCollectionAdapter.setOnItemLongClickListener((view, position, id) -> {
             if (!mCollectionAdapter.isAllowSelection()) {
-                setActionMode(getAppCompatActivity().startSupportActionMode(new ActionMode.Callback() {
+                mActionMode = getAppCompatActivity().startSupportActionMode(new ActionMode.Callback() {
                     @Override
                     public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
                         mCollectionAdapter.setAllowSelection(true);
@@ -260,17 +261,17 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                     public void onDestroyActionMode(ActionMode actionMode) {
                         mCollectionAdapter.clearSelections();
                         mCollectionAdapter.setAllowSelection(false);
-                        setActionMode(null);
+                        mActionMode = null;
                     }
-                }));
+                });
                 mCollectionAdapter.toggleSelection(position);
-                getActionMode().setTitle(getString(R.string.cab_selection_count, mCollectionAdapter.getSelectedItemCount()));
+                mActionMode.setTitle(getString(R.string.cab_selection_count, mCollectionAdapter.getSelectedItemCount()));
             } else {
-                if (getActionMode() != null) {
+                if (mActionMode != null) {
                     mCollectionAdapter.toggleSelection(position);
-                    getActionMode().setTitle(getString(R.string.cab_selection_count, mCollectionAdapter.getSelectedItemCount()));
+                    mActionMode.setTitle(getString(R.string.cab_selection_count, mCollectionAdapter.getSelectedItemCount()));
                     if (mCollectionAdapter.getSelectedItemCount() == 0)
-                        getActionMode().finish();
+                        mActionMode.finish();
                 }
             }
             return true;
@@ -280,7 +281,6 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mCollectionView.getSwipeToRefresh().setRefreshing(true);
         mPresenter.loadFavoriteNovels();
         Activity activity = getActivity();
         if (activity instanceof MainActivity) {
@@ -296,6 +296,10 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                         //Toast.makeText(getContext(), "onBackPressed", Toast.LENGTH_SHORT).show();
                         if (mSearchView.isSearching()) {
                             mSearchView.closeSearch();
+                            return true;
+                        }
+                        if (mActionMode != null) {
+                            mActionMode.finish();
                             return true;
                         }
                         return false;
@@ -507,11 +511,9 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     @Override
     public void setLoading(Boolean isLoading) {
         if (isLoading) {
-            mCollectionView.showMoreProgress();
-            mCollectionView.getSwipeToRefresh().setRefreshing(true);
+            mCollectionView.showProgress();
         } else {
-            mCollectionView.hideMoreProgress();
-            mCollectionView.getSwipeToRefresh().setRefreshing(false);
+            mCollectionView.hideProgress();
         }
     }
 

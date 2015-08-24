@@ -226,11 +226,6 @@ public class MainActivity extends AbstractThemeableActivity {
             return;
         }
 
-        if (getActionMode() != null) {
-            getActionMode().finish();
-            return;
-        }
-
         if(mNaviagtionDrawer != null && mNaviagtionDrawer.isDrawerOpen()) {
             mNaviagtionDrawer.closeDrawer();
             return;

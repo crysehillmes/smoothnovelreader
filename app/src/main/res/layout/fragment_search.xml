@@ -14,6 +14,6 @@
         app:layout_moreProgress="@layout/layout_more_progress"
         app:mainLayoutId="@layout/layout_recyclerview_verticalscroll"
         app:recyclerClipToPadding="false"
-        app:recyclerPadding="0dp"
+        app:recyclerPaddingTop="@dimen/search_toolbar_height"
         app:scrollbarStyle="outsideOverlay" />
 </FrameLayout>
