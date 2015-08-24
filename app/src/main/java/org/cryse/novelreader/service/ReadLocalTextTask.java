@@ -3,6 +3,7 @@ package org.cryse.novelreader.service;
 public class ReadLocalTextTask {
     String textFilePath;
     String customTitle;
+    String novelId;
 
     public ReadLocalTextTask(String textFilePath, String customTitle) {
         this.textFilePath = textFilePath;
@@ -23,5 +24,13 @@ public class ReadLocalTextTask {
 
     public void setCustomTitle(String customTitle) {
         this.customTitle = customTitle;
+    }
+
+    public String getNovelId() {
+        return novelId;
+    }
+
+    public void setNovelId(String novelId) {
+        this.novelId = novelId;
     }
 }

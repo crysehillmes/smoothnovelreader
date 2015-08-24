@@ -18,6 +18,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -525,13 +526,21 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     private void removeNovels() {
         int count = mCollectionAdapter.getSelectedItemCount();
         List<String> removeIds = new ArrayList<String>();
-        String currentCachingNovelId = null;
+        String currentCachingNovelId = null, currentImportingNovelId = null;
         int[] reverseSortedPositions = mCollectionAdapter.getSelectedItemReversePositions();
         if (mServiceBinder != null && mServiceBinder.getCurrentCachingNovelId() != null) {
             currentCachingNovelId = mServiceBinder.getCurrentCachingNovelId();
         }
+
+        MainActivity activity = (MainActivity) getActivity();
+        LoadLocalTextService.ReadLocalTextFileBinder localfileBinder = activity.getReadLocalTextFileBinder();
+        if (localfileBinder != null && localfileBinder.getCurrentTextFilePath() != null) {
+            currentImportingNovelId = localfileBinder.getCurrentNovelId();
+        }
         for (int position : reverseSortedPositions) {
-            if (currentCachingNovelId != null && currentCachingNovelId.compareTo(mNovelList.get(position).getNovelId()) == 0) {
+            if (!TextUtils.isEmpty(currentCachingNovelId) && currentCachingNovelId.compareTo(mNovelList.get(position).getNovelId()) == 0) {
+                showSnackbar(getString(R.string.toast_chapter_contents_caching_cannot_delete, mNovelList.get(position).getTitle()), SimpleSnackbarType.WARNING);
+            } else if (!TextUtils.isEmpty(currentImportingNovelId) && currentImportingNovelId.compareTo(mNovelList.get(position).getNovelId()) == 0) {
                 showSnackbar(getString(R.string.toast_chapter_contents_caching_cannot_delete, mNovelList.get(position).getTitle()), SimpleSnackbarType.WARNING);
             } else {
                 removeIds.add(mNovelList.get(position).getNovelId());
@@ -543,7 +552,8 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                 ((NovelBookShelfListAdapter) mCollectionView.getAdapter()).remove(position);
             }
         }
-        mPresenter.removeFromFavorite(removeIds.toArray(new String[removeIds.size()]));
+        if (removeIds.size() > 0)
+            mPresenter.removeFromFavorite(removeIds.toArray(new String[removeIds.size()]));
         mCollectionAdapter.clearSelections();
         mCollectionAdapter.notifyDataSetChanged();
     }

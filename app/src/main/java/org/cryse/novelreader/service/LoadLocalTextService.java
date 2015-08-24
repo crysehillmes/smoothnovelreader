@@ -44,32 +44,28 @@ import java.util.concurrent.LinkedBlockingQueue;
 import javax.inject.Inject;
 
 public class LoadLocalTextService extends Service {
-    private static final String LOG_TAG = LoadLocalTextService.class.getName();
     public static final String LOCAL_FILE_PREFIX = DataContract.LOCAL_FILE_PREFIX;
     public static final int MAX_CHAPTER_CHAR_COUNT_LIMIT = 20000;
+    public static final int NOTIFICATION_START_ID = 1024;
+    static final int CACHING_NOTIFICATION_ID = 450;
+    private static final String LOG_TAG = LoadLocalTextService.class.getName();
+    public int notification_count = 0;
     @Inject
     NovelDatabaseAccessLayer mNovelDatabase;
-
     @Inject
     NovelSource novelSource;
-
     @Inject
     NovelTextFilter novelTextFilter;
-
     @Inject
     RxEventBus mEventBus;
-
     BlockingQueue<ReadLocalTextTask> mTaskQueue = new LinkedBlockingQueue<ReadLocalTextTask>();
     ReadLocalTextTask mCurrentTask = null;
-    public static final int NOTIFICATION_START_ID = 1024;
-    public int notification_count = 0;
-
     NotificationManager mNotifyManager;
-    static final int CACHING_NOTIFICATION_ID = 450;
-
     boolean stopCurrentTask = false;
     Thread mCachingThread;
     boolean mIsStopingService;
+    private List<ChapterModel> mChapterCache = new ArrayList<>(CacheConstants.CONST_BULK_INSERT_COUNT);
+    private List<ChapterContentModel> mChapterContentCache = new ArrayList<>(CacheConstants.CONST_BULK_INSERT_COUNT);
 
     @Override
     public void onCreate() {
@@ -187,6 +183,7 @@ public class LoadLocalTextService extends Service {
                     ""
             );
             mNovelDatabase.addToFavorite(newLocalNovel);
+            mCurrentTask.setNovelId(novelId);
             mEventBus.sendEvent(new LoadLocalFileStartEvent());
             localTextReader.setOnReadProgressListener(percent -> {
                 progressNotificationBuilder
@@ -253,6 +250,8 @@ public class LoadLocalTextService extends Service {
             Log.d("CHAPTERS", String.format("Chapter count: %d", chapterCount));
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException ex) {
+            ex.printStackTrace();
         } finally {
             if(localTextReader != null) {
                 localTextReader.close();
@@ -270,9 +269,6 @@ public class LoadLocalTextService extends Service {
                 newLocalNovel
         );
     }
-
-    private List<ChapterModel> mChapterCache = new ArrayList<>(CacheConstants.CONST_BULK_INSERT_COUNT);
-    private List<ChapterContentModel> mChapterContentCache = new ArrayList<>(CacheConstants.CONST_BULK_INSERT_COUNT);
 
     private void addChapterToDatabase(String novelId, int chapterIndex, String chapterTitle, String chapterContent) {
         String chapterHash = HashUtils.md5(chapterTitle + String.format("%06d", chapterIndex));
@@ -330,9 +326,44 @@ public class LoadLocalTextService extends Service {
         mNotifyManager.notify(NOTIFICATION_START_ID + notification_count, mResultBuilder.build());
     }
 
+    protected void updateQueueCountInNotification() {
+        if (mCurrentTask == null)
+            return;
+        String filePath = mCurrentTask.getTextFilePath();
+        File file = new File(filePath);
+        String fileName = file.getName();
+        String customTitle = mCurrentTask.getCustomTitle();
+        NotificationCompat.Builder progressNotificationBuilder = new NotificationCompat.Builder(LoadLocalTextService.this);
+        progressNotificationBuilder
+                .setContentTitle(
+                        getString(
+                                R.string.notification_read_local_file_title,
+                                customTitle == null ? fileName : customTitle
+                        )
+                )
+                .setContentText(
+                        mTaskQueue.size() > 0 ?
+                                getString(
+                                        R.string.notification_read_local_file_content,
+                                        mTaskQueue.size()
+                                ) : ""
+                )
+                .setSmallIcon(R.drawable.ic_notification_open_local)
+                .setOngoing(true)
+                .setProgress(0, 0, true);
+        //.addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cancel_current), cancelCurrentPendingIntent)
+        //.addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cancel_all), cancelAllPendingIntent);
+
+        startForeground(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
+    }
+
     public class ReadLocalTextFileBinder extends Binder {
         public boolean isCaching() {
             return mCurrentTask != null;
+        }
+
+        public String getCurrentNovelId() {
+            return mCurrentTask == null ? null : mCurrentTask.getNovelId();
         }
 
         public String getCurrentTextFilePath() {
@@ -361,36 +392,5 @@ public class LoadLocalTextService extends Service {
             }
             return false;
         }
-    }
-
-    protected void updateQueueCountInNotification() {
-        if(mCurrentTask == null)
-            return;
-        String filePath = mCurrentTask.getTextFilePath();
-        File file = new File(filePath);
-        String fileName = file.getName();
-        String customTitle = mCurrentTask.getCustomTitle();
-        NotificationCompat.Builder progressNotificationBuilder = new NotificationCompat.Builder(LoadLocalTextService.this);
-        progressNotificationBuilder
-                .setContentTitle(
-                        getString(
-                                R.string.notification_read_local_file_title,
-                                customTitle == null ? fileName : customTitle
-                        )
-                )
-                .setContentText(
-                        mTaskQueue.size() > 0 ?
-                                getString(
-                                        R.string.notification_read_local_file_content,
-                                        mTaskQueue.size()
-                                ) : ""
-                )
-                .setSmallIcon(R.drawable.ic_notification_open_local)
-                .setOngoing(true)
-                .setProgress(0, 0, true);
-        //.addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cancel_current), cancelCurrentPendingIntent)
-        //.addAction(R.drawable.ic_action_close, getString(R.string.notification_action_chapter_contents_cancel_all), cancelAllPendingIntent);
-
-        startForeground(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
     }
 }
