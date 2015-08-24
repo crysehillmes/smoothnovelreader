@@ -154,7 +154,7 @@ public class SearchFragment extends AbstractFragment implements NovelOnlineListV
     private void initListView() {
         //mCollectionView.getList().setItemAnimator(new ScaleInOutItemAnimator(mCollectionView.getList()));
         mSearchNovelList = new ArrayList<NovelModel>();
-        int columnCount = getResources().getInteger(R.integer.online_list_col);
+        int columnCount = getResources().getInteger(R.integer.search_column_count);
         RecyclerView.LayoutManager layoutManager;
         if (columnCount == 1) {
             layoutManager = new LinearLayoutManager(getContext());

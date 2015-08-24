@@ -130,8 +130,9 @@ public abstract class NovelModelListAdapter extends RecyclerViewBaseAdapter<Nove
         @Nullable
         @Bind(R.id.listview_item_novel_info2_textview)
         public TextView mNovelInfo2TextView;
-        /*@Bind(R.id.listview_item_novel_info3_textview)
-        public TextView mNovelInfo3TextView;*/
+        @Nullable
+        @Bind(R.id.listview_item_novel_info3_textview)
+        public TextView mNovelInfo3TextView;
         @Nullable
         @Bind(R.id.listview_item_novel_image_imageview)
         public ImageView mNovelImageImageView;

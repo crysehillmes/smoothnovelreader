@@ -15,14 +15,18 @@ public class ToNovelFromSearch implements Func1<SearchNovelItem[], List<NovelMod
     public List<NovelModel> call(SearchNovelItem[] searchNovelItems) {
         List<NovelModel> result = new ArrayList<>(searchNovelItems.length);
         for(SearchNovelItem item : searchNovelItems) {
-            result.add(new Novel(
+            Novel novel = new Novel(
                     item.getNovelId(),
                     item.getTitle(),
                     item.getAuthor(),
                     NovelModel.TYPE_BAIDU_BROWSER_SOURCE,
                     item.getSource(),
                     item.getCoverImage()
-            ));
+            );
+            novel.setStatus(item.getStatus());
+            novel.setSummary(item.getSummary());
+            novel.setCategory(item.getCategory());
+            result.add(novel);
         }
         return result;
     }

@@ -55,6 +55,10 @@
     <dimen name="text_size_body2">14sp</dimen><!-- Medium -->
     <dimen name="text_size_body1">14sp</dimen><!-- Regular -->
     <dimen name="text_size_caption">12sp</dimen><!-- Regular -->
+    <dimen name="text_size_mini">10sp</dimen>
+    <!-- Regular -->
+    <dimen name="text_size_tiny">8sp</dimen>
+    <!-- Regular -->
     <dimen name="text_size_menu">14sp</dimen><!-- Medium -->
     <dimen name="text_size_button">14sp</dimen><!-- MEDIUM(ALL CAPS) -->
 

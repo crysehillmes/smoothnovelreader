@@ -1,59 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?><!-- A CardView that contains a TextView -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center">
+    android:layout_gravity="center"
+    app:cardBackgroundColor="?attr/smooth_theme_card_bg_color"
+    app:cardCornerRadius="2dp"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="true">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="1dp">
+        android:layout_height="wrap_content">
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:cardCornerRadius="0dp"
-            app:cardElevation="4dp"
-            app:cardUseCompatPadding="true"
-            app:cardBackgroundColor="?attr/smooth_theme_card_bg_color">
-            <org.cryse.widget.FixedAspectRatioImageView
-                android:id="@+id/listview_item_novel_image_imageview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="fitXY"
-                app:far_height_weight="4"
-                app:far_width_weight="3"
-                app:far_fixed_orientation="horizontal" />
-        </android.support.v7.widget.CardView>
+        <ImageView
+            android:id="@+id/listview_item_novel_image_imageview"
+            android:layout_width="60dp"
+            android:layout_height="80dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:scaleType="fitXY" />
 
         <TextView
             android:id="@+id/listview_item_novel_title_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="76dp"
+            android:layout_marginRight="32dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:textColor="?attr/smooth_theme_text_color_primary"
-            android:textSize="@dimen/text_size_subhead"
-            android:layout_marginLeft="7dp"
-            android:layout_marginRight="7dp">
+            android:textSize="@dimen/text_size_subhead">
 
         </TextView>
 
         <TextView
             android:id="@+id/listview_item_novel_info1_textview"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/listview_item_novel_title_textview"
+            android:layout_marginLeft="76dp"
+            android:layout_marginRight="32dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="?attr/smooth_theme_text_color_secondary"
-            android:textSize="@dimen/text_size_body1"
-            android:layout_marginLeft="7dp"
-            android:layout_marginRight="7dp">
+            android:textSize="@dimen/text_size_mini">
 
         </TextView>
 
@@ -61,14 +53,30 @@
             android:id="@+id/listview_item_novel_info2_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/listview_item_novel_info1_textview"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="76dp"
+            android:layout_marginRight="32dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="?attr/smooth_theme_text_color_secondary"
             android:textSize="@dimen/text_size_body1"
-            android:layout_marginLeft="7dp"
-            android:layout_marginRight="7dp"
-            android:layout_marginBottom="8dp">
+            android:visibility="gone">
 
         </TextView>
-    </LinearLayout>
-</FrameLayout>
+
+        <TextView
+            android:id="@+id/listview_item_novel_info3_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?attr/smooth_theme_text_color_secondary"
+            android:textSize="@dimen/text_size_mini" />
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.View;
 
 import org.cryse.novelreader.R;
+import org.cryse.novelreader.model.Novel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.PicassoHelper;
@@ -49,10 +50,17 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
             }
         }
 
-        /* TODO: if(viewHolder.mNovelInfo2TextView != null && item.getStatus() != null && !TextUtils.isEmpty(item.getStatus())) {
-            viewHolder.mNovelInfo2TextView.setText(item.getStatus());
-            viewHolder.mNovelInfo2TextView.setVisibility(View.GONE);
-        }*/
+        if (item instanceof Novel) {
+            Novel novel = (Novel) item;
+
+            if (viewHolder.mNovelInfo2TextView != null && !TextUtils.isEmpty(novel.getCategory())) {
+                viewHolder.mNovelInfo2TextView.setText(novel.getCategory());
+                viewHolder.mNovelInfo2TextView.setVisibility(View.VISIBLE);
+            }
+            if (viewHolder.mNovelInfo3TextView != null && !TextUtils.isEmpty(novel.getStatus())) {
+                viewHolder.mNovelInfo3TextView.setText(novel.getStatus());
+            }
+        }
 
         if(viewHolder.mBackCoverLayout != null && !(mIsNightMode && mGrayScale))
             viewHolder.mBackCoverLayout.setBackgroundColor(ColorUtils.getPreDefinedColorFromId(getContext(), item.getNovelId(), item.getTitle().length()));
