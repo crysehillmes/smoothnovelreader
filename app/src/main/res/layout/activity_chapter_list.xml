@@ -3,8 +3,8 @@
     xmlns:superlistview="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
     <com.quentindommerc.superlistview.SuperListview
         android:id="@+id/novel_chapter_list_listview"
@@ -16,7 +16,7 @@
         superlistview:superlv__listDivider="@android:color/transparent"
         superlistview:superlv__listDividerHeight="0dp"
         superlistview:superlv__listPadding="2dp"
-        superlistview:superlv__moreProgress="@layout/layout_more_progress"
+        superlistview:superlv__moreProgress="@layout/layout_more_progressbar"
         superlistview:superlv__scrollbarStyle="outsideInset" />
 
     <include

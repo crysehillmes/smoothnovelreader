@@ -5,11 +5,11 @@
     android:id="@+id/novel_listview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:srv_columns="@integer/online_list_col"
     app:srv_empty="@layout/layout_empty_view"
     app:srv_listClipToPadding="false"
     app:srv_listDivider="@android:color/transparent"
     app:srv_listDividerHeight="0dp"
     app:srv_listPadding="2dp"
-    app:srv_scrollbarStyle="outsideOverlay"
-    app:srv_moreProgress="@layout/layout_more_progress"
-    app:srv_columns="@integer/online_list_col"/>
+    app:srv_moreProgress="@layout/layout_more_progressbar"
+    app:srv_scrollbarStyle="outsideOverlay" />

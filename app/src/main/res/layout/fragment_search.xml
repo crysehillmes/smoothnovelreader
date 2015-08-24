@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:background="?android:colorBackground"
         app:layout_empty="@layout/layout_empty_view"
-        app:layout_moreProgress="@layout/layout_more_progress"
+        app:layout_moreProgress="@layout/layout_more_progressbar"
         app:mainLayoutId="@layout/layout_recyclerview_verticalscroll"
         app:recyclerClipToPadding="false"
         app:recyclerPaddingLeft="2dp"
