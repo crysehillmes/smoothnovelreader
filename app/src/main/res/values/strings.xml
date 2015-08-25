@@ -124,6 +124,16 @@
         <item>32</item>
     </string-array>
 
+    <string-array name="readview_line_spacing_entries">
+        <item>100%</item>
+        <item>125%</item>
+        <item>150%</item>
+        <item>175%</item>
+        <item>200%</item>
+        <item>250%</item>
+        <item>300%</item>
+    </string-array>
+
     <!-- Spinner label and value section-->
 
 

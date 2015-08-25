@@ -5,7 +5,9 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextPaint;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -32,6 +34,7 @@ import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelChapterContentPresenter;
 import org.cryse.novelreader.qualifier.PrefsFontSize;
+import org.cryse.novelreader.qualifier.PrefsLineSpacing;
 import org.cryse.novelreader.qualifier.PrefsReadBackground;
 import org.cryse.novelreader.qualifier.PrefsScrollMode;
 import org.cryse.novelreader.ui.adapter.ReadViewFlipAdapter;
@@ -43,6 +46,7 @@ import org.cryse.novelreader.util.PreferenceConverter;
 import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
+import org.cryse.novelreader.util.animation.SlideInOutAnimator;
 import org.cryse.novelreader.util.gesture.SimpleGestureDetector;
 import org.cryse.novelreader.util.prefs.IntegerPreference;
 import org.cryse.novelreader.util.prefs.StringPreference;
@@ -60,7 +64,10 @@ import butterknife.ButterKnife;
 
 public class NovelReadViewActivity extends AbstractThemeableActivity implements NovelChapterContentView {
     private static final String LOG_TAG = NovelReadViewActivity.class.getName();
+    private static final String READ_OPTIONS_FRAGMENT_TAG = "read_options_fragment_tag";
 
+    @Bind(R.id.activity_chapter_read_options_panel_container)
+    protected FrameLayout mReadOptionsPanelContainer;
     @Bind(R.id.activity_chapter_read_status_page_pos_textview)
     protected TextView mPagePositionTextView = null;
     @Bind(R.id.activity_chapter_read_status_current_chapter_textview)
@@ -85,6 +92,10 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     StringPreference mFontSizePref;
 
     @Inject
+    @PrefsLineSpacing
+    StringPreference mLineSpacingPreference;
+
+    @Inject
     @PrefsScrollMode
     StringPreference mScrollMode;
 
@@ -104,8 +115,48 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     int chapterIndex = 0;
     int chapterOffset = 0;
     float mFontSize = 0;
+    float mLineSpacing = 0;
     String mCurrentContent;
     boolean mIsLoading = false;
+    private ReadOptionsFragment.OnReadOptionsChangedListener mOnReadOptionsChangedListener = new ReadOptionsFragment.OnReadOptionsChangedListener() {
+        @Override
+        public void onCloseReadOptions() {
+
+        }
+
+        @Override
+        public void onFontSizeChanged(String fontSizeString) {
+            mFontSize = PreferenceConverter.getFontSize(NovelReadViewActivity.this, fontSizeString);
+            mNovelReadAdapter.setFontSize(mFontSize);
+            getPresenter().getSplitParams().getTextPaint().setTextSize(mFontSize);
+            getPresenter().splitChapterAndDisplay(mNovelChapters.get(chapterIndex).getTitle(),
+                    mCurrentContent);
+        }
+
+        @Override
+        public void onLineSpacingChanged(String lineSpacing) {
+            mLineSpacing = PreferenceConverter.getLineSpacing(lineSpacing);
+            mNovelReadAdapter.setLineSpacing(mLineSpacing);
+            getPresenter().getSplitParams().setLineSpacingMultiplier(mLineSpacing);
+            getPresenter().splitChapterAndDisplay(mNovelChapters.get(chapterIndex).getTitle(),
+                    mCurrentContent);
+        }
+
+        @Override
+        public void onColorSchemaChanged() {
+
+        }
+
+        @Override
+        public void onTraditionalChanged() {
+
+        }
+
+        @Override
+        public void onFontChanged() {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,13 +234,13 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         setReadBackgroundColor();
     }
 
-    private ReadWidgetAdapter createReadWidgetAdapter(float fontSize) {
+    private ReadWidgetAdapter createReadWidgetAdapter() {
         int scrollMode = PreferenceConverter.getScrollMode(mScrollMode.get());
         if (scrollMode == PreferenceConverter.SCROLL_MODE_FLIP_VERTICAL ||
                 scrollMode == PreferenceConverter.SCROLL_MODE_FLIP_HORIZONTAL)
-            return new ReadViewFlipAdapter(this, fontSize, isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white) : mReadBackgroundPrefs.get());
+            return new ReadViewFlipAdapter(this, mFontSize, mLineSpacing, isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white) : mReadBackgroundPrefs.get());
         else if (scrollMode == PreferenceConverter.SCROLL_MODE_VIEWPAGER_HORIZONTAL) {
-            return new ReadViewPagerAdapter(this, fontSize, isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white) : mReadBackgroundPrefs.get());
+            return new ReadViewPagerAdapter(this, mFontSize, mLineSpacing, isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white) : mReadBackgroundPrefs.get());
         } else {
             throw new IllegalStateException("Unsupported read view scroll mode.");
         }
@@ -211,7 +262,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         super.onPostCreate(savedInstanceState);
         boolean hasSavedStated = false;
         List<CharSequence> splitedContent = null;
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             hasSavedStated = true;
             mNovelChapters = savedInstanceState.getParcelableArrayList(DataContract.NOVEL_CHAPTER_LIST_NAME);
             splitedContent = savedInstanceState.getCharSequenceArrayList(DataContract.NOVEL_CHAPTER_SPLITTED_CONTENT);
@@ -226,7 +277,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
             String startChapterId = intent.getStringExtra(DataContract.NOVEL_CHAPTER_ID_NAME);
             chapterIndex = findChapterIndex(startChapterId);
             chapterOffset = intent.getIntExtra(DataContract.NOVEL_CHAPTER_OFFSET_NAME, 0);
-            if(intent.hasExtra(DataContract.NOVEL_HAS_STATE)) {
+            if (intent.hasExtra(DataContract.NOVEL_HAS_STATE)) {
                 hasSavedStated = true;
                 splitedContent = intent.getCharSequenceArrayListExtra(DataContract.NOVEL_CHAPTER_SPLITTED_CONTENT);
                 mCurrentContent = intent.getStringExtra(DataContract.NOVEL_CHAPTER_CONTENT);
@@ -247,18 +298,22 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                 mFlipWidth = mReadWidget.getReadDisplayView().getWidth();
                 mFlipHeight = mReadWidget.getReadDisplayView().getHeight();
                 mFontSize = PreferenceConverter.getFontSize(NovelReadViewActivity.this, mFontSizePref.get());
+                mLineSpacing = PreferenceConverter.getLineSpacing(mLineSpacingPreference.get());
                 View testView = getLayoutInflater().inflate(R.layout.layout_chapter_content_textview, null);
                 TextView textView = (TextView) testView.findViewById(R.id.layout_chapter_content_textview);
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mFontSize);
                 TextPaint textPaint = textView.getPaint();
-                mNovelReadAdapter = createReadWidgetAdapter(mFontSize);
+                mNovelReadAdapter = createReadWidgetAdapter();
                 mReadWidget.setAdapter(mNovelReadAdapter);
                 getPresenter().setSplitParams(
-                        mFlipWidth - padding * 2,
-                        mFlipHeight,
-                        1.3f,
-                        0f,
-                        textPaint);
+                        new NovelChapterContentPresenter.TextSplitParam(
+                                mFlipWidth - padding * 2,
+                                mFlipHeight,
+                                mLineSpacing,
+                                0f,
+                                textPaint
+                        )
+                );
                 if (finalHasSavedStated) {
                     getPresenter().splitChapterAndDisplay(mNovelChapters.get(chapterIndex).getTitle(),
                             mCurrentContent);
@@ -351,11 +406,6 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
     private void hideSystemUI() {
         if(isSystemUiHelperAvailable())
             getSystemUiHelper().hide();
@@ -414,7 +464,8 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                             finish();
                             break;*/
                         case R.id.menu_bottomsheet_changesrc:
-                            onMenuItemChangeSrcClick();
+                            showReadOptionsPanel();
+                            // onMenuItemChangeSrcClick();
                             break;
                         case R.id.menu_bottomsheet_nightmode:
                             onMenuItemNightModeClick();
@@ -627,7 +678,6 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         setNightMode(!isNightMode());
     }
 
-
     public void onMenuItemFontSizeClick(){
         String[] fontSizes = getResources().getStringArray(R.array.readview_font_size_entries);
         int index = Arrays.binarySearch(fontSizes, mFontSizePref.get());
@@ -639,7 +689,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                     mFontSizePref.set(charSequence.toString());
                     mFontSize = PreferenceConverter.getFontSize(NovelReadViewActivity.this, charSequence.toString());
                     mNovelReadAdapter.setFontSize(mFontSize);
-                    getPresenter().getSplitTextPainter().setTextSize(mFontSize);
+                    //getPresenter().getSplitTextPainter().setTextSize(mFontSize);
                     getPresenter().splitChapterAndDisplay(mNovelChapters.get(chapterIndex).getTitle(),
                             mCurrentContent);
                     return true;
@@ -690,9 +740,9 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         new ColorChooserDialog()
                 .setColors(this, R.array.read_bg_colors)
                 .show(this, mReadBackgroundPrefs.get(), (index, color, darker) -> {
-            mReadBackgroundPrefs.set(color);
-            setReadBackgroundColor();
-        });
+                    mReadBackgroundPrefs.set(color);
+                    setReadBackgroundColor();
+                });
     }
 
     private int findChapterIndex(String chapterId) {
@@ -707,5 +757,66 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
 
     private boolean checkIfLocal(int chapterIndex) {
         return mNovelChapters.get(chapterIndex).getSource().contains("://");
+    }
+
+    private void showReadOptionsPanel() {
+        ReadOptionsFragment readOptionsFragment = (ReadOptionsFragment) getSupportFragmentManager().findFragmentByTag(READ_OPTIONS_FRAGMENT_TAG);
+        if (readOptionsFragment == null) {
+
+            readOptionsFragment = ReadOptionsFragment.newInstance(mOnReadOptionsChangedListener);
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.activity_chapter_read_options_panel_container, readOptionsFragment, READ_OPTIONS_FRAGMENT_TAG);
+            fragmentTransaction.commit();
+        }
+        if (!mReadOptionsPanelContainer.isShown()) {
+            final ReadOptionsFragment finalReadOptionsFragment = readOptionsFragment;
+            DisplayMetrics metrics = getResources().getDisplayMetrics();
+            SlideInOutAnimator.slideInToTop(this, mReadOptionsPanelContainer,
+                    metrics.heightPixels - getResources().getDimensionPixelSize(R.dimen.read_options_height),
+                    0,
+                    0f,
+                    1f,
+                    true,
+                    () -> {
+                        //finalSearchFragment.search(string);
+                    });
+        } else {
+            //readOptionsFragment.search(string);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mReadOptionsPanelContainer.isShown()) {
+            ReadOptionsFragment readOptionsFragment = (ReadOptionsFragment) getSupportFragmentManager().findFragmentByTag(READ_OPTIONS_FRAGMENT_TAG);
+
+            DisplayMetrics metrics = getResources().getDisplayMetrics();
+            if (readOptionsFragment != null) {
+                SlideInOutAnimator.slideOutToButtom(
+                        this,
+                        mReadOptionsPanelContainer,
+                        0,
+                        metrics.heightPixels - getResources().getDimensionPixelSize(R.dimen.read_options_height),
+                        1f,
+                        0f,
+                        true,
+                        () -> {
+                            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                            fragmentTransaction.remove(readOptionsFragment);
+                            fragmentTransaction.commit();
+                        });
+            } else {
+                SlideInOutAnimator.slideOutToButtom(
+                        this,
+                        mReadOptionsPanelContainer,
+                        0,
+                        metrics.heightPixels - getResources().getDimensionPixelSize(R.dimen.read_options_height),
+                        1f,
+                        0f,
+                        true, null);
+            }
+            return;
+        }
+        super.onBackPressed();
     }
 }

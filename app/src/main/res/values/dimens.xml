@@ -112,4 +112,5 @@
     <dimen name="navigation_drawer_elevation">12dp</dimen>
 
     <dimen name="search_toolbar_height">56dp</dimen>
+    <dimen name="read_options_height">400dp</dimen>
 </resources>

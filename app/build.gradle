@@ -114,6 +114,7 @@ dependencies {
     compile 'org.cryse.widget:persistentsearchview:1.0.3@aar'
     compile 'com.malinskiy:superrecyclerview:1.1.1'
     compile 'com.google.re2j:re2j:1.0'
+    compile 'com.flipboard:bottomsheet-core:1.3.0'
 
     // Local libs
     compile fileTree(dir: 'libs', include: ['*.jar'])

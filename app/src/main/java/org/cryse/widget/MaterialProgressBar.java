@@ -31,6 +31,7 @@ public class MaterialProgressBar extends ProgressBar {
     }
 
     private void setDefaultIndeterminateDrawable() {
+        if (isInEditMode()) return;
         this.setIndeterminateDrawable(new IndeterminateProgressDrawable(getContext()));
     }
 }

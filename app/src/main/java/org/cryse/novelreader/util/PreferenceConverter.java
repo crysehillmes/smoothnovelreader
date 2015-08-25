@@ -1,6 +1,7 @@
 package org.cryse.novelreader.util;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 public class PreferenceConverter {
     public static final int SCROLL_MODE_FLIP_VERTICAL = 0;
@@ -9,6 +10,15 @@ public class PreferenceConverter {
     public static float getFontSize(Context context, String fontSize) {
         int sizeItem = Integer.parseInt(fontSize);
         return sp2px(context, sizeItem);
+    }
+
+    public static float getLineSpacing(String lineSpacing) {
+        if (TextUtils.isEmpty(lineSpacing))
+            return 1f;
+        else {
+            String value = lineSpacing.substring(0, lineSpacing.length() - 1);
+            return Float.parseFloat(value) / 100f;
+        }
     }
 
     public static float px2sp(Context context, float px) {

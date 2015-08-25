@@ -1,7 +1,5 @@
 package org.cryse.novelreader.presenter.impl;
 
-import android.text.TextPaint;
-
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.BookmarkModel;
 import org.cryse.novelreader.model.ChapterModel;
@@ -37,11 +35,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     NovelBusinessLogicLayer mNovelBusinessLogicLayer;
     AndroidNavigation mDisplay;
     SnackbarUtils mSnackbarUtils;
-    int mWidth;
-    int mHeight;
-    float mLineSpacingMultiplier;
-    float mLineSpacingExtra;
-    TextPaint mTextPaint;
+    TextSplitParam mTextSplitParams;
 
     @Inject
     public NovelChapterContentPresenterImpl(
@@ -223,26 +217,31 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     }
 
     private List<CharSequence> splitNovelChapter(String title, String content) {
-        if (mWidth == 0 || mHeight == 0 || mTextPaint == null)
+        if (mTextSplitParams == null ||
+                mTextSplitParams.getDisplayWidth() == 0 ||
+                mTextSplitParams.getDisplayHeight() == 0 ||
+                mTextSplitParams.getTextPaint() == null
+                )
             throw new IllegalStateException("setSplitParams must be called before splitNovelChapter");
-        PageSplitter pageSplitter = new PageSplitter(mWidth, mHeight, mLineSpacingMultiplier, mLineSpacingExtra);
+        PageSplitter pageSplitter = new PageSplitter(
+                mTextSplitParams.getDisplayWidth(),
+                mTextSplitParams.getDisplayHeight(),
+                mTextSplitParams.getLineSpacingMultiplier(),
+                mTextSplitParams.getLineSpacingExtra()
+        );
         pageSplitter.append(title + "\n");
         pageSplitter.append(content);
-        pageSplitter.split(mTextPaint);
+        pageSplitter.split(mTextSplitParams.getTextPaint());
         return pageSplitter.getPages();
     }
 
-    public void setSplitParams(int width, int height, float lineSpacingMultiplier, float lineSpacingExtra, TextPaint textPaint) {
-        this.mWidth = width;
-        this.mHeight = height;
-        this.mLineSpacingMultiplier = lineSpacingMultiplier;
-        this.mLineSpacingExtra = lineSpacingExtra;
-        this.mTextPaint = textPaint;
+    @Override
+    public TextSplitParam getSplitParams() {
+        return mTextSplitParams;
     }
 
-    @Override
-    public TextPaint getSplitTextPainter() {
-        return mTextPaint;
+    public void setSplitParams(TextSplitParam splitParams) {
+        this.mTextSplitParams = splitParams;
     }
 
     @Override

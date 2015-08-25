@@ -6,10 +6,10 @@ import android.preference.PreferenceManager;
 
 import org.cryse.novelreader.constant.PreferenceConstant;
 import org.cryse.novelreader.qualifier.ApplicationContext;
-import org.cryse.novelreader.qualifier.PrefsFontLineHeight;
 import org.cryse.novelreader.qualifier.PrefsFontSize;
 import org.cryse.novelreader.qualifier.PrefsGrayScaleInNight;
 import org.cryse.novelreader.qualifier.PrefsHideRedundantChapterTitle;
+import org.cryse.novelreader.qualifier.PrefsLineSpacing;
 import org.cryse.novelreader.qualifier.PrefsNightMode;
 import org.cryse.novelreader.qualifier.PrefsReadBackground;
 import org.cryse.novelreader.qualifier.PrefsScrollMode;
@@ -46,9 +46,9 @@ public class PreferenceProvider {
 
     @Provides
     @Singleton
-    @PrefsFontLineHeight
-    IntegerPreference provideFontLineHeightPreference(SharedPreferences preferences) {
-        return new IntegerPreference(preferences, PreferenceConstant.SHARED_PREFERENCE_READ_LINE_HEIGHT, PreferenceConstant.SHARED_PREFERENCE_READ_LINE_HEIGHT_VALUE);
+    @PrefsLineSpacing
+    StringPreference provideFontLineHeightPreference(SharedPreferences preferences) {
+        return new StringPreference(preferences, PreferenceConstant.SHARED_PREFERENCE_READ_LINE_SPACING, PreferenceConstant.SHARED_PREFERENCE_READ_LINE_SPACING_VALUE);
     }
 
     @Provides

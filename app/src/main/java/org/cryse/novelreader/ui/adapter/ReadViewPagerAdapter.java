@@ -20,10 +20,12 @@ public class ReadViewPagerAdapter extends PagerAdapter implements ReadWidgetAdap
     private LayoutInflater mLayoutInflater;
     private float mFontSize;
     private int mBackgroundColor;
+    private float mLineSpacingMultiplier;
 
-    public ReadViewPagerAdapter(Context context, float fontSize, int backgroundColor) {
+    public ReadViewPagerAdapter(Context context, float fontSize, float lineSpacingMultiplier, int backgroundColor) {
         this.mContext = context;
         this.mFontSize = fontSize;
+        this.mLineSpacingMultiplier = lineSpacingMultiplier;
         this.mContentList = new ArrayList<CharSequence>();
         this.mLayoutInflater = LayoutInflater.from(mContext);
         this.mBackgroundColor = backgroundColor;
@@ -46,7 +48,7 @@ public class ReadViewPagerAdapter extends PagerAdapter implements ReadWidgetAdap
         TextView textView = (TextView)view;
         textView.setText(mContentList.get(position));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mFontSize);
-        textView.setLineSpacing(0f, 1.3f);
+        textView.setLineSpacing(0f, mLineSpacingMultiplier);
         return view;
     }
 
@@ -72,6 +74,11 @@ public class ReadViewPagerAdapter extends PagerAdapter implements ReadWidgetAdap
     @Override
     public void setFontSize(float fontSize) {
         this.mFontSize = fontSize;
+    }
+
+    @Override
+    public void setLineSpacing(float lineSpacingMultiplier) {
+        this.mLineSpacingMultiplier = lineSpacingMultiplier;
     }
 
     @Override

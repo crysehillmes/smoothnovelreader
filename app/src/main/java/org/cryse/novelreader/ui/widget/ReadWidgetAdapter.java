@@ -10,6 +10,8 @@ public interface ReadWidgetAdapter {
     public void replaceContent(List<CharSequence> newContents);
     public void setBackgroundColor(int backgroundColor);
     public void setFontSize(float fontSize);
+
+    public void setLineSpacing(float lineSpacingMultiplier);
     public int getPageFromStringOffset(int offset);
     public int getStringOffsetFromPage(int page);
     public ArrayList<CharSequence> getContent();

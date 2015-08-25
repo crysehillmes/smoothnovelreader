@@ -19,15 +19,18 @@ public class ReadViewFlipAdapter extends BaseAdapter implements ReadWidgetAdapte
     private LayoutInflater inflater = null;
     private ArrayList<CharSequence> mContentList = new ArrayList<CharSequence>();
     private float mFontSize;
+    private float mLineSpacingMultiplier;
     private int mBackgroundColor;
     public ReadViewFlipAdapter(
             Context context,
             float fontSize,
+            float lineSpacingMultiplier,
             int backgroundColor
     ) {
         this.mContext = context;
         this.inflater = LayoutInflater.from(this.mContext);
         this.mFontSize = fontSize;
+        this.mLineSpacingMultiplier = lineSpacingMultiplier;
         this.mBackgroundColor = backgroundColor;
     }
 
@@ -80,18 +83,14 @@ public class ReadViewFlipAdapter extends BaseAdapter implements ReadWidgetAdapte
         final TextView readTextView = viewHolder.mNovelChapterTextView;
         readTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mFontSize);
         readTextView.setText(mContentList.get(position));
-        readTextView.setLineSpacing(0f, 1.3f);
+        readTextView.setLineSpacing(0f, mLineSpacingMultiplier);
         readTextView.setBackgroundColor(mBackgroundColor);
         return convertView;
     }
 
-    public class FlipNovelChapterViewHolder {
-        public TextView mNovelChapterTextView;
-    }
-
     @Override
     public void replaceContent(List<CharSequence> newContents) {
-        if(this.mContentList != null) {
+        if (this.mContentList != null) {
             this.mContentList.clear();
             this.mContentList.addAll(newContents);
         }
@@ -110,7 +109,16 @@ public class ReadViewFlipAdapter extends BaseAdapter implements ReadWidgetAdapte
     }
 
     @Override
+    public void setLineSpacing(float lineSpacingMultiplier) {
+        this.mLineSpacingMultiplier = lineSpacingMultiplier;
+    }
+
+    @Override
     public ArrayList<CharSequence> getContent() {
         return mContentList;
+    }
+
+    public class FlipNovelChapterViewHolder {
+        public TextView mNovelChapterTextView;
     }
 }
