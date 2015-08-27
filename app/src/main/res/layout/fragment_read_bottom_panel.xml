@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:clickable="true"
+        android:descendantFocusability="blocksDescendants"
+        app:cardBackgroundColor="?attr/smooth_theme_card_bg_color"
+        app:cardCornerRadius="2dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/fragment_read_bottom_panel_button_previous"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?selectableItemBackground" />
+
+            <ImageButton
+                android:id="@+id/fragment_read_bottom_panel_button_dark_mode"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?selectableItemBackground" />
+
+            <ImageButton
+                android:id="@+id/fragment_read_bottom_panel_button_reload"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?selectableItemBackground" />
+
+            <ImageButton
+                android:id="@+id/fragment_read_bottom_panel_button_read_options"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?selectableItemBackground" />
+
+            <ImageButton
+                android:id="@+id/fragment_read_bottom_panel_button_next"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?selectableItemBackground" />
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</FrameLayout>

@@ -16,7 +16,10 @@ public class PreferenceConverter {
         if (TextUtils.isEmpty(lineSpacing))
             return 1f;
         else {
-            String value = lineSpacing.substring(0, lineSpacing.length() - 1);
+            String value = lineSpacing;
+            if (lineSpacing.endsWith("%"))
+                value = value.substring(0, lineSpacing.length() - 1);
+
             return Float.parseFloat(value) / 100f;
         }
     }

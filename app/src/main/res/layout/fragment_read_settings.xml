@@ -1,132 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/card_view"
+    android:id="@+id/root_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:clickable="true"
-    android:descendantFocusability="blocksDescendants"
-    app:cardBackgroundColor="?attr/smooth_theme_card_bg_color"
-    app:cardCornerRadius="2dp"
-    app:cardElevation="4dp"
-    app:cardUseCompatPadding="true">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:clickable="true"
+        android:descendantFocusability="blocksDescendants"
+        app:cardBackgroundColor="?attr/smooth_theme_card_bg_color"
+        app:cardCornerRadius="2dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:minHeight="48dp"
-            android:orientation="horizontal"
-            android:padding="16dp">
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"
+            android:orientation="vertical">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Text Size"
-                android:textSize="@dimen/text_size_title" />
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
+                android:orientation="horizontal">
 
-            <Spinner
-                android:id="@+id/spinner_fragment_read_options_font_size"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Text Size"
+                    android:textSize="@dimen/text_size_subhead" />
+
+                <org.cryse.widget.NumberPicker
+                    android:id="@+id/numberpicker_fragment_read_options_text_size"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    app:np_buttonDecreaseIcon="@drawable/ic_button_decrease"
+                    app:np_buttonIncreaseIcon="@drawable/ic_button_increase"
+                    app:np_textColor="?smooth_theme_text_color_primary"
+                    app:np_textSize="@dimen/text_size_subhead" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Line Spacing"
+                    android:textSize="@dimen/text_size_subhead" />
+
+                <org.cryse.widget.NumberPicker
+                    android:id="@+id/numberpicker_fragment_read_options_line_spacing"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    app:np_buttonDecreaseIcon="@drawable/ic_button_decrease"
+                    app:np_buttonIncreaseIcon="@drawable/ic_button_increase"
+                    app:np_textColor="?smooth_theme_text_color_primary"
+                    app:np_textSize="@dimen/text_size_subhead" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Color Schema"
+                    android:textSize="@dimen/text_size_subhead" />
+
+                <ImageView
+                    android:id="@+id/seekBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+
+                    android:max="15" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Traditional Chinese"
+                    android:textSize="@dimen/text_size_subhead" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switch_fragment_read_options_traditional"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Font"
+                    android:textSize="@dimen/text_size_subhead" />
+
+                <Spinner
+                    android:id="@+id/spinner_fragment_read_options_font"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:minHeight="48dp"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Line Spacing"
-                android:textSize="@dimen/text_size_title" />
-
-            <Spinner
-                android:id="@+id/spinner_fragment_read_options_line_spacing"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:minHeight="48dp"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Color Schema"
-                android:textSize="@dimen/text_size_title" />
-
-            <ImageView
-                android:id="@+id/seekBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-
-                android:max="15" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:minHeight="48dp"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Traditional Chinese"
-                android:textSize="@dimen/text_size_title" />
-
-            <android.support.v7.widget.SwitchCompat
-                android:id="@+id/switch_fragment_read_options_traditional"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:minHeight="48dp"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Font"
-                android:textSize="@dimen/text_size_title" />
-
-            <Spinner
-                android:id="@+id/spinner_fragment_read_options_font"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-        </LinearLayout>
-    </LinearLayout>
-</android.support.v7.widget.CardView>
+    </android.support.v7.widget.CardView>
+</FrameLayout>

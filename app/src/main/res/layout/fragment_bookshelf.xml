@@ -53,7 +53,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:alpha="0.0"
-        android:background="#88000000"
+        android:background="@color/transparent_tint"
         android:elevation="6dp"
         android:visibility="gone" />
 

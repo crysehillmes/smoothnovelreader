@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextPaint;
 import android.util.DisplayMetrics;
@@ -21,7 +22,6 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-import com.cocosw.bottomsheet.BottomSheet;
 import com.example.android.systemuivis.SystemUiHelper;
 
 import org.cryse.novelreader.R;
@@ -43,7 +43,6 @@ import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.ui.widget.ReadWidget;
 import org.cryse.novelreader.ui.widget.ReadWidgetAdapter;
 import org.cryse.novelreader.util.PreferenceConverter;
-import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.animation.SlideInOutAnimator;
@@ -121,7 +120,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     private ReadOptionsFragment.OnReadOptionsChangedListener mOnReadOptionsChangedListener = new ReadOptionsFragment.OnReadOptionsChangedListener() {
         @Override
         public void onCloseReadOptions() {
-
+            closeBottomPanel(null);
         }
 
         @Override
@@ -155,6 +154,41 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         @Override
         public void onFontChanged() {
 
+        }
+    };
+
+    private ReadBottomPanelFragment.OnReadBottomPanelItemClickListener mOnReadBottomPanelItemClickListener = new ReadBottomPanelFragment.OnReadBottomPanelItemClickListener() {
+        @Override
+        public void onClose() {
+            closeBottomPanel(null);
+        }
+
+        @Override
+        public void onReadOptionsClick() {
+            closeBottomPanel(NovelReadViewActivity.this::showReadOptionsPanel);
+        }
+
+        @Override
+        public void onNextClick() {
+            closeBottomPanel(NovelReadViewActivity.this::goNextChapter);
+        }
+
+        @Override
+        public void onPreviousClick() {
+            closeBottomPanel(NovelReadViewActivity.this::goPrevChapter);
+        }
+
+        @Override
+        public void onDarkModeClick() {
+            closeBottomPanel(() -> setNightMode(!isNightMode()));
+        }
+
+        @Override
+        public void onReloadClick() {
+            closeBottomPanel(() -> {
+                if (checkIfLocal(chapterIndex))
+                    getPresenter().loadChapter(mNovelChapters.get(chapterIndex), true);
+            });
         }
     };
 
@@ -444,7 +478,8 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     }
 
     private void showBottomMenu() {
-        BottomSheet.Builder bottomSheetBuilder = new BottomSheet.Builder(NovelReadViewActivity.this)
+        showBottomPanel();
+        /*BottomSheet.Builder bottomSheetBuilder = new BottomSheet.Builder(NovelReadViewActivity.this)
                 .title(getString(R.string.bottom_sheet_title))
                 .sheet(R.menu.menu_readview)
                 .grid()
@@ -460,9 +495,9 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                         case R.id.menu_bottomsheet_chapter_next:
                             onMenuItemNextChapterClick();
                             break;
-                        /*case R.id.menu_bottomsheet_back:
+                        *//*case R.id.menu_bottomsheet_back:
                             finish();
-                            break;*/
+                            break;*//*
                         case R.id.menu_bottomsheet_changesrc:
                             showReadOptionsPanel();
                             // onMenuItemChangeSrcClick();
@@ -486,7 +521,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                     dialog.dismiss();
                 });
         BottomSheet bottomSheet = bottomSheetBuilder.show();
-        bottomSheet.setOnDismissListener(dialog -> mHandler.postDelayed(() -> hideSystemUI(), 1500));
+        bottomSheet.setOnDismissListener(dialog -> mHandler.postDelayed(() -> hideSystemUI(), 1500));*/
     }
 
     private synchronized void setViewContent(String title, List<CharSequence> content) {
@@ -759,24 +794,38 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         return mNovelChapters.get(chapterIndex).getSource().contains("://");
     }
 
-    private void showReadOptionsPanel() {
-        ReadOptionsFragment readOptionsFragment = (ReadOptionsFragment) getSupportFragmentManager().findFragmentByTag(READ_OPTIONS_FRAGMENT_TAG);
-        if (readOptionsFragment == null) {
+    private void showBottomPanel() {
+        ReadBottomPanelFragment readBottomPanelFragment = (ReadBottomPanelFragment) getSupportFragmentManager().findFragmentByTag(READ_OPTIONS_FRAGMENT_TAG);
+        if (readBottomPanelFragment == null) {
 
-            readOptionsFragment = ReadOptionsFragment.newInstance(mOnReadOptionsChangedListener);
+            readBottomPanelFragment = ReadBottomPanelFragment.newInstance(mOnReadBottomPanelItemClickListener);
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.activity_chapter_read_options_panel_container, readOptionsFragment, READ_OPTIONS_FRAGMENT_TAG);
+            fragmentTransaction.add(R.id.activity_chapter_read_options_panel_container, readBottomPanelFragment, READ_OPTIONS_FRAGMENT_TAG);
             fragmentTransaction.commit();
         }
         if (!mReadOptionsPanelContainer.isShown()) {
-            final ReadOptionsFragment finalReadOptionsFragment = readOptionsFragment;
+            final ReadBottomPanelFragment finalReadBottomPanelFragment = readBottomPanelFragment;
             DisplayMetrics metrics = getResources().getDisplayMetrics();
-            SlideInOutAnimator.slideInToTop(this, mReadOptionsPanelContainer,
-                    metrics.heightPixels - getResources().getDimensionPixelSize(R.dimen.read_options_height),
-                    0,
-                    0f,
-                    1f,
-                    true,
+            SlideInOutAnimator.slideInToTop(this, mReadOptionsPanelContainer, true,
+                    () -> {
+                        //finalSearchFragment.search(string);
+                    });
+        } else {
+            //readOptionsFragment.search(string);
+        }
+    }
+
+    private void showReadOptionsPanel() {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(READ_OPTIONS_FRAGMENT_TAG);
+
+        if (fragment == null) {
+            fragment = ReadOptionsFragment.newInstance(mOnReadOptionsChangedListener);
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.activity_chapter_read_options_panel_container, fragment, READ_OPTIONS_FRAGMENT_TAG);
+            fragmentTransaction.commit();
+        }
+        if (!mReadOptionsPanelContainer.isShown()) {
+            SlideInOutAnimator.slideInToTop(this, mReadOptionsPanelContainer, true,
                     () -> {
                         //finalSearchFragment.search(string);
                     });
@@ -788,35 +837,39 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     @Override
     public void onBackPressed() {
         if (mReadOptionsPanelContainer.isShown()) {
-            ReadOptionsFragment readOptionsFragment = (ReadOptionsFragment) getSupportFragmentManager().findFragmentByTag(READ_OPTIONS_FRAGMENT_TAG);
+            closeBottomPanel(null);
+            return;
+        }
+        super.onBackPressed();
+    }
 
-            DisplayMetrics metrics = getResources().getDisplayMetrics();
-            if (readOptionsFragment != null) {
+    private void closeBottomPanel(Runnable postClose) {
+        if (mReadOptionsPanelContainer.isShown()) {
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(READ_OPTIONS_FRAGMENT_TAG);
+            if (fragment != null) {
                 SlideInOutAnimator.slideOutToButtom(
                         this,
                         mReadOptionsPanelContainer,
-                        0,
-                        metrics.heightPixels - getResources().getDimensionPixelSize(R.dimen.read_options_height),
-                        1f,
-                        0f,
                         true,
                         () -> {
                             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                            fragmentTransaction.remove(readOptionsFragment);
+                            fragmentTransaction.remove(fragment);
                             fragmentTransaction.commit();
+                            getSupportFragmentManager().executePendingTransactions();
+                            if (postClose != null)
+                                postClose.run();
                         });
             } else {
                 SlideInOutAnimator.slideOutToButtom(
                         this,
                         mReadOptionsPanelContainer,
-                        0,
-                        metrics.heightPixels - getResources().getDimensionPixelSize(R.dimen.read_options_height),
-                        1f,
-                        0f,
-                        true, null);
+                        true,
+                        () -> {
+                            if (postClose != null)
+                                postClose.run();
+                        });
             }
             return;
         }
-        super.onBackPressed();
     }
 }

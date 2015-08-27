@@ -6,8 +6,7 @@ import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 
 import org.cryse.novelreader.R;
@@ -17,6 +16,7 @@ import org.cryse.novelreader.qualifier.PrefsLineSpacing;
 import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.prefs.StringPreference;
+import org.cryse.widget.NumberPicker;
 
 import javax.inject.Inject;
 
@@ -33,12 +33,14 @@ public class ReadOptionsFragment extends AbstractFragment {
     @PrefsLineSpacing
     StringPreference mLineSpacingPreference;
 
+    @Bind(R.id.root_container)
+    FrameLayout mRootContainer;
 
-    @Bind(R.id.spinner_fragment_read_options_font_size)
-    Spinner mFontSizeSpinner;
+    @Bind(R.id.numberpicker_fragment_read_options_text_size)
+    NumberPicker mFontSizeNumberPicker;
 
-    @Bind(R.id.spinner_fragment_read_options_line_spacing)
-    Spinner mLineSpacingSpinner;
+    @Bind(R.id.numberpicker_fragment_read_options_line_spacing)
+    NumberPicker mLineSpacingNumberPicker;
 
     @Bind(R.id.switch_fragment_read_options_traditional)
     SwitchCompat mTraditionalSwitch;
@@ -90,53 +92,68 @@ public class ReadOptionsFragment extends AbstractFragment {
 
     private void setInitialValues() {
         // Font Size:
-        ArrayAdapter<CharSequence> fontSizeAdapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.readview_font_size_entries, android.R.layout.simple_spinner_item);
-        fontSizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mFontSizeSpinner.setAdapter(fontSizeAdapter);
-        int fontSizePosition = fontSizeAdapter.getPosition(mFontSizePreference.get());
-        mFontSizeSpinner.setSelection(fontSizePosition);
+        mFontSizeNumberPicker.setStep(2);
+        String[] mFontSizeValues = getResources().getStringArray(R.array.readview_font_size_entries);
+        int maxFontSize = Integer.valueOf(mFontSizeValues[mFontSizeValues.length - 1]);
+        int minFontSize = Integer.valueOf(mFontSizeValues[0]);
+        int currentFontSize = Integer.valueOf(mFontSizePreference.get());
+        mFontSizeNumberPicker.setMaxValue(maxFontSize);
+        mFontSizeNumberPicker.setMinValue(minFontSize);
+        mFontSizeNumberPicker.setCurrentValue(currentFontSize);
+
 
         // Line Spacing:
-        ArrayAdapter<CharSequence> lineSpacingAdapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.readview_line_spacing_entries, android.R.layout.simple_spinner_item);
-        lineSpacingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mLineSpacingSpinner.setAdapter(lineSpacingAdapter);
-        int lineSpacingPosition = lineSpacingAdapter.getPosition(mLineSpacingPreference.get());
-        mLineSpacingSpinner.setSelection(lineSpacingPosition);
+        mLineSpacingNumberPicker.setStep(25);
+        mLineSpacingNumberPicker.setValueDisplaySuffix("%");
+        String[] mLineSpacingValues = getResources().getStringArray(R.array.readview_line_spacing_entries);
+        int maxLineSpacing = Integer.valueOf(removePercentSuffix(mLineSpacingValues[mLineSpacingValues.length - 1]));
+        int minLineSpacing = Integer.valueOf(removePercentSuffix(mLineSpacingValues[0]));
+        int currentLineSpacing = Integer.valueOf(removePercentSuffix(mLineSpacingPreference.get()));
+        mLineSpacingNumberPicker.setMaxValue(maxLineSpacing);
+        mLineSpacingNumberPicker.setMinValue(minLineSpacing);
+        mLineSpacingNumberPicker.setCurrentValue(currentLineSpacing);
     }
 
     private void addListeners() {
-        mFontSizeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mRootContainer.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String fontSizeString = (String) parent.getAdapter().getItem(position);
+            public void onClick(View v) {
+                if (mOnReadOptionsChangedListener != null) {
+                    mOnReadOptionsChangedListener.onCloseReadOptions();
+                }
+            }
+        });
+        mFontSizeNumberPicker.setOnNumberPickedListener(new NumberPicker.OnNumberPickedListener() {
+            @Override
+            public void onNumberPicked(int number) {
+                String fontSizeString = Integer.toString(number);
+                if (fontSizeString.equals(mFontSizePreference.get())) return;
                 mFontSizePreference.set(fontSizeString);
                 if (mOnReadOptionsChangedListener != null) {
                     mOnReadOptionsChangedListener.onFontSizeChanged(fontSizeString);
                 }
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
         });
-        mLineSpacingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mLineSpacingNumberPicker.setOnNumberPickedListener(new NumberPicker.OnNumberPickedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String lineSpacing = (String) parent.getAdapter().getItem(position);
-                mLineSpacingPreference.set(lineSpacing);
+            public void onNumberPicked(int number) {
+                String lineSpacingString = Integer.toString(number);
+                String currentValue = mLineSpacingPreference.get();
+                if (currentValue.endsWith("%"))
+                    currentValue = currentValue.substring(0, currentValue.length() - 1);
+                if (lineSpacingString.equals(currentValue)) return;
+                mLineSpacingPreference.set(lineSpacingString);
                 if (mOnReadOptionsChangedListener != null) {
-                    mOnReadOptionsChangedListener.onLineSpacingChanged(lineSpacing);
+                    mOnReadOptionsChangedListener.onLineSpacingChanged(lineSpacingString);
                 }
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
         });
+    }
+
+    private String removePercentSuffix(String input) {
+        if (input.endsWith("%"))
+            return input.replace("%", "");
+        return input;
     }
 
     public interface OnReadOptionsChangedListener {

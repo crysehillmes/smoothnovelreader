@@ -25,6 +25,7 @@ import org.cryse.novelreader.ui.NovelDetailActivity;
 import org.cryse.novelreader.ui.NovelListFragment;
 import org.cryse.novelreader.ui.NovelRankFragment;
 import org.cryse.novelreader.ui.NovelReadViewActivity;
+import org.cryse.novelreader.ui.ReadBottomPanelFragment;
 import org.cryse.novelreader.ui.ReadOptionsFragment;
 import org.cryse.novelreader.ui.SearchActivity;
 import org.cryse.novelreader.ui.SearchFragment;
@@ -68,6 +69,7 @@ import dagger.Provides;
                 NovelCategoryFragment.CategorySubListFragment.class,
                 SettingsFragment.class,
                 ReadOptionsFragment.class,
+                ReadBottomPanelFragment.class,
 
                 ChapterContentsCacheService.class,
                 LoadLocalTextService.class

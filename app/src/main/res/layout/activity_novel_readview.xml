@@ -63,7 +63,7 @@
     <FrameLayout
         android:id="@+id/activity_chapter_read_options_panel_container"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/read_options_height"
+        android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:elevation="4dp"
         android:visibility="invisible" />
