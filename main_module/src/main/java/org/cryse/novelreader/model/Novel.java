@@ -77,6 +77,10 @@ public class Novel implements NovelModel {
         this.category = in.readString();
     }
 
+    public boolean isLocal() {
+        return type == TYPE_LOCAL_FILE;
+    }
+
     @NonNull
     @Override
     public String getNovelId() {

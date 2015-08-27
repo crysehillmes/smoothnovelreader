@@ -5,10 +5,10 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextPaint;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -30,8 +30,8 @@ import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.model.Bookmark;
 import org.cryse.novelreader.model.BookmarkModel;
 import org.cryse.novelreader.model.ChapterModel;
+import org.cryse.novelreader.model.Novel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
-import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelChapterContentPresenter;
 import org.cryse.novelreader.qualifier.PrefsFontSize;
 import org.cryse.novelreader.qualifier.PrefsLineSpacing;
@@ -63,7 +63,7 @@ import butterknife.ButterKnife;
 
 public class NovelReadViewActivity extends AbstractThemeableActivity implements NovelChapterContentView {
     private static final String LOG_TAG = NovelReadViewActivity.class.getName();
-    private static final String READ_OPTIONS_FRAGMENT_TAG = "read_options_fragment_tag";
+    private static final String READ_BOTTOM_FRAGMENT_TAG = "read_bottom_fragment_tag";
 
     @Bind(R.id.activity_chapter_read_options_panel_container)
     protected FrameLayout mReadOptionsPanelContainer;
@@ -110,14 +110,43 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
 
     ArrayList<ChapterModel> mNovelChapters;
 
-    NovelModel novelModel;
+    Novel mNovel;
     int chapterIndex = 0;
     int chapterOffset = 0;
     float mFontSize = 0;
     float mLineSpacing = 0;
     String mCurrentContent;
     boolean mIsLoading = false;
-    private ReadOptionsFragment.OnReadOptionsChangedListener mOnReadOptionsChangedListener = new ReadOptionsFragment.OnReadOptionsChangedListener() {
+
+    private ReadBottomPanelFragment.OnReadBottomPanelItemClickListener mOnReadBottomPanelItemClickListener = new ReadBottomPanelFragment.OnReadBottomPanelItemClickListener() {
+        @Override
+        public void onClose() {
+            closeBottomPanel(null);
+        }
+
+        @Override
+        public void onNextClick() {
+            closeBottomPanel(NovelReadViewActivity.this::goNextChapter);
+        }
+
+        @Override
+        public void onPreviousClick() {
+            closeBottomPanel(NovelReadViewActivity.this::goPrevChapter);
+        }
+
+        @Override
+        public void onDarkModeClick() {
+            closeBottomPanel(() -> setNightMode(!isNightMode()));
+        }
+
+        @Override
+        public void onReloadClick() {
+            closeBottomPanel(() -> {
+                if (checkIfLocal())
+                    getPresenter().loadChapter(mNovelChapters.get(chapterIndex), true);
+            });
+        }
+
         @Override
         public void onCloseReadOptions() {
             closeBottomPanel(null);
@@ -157,41 +186,6 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         }
     };
 
-    private ReadBottomPanelFragment.OnReadBottomPanelItemClickListener mOnReadBottomPanelItemClickListener = new ReadBottomPanelFragment.OnReadBottomPanelItemClickListener() {
-        @Override
-        public void onClose() {
-            closeBottomPanel(null);
-        }
-
-        @Override
-        public void onReadOptionsClick() {
-            closeBottomPanel(NovelReadViewActivity.this::showReadOptionsPanel);
-        }
-
-        @Override
-        public void onNextClick() {
-            closeBottomPanel(NovelReadViewActivity.this::goNextChapter);
-        }
-
-        @Override
-        public void onPreviousClick() {
-            closeBottomPanel(NovelReadViewActivity.this::goPrevChapter);
-        }
-
-        @Override
-        public void onDarkModeClick() {
-            closeBottomPanel(() -> setNightMode(!isNightMode()));
-        }
-
-        @Override
-        public void onReloadClick() {
-            closeBottomPanel(() -> {
-                if (checkIfLocal(chapterIndex))
-                    getPresenter().loadChapter(mNovelChapters.get(chapterIndex), true);
-            });
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         injectThis();
@@ -227,31 +221,17 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                     mReadWidget.setLoading(false);
             }
         });
-        mReadWidget.setOnPageChangedListener(new ReadWidget.OnPageChangedListener() {
-            @Override
-            public void onPageChanged(int position) {
-                mPagePositionTextView.setText(
-                        getResources().getString(
-                                R.string.readview_page_offset,
-                                position + 1,
-                                mNovelReadAdapter.getCount()
-                        )
-                );
-                chapterOffset = mNovelReadAdapter.getStringOffsetFromPage(mReadWidget.getCurrentPage());
-                hideSystemUI();
-            }
+        mReadWidget.setOnPageChangedListener(position -> {
+            mPagePositionTextView.setText(
+                    getResources().getString(
+                            R.string.readview_page_offset,
+                            position + 1,
+                            mNovelReadAdapter.getCount()
+                    )
+            );
+            chapterOffset = mNovelReadAdapter.getStringOffsetFromPage(mReadWidget.getCurrentPage());
+            hideSystemUI();
         });
-        /*mProgressBar.setSmoothProgressDrawableCallbacks(new SmoothProgressDrawable.Callbacks() {
-            @Override
-            public void onStop() {
-                mProgressBar.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onStart() {
-                mProgressBar.setVisibility(View.VISIBLE);
-            }
-        });*/
         addClickEventListener();
     }
 
@@ -272,22 +252,22 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         int scrollMode = PreferenceConverter.getScrollMode(mScrollMode.get());
         if (scrollMode == PreferenceConverter.SCROLL_MODE_FLIP_VERTICAL ||
                 scrollMode == PreferenceConverter.SCROLL_MODE_FLIP_HORIZONTAL)
-            return new ReadViewFlipAdapter(this, mFontSize, mLineSpacing, isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white) : mReadBackgroundPrefs.get());
+            return new ReadViewFlipAdapter(this, mFontSize, mLineSpacing, isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white, null) : mReadBackgroundPrefs.get());
         else if (scrollMode == PreferenceConverter.SCROLL_MODE_VIEWPAGER_HORIZONTAL) {
-            return new ReadViewPagerAdapter(this, mFontSize, mLineSpacing, isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white) : mReadBackgroundPrefs.get());
+            return new ReadViewPagerAdapter(this, mFontSize, mLineSpacing, isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white, null) : mReadBackgroundPrefs.get());
         } else {
             throw new IllegalStateException("Unsupported read view scroll mode.");
         }
     }
 
     public void setReadBackgroundColor() {
-        mRootContainer.setBackgroundColor(isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white) : mReadBackgroundPrefs.get());
+        mRootContainer.setBackgroundColor(isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white, null) : mReadBackgroundPrefs.get());
         if(mNovelReadAdapter != null)
-            mNovelReadAdapter.setBackgroundColor(isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white) : mReadBackgroundPrefs.get());
+            mNovelReadAdapter.setBackgroundColor(isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white, null) : mReadBackgroundPrefs.get());
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -301,13 +281,13 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
             mNovelChapters = savedInstanceState.getParcelableArrayList(DataContract.NOVEL_CHAPTER_LIST_NAME);
             splitedContent = savedInstanceState.getCharSequenceArrayList(DataContract.NOVEL_CHAPTER_SPLITTED_CONTENT);
             mCurrentContent = savedInstanceState.getString(DataContract.NOVEL_CHAPTER_CONTENT);
-            novelModel = savedInstanceState.getParcelable(DataContract.NOVEL_OBJECT_NAME);
+            mNovel = savedInstanceState.getParcelable(DataContract.NOVEL_OBJECT_NAME);
             chapterIndex = savedInstanceState.getInt(DataContract.NOVEL_CHAPTER_INDEX_NAME);
             chapterOffset = savedInstanceState.getInt(DataContract.NOVEL_CHAPTER_OFFSET_NAME);
         } else {
             Intent intent = getIntent();
             mNovelChapters = new ArrayList<ChapterModel>(getPresenter().getChaptersState());
-            novelModel = intent.getParcelableExtra(DataContract.NOVEL_OBJECT_NAME);
+            mNovel = intent.getParcelableExtra(DataContract.NOVEL_OBJECT_NAME);
             String startChapterId = intent.getStringExtra(DataContract.NOVEL_CHAPTER_ID_NAME);
             chapterIndex = findChapterIndex(startChapterId);
             chapterOffset = intent.getIntExtra(DataContract.NOVEL_CHAPTER_OFFSET_NAME, 0);
@@ -375,7 +355,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         outState.putCharSequenceArrayList(DataContract.NOVEL_CHAPTER_SPLITTED_CONTENT,
                 mNovelReadAdapter.getContent());
         outState.putString(DataContract.NOVEL_CHAPTER_CONTENT, mCurrentContent);
-        outState.putParcelable(DataContract.NOVEL_OBJECT_NAME, novelModel);
+        outState.putParcelable(DataContract.NOVEL_OBJECT_NAME, mNovel);
         outState.putInt(DataContract.NOVEL_CHAPTER_INDEX_NAME, chapterIndex);
         outState.putInt(DataContract.NOVEL_CHAPTER_OFFSET_NAME, chapterOffset);
     }
@@ -451,13 +431,13 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
             public boolean onGesture(View view, int gestureId, MotionEvent motionEvent) {
                 if(view == mReadWidget.getReadDisplayView() && gestureId == SimpleGestureDetector.TAP) {
                     int viewWidth = view.getWidth();
-                    int viewHeight = view.getHeight();
+                    /*int viewHeight = view.getHeight();*/
                     int x = (int)motionEvent.getX();
                     int y = (int)motionEvent.getY();
-                    if((x > (viewWidth * 1 / 3) && x < (viewWidth * 2 / 3)) && (y > (viewHeight * 1 / 3) && y < (viewHeight * 2 / 3))) {
+                    if ((x > (viewWidth / 3) && x < (viewWidth * 2 / 3)) /*&& (y > (viewHeight / 3) && y < (viewHeight * 2 / 3))*/) {
                         showBottomMenu();
                         return true;
-                    } else if((x > 0 && x < (viewWidth * 1 / 3))) {
+                    } else if ((x > 0 && x < (viewWidth / 3))) {
                         goPrevPage();
                         return true;
                     } else if((x > (viewWidth * 2 / 3) && x < viewWidth)) {
@@ -689,9 +669,9 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         if(mNovelChapters == null || mNovelReadAdapter == null)
             return;
         BookmarkModel lastReadBookMark = new Bookmark(
-                novelModel.getNovelId(),
+                mNovel.getNovelId(),
                 mNovelChapters.get(chapterIndex).getChapterId(),
-                novelModel.getTitle(),
+                mNovel.getTitle(),
                 mNovelChapters.get(chapterIndex).getTitle(),
                 mNovelReadAdapter.getStringOffsetFromPage(currentPage),
                 BookmarkModel.BOOKMARK_TYPE_LASTREAD,
@@ -705,7 +685,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     }
 
     public void onMenuItemChangeSrcClick() {
-        if(checkIfLocal(chapterIndex))
+        if (checkIfLocal())
             getPresenter().getOtherSrc(mNovelChapters.get(chapterIndex));
     }
 
@@ -758,19 +738,6 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         dialog.show();
     }
 
-    public void onMenuItemNextChapterClick() {
-        goNextChapter();
-    }
-
-    public void onMenuItemPreviousChapterClick() {
-        goPrevChapter();
-    }
-
-    public void onMenuItemReloadClick() {
-        if(checkIfLocal(chapterIndex))
-            getPresenter().loadChapter(mNovelChapters.get(chapterIndex), true);
-    }
-
     public void onMenuItemChooseReadBackground() {
         new ColorChooserDialog()
                 .setColors(this, R.array.read_bg_colors)
@@ -790,38 +757,17 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         throw new IllegalStateException("ChapterIndex not found.");
     }
 
-    private boolean checkIfLocal(int chapterIndex) {
-        return mNovelChapters.get(chapterIndex).getSource().contains("://");
+    private boolean checkIfLocal() {
+        return mNovel.isLocal();
     }
 
     private void showBottomPanel() {
-        ReadBottomPanelFragment readBottomPanelFragment = (ReadBottomPanelFragment) getSupportFragmentManager().findFragmentByTag(READ_OPTIONS_FRAGMENT_TAG);
+        ReadBottomPanelFragment readBottomPanelFragment = (ReadBottomPanelFragment) getSupportFragmentManager().findFragmentByTag(READ_BOTTOM_FRAGMENT_TAG);
         if (readBottomPanelFragment == null) {
 
             readBottomPanelFragment = ReadBottomPanelFragment.newInstance(mOnReadBottomPanelItemClickListener);
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.activity_chapter_read_options_panel_container, readBottomPanelFragment, READ_OPTIONS_FRAGMENT_TAG);
-            fragmentTransaction.commit();
-        }
-        if (!mReadOptionsPanelContainer.isShown()) {
-            final ReadBottomPanelFragment finalReadBottomPanelFragment = readBottomPanelFragment;
-            DisplayMetrics metrics = getResources().getDisplayMetrics();
-            SlideInOutAnimator.slideInToTop(this, mReadOptionsPanelContainer, true,
-                    () -> {
-                        //finalSearchFragment.search(string);
-                    });
-        } else {
-            //readOptionsFragment.search(string);
-        }
-    }
-
-    private void showReadOptionsPanel() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(READ_OPTIONS_FRAGMENT_TAG);
-
-        if (fragment == null) {
-            fragment = ReadOptionsFragment.newInstance(mOnReadOptionsChangedListener);
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.activity_chapter_read_options_panel_container, fragment, READ_OPTIONS_FRAGMENT_TAG);
+            fragmentTransaction.add(R.id.activity_chapter_read_options_panel_container, readBottomPanelFragment, READ_BOTTOM_FRAGMENT_TAG);
             fragmentTransaction.commit();
         }
         if (!mReadOptionsPanelContainer.isShown()) {
@@ -829,8 +775,6 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                     () -> {
                         //finalSearchFragment.search(string);
                     });
-        } else {
-            //readOptionsFragment.search(string);
         }
     }
 
@@ -845,7 +789,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
 
     private void closeBottomPanel(Runnable postClose) {
         if (mReadOptionsPanelContainer.isShown()) {
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(READ_OPTIONS_FRAGMENT_TAG);
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(READ_BOTTOM_FRAGMENT_TAG);
             if (fragment != null) {
                 SlideInOutAnimator.slideOutToButtom(
                         this,
@@ -869,7 +813,6 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                                 postClose.run();
                         });
             }
-            return;
         }
     }
 }
