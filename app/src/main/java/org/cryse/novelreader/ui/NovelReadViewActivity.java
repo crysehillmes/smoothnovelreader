@@ -42,6 +42,7 @@ import org.cryse.novelreader.ui.adapter.ReadViewPagerAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.ui.widget.ReadWidget;
 import org.cryse.novelreader.ui.widget.ReadWidgetAdapter;
+import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.PreferenceConverter;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
@@ -252,18 +253,18 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         int scrollMode = PreferenceConverter.getScrollMode(mScrollMode.get());
         if (scrollMode == PreferenceConverter.SCROLL_MODE_FLIP_VERTICAL ||
                 scrollMode == PreferenceConverter.SCROLL_MODE_FLIP_HORIZONTAL)
-            return new ReadViewFlipAdapter(this, mFontSize, mLineSpacing, isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white, null) : mReadBackgroundPrefs.get());
+            return new ReadViewFlipAdapter(this, mFontSize, mLineSpacing, isNightMode() ? ColorUtils.getColor(getResources(), R.color.theme_read_bg_color_white, null) : mReadBackgroundPrefs.get());
         else if (scrollMode == PreferenceConverter.SCROLL_MODE_VIEWPAGER_HORIZONTAL) {
-            return new ReadViewPagerAdapter(this, mFontSize, mLineSpacing, isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white, null) : mReadBackgroundPrefs.get());
+            return new ReadViewPagerAdapter(this, mFontSize, mLineSpacing, isNightMode() ? ColorUtils.getColor(getResources(), R.color.theme_read_bg_color_white, null) : mReadBackgroundPrefs.get());
         } else {
             throw new IllegalStateException("Unsupported read view scroll mode.");
         }
     }
 
     public void setReadBackgroundColor() {
-        mRootContainer.setBackgroundColor(isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white, null) : mReadBackgroundPrefs.get());
+        mRootContainer.setBackgroundColor(isNightMode() ? ColorUtils.getColor(getResources(), R.color.theme_read_bg_color_white, null) : mReadBackgroundPrefs.get());
         if(mNovelReadAdapter != null)
-            mNovelReadAdapter.setBackgroundColor(isNightMode() ? getResources().getColor(R.color.theme_read_bg_color_white, null) : mReadBackgroundPrefs.get());
+            mNovelReadAdapter.setBackgroundColor(isNightMode() ? ColorUtils.getColor(getResources(), R.color.theme_read_bg_color_white, null) : mReadBackgroundPrefs.get());
     }
 
     @Override

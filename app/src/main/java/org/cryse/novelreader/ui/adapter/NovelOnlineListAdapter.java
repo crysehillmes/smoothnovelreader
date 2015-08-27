@@ -57,7 +57,7 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
         }*/
 
         if(viewHolder.mBackCoverLayout != null && !(mIsNightMode && mGrayScale))
-            viewHolder.mBackCoverLayout.setBackgroundColor(ColorUtils.getPreDefinedColorFromId(getContext(), item.getNovelId(), item.getTitle().length()));
+            viewHolder.mBackCoverLayout.setBackgroundColor(ColorUtils.getPreDefinedColorFromId(getContext().getResources(), item.getNovelId(), item.getTitle().length()));
 
         if(viewHolder.mNovelImageImageView != null) {
             PicassoHelper.load(getContext(), item.getCoverImage(), viewHolder.mNovelImageImageView, mIsNightMode && mGrayScale);

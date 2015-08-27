@@ -25,7 +25,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class NovelChapterListAdapter extends BaseAdapter{
+public class NovelChapterListAdapter extends BaseAdapter {
     private Context mContext = null;
     private List<ChapterModel> mContentList = null;
     private LayoutInflater mInflater = null;
@@ -33,6 +33,8 @@ public class NovelChapterListAdapter extends BaseAdapter{
     private int mLastReadIconSize;
     private int mTagColorDotPadding;
     private int mCachedColor;
+    private Drawable mCachedDotDrawable;
+    private Drawable mNotCachedDotDrawable;
     private int mLastReadPosition = -1;
     private int mColorAccent = 0;
 
@@ -44,12 +46,25 @@ public class NovelChapterListAdapter extends BaseAdapter{
         mTagColorDotSize = UIUtils.dp2px(mContext, 12f);
         mTagColorDotPadding = UIUtils.dp2px(mContext, 4f);
         mLastReadIconSize = UIUtils.dp2px(mContext, 24f);
-        if(context instanceof AbstractThemeableActivity) {
+        if (context instanceof AbstractThemeableActivity) {
             mCachedColor = ((AbstractThemeableActivity) context).getThemeEngine().getPrimaryColor(context);
         } else {
             mCachedColor = ColorUtils.getColorFromAttr(context, R.attr.colorPrimary);
         }
         mColorAccent = ColorUtils.getColorFromAttr(getContext(), R.attr.colorAccent);
+        mCachedDotDrawable = makeCachedIndicatorDrawable(mTagColorDotSize, mLastReadIconSize, mCachedColor);
+        mNotCachedDotDrawable = makeCachedIndicatorDrawable(mTagColorDotSize, mLastReadIconSize, Color.TRANSPARENT);
+    }
+
+    private static Drawable makeCachedIndicatorDrawable(int colorDotSize, int lastReadIconSize, int color) {
+        ShapeDrawable colorDrawable = new ShapeDrawable(new OvalShape());
+        int drawPaddingLeft = (lastReadIconSize - colorDotSize) / 2;
+        colorDrawable.setIntrinsicWidth(colorDotSize);
+        colorDrawable.setIntrinsicHeight(colorDotSize);
+        colorDrawable.setBounds(drawPaddingLeft, 0, colorDotSize + drawPaddingLeft, colorDotSize);
+        colorDrawable.getPaint().setStyle(Paint.Style.FILL);
+        colorDrawable.getPaint().setColor(color);
+        return colorDrawable;
     }
 
     @Override
@@ -84,28 +99,18 @@ public class NovelChapterListAdapter extends BaseAdapter{
             convertView = mInflater.inflate(R.layout.listview_item_novel_chapter, null);
             viewHolder = new NovelIntroItemViewHolder(convertView);
             convertView.setTag(viewHolder);
-        }
-        else
-        {
-            viewHolder = (NovelIntroItemViewHolder)convertView.getTag();
+        } else {
+            viewHolder = (NovelIntroItemViewHolder) convertView.getTag();
         }
         ChapterModel item = mContentList.get(position);
 
-        if(mLastReadPosition != position) {
-            ShapeDrawable colorDrawable = new ShapeDrawable(new OvalShape());
-            int drawPaddingLeft = (mLastReadIconSize - mTagColorDotSize) / 2;
-            colorDrawable.setIntrinsicWidth(mTagColorDotSize);
-            colorDrawable.setIntrinsicHeight(mTagColorDotSize);
-            colorDrawable.setBounds(drawPaddingLeft, 0, mTagColorDotSize + drawPaddingLeft, mTagColorDotSize);
-            colorDrawable.getPaint().setStyle(Paint.Style.FILL);
-            viewHolder.mNovelChapterTitleTextView.setCompoundDrawables(colorDrawable,
-                    null, null, null);
+        if (mLastReadPosition != position) {
             viewHolder.mNovelChapterTitleTextView.setCompoundDrawablePadding(mTagColorDotPadding + (mLastReadIconSize - mTagColorDotSize));
-            colorDrawable.getPaint().setColor(
-                    item.isCached() ?
-                            mCachedColor :
-                            Color.TRANSPARENT
-            );
+            if (item.isCached()) {
+                viewHolder.mNovelChapterTitleTextView.setCompoundDrawables(mCachedDotDrawable, null, null, null);
+            } else {
+                viewHolder.mNovelChapterTitleTextView.setCompoundDrawables(mNotCachedDotDrawable, null, null, null);
+            }
         } else {
             Drawable lastReadDrawable = ResourcesCompat.getDrawable(getContext().getResources(), R.drawable.ic_action_history, null);
             lastReadDrawable.mutate().setColorFilter(mColorAccent, PorterDuff.Mode.SRC_IN);
@@ -137,8 +142,7 @@ public class NovelChapterListAdapter extends BaseAdapter{
         return mContext;
     }
 
-    public class NovelIntroItemViewHolder
-    {
+    public class NovelIntroItemViewHolder {
         public View view;
         @Bind(R.id.listview_item_novel_chapters_item_chapter_title)
         public TextView mNovelChapterTitleTextView;

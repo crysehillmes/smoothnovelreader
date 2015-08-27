@@ -67,7 +67,7 @@ public class NovelBookShelfListAdapter extends NovelModelListAdapter {
         } else {
             TextDrawable textDrawable = TextDrawable.builder()
                     .buildRoundRect( item.getTitle().length() > 0 ? item.getTitle().substring(0,1) : "",
-                            ColorUtils.getSortedPreDefinedColor(getContext(), position),
+                            ColorUtils.getSortedPreDefinedColor(getContext().getResources(), position),
                             mTagColorDotSize
                     ); // radius in px
             viewHolder.mNovelImageImageView.setImageDrawable(textDrawable);

@@ -1,11 +1,7 @@
 package org.cryse.novelreader.ui.adapter;
 
 import android.content.Context;
-import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,15 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NovelCategoryItemAdapter extends RecyclerViewBaseAdapter<NovelCategoryItemAdapter.NovelCategoryItemViewHolder> {
+    public static final int LAST_POSITION = -1;
     private List<NovelCategoryItem> mItems = new ArrayList<NovelCategoryItem>();
     private Context mContext;
+    private int mTagColorDotSize;
+
     public NovelCategoryItemAdapter(Context context) {
         mContext = context;
         mTagColorDotSize = UIUtils.dp2px(mContext, 16f);
     }
-
-    private int mTagColorDotSize;
-    public static final int LAST_POSITION = -1 ;
 
     public void addAll(List<NovelCategoryItem> items) {
         addAll(LAST_POSITION, items);
@@ -81,14 +77,14 @@ public class NovelCategoryItemAdapter extends RecyclerViewBaseAdapter<NovelCateg
             if(item.getIcon() == 0) {
                 TextDrawable textDrawable = TextDrawable.builder()
                         .buildRoundRect( item.getTitle().length() > 0 ? item.getTitle().substring(0,1) : "",
-                                ColorUtils.getSortedPreDefinedColor(mContext, position),
+                                ColorUtils.getSortedPreDefinedColor(mContext.getResources(), position),
                                 mTagColorDotSize
                         ); // radius in px
                 viewHolder.imageView.setImageDrawable(textDrawable);
             } else {
                 viewHolder.imageView.setImageDrawable(mContext.getResources().getDrawable(item.getIcon()));
                 viewHolder.imageView.getDrawable().setColorFilter(
-                        ColorUtils.getSortedPreDefinedColor(mContext, position),
+                        ColorUtils.getSortedPreDefinedColor(mContext.getResources(), position),
                         PorterDuff.Mode.SRC_IN
                 );
             }

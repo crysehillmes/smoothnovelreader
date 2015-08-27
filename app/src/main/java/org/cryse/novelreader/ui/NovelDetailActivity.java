@@ -424,7 +424,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
     }
 
     private void showNovelInformation() {
-        mDetailPrimaryColor = ColorUtils.getPreDefinedColorFromId(getThemedContext(), mNovel.getNovelId(), mNovel.getTitle().length());
+        mDetailPrimaryColor = ColorUtils.getPreDefinedColorFromId(getThemedContext().getResources(), mNovel.getNovelId(), mNovel.getTitle().length());
         mTitleString = mNovel.getTitle();
 
         if (mDetailPrimaryColor == 0) {
@@ -568,7 +568,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
                 colorDrawable.getPaint().setStyle(Paint.Style.FILL);
                 chipView.setCompoundDrawablesWithIntrinsicBounds(colorDrawable,
                         null, null, null);
-                colorDrawable.getPaint().setColor(ColorUtils.getRandomPreDefinedColor(getThemedContext()));
+                colorDrawable.getPaint().setColor(ColorUtils.getRandomPreDefinedColor(getThemedContext().getResources()));
 
                 mTagsContainer.addView(chipView);
             }
