@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 
 import org.cryse.novelreader.R;
+import org.cryse.novelreader.application.factory.StaticRunTimeStoreFactory;
 import org.cryse.novelreader.event.AbstractEvent;
 import org.cryse.novelreader.event.ThemeColorChangedEvent;
 import org.cryse.novelreader.util.RunTimeStore;
@@ -21,13 +22,9 @@ import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.ThemeEngine;
 import org.cryse.novelreader.util.ToastErrorConstant;
 
-import javax.inject.Inject;
-
 public abstract class AbstractThemeableActivity extends AbstractActivity implements SnackbarSupport {
     protected Handler mMainThreadHandler;
-    @Inject
     ThemeEngine mThemeEngine;
-    @Inject
     RunTimeStore mRunTimeStore;
     private int mDarkTheme = R.style.SmoothTheme_Dark;
     private int mLightTheme = R.style.SmoothTheme_Light;
@@ -37,9 +34,11 @@ public abstract class AbstractThemeableActivity extends AbstractActivity impleme
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mThemeEngine = ThemeEngine.get(this);
         mTheme = getAppTheme();
         setTheme(mTheme);
         super.onCreate(savedInstanceState);
+        mRunTimeStore = StaticRunTimeStoreFactory.getInstance();
         mMainThreadHandler = new Handler();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             updateTaskDescription();

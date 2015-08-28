@@ -9,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import org.cryse.novelreader.R;
-import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 
@@ -54,7 +53,6 @@ public class SettingsActivity extends AbstractThemeableActivity {
 
     @Override
     protected void injectThis() {
-        SmoothReaderApplication.get(this).inject(this);
     }
 
     @Override

@@ -37,6 +37,7 @@ import android.widget.TextView;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.application.module.DetailActivityModule;
 import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
@@ -317,6 +318,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         super.onStart();
         getPresenter().bindView(this);
         Intent service = new Intent(this.getApplicationContext(), ChapterContentsCacheService.class);
+        startService(service);
         this.bindService(service, mBackgroundServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -343,7 +345,9 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
 
     @Override
     protected void injectThis() {
-        SmoothReaderApplication.get(this).inject(this);
+        SmoothReaderApplication.get(this).getAppComponent().plus(
+                new DetailActivityModule(this)
+        ).inject(this);
     }
 
     @Override

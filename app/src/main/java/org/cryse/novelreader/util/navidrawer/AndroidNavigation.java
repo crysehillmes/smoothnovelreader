@@ -4,37 +4,25 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
-import android.view.View;
 
 import org.cryse.novelreader.R;
-import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.application.factory.StaticRunTimeStoreFactory;
 import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.ui.NovelBookShelfFragment;
-import org.cryse.novelreader.ui.NovelCategoryFragment;
 import org.cryse.novelreader.ui.NovelChapterListActivity;
 import org.cryse.novelreader.ui.NovelDetailActivity;
-import org.cryse.novelreader.ui.NovelListFragment;
-import org.cryse.novelreader.ui.NovelRankFragment;
 import org.cryse.novelreader.ui.NovelReadViewActivity;
-import org.cryse.novelreader.ui.SearchActivity;
 import org.cryse.novelreader.ui.SettingsActivity;
 import org.cryse.novelreader.util.RunTimeStore;
 
 import java.util.List;
-
-import javax.inject.Inject;
 
 import timber.log.Timber;
 
@@ -44,15 +32,13 @@ public class AndroidNavigation {
     protected FragmentManager mFragmentManager;
     RunTimeStore mRunTimeStore;
 
-    @Inject
-    public AndroidNavigation(RunTimeStore runTimeStore) {
-        this.mRunTimeStore = runTimeStore;
+    public AndroidNavigation() {
+        mRunTimeStore = StaticRunTimeStoreFactory.getInstance();
     }
 
     public void attachMainActivity(AppCompatActivity activity) {
         mActivity = activity;
         mFragmentManager = mActivity.getSupportFragmentManager();
-        SmoothReaderApplication.get(activity).inject(this);
     }
 
     public void switchContentFragment(String fragmentName, String backStackTag) {
@@ -111,51 +97,6 @@ public class AndroidNavigation {
 
     public void navigateToBookShelfFragment() {
         switchContentFragment(NovelBookShelfFragment.class.getName(), null);
-    }
-
-    public void navigateToCategoryListFragment() {
-        switchContentFragment(NovelCategoryFragment.class.getName(), null);
-    }
-
-    public void navigateToRankFragment() {
-        switchContentFragment(NovelRankFragment.class.getName(), null);
-    }
-
-    public void navigateToRankFragment(String title, String queryString) {
-        NovelListFragment categoryFragment = NovelListFragment.newInstance(
-                NovelListFragment.QUERY_TYPE_RANK,
-                title,
-                queryString,
-                null,
-                false
-        );
-        switchContentFragment(categoryFragment, "rank_list");
-    }
-
-    public void navigateToCategoryFragment(String title, String queryString, String subQueryString, boolean isQueryByTag) {
-        NovelListFragment categoryFragment = NovelListFragment.newInstance(
-                NovelListFragment.QUERY_TYPE_CATEGORY,
-                title,
-                queryString,
-                subQueryString,
-                isQueryByTag
-        );
-        switchContentFragment(categoryFragment, "category_list");
-    }
-
-    public void showSearchActivity(Object currentView, String queryString, Pair<View, String>... transitionPairs) {
-        Context context = getContextFromView(currentView);
-        Intent intent = new Intent(context, SearchActivity.class);
-        if (!TextUtils.isEmpty(queryString)) {
-            intent.putExtra(DataContract.SEARCH_STRING, queryString);
-        }
-        Activity activity = getActivityFromView(currentView);
-        ActivityOptionsCompat options = ActivityOptionsCompat.
-                makeSceneTransitionAnimation(activity, transitionPairs);
-        ActivityCompat.startActivity(activity, intent, options.toBundle());
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            activity.overridePendingTransition(android.R.anim.fade_in, 0);
-        }
     }
 
     public void navigateToSettingsActivity(Context context) {

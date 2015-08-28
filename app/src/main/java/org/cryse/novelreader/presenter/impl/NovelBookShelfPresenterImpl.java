@@ -1,12 +1,9 @@
 package org.cryse.novelreader.presenter.impl;
 
-import android.support.v4.util.Pair;
-import android.view.View;
-
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelBookShelfPresenter;
-import org.cryse.novelreader.util.SnackbarUtils;
+import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.SubscriptionUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 import org.cryse.novelreader.view.NovelBookShelfView;
@@ -28,13 +25,10 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
 
     AndroidNavigation mDisplay;
 
-    SnackbarUtils mToastUtil;
-
     @Inject
-    public NovelBookShelfPresenterImpl(NovelBusinessLogicLayer mNovelBusinessLogicLayer, AndroidNavigation display, SnackbarUtils snackbarUtils) {
+    public NovelBookShelfPresenterImpl(NovelBusinessLogicLayer mNovelBusinessLogicLayer, AndroidNavigation display) {
         this.mNovelBusinessLogicLayer = mNovelBusinessLogicLayer;
         this.mDisplay = display;
-        this.mToastUtil = snackbarUtils;
         this.mView = null;
     }
 
@@ -53,7 +47,8 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
                         error -> {
                             if (mView != null) {
                                 mView.setLoading(false);
-                                mToastUtil.showExceptionToast(mView, error);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
                             }
                             Timber.e(error, error.getMessage(), LOG_TAG);
                         },
@@ -82,7 +77,8 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
                             Timber.e(error, error.getMessage(), LOG_TAG);
                             if (mView != null) {
                                 mView.setLoading(false);
-                                mToastUtil.showExceptionToast(mView, error);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
                             }
                         },
                         () -> {
@@ -106,7 +102,8 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
                         error -> {
                             if (mView != null) {
                                 mView.setLoading(false);
-                                mToastUtil.showExceptionToast(mView, error);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
                             }
                             Timber.e(error, error.getMessage(), LOG_TAG);
                         },
@@ -122,11 +119,6 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
     @Override
     public void showNovelChapterList(NovelModel novelModel) {
         mDisplay.showNovelChapterList(mView, novelModel);
-    }
-
-    @Override
-    public void goSearch(String queryString, Pair<View, String>... transitionPairs) {
-        mDisplay.showSearchActivity(mView, queryString, transitionPairs);
     }
 
     @Override

@@ -25,18 +25,15 @@ import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.event.AbstractEvent;
 import org.cryse.novelreader.event.ThemeColorChangedEvent;
-import org.cryse.novelreader.service.LoadLocalTextService;
+import org.cryse.novelreader.service.LocalFileImportService;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
 import java.util.concurrent.Executors;
 
-import javax.inject.Inject;
-
 public class MainActivity extends AbstractThemeableActivity {
     private static final String LOG_TAG = MainActivity.class.getName();
-    @Inject
     AndroidNavigation mNavigation;
 
     AccountHeader mAccountHeader;
@@ -52,7 +49,7 @@ public class MainActivity extends AbstractThemeableActivity {
      */
     private Handler mHandler = new Handler();
     private Runnable mPendingRunnable = null;
-    private LoadLocalTextService.ReadLocalTextFileBinder mServiceBinder;
+    private LocalFileImportService.ReadLocalTextFileBinder mServiceBinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +72,7 @@ public class MainActivity extends AbstractThemeableActivity {
         mBackgroundServiceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                mServiceBinder = (LoadLocalTextService.ReadLocalTextFileBinder) service;
+                mServiceBinder = (LocalFileImportService.ReadLocalTextFileBinder) service;
             }
 
             @Override
@@ -147,12 +144,6 @@ public class MainActivity extends AbstractThemeableActivity {
             case 1001:
                 mNavigation.navigateToBookShelfFragment();
                 break;
-            case 1002:
-                mNavigation.navigateToRankFragment();
-                break;
-            case 1003:
-                mNavigation.navigateToCategoryListFragment();
-                break;
             case 1101:
                 mNavigation.navigateToSettingsActivity(MainActivity.this);
                 break;
@@ -170,7 +161,8 @@ public class MainActivity extends AbstractThemeableActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Intent service = new Intent(this.getApplicationContext(), LoadLocalTextService.class);
+        Intent service = new Intent(this.getApplicationContext(), LocalFileImportService.class);
+        startService(service);
         this.bindService(service, mBackgroundServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -188,7 +180,7 @@ public class MainActivity extends AbstractThemeableActivity {
 
     @Override
     protected void injectThis() {
-        SmoothReaderApplication.get(this).inject(this);
+        mNavigation = SmoothReaderApplication.get(this).getAndroidNavigation();
     }
 
     @Override
@@ -257,7 +249,7 @@ public class MainActivity extends AbstractThemeableActivity {
                 .show();
     }
 
-    public LoadLocalTextService.ReadLocalTextFileBinder getReadLocalTextFileBinder() {
+    public LocalFileImportService.ReadLocalTextFileBinder getReadLocalTextFileBinder() {
         return mServiceBinder;
     }
 

@@ -15,11 +15,12 @@ import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.application.module.SearchModule;
+import org.cryse.novelreader.application.qualifier.PrefsGrayScaleInNight;
+import org.cryse.novelreader.application.qualifier.PrefsShowCoverImage;
 import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelListPresenter;
-import org.cryse.novelreader.qualifier.PrefsGrayScaleInNight;
-import org.cryse.novelreader.qualifier.PrefsShowCoverImage;
 import org.cryse.novelreader.ui.adapter.NovelModelListAdapter;
 import org.cryse.novelreader.ui.adapter.NovelOnlineListAdapter;
 import org.cryse.novelreader.ui.common.AbstractFragment;
@@ -133,7 +134,11 @@ public class SearchFragment extends AbstractFragment implements NovelOnlineListV
 
     @Override
     protected void injectThis() {
-        SmoothReaderApplication.get(getContext()).inject(this);
+        SmoothReaderApplication
+                .get(getContext())
+                .getAppComponent()
+                .plus(new SearchModule(this))
+                .inject(this);
     }
 
     @Override

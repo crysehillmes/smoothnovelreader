@@ -4,7 +4,7 @@ import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelChaptersPresenter;
-import org.cryse.novelreader.util.SnackbarUtils;
+import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.SubscriptionUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 import org.cryse.novelreader.view.NovelChaptersView;
@@ -35,13 +35,10 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
 
     AndroidNavigation mDisplay;
 
-    SnackbarUtils mSnackbarUtils;
-
     @Inject
-    public NovelChaptersPresenterImpl(NovelBusinessLogicLayer mNovelBusinessLogicLayer, AndroidNavigation display, SnackbarUtils snackbarUtils) {
+    public NovelChaptersPresenterImpl(NovelBusinessLogicLayer mNovelBusinessLogicLayer, AndroidNavigation display) {
         this.mNovelBusinessLogicLayer = mNovelBusinessLogicLayer;
         this.mDisplay = display;
-        this.mSnackbarUtils = snackbarUtils;
     }
 
     @Override
@@ -65,7 +62,8 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
                             Timber.e("Load chapter list error:", error.getMessage(), LOG_TAG);
                             if (mView != null) {
                                 mView.setLoading(false);
-                                mSnackbarUtils.showExceptionToast(mView, error);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
                             }
                         },
                         () -> {
@@ -131,7 +129,8 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
                             Timber.e(error, error.getMessage(), LOG_TAG);
                             if (mView != null) {
                                 mView.canGoToLastRead(null);
-                                mSnackbarUtils.showExceptionToast(mView, error);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
                             }
                         },
                         () -> {
@@ -160,7 +159,8 @@ public class NovelChaptersPresenterImpl implements NovelChaptersPresenter {
                             Timber.e(error, error.getMessage(), LOG_TAG);
                             if (mView != null) {
                                 mView.canGoToLastRead(null);
-                                mSnackbarUtils.showExceptionToast(mView, error);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
                             }
                         },
                         () -> {

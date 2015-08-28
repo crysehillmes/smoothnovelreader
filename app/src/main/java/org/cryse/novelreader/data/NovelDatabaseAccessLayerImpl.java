@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import org.cryse.novelreader.application.qualifier.ApplicationContext;
 import org.cryse.novelreader.data.provider.ContentValuesUtils;
 import org.cryse.novelreader.data.provider.NovelReaderSQLiteOpenHelper;
 import org.cryse.novelreader.data.provider.bookmark.BookmarkContentValues;
@@ -31,7 +32,6 @@ import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.Novel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.model.NovelModel;
-import org.cryse.novelreader.qualifier.ApplicationContext;
 import org.cryse.novelreader.util.comparator.NovelSortKeyComparator;
 
 import java.util.ArrayList;
@@ -42,6 +42,14 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
+    private static final String QUERY_CHAPTERS_SQL =
+            "SELECT " + ChapterColumns._ID + ", " + ChapterColumns.NOVEL_ID + ", " + ChapterColumns.CHAPTER_ID + ", " + ChapterColumns.TITLE + ", " + ChapterColumns.SOURCE + ", " + ChapterColumns.CHAPTER_INDEX + ", " +
+                    "CASE WHEN EXISTS (SELECT " + ChapterContentColumns.CHAPTER_ID + " FROM " + ChapterContentColumns.TABLE_NAME + " WHERE " + ChapterContentColumns.TABLE_NAME + "." + ChapterContentColumns.CHAPTER_ID + " = " + ChapterColumns.TABLE_NAME + "." + ChapterColumns.CHAPTER_ID + ") " +
+                    "THEN 1 " +
+                    "ELSE 0 " +
+                    "END AS CACHED " +
+                    "FROM " + ChapterColumns.TABLE_NAME + " " +
+                    "WHERE " + ChapterColumns.NOVEL_ID + "=?";
     Context mContext;
     ContentResolver mContentResolver;
 
@@ -119,15 +127,6 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
         Collections.sort(result, new NovelSortKeyComparator());
         return result;
     }
-
-    private static final String QUERY_CHAPTERS_SQL =
-            "SELECT " + ChapterColumns._ID + ", " + ChapterColumns.NOVEL_ID + ", " + ChapterColumns.CHAPTER_ID + ", " + ChapterColumns.TITLE + ", " + ChapterColumns.SOURCE + ", " + ChapterColumns.CHAPTER_INDEX + ", " +
-            "CASE WHEN EXISTS (SELECT " + ChapterContentColumns.CHAPTER_ID + " FROM " + ChapterContentColumns.TABLE_NAME + " WHERE " + ChapterContentColumns.TABLE_NAME + "." + ChapterContentColumns.CHAPTER_ID + " = " + ChapterColumns.TABLE_NAME + "." + ChapterColumns.CHAPTER_ID + ") " +
-            "THEN 1 " +
-            "ELSE 0 " +
-            "END AS CACHED " +
-            "FROM " + ChapterColumns.TABLE_NAME + " " +
-            "WHERE " + ChapterColumns.NOVEL_ID + "=?";
 
     @Override
     public List<ChapterModel> loadChapters(String novelId) {

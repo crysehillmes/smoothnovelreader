@@ -13,7 +13,6 @@ import com.afollestad.materialdialogs.Theme;
 
 import org.cryse.changelog.ChangeLogUtils;
 import org.cryse.novelreader.R;
-import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.constant.PreferenceConstant;
 import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.event.ThemeColorChangedEvent;
@@ -21,20 +20,16 @@ import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ThemeEngine;
 import org.cryse.novelreader.util.prefs.IntegerPreference;
 
-import javax.inject.Inject;
-
 import timber.log.Timber;
 
 public class SettingsFragment extends PreferenceFragment {
     private static final String LOG_TAG = SettingsFragment.class.getName();
-    @Inject
-    RxEventBus mEventBus;
+    RxEventBus mEventBus = RxEventBus.getInstance();
     private OnConcisePreferenceChangedListener mOnConcisePreferenceChangedListener = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        injectThis();
         mOnConcisePreferenceChangedListener = new OnConcisePreferenceChangedListener();
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preference_settings);
@@ -90,10 +85,6 @@ public class SettingsFragment extends PreferenceFragment {
         });
     }
 
-    private void injectThis() {
-        SmoothReaderApplication.get(getActivity()).inject(this);
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -104,19 +95,6 @@ public class SettingsFragment extends PreferenceFragment {
     public void onPause() {
         super.onPause();
         getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(mOnConcisePreferenceChangedListener);
-    }
-
-    public class OnConcisePreferenceChangedListener implements SharedPreferences.OnSharedPreferenceChangeListener {
-
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            AbstractThemeableActivity parentActivity = (AbstractThemeableActivity) getActivity();
-            if (parentActivity != null) {
-                if (key.compareTo(PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE) == 0) {
-                    parentActivity.reloadTheme();
-                }
-            }
-        }
     }
 
     private void setUpThemeColorPreference() {
@@ -137,5 +115,18 @@ public class SettingsFragment extends PreferenceFragment {
             });
             return true;
         });
+    }
+
+    public class OnConcisePreferenceChangedListener implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            AbstractThemeableActivity parentActivity = (AbstractThemeableActivity) getActivity();
+            if (parentActivity != null) {
+                if (key.compareTo(PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE) == 0) {
+                    parentActivity.reloadTheme();
+                }
+            }
+        }
     }
 }

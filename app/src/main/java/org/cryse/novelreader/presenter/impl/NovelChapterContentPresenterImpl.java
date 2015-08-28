@@ -5,7 +5,7 @@ import org.cryse.novelreader.model.BookmarkModel;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.presenter.NovelChapterContentPresenter;
-import org.cryse.novelreader.util.SnackbarUtils;
+import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.SubscriptionUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 import org.cryse.novelreader.util.textsplitter.PageSplitter;
@@ -34,17 +34,14 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     Subscription mGetOtherSrcSubscription;
     NovelBusinessLogicLayer mNovelBusinessLogicLayer;
     AndroidNavigation mDisplay;
-    SnackbarUtils mSnackbarUtils;
     TextSplitParam mTextSplitParams;
 
     @Inject
     public NovelChapterContentPresenterImpl(
             NovelBusinessLogicLayer mNovelBusinessLogicLayer,
-            AndroidNavigation display,
-            SnackbarUtils snackbarUtils) {
+            AndroidNavigation display) {
         this.mNovelBusinessLogicLayer = mNovelBusinessLogicLayer;
         this.mDisplay = display;
-        this.mSnackbarUtils = snackbarUtils;
         this.mView = null;
     }
 
@@ -77,9 +74,10 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                             Timber.e(error, error.getMessage(), LOG_TAG);
                             if (mView != null) {
                                 mView.setLoading(false);
-                                mSnackbarUtils.showExceptionToast(mView, error);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
                             }
-                            showEmptyContent(type, generateEmptyString(novelChapterModel.getTitle(), mSnackbarUtils.getEmptyContentText()));
+                            showEmptyContent(type, generateEmptyString(novelChapterModel.getTitle(), ""));
 
                         },
                         () -> {
@@ -118,12 +116,18 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                             Timber.e(error, error.getMessage(), LOG_TAG);
                             if (mView != null) {
                                 mView.setLoading(false);
-                                if (content == null || error instanceof NullPointerException)
-                                    mSnackbarUtils.showEmptyContentToast(mView);
-                                else
-                                    mSnackbarUtils.showExceptionToast(mView, error);
+                                if (content == null || error instanceof NullPointerException) {
+                                    // TODO: return errorCode here
+                                    // mSnackbarUtils.showEmptyContentToast(mView);
+                                    mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
+                                } else {
+                                    // TODO: return errorCode here
+                                    // mSnackbarUtils.showExceptionToast(mView, error);
+                                    mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
+                                }
                             }
-                            showEmptyContent(type, generateEmptyString(title, mSnackbarUtils.getEmptyContentText()));
+                            // TODO: return empty content here
+                            showEmptyContent(type, generateEmptyString(title, ""));
                         },
                         () -> {
 
@@ -147,7 +151,8 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
 
                             if (mView != null) {
                                 mView.onBookMarkSaved(BookmarkModel.BOOKMARK_TYPE_NORMAL, false);
-                                mSnackbarUtils.showExceptionToast(mView, error);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
                             }
                         },
                         () -> {
@@ -171,7 +176,8 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                         error -> {
                             if (mView != null) {
                                 mView.onBookMarkSaved(BookmarkModel.BOOKMARK_TYPE_LASTREAD, false);
-                                mSnackbarUtils.showExceptionToast(mView, error);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
                             }
                         },
                         () -> {
@@ -261,7 +267,8 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                         error -> {
                             Timber.e(error, error.getMessage(), LOG_TAG);
                             if (mView != null) {
-                                mSnackbarUtils.showExceptionToast(mView, error);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
                             }
                         },
                         () -> {
@@ -288,7 +295,8 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                             Timber.e(error, error.getMessage(), LOG_TAG);
                             if (mView != null) {
                                 mView.setLoading(false);
-                                mSnackbarUtils.showExceptionToast(mView, error);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
                             }
                         },
                         () -> {

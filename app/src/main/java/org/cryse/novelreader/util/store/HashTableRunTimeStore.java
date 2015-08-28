@@ -4,8 +4,15 @@ import org.cryse.novelreader.util.RunTimeStore;
 
 import java.util.Hashtable;
 
-public class HashTableRunTimeStore implements RunTimeStore {
+public enum HashTableRunTimeStore implements RunTimeStore {
+    INSTANCE;
+
     private Hashtable<String,Object> hashTable = new Hashtable<String,Object>();
+
+    public static HashTableRunTimeStore getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     public void put(String key, Object obj) {
         hashTable.put(key,obj);

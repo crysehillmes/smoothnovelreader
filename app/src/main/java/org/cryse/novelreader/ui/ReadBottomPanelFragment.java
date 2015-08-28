@@ -13,7 +13,6 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import org.cryse.novelreader.R;
-import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
@@ -99,7 +98,6 @@ public class ReadBottomPanelFragment extends AbstractFragment {
 
     @Override
     protected void injectThis() {
-        SmoothReaderApplication.get(getActivity()).inject(this);
     }
 
     @Override

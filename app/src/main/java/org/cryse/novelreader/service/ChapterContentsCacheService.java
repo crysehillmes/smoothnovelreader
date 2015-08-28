@@ -13,6 +13,7 @@ import android.util.Log;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.application.module.ChapterCacheModule;
 import org.cryse.novelreader.constant.CacheConstants;
 import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
@@ -33,27 +34,20 @@ import java.util.concurrent.LinkedBlockingQueue;
 import javax.inject.Inject;
 
 public class ChapterContentsCacheService extends Service {
+    public static final int NOTIFICATION_START_ID = 150;
+    static final int CACHING_NOTIFICATION_ID = 110;
     private static final String LOG_TAG = ChapterContentsCacheService.class.getName();
+    public int notification_count = 0;
     @Inject
     NovelDatabaseAccessLayer mNovelDatabase;
-
     @Inject
     NovelSource novelSource;
-
-    @Inject
-    RxEventBus mEventBus;
-
     @Inject
     NovelTextFilter novelTextFilter;
-
+    RxEventBus mEventBus = RxEventBus.getInstance();
     BlockingQueue<NovelCacheTask> mTaskQueue = new LinkedBlockingQueue<NovelCacheTask>();
     NovelCacheTask mCurrentTask = null;
-    public static final int NOTIFICATION_START_ID = 150;
-    public int notification_count = 0;
-
     NotificationManager mNotifyManager;
-    static final int CACHING_NOTIFICATION_ID = 110;
-
     boolean stopCurrentTask = false;
     Thread mCachingThread;
     boolean mIsStopingService;
@@ -61,7 +55,10 @@ public class ChapterContentsCacheService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        ((SmoothReaderApplication)getApplication()).inject(this);
+        SmoothReaderApplication.get(this)
+                .getAppComponent()
+                .plus(new ChapterCacheModule(this))
+                .inject(this);
         mNotifyManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 

@@ -26,6 +26,11 @@ import com.example.android.systemuivis.SystemUiHelper;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.application.module.ReadActivityModule;
+import org.cryse.novelreader.application.qualifier.PrefsFontSize;
+import org.cryse.novelreader.application.qualifier.PrefsLineSpacing;
+import org.cryse.novelreader.application.qualifier.PrefsReadBackground;
+import org.cryse.novelreader.application.qualifier.PrefsScrollMode;
 import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.model.Bookmark;
 import org.cryse.novelreader.model.BookmarkModel;
@@ -33,10 +38,6 @@ import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.Novel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.presenter.NovelChapterContentPresenter;
-import org.cryse.novelreader.qualifier.PrefsFontSize;
-import org.cryse.novelreader.qualifier.PrefsLineSpacing;
-import org.cryse.novelreader.qualifier.PrefsReadBackground;
-import org.cryse.novelreader.qualifier.PrefsScrollMode;
 import org.cryse.novelreader.ui.adapter.ReadViewFlipAdapter;
 import org.cryse.novelreader.ui.adapter.ReadViewPagerAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
@@ -375,7 +376,9 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
 
     @Override
     protected void injectThis() {
-        SmoothReaderApplication.get(this).inject(this);
+        SmoothReaderApplication.get(this).getAppComponent().plus(
+                new ReadActivityModule(this)
+        ).inject(this);
     }
 
     @Override

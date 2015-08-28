@@ -42,13 +42,14 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MimeTypes;
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.application.module.BookShelfFragmentModule;
 import org.cryse.novelreader.event.AbstractEvent;
 import org.cryse.novelreader.event.LoadLocalFileDoneEvent;
 import org.cryse.novelreader.event.LoadLocalFileStartEvent;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelBookShelfPresenter;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
-import org.cryse.novelreader.service.LoadLocalTextService;
+import org.cryse.novelreader.service.LocalFileImportService;
 import org.cryse.novelreader.ui.adapter.NovelBookShelfListAdapter;
 import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.util.ColorUtils;
@@ -164,7 +165,9 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
 
     @Override
     protected void injectThis() {
-        SmoothReaderApplication.get(getActivity()).inject(this);
+        SmoothReaderApplication.get(getActivity()).getAppComponent().plus(
+                new BookShelfFragmentModule(this)
+        ).inject(this);
     }
 
     @Override
@@ -316,6 +319,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         super.onStart();
         mPresenter.bindView(this);
         Intent service = new Intent(getActivity().getApplicationContext(), ChapterContentsCacheService.class);
+        getActivity().startService(service);
         getActivity().bindService(service, mBackgroundServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -533,7 +537,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
         }
 
         MainActivity activity = (MainActivity) getActivity();
-        LoadLocalTextService.ReadLocalTextFileBinder localfileBinder = activity.getReadLocalTextFileBinder();
+        LocalFileImportService.ReadLocalTextFileBinder localfileBinder = activity.getReadLocalTextFileBinder();
         if (localfileBinder != null && localfileBinder.getCurrentTextFilePath() != null) {
             currentImportingNovelId = localfileBinder.getCurrentNovelId();
         }
@@ -576,7 +580,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     public void readLocalTextFile(String textFilePath, String customTitle) {
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
-            LoadLocalTextService.ReadLocalTextFileBinder binder = activity.getReadLocalTextFileBinder();
+            LocalFileImportService.ReadLocalTextFileBinder binder = activity.getReadLocalTextFileBinder();
             String mime = detectMimeType(textFilePath);
             if (MimeTypes.PLAIN_TEXT.equalsIgnoreCase(mime)) {
                 binder.addToCacheQueue(textFilePath, customTitle);

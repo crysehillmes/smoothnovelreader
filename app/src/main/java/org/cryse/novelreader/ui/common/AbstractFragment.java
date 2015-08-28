@@ -20,15 +20,12 @@ import org.cryse.novelreader.util.ToastErrorConstant;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public abstract class AbstractFragment extends android.support.v4.app.Fragment implements SnackbarSupport {
-    @Inject
-    RxEventBus mEventBus;
+    RxEventBus mEventBus = RxEventBus.getInstance();
     private List<Runnable> mDeferredUiOperations = new ArrayList<Runnable>();
     private Subscription mEventBusSubscription;
     @Override

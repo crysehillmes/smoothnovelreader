@@ -3,7 +3,7 @@ package org.cryse.novelreader.presenter.impl;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelDetailPresenter;
-import org.cryse.novelreader.util.SnackbarUtils;
+import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.SubscriptionUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 import org.cryse.novelreader.view.NovelDetailView;
@@ -23,14 +23,12 @@ public class NovelDetailPresenterImpl implements NovelDetailPresenter {
     private Subscription mCheckFavoriteStatusSubscription;
     private Subscription mAddFavoriteSubscription;
     private NovelBusinessLogicLayer dataService;
-    private SnackbarUtils mSnackbarUtils;
     private AndroidNavigation mDisplay;
 
     @Inject
-    public NovelDetailPresenterImpl(NovelBusinessLogicLayer dataService, AndroidNavigation display, SnackbarUtils snackbarUtils) {
+    public NovelDetailPresenterImpl(NovelBusinessLogicLayer dataService, AndroidNavigation display) {
         this.dataService = dataService;
         this.mDisplay = display;
-        this.mSnackbarUtils = snackbarUtils;
         this.mView = null;
     }
 
@@ -68,7 +66,8 @@ public class NovelDetailPresenterImpl implements NovelDetailPresenter {
                             Timber.e(error, error.getMessage(), LOG_TAG);
                             if (mView != null) {
                                 mView.setLoading(false);
-                                mSnackbarUtils.showExceptionToast(mView, error);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
                             }
                         },
                         () -> {

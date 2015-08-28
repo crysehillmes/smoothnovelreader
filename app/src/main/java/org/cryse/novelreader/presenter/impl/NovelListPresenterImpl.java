@@ -3,7 +3,6 @@ package org.cryse.novelreader.presenter.impl;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelListPresenter;
-import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.SubscriptionUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 import org.cryse.novelreader.view.NovelOnlineListView;
@@ -22,12 +21,9 @@ public class NovelListPresenterImpl implements NovelListPresenter {
 
     AndroidNavigation mDisplay;
 
-    SnackbarUtils mSnackbarUtils;
-
-    public NovelListPresenterImpl(NovelBusinessLogicLayer novelBusinessLogicLayer, AndroidNavigation display, SnackbarUtils snackbarUtils) {
+    public NovelListPresenterImpl(NovelBusinessLogicLayer novelBusinessLogicLayer, AndroidNavigation display) {
         this.novelBusinessLogicLayer = novelBusinessLogicLayer;
         this.mDisplay = display;
-        this.mSnackbarUtils = snackbarUtils;
         this.mView = null;
     }
 

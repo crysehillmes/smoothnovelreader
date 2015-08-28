@@ -11,8 +11,9 @@ import android.widget.Spinner;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
-import org.cryse.novelreader.qualifier.PrefsFontSize;
-import org.cryse.novelreader.qualifier.PrefsLineSpacing;
+import org.cryse.novelreader.application.module.ReadOptionsModule;
+import org.cryse.novelreader.application.qualifier.PrefsFontSize;
+import org.cryse.novelreader.application.qualifier.PrefsLineSpacing;
 import org.cryse.novelreader.ui.common.AbstractFragment;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.prefs.StringPreference;
@@ -60,7 +61,7 @@ public class ReadOptionsFragment extends AbstractFragment {
 
     @Override
     protected void injectThis() {
-        SmoothReaderApplication.get(getActivity()).inject(this);
+        SmoothReaderApplication.get(getContext()).getAppComponent().plus(new ReadOptionsModule(this)).inject(this);
     }
 
     @Override

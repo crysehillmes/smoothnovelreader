@@ -18,6 +18,8 @@ import com.quentindommerc.superlistview.SuperListview;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.application.module.ChaptersActivityModule;
+import org.cryse.novelreader.application.qualifier.PrefsHideRedundantChapterTitle;
 import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.event.AbstractEvent;
 import org.cryse.novelreader.event.ImportChapterContentEvent;
@@ -25,7 +27,6 @@ import org.cryse.novelreader.model.BookmarkModel;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelChaptersPresenter;
-import org.cryse.novelreader.qualifier.PrefsHideRedundantChapterTitle;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.ui.adapter.NovelChapterListAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
@@ -157,6 +158,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         super.onStart();
         getPresenter().bindView(this);
         Intent service = new Intent(this.getApplicationContext(), ChapterContentsCacheService.class);
+        startService(service);
         this.bindService(service, mBackgroundServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -182,7 +184,9 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     @Override
     protected void injectThis() {
-        SmoothReaderApplication.get(this).inject(this);
+        SmoothReaderApplication.get(this).getAppComponent().plus(
+                new ChaptersActivityModule(this)
+        ).inject(this);
     }
 
     @Override
