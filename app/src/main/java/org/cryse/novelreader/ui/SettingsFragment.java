@@ -100,19 +100,21 @@ public class SettingsFragment extends PreferenceFragment {
     private void setUpThemeColorPreference() {
         Preference themeColorPreference = findPreference("prefs_theme_color");
         IntegerPreference themeColorPrefsValue = new IntegerPreference(getPreferenceManager().getSharedPreferences(), PreferenceConstant.SHARED_PREFERENCE_THEME_COLOR, PreferenceConstant.SHARED_PREFERENCE_THEME_COLOR_VALUE);
+        Boolean isNightMode = getPreferenceManager().getSharedPreferences().getBoolean(PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE, false);
 
         themeColorPreference.setOnPreferenceClickListener(preference -> {
-            new ColorChooserDialog()
-                    .setColors(getActivity(), R.array.primaryColors)
-                    .show((AppCompatActivity)getActivity(), themeColorPrefsValue.get(), (index, color, darker) -> {
-                themeColorPrefsValue.set(index);
-                ThemeEngine themeEngine = ((AbstractThemeableActivity)getActivity()).getThemeEngine();
-                mEventBus.sendEvent(new ThemeColorChangedEvent(
-                        themeEngine.getPrimaryColor(getActivity()),
-                        themeEngine.getPrimaryDarkColor(getActivity()),
-                        themeEngine.getPrimaryColorResId(),
-                        themeEngine.getPrimaryDarkColorResId()));
-            });
+            new SimpleDrawableChooserDialog()
+                    .setTheme(isNightMode ? Theme.DARK : Theme.LIGHT)
+                    .setColorDrawables(getActivity(), R.array.primaryColors)
+                    .show((AppCompatActivity) getActivity(), themeColorPrefsValue.get(), (index, color, darker) -> {
+                        themeColorPrefsValue.set(index);
+                        ThemeEngine themeEngine = ((AbstractThemeableActivity) getActivity()).getThemeEngine();
+                        mEventBus.sendEvent(new ThemeColorChangedEvent(
+                                themeEngine.getPrimaryColor(getActivity()),
+                                themeEngine.getPrimaryDarkColor(getActivity()),
+                                themeEngine.getPrimaryColorResId(),
+                                themeEngine.getPrimaryDarkColorResId()));
+                    });
             return true;
         });
     }

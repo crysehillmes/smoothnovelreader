@@ -1,6 +1,7 @@
 package org.cryse.novelreader.ui.adapter;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.ui.widget.ReadWidgetAdapter;
+import org.cryse.novelreader.util.colorschema.ColorSchema;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,18 +22,18 @@ public class ReadViewFlipAdapter extends BaseAdapter implements ReadWidgetAdapte
     private ArrayList<CharSequence> mContentList = new ArrayList<CharSequence>();
     private float mFontSize;
     private float mLineSpacingMultiplier;
-    private int mBackgroundColor;
+    private ColorSchema mDisplaySchema;
     public ReadViewFlipAdapter(
             Context context,
             float fontSize,
             float lineSpacingMultiplier,
-            int backgroundColor
+            ColorSchema displaySchema
     ) {
         this.mContext = context;
         this.inflater = LayoutInflater.from(this.mContext);
         this.mFontSize = fontSize;
         this.mLineSpacingMultiplier = lineSpacingMultiplier;
-        this.mBackgroundColor = backgroundColor;
+        this.mDisplaySchema = displaySchema;
     }
 
     public int getPageFromStringOffset(int offset) {
@@ -82,9 +84,13 @@ public class ReadViewFlipAdapter extends BaseAdapter implements ReadWidgetAdapte
         }
         final TextView readTextView = viewHolder.mNovelChapterTextView;
         readTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mFontSize);
+        readTextView.setTextColor(mDisplaySchema.getTextColor());
         readTextView.setText(mContentList.get(position));
         readTextView.setLineSpacing(0f, mLineSpacingMultiplier);
-        readTextView.setBackgroundColor(mBackgroundColor);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+            readTextView.setBackground(mDisplaySchema.getBackgroundDrawable());
+        else
+            readTextView.setBackgroundDrawable(mDisplaySchema.getBackgroundDrawable());
         return convertView;
     }
 
@@ -98,8 +104,8 @@ public class ReadViewFlipAdapter extends BaseAdapter implements ReadWidgetAdapte
     }
 
     @Override
-    public void setBackgroundColor(int backgroundColor) {
-        this.mBackgroundColor = backgroundColor;
+    public void setDisplaySchema(ColorSchema displaySchema) {
+        this.mDisplaySchema = displaySchema;
         notifyDataSetChanged();
     }
 

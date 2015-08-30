@@ -1,143 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/card_view"
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_above="@+id/panel"
+        android:background="@drawable/top_shadow" />
+
+    <LinearLayout
+        android:id="@+id/panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
+        android:background="?attr/smooth_theme_card_bg_color"
         android:clickable="true"
-        android:descendantFocusability="blocksDescendants"
-        app:cardBackgroundColor="?attr/smooth_theme_card_bg_color"
-        app:cardCornerRadius="2dp"
-        app:cardElevation="4dp"
-        app:cardUseCompatPadding="true">
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="16dp"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="72dp"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:orientation="horizontal">
 
-            <LinearLayout
+            <ImageView
+                android:id="@+id/imageview_fragment_read_options_text_size"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:scaleType="center"
+                android:src="@drawable/ic_label_text_size"
+                android:tint="?smooth_theme_text_color_primary" />
+
+            <org.cryse.widget.NumberPicker
+                android:id="@+id/numberpicker_fragment_read_options_text_size"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:minHeight="48dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Text Size"
-                    android:textSize="@dimen/text_size_subhead" />
-
-                <org.cryse.widget.NumberPicker
-                    android:id="@+id/numberpicker_fragment_read_options_text_size"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    app:np_buttonDecreaseIcon="@drawable/ic_button_decrease"
-                    app:np_buttonIncreaseIcon="@drawable/ic_button_increase"
-                    app:np_textColor="?smooth_theme_text_color_primary"
-                    app:np_textSize="@dimen/text_size_subhead" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:minHeight="48dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Line Spacing"
-                    android:textSize="@dimen/text_size_subhead" />
-
-                <org.cryse.widget.NumberPicker
-                    android:id="@+id/numberpicker_fragment_read_options_line_spacing"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    app:np_buttonDecreaseIcon="@drawable/ic_button_decrease"
-                    app:np_buttonIncreaseIcon="@drawable/ic_button_increase"
-                    app:np_textColor="?smooth_theme_text_color_primary"
-                    app:np_textSize="@dimen/text_size_subhead" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:minHeight="48dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Color Schema"
-                    android:textSize="@dimen/text_size_subhead" />
-
-                <ImageView
-                    android:id="@+id/seekBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-
-                    android:max="15" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:minHeight="48dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Traditional Chinese"
-                    android:textSize="@dimen/text_size_subhead" />
-
-                <android.support.v7.widget.SwitchCompat
-                    android:id="@+id/switch_fragment_read_options_traditional"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:minHeight="48dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Font"
-                    android:textSize="@dimen/text_size_subhead" />
-
-                <Spinner
-                    android:id="@+id/spinner_fragment_read_options_font"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-            </LinearLayout>
+                android:layout_height="48dp"
+                app:np_buttonDecreaseIcon="@drawable/ic_button_decrease"
+                app:np_buttonIncreaseIcon="@drawable/ic_button_increase"
+                app:np_textColor="?smooth_theme_text_color_primary"
+                app:np_textSize="@dimen/text_size_subhead" />
         </LinearLayout>
-    </android.support.v7.widget.CardView>
-</FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="72dp"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageview_fragment_read_options_line_spacing"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:scaleType="center"
+                android:src="@drawable/ic_label_linespacing"
+                android:tint="?smooth_theme_text_color_primary" />
+
+            <org.cryse.widget.NumberPicker
+                android:id="@+id/numberpicker_fragment_read_options_line_spacing"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                app:np_buttonDecreaseIcon="@drawable/ic_button_decrease"
+                app:np_buttonIncreaseIcon="@drawable/ic_button_increase"
+                app:np_textColor="?smooth_theme_text_color_primary"
+                app:np_textSize="@dimen/text_size_subhead" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="72dp"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageview_fragment_read_options_color_schema"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:scaleType="center"
+                android:src="@drawable/ic_label_color_schema"
+                android:tint="?smooth_theme_text_color_primary" />
+
+            <ImageView
+                android:id="@+id/imageview_fragment_read_options_color_schema_value"
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

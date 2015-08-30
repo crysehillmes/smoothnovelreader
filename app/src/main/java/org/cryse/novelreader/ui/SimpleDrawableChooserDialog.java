@@ -2,11 +2,11 @@ package org.cryse.novelreader.ui;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.OvalShape;
@@ -24,28 +24,27 @@ import com.afollestad.materialdialogs.Theme;
 
 import org.cryse.novelreader.R;
 
+import java.util.Collection;
+
 /**
  * @author Aidan Follestad (afollestad)
  */
-public class ColorChooserDialog extends DialogFragment implements View.OnClickListener {
+public class SimpleDrawableChooserDialog extends DialogFragment implements View.OnClickListener {
 
     private Callback mCallback;
-    private int[] mColors;
+    private Drawable[] mDrawables;
+    private Theme mTheme = Theme.LIGHT;
+
+    public SimpleDrawableChooserDialog() {
+    }
 
     @Override
     public void onClick(View v) {
         if (v.getTag() != null) {
             Integer index = (Integer) v.getTag();
-            mCallback.onColorSelection(index, mColors[index], shiftColor(mColors[index]));
+            mCallback.onColorSelection(index, mDrawables[index], shiftColor(mDrawables[index]));
             dismiss();
         }
-    }
-
-    public interface Callback {
-        void onColorSelection(int index, int color, int darker);
-    }
-
-    public ColorChooserDialog() {
     }
 
     @Override
@@ -63,7 +62,7 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
 
         for (int i = 0; i < list.getChildCount(); i++) {
             FrameLayout child = (FrameLayout) list.getChildAt(i);
-            if(i < mColors.length) {
+            if (i < mDrawables.length) {
                 child.setTag(i);
                 child.setOnClickListener(this);
                 child.getChildAt(0).setVisibility(preselect == i ? View.VISIBLE : View.GONE);
@@ -71,23 +70,8 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
                 child.getChildAt(0).setVisibility(View.GONE);
                 continue;
             }
-            Drawable selector = createSelector(mColors[i]);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                int[][] states = new int[][]{
-                        new int[]{-android.R.attr.state_pressed},
-                        new int[]{android.R.attr.state_pressed}
-                };
-                int[] colors = new int[]{
-                        shiftColor(mColors[i]),
-                        mColors[i]
-                };
-                ColorStateList rippleColors = new ColorStateList(states, colors);
-                setBackgroundCompat(child, new RippleDrawable(rippleColors, selector, null));
-            } else {
-                setBackgroundCompat(child, selector);
-            }
-
-
+            Drawable selector = createSelector(mDrawables[i]);
+            setBackgroundCompat(child, selector);
         }
         return dialog;
     }
@@ -98,31 +82,40 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
         else view.setBackgroundDrawable(d);
     }
 
-    private int shiftColor(int color) {
+    private Drawable shiftColor(Drawable drawable) {
+        /*float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        hsv[2] *= 0.9f; // value component
+        return Color.HSVToColor(hsv);*/
+        drawable.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.DARKEN));
+        return drawable;
+    }
+
+    private Drawable createSelector(Drawable drawable) {
+
+        StateListDrawable stateListDrawable = new StateListDrawable();
+        stateListDrawable.addState(new int[]{-android.R.attr.state_pressed}, drawable);
+        stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, drawable);
+        return stateListDrawable;
+    }
+
+    /*private int shiftSelectorColor(int color) {
         float[] hsv = new float[3];
         Color.colorToHSV(color, hsv);
         hsv[2] *= 0.9f; // value component
         return Color.HSVToColor(hsv);
-    }
+    }*/
 
-    private Drawable createSelector(int color) {
+    /*private Drawable createSelector(int color) {
         ShapeDrawable coloredCircle = new ShapeDrawable(new OvalShape());
         coloredCircle.getPaint().setColor(color);
         ShapeDrawable darkerCircle = new ShapeDrawable(new OvalShape());
-        darkerCircle.getPaint().setColor(shiftColor(color));
+        darkerCircle.getPaint().setColor(shiftSelectorColor(color));
 
         StateListDrawable stateListDrawable = new StateListDrawable();
         stateListDrawable.addState(new int[]{-android.R.attr.state_pressed}, coloredCircle);
         stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, darkerCircle);
         return stateListDrawable;
-    }
-
-    /*@Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (!(activity instanceof Callback))
-            throw new RuntimeException("The Activity must implement Callback to be used by ColorChooserDialog.");
-        mCallback = (Callback) activity;
     }*/
 
     public void show(AppCompatActivity context, int preselect, Callback callback) {
@@ -133,12 +126,42 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
         show(context.getSupportFragmentManager(), "COLOR_SELECTOR");
     }
 
-    public ColorChooserDialog setColors(Context context, @ArrayRes int colorsResId) {
+    /*@Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (!(activity instanceof Callback))
+            throw new RuntimeException("The Activity must implement Callback to be used by ColorChooserDialog.");
+        mCallback = (Callback) activity;
+    }*/
+
+    public SimpleDrawableChooserDialog setDrawables(Drawable[] drawables) {
+        mDrawables = drawables;
+        return this;
+    }
+
+    public SimpleDrawableChooserDialog setDrawables(Collection<Drawable> drawables) {
+        mDrawables = drawables.toArray(new Drawable[drawables.size()]);
+        return this;
+    }
+
+    public SimpleDrawableChooserDialog setColorDrawables(Context context, @ArrayRes int colorsResId) {
         final TypedArray ta = context.getResources().obtainTypedArray(colorsResId);
-        mColors = new int[ta.length()];
-        for (int i = 0; i < ta.length(); i++)
-            mColors[i] = ta.getColor(i, 0);
+        mDrawables = new Drawable[ta.length()];
+        for (int i = 0; i < ta.length(); i++) {
+            ShapeDrawable coloredCircle = new ShapeDrawable(new OvalShape());
+            coloredCircle.getPaint().setColor(ta.getColor(i, 0));
+            mDrawables[i] = coloredCircle;
+        }
         ta.recycle();
         return this;
+    }
+
+    public SimpleDrawableChooserDialog setTheme(Theme theme) {
+        mTheme = theme;
+        return this;
+    }
+
+    public interface Callback {
+        void onColorSelection(int index, Drawable color, Drawable darker);
     }
 }

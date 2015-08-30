@@ -5,8 +5,10 @@ import android.content.SharedPreferences;
 import org.cryse.novelreader.application.qualifier.FragmentScope;
 import org.cryse.novelreader.application.qualifier.PrefsFontSize;
 import org.cryse.novelreader.application.qualifier.PrefsLineSpacing;
+import org.cryse.novelreader.application.qualifier.PrefsReadColorSchema;
 import org.cryse.novelreader.constant.PreferenceConstant;
 import org.cryse.novelreader.ui.ReadOptionsFragment;
+import org.cryse.novelreader.util.prefs.IntegerPreference;
 import org.cryse.novelreader.util.prefs.StringPreference;
 
 import dagger.Module;
@@ -36,5 +38,11 @@ public class ReadOptionsModule {
     @PrefsLineSpacing
     StringPreference provideFontLineSpacingPreference(SharedPreferences preferences) {
         return new StringPreference(preferences, PreferenceConstant.SHARED_PREFERENCE_READ_LINE_SPACING, PreferenceConstant.SHARED_PREFERENCE_READ_LINE_SPACING_VALUE);
+    }
+
+    @Provides
+    @PrefsReadColorSchema
+    IntegerPreference provideReadColorSchemaPreference(SharedPreferences preferences) {
+        return new IntegerPreference(preferences, PreferenceConstant.SHARED_PREFERENCE_READ_COLOR_SCHEMA, PreferenceConstant.SHARED_PREFERENCE_READ_COLOR_SCHEMA_VALUE);
     }
 }

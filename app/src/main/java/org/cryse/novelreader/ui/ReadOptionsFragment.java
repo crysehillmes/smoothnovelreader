@@ -1,21 +1,31 @@
 package org.cryse.novelreader.ui;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.SwitchCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.Spinner;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+
+import com.afollestad.materialdialogs.Theme;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.application.module.ReadOptionsModule;
 import org.cryse.novelreader.application.qualifier.PrefsFontSize;
 import org.cryse.novelreader.application.qualifier.PrefsLineSpacing;
+import org.cryse.novelreader.application.qualifier.PrefsNightMode;
+import org.cryse.novelreader.application.qualifier.PrefsReadColorSchema;
 import org.cryse.novelreader.ui.common.AbstractFragment;
+import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
+import org.cryse.novelreader.util.colorschema.ColorSchema;
+import org.cryse.novelreader.util.colorschema.ColorSchemaBuilder;
+import org.cryse.novelreader.util.prefs.BooleanPreference;
+import org.cryse.novelreader.util.prefs.IntegerPreference;
 import org.cryse.novelreader.util.prefs.StringPreference;
 import org.cryse.widget.NumberPicker;
 
@@ -26,6 +36,11 @@ import butterknife.ButterKnife;
 
 public class ReadOptionsFragment extends AbstractFragment {
     private static final String LOG_TAG = ReadOptionsFragment.class.getSimpleName();
+
+    @Inject
+    @PrefsNightMode
+    BooleanPreference mIsNightModePreference;
+
     @Inject
     @PrefsFontSize
     StringPreference mFontSizePreference;
@@ -34,20 +49,30 @@ public class ReadOptionsFragment extends AbstractFragment {
     @PrefsLineSpacing
     StringPreference mLineSpacingPreference;
 
+    @Inject
+    @PrefsReadColorSchema
+    IntegerPreference mColorSchemaPreference;
+
     @Bind(R.id.root_container)
-    FrameLayout mRootContainer;
+    RelativeLayout mRootContainer;
 
     @Bind(R.id.numberpicker_fragment_read_options_text_size)
     NumberPicker mFontSizeNumberPicker;
 
+    @Bind(R.id.imageview_fragment_read_options_text_size)
+    ImageView mFontSizeImageView;
+
     @Bind(R.id.numberpicker_fragment_read_options_line_spacing)
     NumberPicker mLineSpacingNumberPicker;
 
-    @Bind(R.id.switch_fragment_read_options_traditional)
-    SwitchCompat mTraditionalSwitch;
+    @Bind(R.id.imageview_fragment_read_options_line_spacing)
+    ImageView mLineSpacingImageView;
 
-    @Bind(R.id.spinner_fragment_read_options_font)
-    Spinner mFontSpinner;
+    @Bind(R.id.imageview_fragment_read_options_color_schema_value)
+    ImageView mColorSchemaValueImageView;
+
+    @Bind(R.id.imageview_fragment_read_options_color_schema)
+    ImageView mColorSchemaImageView;
 
     private OnReadOptionsChangedListener mOnReadOptionsChangedListener;
 
@@ -92,6 +117,14 @@ public class ReadOptionsFragment extends AbstractFragment {
     }
 
     private void setInitialValues() {
+        int colorSchemaIndex = mColorSchemaPreference.get();
+        Drawable colorSchemaDisplayDrawable = ColorSchemaBuilder.displayDrawableByIndex(
+                getContext(),
+                UIUtils.sp2px(getContext(), 14f),
+                colorSchemaIndex
+        );
+        mColorSchemaValueImageView.setImageDrawable(colorSchemaDisplayDrawable);
+
         // Font Size:
         mFontSizeNumberPicker.setStep(2);
         String[] mFontSizeValues = getResources().getStringArray(R.array.readview_font_size_entries);
@@ -149,6 +182,22 @@ public class ReadOptionsFragment extends AbstractFragment {
                 }
             }
         });
+        mColorSchemaValueImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new SimpleDrawableChooserDialog()
+                        .setTheme(mIsNightModePreference.get() ? Theme.DARK : Theme.LIGHT)
+                        .setDrawables(ColorSchemaBuilder.displayDrawables(getContext(), UIUtils.sp2px(getContext(), 14f)))
+                        .show((AppCompatActivity) getActivity(), mColorSchemaPreference.get(), (index, color, darker) -> {
+                            mColorSchemaPreference.set(index);
+                            ColorSchema newColorSchema = ColorSchemaBuilder.fromIndex(getContext(), index);
+                            if (mOnReadOptionsChangedListener != null) {
+                                mOnReadOptionsChangedListener.onColorSchemaChanged(newColorSchema);
+                            }
+                            mColorSchemaValueImageView.setImageDrawable(newColorSchema.getDisplayDrawable());
+                        });
+            }
+        });
     }
 
     private String removePercentSuffix(String input) {
@@ -164,7 +213,7 @@ public class ReadOptionsFragment extends AbstractFragment {
 
         void onLineSpacingChanged(String lineSpacing);
 
-        void onColorSchemaChanged();
+        void onColorSchemaChanged(ColorSchema newColorSchema);
 
         void onTraditionalChanged();
 

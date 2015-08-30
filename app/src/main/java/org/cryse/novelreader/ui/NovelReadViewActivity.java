@@ -30,6 +30,7 @@ import org.cryse.novelreader.application.module.ReadActivityModule;
 import org.cryse.novelreader.application.qualifier.PrefsFontSize;
 import org.cryse.novelreader.application.qualifier.PrefsLineSpacing;
 import org.cryse.novelreader.application.qualifier.PrefsReadBackground;
+import org.cryse.novelreader.application.qualifier.PrefsReadColorSchema;
 import org.cryse.novelreader.application.qualifier.PrefsScrollMode;
 import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.model.Bookmark;
@@ -43,11 +44,12 @@ import org.cryse.novelreader.ui.adapter.ReadViewPagerAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.ui.widget.ReadWidget;
 import org.cryse.novelreader.ui.widget.ReadWidgetAdapter;
-import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.PreferenceConverter;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.animation.SlideInOutAnimator;
+import org.cryse.novelreader.util.colorschema.ColorSchema;
+import org.cryse.novelreader.util.colorschema.ColorSchemaBuilder;
 import org.cryse.novelreader.util.gesture.SimpleGestureDetector;
 import org.cryse.novelreader.util.prefs.IntegerPreference;
 import org.cryse.novelreader.util.prefs.StringPreference;
@@ -103,6 +105,10 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     @Inject
     @PrefsReadBackground
     IntegerPreference mReadBackgroundPrefs;
+
+    @Inject
+    @PrefsReadColorSchema
+    IntegerPreference mColorSchemaPreference;
 
     Handler mHandler;
 
@@ -173,8 +179,8 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         }
 
         @Override
-        public void onColorSchemaChanged() {
-
+        public void onColorSchemaChanged(ColorSchema newColorSchema) {
+            setReadViewColorSchema();
         }
 
         @Override
@@ -247,25 +253,43 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         else if(scrollMode == PreferenceConverter.SCROLL_MODE_VIEWPAGER_HORIZONTAL)
             getLayoutInflater().inflate(R.layout.layout_read_view_pager, mReadWidgetContainer);
         mReadWidget = (ReadWidget)findViewById(R.id.activity_read_view_readwidget);
-        setReadBackgroundColor();
+        setReadViewColorSchema();
     }
 
     private ReadWidgetAdapter createReadWidgetAdapter() {
         int scrollMode = PreferenceConverter.getScrollMode(mScrollMode.get());
+        ColorSchema colorSchema;
+        if (isNightMode()) {
+            colorSchema = ColorSchemaBuilder.darkMode(this);
+        } else {
+            int colorSchemaIndex = mColorSchemaPreference.get();
+            colorSchema = ColorSchemaBuilder.fromIndex(this, colorSchemaIndex);
+        }
         if (scrollMode == PreferenceConverter.SCROLL_MODE_FLIP_VERTICAL ||
                 scrollMode == PreferenceConverter.SCROLL_MODE_FLIP_HORIZONTAL)
-            return new ReadViewFlipAdapter(this, mFontSize, mLineSpacing, isNightMode() ? ColorUtils.getColor(getResources(), R.color.theme_read_bg_color_white, null) : mReadBackgroundPrefs.get());
+            return new ReadViewFlipAdapter(this, mFontSize, mLineSpacing, colorSchema);
         else if (scrollMode == PreferenceConverter.SCROLL_MODE_VIEWPAGER_HORIZONTAL) {
-            return new ReadViewPagerAdapter(this, mFontSize, mLineSpacing, isNightMode() ? ColorUtils.getColor(getResources(), R.color.theme_read_bg_color_white, null) : mReadBackgroundPrefs.get());
+            return new ReadViewPagerAdapter(this, mFontSize, mLineSpacing, colorSchema);
         } else {
             throw new IllegalStateException("Unsupported read view scroll mode.");
         }
     }
 
-    public void setReadBackgroundColor() {
-        mRootContainer.setBackgroundColor(isNightMode() ? ColorUtils.getColor(getResources(), R.color.theme_read_bg_color_white, null) : mReadBackgroundPrefs.get());
-        if(mNovelReadAdapter != null)
-            mNovelReadAdapter.setBackgroundColor(isNightMode() ? ColorUtils.getColor(getResources(), R.color.theme_read_bg_color_white, null) : mReadBackgroundPrefs.get());
+    private void setReadViewColorSchema() {
+        int colorSchemaIndex = mColorSchemaPreference.get();
+        setReadViewColorSchema(ColorSchemaBuilder.fromIndex(this, colorSchemaIndex));
+    }
+
+    private void setReadViewColorSchema(ColorSchema colorSchema) {
+        if (isNightMode()) {
+            colorSchema = ColorSchemaBuilder.darkMode(this);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+            mRootContainer.setBackground(colorSchema.getBackgroundDrawable());
+        else
+            mRootContainer.setBackgroundDrawable(colorSchema.getBackgroundDrawable());
+        if (mNovelReadAdapter != null)
+            mNovelReadAdapter.setDisplaySchema(colorSchema);
     }
 
     @Override
@@ -743,12 +767,12 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     }
 
     public void onMenuItemChooseReadBackground() {
-        new ColorChooserDialog()
+        /*new ColorChooserDialog()
                 .setColors(this, R.array.read_bg_colors)
                 .show(this, mReadBackgroundPrefs.get(), (index, color, darker) -> {
                     mReadBackgroundPrefs.set(color);
                     setReadBackgroundColor();
-                });
+                });*/
     }
 
     private int findChapterIndex(String chapterId) {

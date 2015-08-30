@@ -1,6 +1,5 @@
 package org.cryse.novelreader.ui;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,10 +13,9 @@ import android.widget.RelativeLayout;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.ui.common.AbstractFragment;
-import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.animation.FadeInOutAnimator;
-import org.cryse.novelreader.util.drawable.CompatTintUtils;
+import org.cryse.novelreader.util.colorschema.ColorSchema;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -69,10 +67,9 @@ public class ReadBottomPanelFragment extends AbstractFragment {
         }
 
         @Override
-        public void onColorSchemaChanged() {
+        public void onColorSchemaChanged(ColorSchema newColorSchema) {
             if (mOnReadBottomPanelItemClickListener != null)
-                mOnReadBottomPanelItemClickListener.onColorSchemaChanged();
-
+                mOnReadBottomPanelItemClickListener.onColorSchemaChanged(newColorSchema);
         }
 
         @Override
@@ -128,13 +125,6 @@ public class ReadBottomPanelFragment extends AbstractFragment {
     }
 
     private void setInitialValues() {
-        int tintColor = ColorUtils.getColorFromAttr(getContext(), R.attr.smooth_theme_text_color_primary);
-        Resources resources = getResources();
-        mPreviousButton.setImageDrawable(CompatTintUtils.getTintedDrawable(resources, R.drawable.ic_action_chapter_previous, tintColor));
-        mDarkModeButton.setImageDrawable(CompatTintUtils.getTintedDrawable(resources, R.drawable.ic_action_dark_mode, tintColor));
-        mReloadButton.setImageDrawable(CompatTintUtils.getTintedDrawable(resources, R.drawable.ic_action_reload, tintColor));
-        mReadOptionsButton.setImageDrawable(CompatTintUtils.getTintedDrawable(resources, R.drawable.ic_action_read_options, tintColor));
-        mNextButton.setImageDrawable(CompatTintUtils.getTintedDrawable(resources, R.drawable.ic_action_chapter_next, tintColor));
     }
 
     private void addListeners() {
@@ -240,7 +230,7 @@ public class ReadBottomPanelFragment extends AbstractFragment {
 
         void onLineSpacingChanged(String lineSpacing);
 
-        void onColorSchemaChanged();
+        void onColorSchemaChanged(ColorSchema newColorSchema);
 
         void onTraditionalChanged();
 

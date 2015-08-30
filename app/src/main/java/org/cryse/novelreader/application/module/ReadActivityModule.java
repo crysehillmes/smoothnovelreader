@@ -6,6 +6,7 @@ import org.cryse.novelreader.application.qualifier.ActivityScope;
 import org.cryse.novelreader.application.qualifier.PrefsFontSize;
 import org.cryse.novelreader.application.qualifier.PrefsLineSpacing;
 import org.cryse.novelreader.application.qualifier.PrefsReadBackground;
+import org.cryse.novelreader.application.qualifier.PrefsReadColorSchema;
 import org.cryse.novelreader.application.qualifier.PrefsScrollMode;
 import org.cryse.novelreader.constant.PreferenceConstant;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
@@ -62,4 +63,9 @@ public class ReadActivityModule {
         return new IntegerPreference(preferences, PreferenceConstant.SHARED_PREFERENCE_READ_BACKGROUND, PreferenceConstant.SHARED_PREFERENCE_READ_BACKGROUND_VALUE);
     }
 
+    @Provides
+    @PrefsReadColorSchema
+    IntegerPreference provideReadColorSchemaPreference(SharedPreferences preferences) {
+        return new IntegerPreference(preferences, PreferenceConstant.SHARED_PREFERENCE_READ_COLOR_SCHEMA, PreferenceConstant.SHARED_PREFERENCE_READ_COLOR_SCHEMA_VALUE);
+    }
 }
