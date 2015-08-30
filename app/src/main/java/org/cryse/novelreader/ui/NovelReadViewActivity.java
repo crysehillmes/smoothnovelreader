@@ -150,7 +150,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         @Override
         public void onReloadClick() {
             closeBottomPanel(() -> {
-                if (checkIfLocal())
+                if (!checkIfLocal())
                     getPresenter().loadChapter(mNovelChapters.get(chapterIndex), true);
             });
         }
