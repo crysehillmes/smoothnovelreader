@@ -1,8 +1,12 @@
 package org.cryse.novelreader.util.colorschema;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -53,11 +57,57 @@ public class ColorSchemaBuilder {
         return ResourcesCompat.getDrawable(context.getResources(), drawableId, null);
     }
 
+    private static int getBgIdFromDrawablesArray(Context context, @ArrayRes int drawablesResId, int index) {
+        final TypedArray ta = context.getResources().obtainTypedArray(drawablesResId);
+        int drawableId = ta.getResourceId(index, -1);
+        ta.recycle();
+        return drawableId;
+    }
+
     private static int getTextColorFromColorsArray(Context context, @ArrayRes int colorsResId, int index) {
         final TypedArray ta = context.getResources().obtainTypedArray(colorsResId);
         int color = ta.getColor(index, Color.WHITE);
         ta.recycle();
         return color;
+    }
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+                                                         int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(res, resId, options);
     }
 
     public ColorSchemaBuilder textSize(int textSize) {
@@ -95,15 +145,14 @@ public class ColorSchemaBuilder {
         int textColor = ColorUtils.getColor(mContext.getResources(), R.color.text_color_night_read);
         return new ColorSchema(
                 textColor,
-                new ColorDrawable(bgColor),
-                displayDrawableFromColor(textColor, bgColor)
+                new ColorDrawable(bgColor)
         );
     }
 
-    public List<Drawable> displayDrawables() {
-        List<Drawable> colorSchemas = new ArrayList<>(10);
+    public List<Drawable> displayDrawables(int width, int height) {
+        List<Drawable> colorSchemas = new ArrayList<>(12);
         for (int i = 0; i < 12; i++) {
-            colorSchemas.add(displayDrawableByIndex(i));
+            colorSchemas.add(displayDrawableByIndex(i, width, height));
         }
         return colorSchemas;
     }
@@ -133,25 +182,32 @@ public class ColorSchemaBuilder {
         return fromDrawable(textColor, drawable);
     }
 
-    public Drawable displayDrawableByIndex(int index) {
+    public Drawable displayDrawableByIndex(int index, int width, int height) {
         if (index >= 0 && index < 8)
-            return displayDrawableFromColorByIndex(index);
+            return displayDrawableFromColorByIndex(index, width, height);
         else if (index >= 8 && index < 12)
-            return displayDrawableFromDrawableByIndex(index);
+            return displayDrawableFromDrawableByIndex(index, width, height);
         else
-            return displayDrawableFromColorByIndex(0);
+            return displayDrawableFromColorByIndex(0, width, height);
     }
 
-    private Drawable displayDrawableFromColorByIndex(@IntRange(from = 0, to = 7) int index) {
+    private Drawable displayDrawableFromColorByIndex(@IntRange(from = 0, to = 7) int index, int width, int height) {
         int bgColor = getBgColorFromColorsArray(mContext, R.array.read_background_from_colors, index);
         int textColor = getTextColorFromColorsArray(mContext, R.array.read_text_color_from_colors, index);
-        return displayDrawableFromColor(textColor, bgColor);
+        return displayDrawableFromColor(textColor, bgColor, width, height);
     }
 
-    private Drawable displayDrawableFromDrawableByIndex(@IntRange(from = 8, to = 11) int index) {
-        Drawable bgDrawable = getBgFromDrawablesArray(mContext, R.array.read_background_from_drawables, index - COLOR_BG_COUNT);
+    private Drawable displayDrawableFromDrawableByIndex(@IntRange(from = 8, to = 11) int index, int width, int height) {
+        int bgDrawableId = getBgIdFromDrawablesArray(mContext, R.array.read_background_from_drawables, index - COLOR_BG_COUNT);
         int textColor = getTextColorFromColorsArray(mContext, R.array.read_text_color_from_drawables, index - COLOR_BG_COUNT);
-        return displayDrawableFromDrawable(textColor, bgDrawable);
+        Bitmap bitmap = decodeSampledBitmapFromResource(mContext.getResources(), bgDrawableId, width, height);
+        Drawable result = null;
+        if (bitmap == null) {
+            result = ResourcesCompat.getDrawable(mContext.getResources(), bgDrawableId, null);
+        } else {
+            result = new BitmapDrawable(mContext.getResources(), Bitmap.createScaledBitmap(bitmap, width, height, true));
+        }
+        return displayDrawableFromDrawable(textColor, result, width, height);
     }
 
     private ColorSchema fromColor(int textColor, int bgColor) {
@@ -161,29 +217,34 @@ public class ColorSchemaBuilder {
     private ColorSchema fromDrawable(int textColor, Drawable bgDrawable) {
         return new ColorSchema(
                 textColor,
-                bgDrawable,
-                displayDrawableFromDrawable(textColor, bgDrawable)
+                bgDrawable
         );
     }
 
-    private Drawable displayDrawableFromColor(int textColor, int bgColor) {
+    private Drawable displayDrawableFromColor(int textColor, int bgColor, int width, int height) {
         return TextDrawable.builder()
                 .beginConfig()
                 .textColor(textColor)
                 .fontSize(mTextSize)
                 .withBorder(mDisplayBorderSize)
+                .width(width)
+                .height(height)
                 .endConfig()
                 .buildRect(mDisplayText, bgColor);
     }
 
-    private Drawable displayDrawableFromDrawable(int textColor, Drawable bgDrawable) {
+    private Drawable displayDrawableFromDrawable(int textColor, Drawable bgDrawable, int width, int height) {
         Drawable textDrawable = TextDrawable.builder()
                 .beginConfig()
                 .textColor(textColor)
                 .fontSize(mTextSize)
                 .withBorder(mDisplayBorderSize)
+                .width(width)
+                .height(height)
                 .endConfig()
                 .buildRect(mDisplayText, Color.TRANSPARENT);
-        return new LayerDrawable(new Drawable[]{bgDrawable, textDrawable});
+        Drawable layerDrawable = new LayerDrawable(new Drawable[]{bgDrawable, textDrawable});
+
+        return layerDrawable;
     }
 }

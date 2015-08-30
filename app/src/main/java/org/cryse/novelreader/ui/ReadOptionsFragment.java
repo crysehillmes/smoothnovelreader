@@ -20,6 +20,7 @@ import org.cryse.novelreader.application.qualifier.PrefsLineSpacing;
 import org.cryse.novelreader.application.qualifier.PrefsNightMode;
 import org.cryse.novelreader.application.qualifier.PrefsReadColorSchema;
 import org.cryse.novelreader.ui.common.AbstractFragment;
+import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.colorschema.ColorSchema;
 import org.cryse.novelreader.util.colorschema.ColorSchemaBuilder;
@@ -120,7 +121,11 @@ public class ReadOptionsFragment extends AbstractFragment {
         Drawable colorSchemaDisplayDrawable = ColorSchemaBuilder
                 .with(getContext())
                 .textRes(R.string.color_schema_display_text)
-                .displayDrawableByIndex(colorSchemaIndex);
+                .displayDrawableByIndex(
+                        colorSchemaIndex,
+                        UIUtils.dp2px(getContext(), 64f),
+                        UIUtils.dp2px(getContext(), 36f)
+                );
         mColorSchemaValueImageView.setImageDrawable(colorSchemaDisplayDrawable);
 
         // Font Size:
@@ -177,7 +182,10 @@ public class ReadOptionsFragment extends AbstractFragment {
                         ColorSchemaBuilder
                                 .with(getContext())
                                 .textRes(R.string.color_schema_display_text)
-                                .displayDrawables())
+                                .displayDrawables(
+                                        UIUtils.dp2px(getContext(), 56f),
+                                        UIUtils.dp2px(getContext(), 56f)
+                                ))
                 .show((AppCompatActivity) getActivity(), mColorSchemaPreference.get(), (index, color, darker) -> {
                     mColorSchemaPreference.set(index);
                     ColorSchema newColorSchema = ColorSchemaBuilder
@@ -187,7 +195,15 @@ public class ReadOptionsFragment extends AbstractFragment {
                     if (mOnReadOptionsChangedListener != null) {
                         mOnReadOptionsChangedListener.onColorSchemaChanged(newColorSchema);
                     }
-                    mColorSchemaValueImageView.setImageDrawable(newColorSchema.getDisplayDrawable());
+                    Drawable colorSchemaDisplayDrawable = ColorSchemaBuilder
+                            .with(getContext())
+                            .textRes(R.string.color_schema_display_text)
+                            .displayDrawableByIndex(
+                                    index,
+                                    UIUtils.dp2px(getContext(), 64f),
+                                    UIUtils.dp2px(getContext(), 36f)
+                            );
+                    mColorSchemaValueImageView.setImageDrawable(colorSchemaDisplayDrawable);
                 }));
     }
 

@@ -3,9 +3,6 @@ package org.cryse.novelreader.ui;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
@@ -70,8 +67,8 @@ public class SimpleDrawableChooserDialog extends DialogFragment implements View.
                 child.getChildAt(0).setVisibility(View.GONE);
                 continue;
             }
-            Drawable selector = createSelector(mDrawables[i]);
-            setBackgroundCompat(child, selector);
+            //Drawable selector = createSelector(mDrawables[i]);
+            setBackgroundCompat(child, mDrawables[i]);
         }
         return dialog;
     }
@@ -87,7 +84,7 @@ public class SimpleDrawableChooserDialog extends DialogFragment implements View.
         Color.colorToHSV(color, hsv);
         hsv[2] *= 0.9f; // value component
         return Color.HSVToColor(hsv);*/
-        drawable.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.DARKEN));
+        //drawable.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.DARKEN));
         return drawable;
     }
 

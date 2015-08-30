@@ -6,12 +6,10 @@ public class ColorSchema {
 
     private int textColor;
     private Drawable backgroundDrawable;
-    private Drawable displayDrawable;
 
-    public ColorSchema(int textColor, Drawable backgroundDrawable, Drawable displayDrawable) {
+    public ColorSchema(int textColor, Drawable backgroundDrawable) {
         this.textColor = textColor;
         this.backgroundDrawable = backgroundDrawable;
-        this.displayDrawable = displayDrawable;
     }
 
     public int getTextColor() {
@@ -20,9 +18,5 @@ public class ColorSchema {
 
     public Drawable getBackgroundDrawable() {
         return backgroundDrawable;
-    }
-
-    public Drawable getDisplayDrawable() {
-        return displayDrawable;
     }
 }
