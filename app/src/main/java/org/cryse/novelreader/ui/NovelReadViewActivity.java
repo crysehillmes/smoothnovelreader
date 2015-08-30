@@ -258,13 +258,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
 
     private ReadWidgetAdapter createReadWidgetAdapter() {
         int scrollMode = PreferenceConverter.getScrollMode(mScrollMode.get());
-        ColorSchema colorSchema;
-        if (isNightMode()) {
-            colorSchema = ColorSchemaBuilder.darkMode(this);
-        } else {
-            int colorSchemaIndex = mColorSchemaPreference.get();
-            colorSchema = ColorSchemaBuilder.fromIndex(this, colorSchemaIndex);
-        }
+        ColorSchema colorSchema = getCurrentColorSchema();
         if (scrollMode == PreferenceConverter.SCROLL_MODE_FLIP_VERTICAL ||
                 scrollMode == PreferenceConverter.SCROLL_MODE_FLIP_HORIZONTAL)
             return new ReadViewFlipAdapter(this, mFontSize, mLineSpacing, colorSchema);
@@ -275,14 +269,31 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         }
     }
 
-    private void setReadViewColorSchema() {
+    private ColorSchema getCurrentColorSchema() {
         int colorSchemaIndex = mColorSchemaPreference.get();
-        setReadViewColorSchema(ColorSchemaBuilder.fromIndex(this, colorSchemaIndex));
+        if (isNightMode()) {
+            return ColorSchemaBuilder
+                    .with(this)
+                    .textRes(R.string.color_schema_display_text)
+                    .darkMode();
+        } else {
+            return ColorSchemaBuilder
+                    .with(this)
+                    .textRes(R.string.color_schema_display_text)
+                    .byIndex(colorSchemaIndex);
+        }
+    }
+
+    private void setReadViewColorSchema() {
+        setReadViewColorSchema(getCurrentColorSchema());
     }
 
     private void setReadViewColorSchema(ColorSchema colorSchema) {
         if (isNightMode()) {
-            colorSchema = ColorSchemaBuilder.darkMode(this);
+            colorSchema = ColorSchemaBuilder
+                    .with(this)
+                    .textRes(R.string.color_schema_display_text)
+                    .darkMode();
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
             mRootContainer.setBackground(colorSchema.getBackgroundDrawable());

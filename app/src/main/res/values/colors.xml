@@ -112,6 +112,16 @@
         <item>#FFE9EBFE</item>
         <item>#FFEAEAEF</item>
     </array>
+    <array name="read_text_colors">
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+    </array>
 
    <color name="colorful_bg_1">#FFDAA89F</color>
    <color name="colorful_bg_2">#FF658AFF</color>

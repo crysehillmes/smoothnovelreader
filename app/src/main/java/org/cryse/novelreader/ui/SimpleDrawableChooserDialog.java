@@ -51,7 +51,7 @@ public class SimpleDrawableChooserDialog extends DialogFragment implements View.
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                 .title(R.string.dialog_choose_read_bg_color)
-                .theme(Theme.DARK)
+                .theme(mTheme)
                 .autoDismiss(false)
                 .customView(R.layout.dialog_color_chooser, false)
                 .build();

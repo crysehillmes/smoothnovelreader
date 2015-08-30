@@ -20,7 +20,6 @@ import org.cryse.novelreader.application.qualifier.PrefsLineSpacing;
 import org.cryse.novelreader.application.qualifier.PrefsNightMode;
 import org.cryse.novelreader.application.qualifier.PrefsReadColorSchema;
 import org.cryse.novelreader.ui.common.AbstractFragment;
-import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.colorschema.ColorSchema;
 import org.cryse.novelreader.util.colorschema.ColorSchemaBuilder;
@@ -118,11 +117,10 @@ public class ReadOptionsFragment extends AbstractFragment {
 
     private void setInitialValues() {
         int colorSchemaIndex = mColorSchemaPreference.get();
-        Drawable colorSchemaDisplayDrawable = ColorSchemaBuilder.displayDrawableByIndex(
-                getContext(),
-                UIUtils.sp2px(getContext(), 14f),
-                colorSchemaIndex
-        );
+        Drawable colorSchemaDisplayDrawable = ColorSchemaBuilder
+                .with(getContext())
+                .textRes(R.string.color_schema_display_text)
+                .displayDrawableByIndex(colorSchemaIndex);
         mColorSchemaValueImageView.setImageDrawable(colorSchemaDisplayDrawable);
 
         // Font Size:
@@ -149,55 +147,48 @@ public class ReadOptionsFragment extends AbstractFragment {
     }
 
     private void addListeners() {
-        mRootContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnReadOptionsChangedListener != null) {
-                    mOnReadOptionsChangedListener.onCloseReadOptions();
-                }
+        mRootContainer.setOnClickListener(v -> {
+            if (mOnReadOptionsChangedListener != null) {
+                mOnReadOptionsChangedListener.onCloseReadOptions();
             }
         });
-        mFontSizeNumberPicker.setOnNumberPickedListener(new NumberPicker.OnNumberPickedListener() {
-            @Override
-            public void onNumberPicked(int number) {
-                String fontSizeString = Integer.toString(number);
-                if (fontSizeString.equals(mFontSizePreference.get())) return;
-                mFontSizePreference.set(fontSizeString);
-                if (mOnReadOptionsChangedListener != null) {
-                    mOnReadOptionsChangedListener.onFontSizeChanged(fontSizeString);
-                }
+        mFontSizeNumberPicker.setOnNumberPickedListener(number -> {
+            String fontSizeString = Integer.toString(number);
+            if (fontSizeString.equals(mFontSizePreference.get())) return;
+            mFontSizePreference.set(fontSizeString);
+            if (mOnReadOptionsChangedListener != null) {
+                mOnReadOptionsChangedListener.onFontSizeChanged(fontSizeString);
             }
         });
-        mLineSpacingNumberPicker.setOnNumberPickedListener(new NumberPicker.OnNumberPickedListener() {
-            @Override
-            public void onNumberPicked(int number) {
-                String lineSpacingString = Integer.toString(number);
-                String currentValue = mLineSpacingPreference.get();
-                if (currentValue.endsWith("%"))
-                    currentValue = currentValue.substring(0, currentValue.length() - 1);
-                if (lineSpacingString.equals(currentValue)) return;
-                mLineSpacingPreference.set(lineSpacingString);
-                if (mOnReadOptionsChangedListener != null) {
-                    mOnReadOptionsChangedListener.onLineSpacingChanged(lineSpacingString);
-                }
+        mLineSpacingNumberPicker.setOnNumberPickedListener(number -> {
+            String lineSpacingString = Integer.toString(number);
+            String currentValue = mLineSpacingPreference.get();
+            if (currentValue.endsWith("%"))
+                currentValue = currentValue.substring(0, currentValue.length() - 1);
+            if (lineSpacingString.equals(currentValue)) return;
+            mLineSpacingPreference.set(lineSpacingString);
+            if (mOnReadOptionsChangedListener != null) {
+                mOnReadOptionsChangedListener.onLineSpacingChanged(lineSpacingString);
             }
         });
-        mColorSchemaValueImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new SimpleDrawableChooserDialog()
-                        .setTheme(mIsNightModePreference.get() ? Theme.DARK : Theme.LIGHT)
-                        .setDrawables(ColorSchemaBuilder.displayDrawables(getContext(), UIUtils.sp2px(getContext(), 14f)))
-                        .show((AppCompatActivity) getActivity(), mColorSchemaPreference.get(), (index, color, darker) -> {
-                            mColorSchemaPreference.set(index);
-                            ColorSchema newColorSchema = ColorSchemaBuilder.fromIndex(getContext(), index);
-                            if (mOnReadOptionsChangedListener != null) {
-                                mOnReadOptionsChangedListener.onColorSchemaChanged(newColorSchema);
-                            }
-                            mColorSchemaValueImageView.setImageDrawable(newColorSchema.getDisplayDrawable());
-                        });
-            }
-        });
+        mColorSchemaValueImageView.setOnClickListener(v -> new SimpleDrawableChooserDialog()
+                .setTheme(mIsNightModePreference.get() ? Theme.DARK : Theme.LIGHT)
+                .setDrawables(
+                        ColorSchemaBuilder
+                                .with(getContext())
+                                .textRes(R.string.color_schema_display_text)
+                                .displayDrawables())
+                .show((AppCompatActivity) getActivity(), mColorSchemaPreference.get(), (index, color, darker) -> {
+                    mColorSchemaPreference.set(index);
+                    ColorSchema newColorSchema = ColorSchemaBuilder
+                            .with(getContext())
+                            .textRes(R.string.color_schema_display_text)
+                            .byIndex(index);
+                    if (mOnReadOptionsChangedListener != null) {
+                        mOnReadOptionsChangedListener.onColorSchemaChanged(newColorSchema);
+                    }
+                    mColorSchemaValueImageView.setImageDrawable(newColorSchema.getDisplayDrawable());
+                }));
     }
 
     private String removePercentSuffix(String input) {

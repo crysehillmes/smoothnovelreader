@@ -243,6 +243,7 @@
     <string name="action_add_book_source_dialog_title">选择来源</string>
     <string name="action_add_local_text_file">导入本地 txt 文件</string>
 
+    <string name="color_schema_display_text">abc</string>
     <!-- placeholder -->
     <string name="placeholder_lorem_ipsum" translatable="false">placeholder</string>
     <string name="placeholder_novel_details_title" translatable="false">placeholder</string>
