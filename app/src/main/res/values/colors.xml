@@ -102,27 +102,6 @@
     <color name="textColorDarkAlpha">#991e1e1e</color>
     <color name="transparent_tint">#88000000</color>
 
-    <array name="read_bg_colors">
-        <item>#FFFFFFFF</item>
-        <item>#FFFAF9DE</item>
-        <item>#FFFFF2E2</item>
-        <item>#FFFDE6E0</item>
-        <item>#FFE3EDCD</item>
-        <item>#FFDCE2F1</item>
-        <item>#FFE9EBFE</item>
-        <item>#FFEAEAEF</item>
-    </array>
-    <array name="read_text_colors">
-        <item>@color/text_color_primary</item>
-        <item>@color/text_color_primary</item>
-        <item>@color/text_color_primary</item>
-        <item>@color/text_color_primary</item>
-        <item>@color/text_color_primary</item>
-        <item>@color/text_color_primary</item>
-        <item>@color/text_color_primary</item>
-        <item>@color/text_color_primary</item>
-    </array>
-
    <color name="colorful_bg_1">#FFDAA89F</color>
    <color name="colorful_bg_2">#FF658AFF</color>
    <color name="colorful_bg_3">#FF25A8F9</color>
