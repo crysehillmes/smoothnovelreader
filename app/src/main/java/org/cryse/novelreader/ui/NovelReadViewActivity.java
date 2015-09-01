@@ -130,6 +130,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         @Override
         public void onClose() {
             closeBottomPanel(null);
+            hideSystemUI();
         }
 
         @Override
@@ -202,6 +203,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         setContentView(R.layout.activity_novel_readview);
         requestSystemUiHelper(SystemUiHelper.LEVEL_IMMERSIVE, SystemUiHelper.FLAG_IMMERSIVE_STICKY);
         ButterKnife.bind(this);
+        setStatusBarColor(getThemeEngine().getPrimaryColor(this));
         mHandler = new Handler();
         createReadWidget();
         mReadWidget.setOnContentRequestListener(new ReadWidget.OnContentRequestListener() {
@@ -497,6 +499,9 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     }
 
     private void showBottomMenu() {
+        if (isSystemUiHelperAvailable()) {
+            getSystemUiHelper().show();
+        }
         showBottomPanel();
         /*BottomSheet.Builder bottomSheetBuilder = new BottomSheet.Builder(NovelReadViewActivity.this)
                 .title(getString(R.string.bottom_sheet_title))
