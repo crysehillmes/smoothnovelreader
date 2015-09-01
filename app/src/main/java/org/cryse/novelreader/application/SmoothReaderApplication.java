@@ -15,6 +15,7 @@ import org.cryse.novelreader.application.module.AppModule;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
+import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
 public class SmoothReaderApplication extends Application {
@@ -40,7 +41,7 @@ public class SmoothReaderApplication extends Application {
     public void onCreate() {
         super.onCreate();
         AnalyticsUtils.init(getString(R.string.UMENG_APPKEY_VALUE));
-        Crashlytics.start(this);
+        Fabric.with(this, new Crashlytics());
         Timber.plant(new CrashReportingTree());
         UmengUpdateAgent.setAppkey(getString(R.string.UMENG_APPKEY_VALUE));
         UmengUpdateAgent.update(this);
