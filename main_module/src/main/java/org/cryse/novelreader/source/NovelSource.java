@@ -19,11 +19,11 @@ public interface NovelSource {
 
     Observable<List<ChapterModel>> getChapterList(String id, String src);
 
-    Observable<ChapterContentModel> getChapterContent(String id, String secondId, String src);
+    Observable<ChapterContentModel> getChapterContent(String id, String secondId, String chapterTitle, String src);
 
     Observable<List<NovelModel>> search(String queryString, int page);
 
-    ChapterContentModel getChapterContentSync(String id, String secondId, String src);
+    ChapterContentModel getChapterContentSync(String id, String secondId, String chapterTitle, String src);
 
     List<ChapterModel> getChapterListSync(String id, String src);
 
