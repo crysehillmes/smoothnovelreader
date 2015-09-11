@@ -8,8 +8,8 @@ import com.squareup.okhttp.OkHttpClient;
 import org.cryse.novelreader.application.qualifier.ApplicationContext;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayerImpl;
-import org.cryse.novelreader.lib.novelsource.baidubrowser.BaiduBrowserSource;
-import org.cryse.novelreader.lib.novelsource.easou.EasouSource;
+import org.cryse.novelreader.lib.novelsource.baidubrowser.BaiduBrowserNovelSource;
+import org.cryse.novelreader.lib.novelsource.easou.EasouNovelSource;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.logic.impl.NovelBusinessLogicLayerImpl;
 import org.cryse.novelreader.logic.impl.NovelSourceManager;
@@ -39,8 +39,14 @@ public class NovelApiModule {
         okHttpClient.setWriteTimeout(30, TimeUnit.SECONDS);
         okHttpClient.setReadTimeout(30, TimeUnit.SECONDS);
         NovelSourceManager manager = new NovelSourceManager();
-        manager.registerNovelSource(BaiduBrowserSource.TYPE_BAIDU_BROWSER_SOURCE, BaiduBrowserSource.build(okHttpClient));
-        manager.registerNovelSource(EasouSource.TYPE_EASOU_SOURCE, EasouSource.build(okHttpClient));
+        manager.registerNovelSource(
+                EasouNovelSource.SOURCE_EASOU,
+                EasouNovelSource.build(okHttpClient)
+        );
+        manager.registerNovelSource(
+                BaiduBrowserNovelSource.SOURCE_BAIDU_BROWSER,
+                BaiduBrowserNovelSource.build(okHttpClient)
+        );
         return manager;
     }
 

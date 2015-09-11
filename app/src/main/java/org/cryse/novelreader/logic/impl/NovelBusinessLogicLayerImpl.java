@@ -28,6 +28,7 @@ import javax.inject.Inject;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.functions.FuncN;
 
 public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     public static final String LOCAL_FILE_PREFIX = DataContract.LOCAL_FILE_PREFIX;
@@ -217,12 +218,24 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     @Override
     public Observable<List<NovelModel>> search(String queryString, int page) {
         Observable<List<NovelModel>> result = Observable.empty();
+        List<Observable<List<NovelModel>>> observables = new ArrayList<>();
         for (int i = 0; i < mNovelSourceManager.getNovelSourceCount(); i++) {
             NovelSource novelSource = mNovelSourceManager.getNovelSourceAt(i);
             Observable<List<NovelModel>> searchObservable = novelSource.search(queryString, page);
-            result = result.concatWith(searchObservable);
+            observables.add(searchObservable);
         }
-        return result;
+        return Observable.zip(observables, new FuncN<List<NovelModel>>() {
+            @Override
+            public List<NovelModel> call(Object... args) {
+                List<NovelModel> result = new ArrayList<NovelModel>();
+                for (int i = 0; i < args.length; i++) {
+                    if (args[i] instanceof List) {
+                        result.addAll((List<? extends NovelModel>) args[i]);
+                    }
+                }
+                return result;
+            }
+        });
     }
 
     @Override

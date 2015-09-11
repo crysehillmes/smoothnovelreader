@@ -21,7 +21,7 @@ public class ToNovelFromSearch implements Func1<SearchNovelItem[], List<NovelMod
                     EasouNovelId.toNovelId(item.getGId(), item.getNId()),
                     item.getTitle(),
                     item.getAuthor(),
-                    Consts.TYPE_EASOU_SOURCE,
+                    Consts.SOURCE_EASOU,
                     item.getSource(),
                     item.getCoverImage()
             );

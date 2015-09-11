@@ -1,6 +1,6 @@
 package org.cryse.novelreader.lib.novelsource.baidubrowser;
 
 public class Consts {
-    public static final int TYPE_BAIDU_BROWSER_SOURCE = 100;
-    public static final String TYPE_BAIDU_BROWSER_SOURCE_NAME = "NOVEL_SOURCE_BAIDU_BROWSER";
+    public static final int SOURCE_BAIDU_BROWSER = 101;
+    public static final String SOURCE_NAME_BAIDU_BROWSER = "SOURCE_NAME_BAIDU_BROWSER";
 }

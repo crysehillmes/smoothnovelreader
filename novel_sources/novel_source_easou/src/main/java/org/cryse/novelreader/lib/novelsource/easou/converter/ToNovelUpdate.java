@@ -4,23 +4,16 @@ import org.cryse.novelreader.lib.novelsource.easou.model.NovelUpdateItem;
 import org.cryse.novelreader.lib.novelsource.easou.utils.EasouNovelId;
 import org.cryse.novelreader.model.NovelSyncBookShelfModel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import rx.functions.Func1;
 
-public class ToNovelUpdate implements Func1<NovelUpdateItem[], List<NovelSyncBookShelfModel>> {
+public class ToNovelUpdate implements Func1<NovelUpdateItem, NovelSyncBookShelfModel> {
     @Override
-    public List<NovelSyncBookShelfModel> call(NovelUpdateItem[] updateShelfItems) {
-        List<NovelSyncBookShelfModel> result = new ArrayList<>(updateShelfItems.length);
-        for (NovelUpdateItem item : updateShelfItems) {
-            result.add(new NovelSyncBookShelfModel(
-                    EasouNovelId.toNovelId(item.getGId(), item.getNId()),
-                    Integer.toString(item.getChapterId()),
-                    item.getLatestChapterTitle(),
-                    item.getChapterNumber()
-            ));
-        }
-        return result;
+    public NovelSyncBookShelfModel call(NovelUpdateItem item) {
+        return new NovelSyncBookShelfModel(
+                EasouNovelId.toNovelId(item.getGId(), item.getNId()),
+                Integer.toString(item.getChapterId()),
+                item.getLatestChapterTitle(),
+                Integer.toString(item.getChapterNumber())
+        );
     }
 }
