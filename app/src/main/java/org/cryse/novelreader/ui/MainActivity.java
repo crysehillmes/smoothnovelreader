@@ -11,10 +11,10 @@ import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
-import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
@@ -94,10 +94,8 @@ public class MainActivity extends AbstractThemeableActivity {
                 .withStatusBarColor(getThemeEngine().getPrimaryDarkColor(this))
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(R.string.drawer_bookshelf).withIcon(R.drawable.ic_drawer_novel).withIdentifier(1001),
-                        new PrimaryDrawerItem().withName(R.string.drawer_rank).withIcon(R.drawable.ic_drawer_rank).withIdentifier(1002),
-                        new PrimaryDrawerItem().withName(R.string.drawer_category).withIcon(R.drawable.ic_drawer_category).withIdentifier(1003),
                         new DividerDrawerItem(),
-                        new SecondaryDrawerItem().withName(R.string.drawer_settings).withIdentifier(1101).withIcon(R.drawable.ic_drawer_settings).withCheckable(false)
+                        new SecondaryDrawerItem().withName(R.string.drawer_settings).withIdentifier(1101).withIcon(R.drawable.ic_drawer_settings).withSelectable(false)
 
                 )
                 .withOnDrawerNavigationListener(view -> getSupportFragmentManager().popBackStackImmediate())
@@ -122,19 +120,18 @@ public class MainActivity extends AbstractThemeableActivity {
 
                     }
                 })
-                .withOnDrawerItemClickListener((parent, view, position, id, drawerItem) -> {
-                    // do something with the clicked item :D
-                    if (drawerItem.getType().equalsIgnoreCase("PRIMARY_ITEM"))
-                        mCurrentSelection = drawerItem.getIdentifier();
-                    mPendingRunnable = () ->  onNavigationSelected(drawerItem);
+                .withOnDrawerItemClickListener((view, i, iDrawerItem) -> {
+                    if (iDrawerItem instanceof PrimaryDrawerItem)
+                        mCurrentSelection = iDrawerItem.getIdentifier();
+                    mPendingRunnable = () -> onNavigationSelected(iDrawerItem);
                     return false;
                 })
                 .build();
         if(mCurrentSelection == 1001 && !mIsRestorePosition) {
-            mNaviagtionDrawer.setSelectionByIdentifier(1001, false);
+            mNaviagtionDrawer.setSelection(1001, false);
             mNavigation.navigateToBookShelfFragment();
         } else if(mIsRestorePosition) {
-            mNaviagtionDrawer.setSelectionByIdentifier(mCurrentSelection, false);
+            mNaviagtionDrawer.setSelection(mCurrentSelection, false);
         }
 
     }

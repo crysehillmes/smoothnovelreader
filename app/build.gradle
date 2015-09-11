@@ -99,7 +99,7 @@ dependencies {
     }
     compile 'com.quentindommerc.superlistview:library:1.5.2'
     compile 'com.afollestad:material-dialogs:0.7.9.1'
-    compile('com.mikepenz:materialdrawer:3.1.0') {
+    compile('com.mikepenz:materialdrawer:4.0.6') {
         transitive = true
         exclude module: 'appcompat-v7'
     }
