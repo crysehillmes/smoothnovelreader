@@ -118,10 +118,12 @@ public class NumberPicker extends ViewGroup {
             public void onClick(View v) {
                 if (mCurrentValue >= mMinValue && mCurrentValue - mStep >= mMinValue) {
                     mCurrentValue -= mStep;
-                    updateValueTextView();
-                    if (mOnNumberPickedListener != null) {
-                        mOnNumberPickedListener.onNumberPicked(mCurrentValue);
-                    }
+                } else {
+                    mCurrentValue = mMinValue;
+                }
+                updateValueTextView();
+                if (mOnNumberPickedListener != null) {
+                    mOnNumberPickedListener.onNumberPicked(mCurrentValue);
                 }
             }
         });
@@ -130,10 +132,12 @@ public class NumberPicker extends ViewGroup {
             public void onClick(View v) {
                 if (mCurrentValue <= mMaxValue && mCurrentValue + mStep <= mMaxValue) {
                     mCurrentValue += mStep;
-                    updateValueTextView();
-                    if (mOnNumberPickedListener != null) {
-                        mOnNumberPickedListener.onNumberPicked(mCurrentValue);
-                    }
+                } else {
+                    mCurrentValue = mMaxValue;
+                }
+                updateValueTextView();
+                if (mOnNumberPickedListener != null) {
+                    mOnNumberPickedListener.onNumberPicked(mCurrentValue);
                 }
             }
         });
