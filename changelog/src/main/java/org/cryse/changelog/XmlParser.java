@@ -268,7 +268,7 @@ public class XmlParser extends BaseParser {
         row.setBugFixPrefixStringResId(mBugFixPrefixResId);
         row.setImprovementPrefixStringResId(mImprovementPrefixResId);
         row.setVersionName(versionName);
-        //row.setVersionCode(versionCode);
+        row.setVersionCode(versionCode);
         row.setChangeDate(changeDate);
         changeLog.addRow(row);
 
