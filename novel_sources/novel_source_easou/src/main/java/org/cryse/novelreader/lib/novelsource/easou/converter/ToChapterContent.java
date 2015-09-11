@@ -6,7 +6,7 @@ import org.cryse.novelreader.model.ChapterContent;
 import rx.functions.Func1;
 
 
-public class ToChapterContent implements Func1<ChapterContentItem[], ChapterContent> {
+public class ToChapterContent implements Func1<ChapterContentItem, ChapterContent> {
     private String mNovelId;
     private String mChapterId;
 
@@ -16,8 +16,8 @@ public class ToChapterContent implements Func1<ChapterContentItem[], ChapterCont
     }
 
     @Override
-    public ChapterContent call(ChapterContentItem[] chapterContentItems) {
-        ChapterContentItem item = chapterContentItems[0];
+    public ChapterContent call(ChapterContentItem chapterContentItem) {
+        ChapterContentItem item = chapterContentItem;
         return new ChapterContent(mNovelId, mChapterId, item.getSource(), item.getContent());
     }
 }

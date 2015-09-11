@@ -61,7 +61,12 @@ public class CustomGsonConverter implements Converter {
                 return responseBodyString;
             JsonParser parser = new JsonParser();
             JsonObject element = (JsonObject) parser.parse(responseBodyString);
-            JsonElement dataObject = element.get("data");
+            JsonElement dataObject = null;
+            if (element.has("items") && !(element.has("labels") && element.has("desc") && element.has("curl"))) {
+                dataObject = element.get("items");
+            } else {
+                dataObject = element;
+            }
             if (!dataObject.isJsonArray() && type instanceof GenericArrayType) {
                 Type componentType = ((GenericArrayType) type).getGenericComponentType();
                 Class<?> c = Class.forName(getClassName(componentType));

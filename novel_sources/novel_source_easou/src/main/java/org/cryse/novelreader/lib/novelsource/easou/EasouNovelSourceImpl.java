@@ -158,7 +158,7 @@ public class EasouNovelSourceImpl implements NovelSource {
         long nid = EasouNovelId.fromNovelIdToNid(id);
         int sort = Integer.valueOf(chapterId);
         String dataString = String.format("[\"%s\"]", chapterId);
-        ChapterContentItem[] item = mNovelSource.getChapterContentSync(
+        ChapterContentItem item = mNovelSource.getChapterContentSync(
                 CONST_APP_VERSION,
                 CONST_CH,
                 CONST_CID,

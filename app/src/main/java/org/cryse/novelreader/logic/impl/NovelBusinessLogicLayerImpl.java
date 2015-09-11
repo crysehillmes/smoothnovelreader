@@ -166,7 +166,7 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
             try {
                 if (novelDataBase.isFavorite(novel.getNovelId())) {
                     for (ChapterModel chapterModel : chapterModels) {
-                        ChapterContentModel chapterContentModel = novelSource.getChapterContentSync(novel.getNovelId(), chapterModel.getChapterId(), chapterModel.getSource());
+                        ChapterContentModel chapterContentModel = novelSource.getChapterContentSync(novel.getNovelId(), chapterModel.getChapterId(), chapterModel.getTitle(), chapterModel.getSource());
                         if (chapterContentModel != null) {
                             novelDataBase.updateChapterContent(chapterContentModel);
                             subscriber.onNext(true);
@@ -191,14 +191,14 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                 if (isFavorite && !forceUpdate) {
                     chapterContent = novelDataBase.loadChapterContent(novelChapter.getChapterId());
                     if (chapterContent == null) {
-                        chapterContent = novelSource.getChapterContentSync(novelChapter.getNovelId(), novelChapter.getChapterId(), novelChapter.getSource());
+                        chapterContent = novelSource.getChapterContentSync(novelChapter.getNovelId(), novelChapter.getChapterId(), novelChapter.getTitle(), novelChapter.getSource());
                         chapterContent.setContent(novelTextFilter.filter(chapterContent.getContent()));
                         novelDataBase.updateChapterContent(chapterContent);
                     }
                     subscriber.onNext(chapterContent);
                     subscriber.onCompleted();
                 } else {
-                    chapterContent = novelSource.getChapterContentSync(novelChapter.getNovelId(), novelChapter.getChapterId(), novelChapter.getSource());
+                    chapterContent = novelSource.getChapterContentSync(novelChapter.getNovelId(), novelChapter.getChapterId(), novelChapter.getTitle(), novelChapter.getSource());
                     chapterContent.setContent(novelTextFilter.filter(chapterContent.getContent()));
                     // if(isFavorited) updateChapterContentInDB(novelChapter.getSecondId(), novelChapter.getSrc(), chapterContent);
                     subscriber.onNext(chapterContent);

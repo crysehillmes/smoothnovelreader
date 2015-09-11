@@ -3,8 +3,6 @@ package org.cryse.novelreader.lib.novelsource.easou.model;
 import com.google.gson.annotations.SerializedName;
 
 public class ChapterItem {
-    @SerializedName("sort")
-    private int chapterIndex;
 
     @SerializedName("sort")
     private int chapterId;
@@ -14,14 +12,6 @@ public class ChapterItem {
 
     @SerializedName("curl")
     private String source;
-
-    public int getChapterIndex() {
-        return chapterIndex;
-    }
-
-    public void setChapterIndex(int chapterIndex) {
-        this.chapterIndex = chapterIndex;
-    }
 
     public int getChapterId() {
         return chapterId;

@@ -50,9 +50,8 @@ public interface EasouNovelSource {
             @Query("nid") long nid
     );
 
-    @FormUrlEncoded
-    @POST("/chapter.m")
-    Observable<ChapterContentItem[]> getChapterContent(
+    @GET("/chapter.m")
+    Observable<ChapterContentItem> getChapterContent(
             @Query("appversion") String appversion,
             @Query("ch") String ch,
             @Query("cid") String cid,
@@ -64,10 +63,8 @@ public interface EasouNovelSource {
             @Query("chapter_name") String chapterName
     );
 
-
-    @FormUrlEncoded
-    @POST("/chapter.m")
-    ChapterContentItem[] getChapterContentSync(
+    @GET("/chapter.m")
+    ChapterContentItem getChapterContentSync(
             @Query("appversion") String appversion,
             @Query("ch") String ch,
             @Query("cid") String cid,

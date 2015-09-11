@@ -105,10 +105,6 @@ public class LocalFileImportService extends Service {
         return new ReadLocalTextFileBinder();
     }
 
-    private ChapterContentModel loadChapterContentFromWeb(String id, String secondId, String src) {
-        return novelSource.getChapterContentSync(id, secondId, src);
-    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(LOG_TAG, "onStartCommand");
