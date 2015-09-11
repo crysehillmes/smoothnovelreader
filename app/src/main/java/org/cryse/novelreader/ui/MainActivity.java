@@ -7,6 +7,8 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -58,7 +60,6 @@ public class MainActivity extends AbstractThemeableActivity {
         setContentView(R.layout.activity_main);
         mPicasso = new Picasso.Builder(this).executor(Executors.newSingleThreadExecutor()).build();
         setIsOverrideStatusBarColor(false);
-        mNavigation.attachMainActivity(this);
         /*setDrawerLayoutBackground(isNightMode());
         getDrawerLayout().setStatusBarBackgroundColor(getThemeEngine().getPrimaryDarkColor(this));*/
         if(savedInstanceState!=null && savedInstanceState.containsKey("selection_item_position")) {
@@ -129,7 +130,7 @@ public class MainActivity extends AbstractThemeableActivity {
                 .build();
         if(mCurrentSelection == 1001 && !mIsRestorePosition) {
             mNaviagtionDrawer.setSelection(1001, false);
-            mNavigation.navigateToBookShelfFragment();
+            navigateToBookShelfFragment();
         } else if(mIsRestorePosition) {
             mNaviagtionDrawer.setSelection(mCurrentSelection, false);
         }
@@ -139,7 +140,7 @@ public class MainActivity extends AbstractThemeableActivity {
     private void onNavigationSelected(IDrawerItem drawerItem) {
         switch (drawerItem.getIdentifier()) {
             case 1001:
-                mNavigation.navigateToBookShelfFragment();
+                navigateToBookShelfFragment();
                 break;
             case 1101:
                 mNavigation.navigateToSettingsActivity(MainActivity.this);
@@ -252,5 +253,20 @@ public class MainActivity extends AbstractThemeableActivity {
 
     public Drawer getNavigationDrawer() {
         return mNaviagtionDrawer;
+    }
+
+    public void navigateToBookShelfFragment() {
+        switchContentFragment(NovelBookShelfFragment.newInstance(null), null);
+    }
+
+    public void switchContentFragment(Fragment targetFragment, String backStackTag) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager()
+                .beginTransaction();
+        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                android.R.anim.fade_out);
+        if (backStackTag != null)
+            fragmentTransaction.addToBackStack(backStackTag);
+        fragmentTransaction.replace(R.id.container, targetFragment);
+        fragmentTransaction.commit();
     }
 }

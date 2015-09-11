@@ -6,16 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 
-import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.factory.StaticRunTimeStoreFactory;
 import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
-import org.cryse.novelreader.ui.NovelBookShelfFragment;
 import org.cryse.novelreader.ui.NovelChapterListActivity;
 import org.cryse.novelreader.ui.NovelDetailActivity;
 import org.cryse.novelreader.ui.NovelReadViewActivity;
@@ -28,54 +23,10 @@ import timber.log.Timber;
 
 public class AndroidNavigation {
     private static final String TAG = AndroidNavigation.class.getCanonicalName();
-    protected AppCompatActivity mActivity;
-    protected FragmentManager mFragmentManager;
     RunTimeStore mRunTimeStore;
 
     public AndroidNavigation() {
         mRunTimeStore = StaticRunTimeStoreFactory.getInstance();
-    }
-
-    public void attachMainActivity(AppCompatActivity activity) {
-        mActivity = activity;
-        mFragmentManager = mActivity.getSupportFragmentManager();
-    }
-
-    public void switchContentFragment(String fragmentName, String backStackTag) {
-        switchContentFragment(fragmentName, null, backStackTag);
-    }
-
-    public void switchContentFragment(String fragmentName, Bundle bundle, String backStackTag) {
-        switchContentFragment(Fragment.instantiate(mActivity, fragmentName, bundle), backStackTag);
-    }
-
-    public void switchContentFragment(Fragment targetFragment, String backStackTag) {
-        if(mActivity == null)
-            throw new IllegalStateException("Should attach to MainActivity before call any method.");
-        clearBackStack();
-        FragmentTransaction fragmentTransaction = mFragmentManager
-                .beginTransaction();
-        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                android.R.anim.fade_out);
-        if(backStackTag != null)
-            fragmentTransaction.addToBackStack(backStackTag);
-        fragmentTransaction.replace(R.id.container, targetFragment);
-        fragmentTransaction.commit();
-    }
-
-    public void clearBackStack() {
-        for(int i = 0; i < mFragmentManager.getBackStackEntryCount(); ++i) {
-            mFragmentManager.popBackStack();
-        }
-    }
-
-    public boolean popEntireFragmentBackStack() {
-        final int backStackCount = mFragmentManager.getBackStackEntryCount();
-        // Clear Back Stack
-        for (int i = 0; i < backStackCount; i++) {
-            mFragmentManager.popBackStack();
-        }
-        return backStackCount > 0;
     }
 
     private void startActivity(Context context, Intent intent) {
@@ -93,10 +44,6 @@ public class AndroidNavigation {
         intent.putExtra(DataContract.NOVEL_OBJECT_NAME, novelModel);
         intent.putExtra(DataContract.NOVEL_INTRODUCTION_CONTRACT_SHOW_START_READING, showStartRead);
         startActivity(activity, intent);
-    }
-
-    public void navigateToBookShelfFragment() {
-        switchContentFragment(NovelBookShelfFragment.class.getName(), null);
     }
 
     public void navigateToSettingsActivity(Context context) {
