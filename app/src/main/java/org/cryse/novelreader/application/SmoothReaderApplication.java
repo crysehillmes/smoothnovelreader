@@ -40,7 +40,7 @@ public class SmoothReaderApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        AnalyticsUtils.init(getString(R.string.UMENG_APPKEY_VALUE));
+        AnalyticsUtils.init(this, getString(R.string.UMENG_APPKEY_VALUE));
         Fabric.with(this, new Crashlytics());
         Timber.plant(new CrashReportingTree());
         UmengUpdateAgent.setAppkey(getString(R.string.UMENG_APPKEY_VALUE));
