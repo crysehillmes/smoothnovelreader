@@ -25,7 +25,7 @@ import dagger.Provides;
 
 @Module
 public class NovelApiModule {
-
+    private static final int NETWORK_TIMEOUT = 30;
     @Provides
     NovelTextFilter provideNovelTextFilter() {
         return new NovelTextSimplifyFilter();
@@ -35,9 +35,9 @@ public class NovelApiModule {
     @Singleton
     NovelSourceManager provideNovelSourceManager() {
         OkHttpClient okHttpClient = new OkHttpClient();
-        okHttpClient.setConnectTimeout(30, TimeUnit.SECONDS);
-        okHttpClient.setWriteTimeout(30, TimeUnit.SECONDS);
-        okHttpClient.setReadTimeout(30, TimeUnit.SECONDS);
+        okHttpClient.setConnectTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS);
+        okHttpClient.setWriteTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS);
+        okHttpClient.setReadTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS);
         NovelSourceManager manager = new NovelSourceManager();
         manager.registerNovelSource(
                 EasouNovelSource.SOURCE_EASOU,

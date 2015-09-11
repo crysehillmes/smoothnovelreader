@@ -44,14 +44,9 @@ public class EasouNovelSource implements NovelSource {
     private static final String CONST_OS = "android";
     private static final String CONST_VERSION = "002";
 
-    /*private OkHttpClient mOkHttpClient;*/
     private EasouNovelService mNovelSource;
 
     public EasouNovelSource(OkHttpClient okHttpClient) {
-        /*this.mOkHttpClient = new OkHttpClient();
-        this.mOkHttpClient.setConnectTimeout(20, TimeUnit.SECONDS);
-        this.mOkHttpClient.setWriteTimeout(20, TimeUnit.SECONDS);
-        this.mOkHttpClient.setReadTimeout(20, TimeUnit.SECONDS);*/
         this.mNovelSource = new RestAdapter.Builder()
                 .setRequestInterceptor(request -> {
                     request.addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19");
