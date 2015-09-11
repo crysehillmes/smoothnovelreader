@@ -14,7 +14,6 @@ import android.util.Log;
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.application.module.ChapterCacheModule;
-import org.cryse.novelreader.constant.CacheConstants;
 import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.event.ImportChapterContentEvent;
@@ -166,11 +165,6 @@ public class ChapterContentsCacheService extends Service {
             } catch (Exception ex) {
                 failureCount++;
             } finally {
-                if(importBulkCount >= CacheConstants.CONST_BULK_INSERT_COUNT) {
-                    mEventBus.sendEvent(new ImportChapterContentEvent(cacheTask.getNovelId(), importBulkCount));
-                    importBulkCount = 0;
-                }
-
                 int newPercent = (int)Math.floor((((float)index)/((float)chapterCount)) * 100);
                 if(newPercent > percent) {
                     percent = newPercent;
@@ -178,6 +172,7 @@ public class ChapterContentsCacheService extends Service {
                             .setProgress(chapterCount, index, false)
                             .setContentText(buildProgressContentString(percent, index, chapterCount));
                     mNotifyManager.notify(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
+                    mEventBus.sendEvent(new ImportChapterContentEvent(cacheTask.getNovelId(), 0));
                 }
 
             }

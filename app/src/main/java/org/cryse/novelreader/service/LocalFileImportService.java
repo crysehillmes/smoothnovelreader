@@ -192,6 +192,7 @@ public class LocalFileImportService extends Service {
                                 )
                         );
                 mNotifyManager.notify(CACHING_NOTIFICATION_ID, progressNotificationBuilder.build());
+                mEventBus.sendEvent(new ImportChapterContentEvent(novelId, 0));
             });
             final NovelModel finalNewLocalNovel = newLocalNovel;
             int chapterCount = localTextReader.readChapters(new LocalTextReader.OnChapterReadCallback() {
@@ -235,10 +236,6 @@ public class LocalFileImportService extends Service {
                         addChapterToDatabase(novelId, chapterIndex, chapter.getChapterName(), content);
                         chapterIndex++;
                         importBulkCount++;
-                    }
-                    if(importBulkCount >= CacheConstants.CONST_BULK_INSERT_COUNT) {
-                        mEventBus.sendEvent(new ImportChapterContentEvent(finalNewLocalNovel.getNovelId(), importBulkCount));
-                        importBulkCount = 0;
                     }
                 }
             });
