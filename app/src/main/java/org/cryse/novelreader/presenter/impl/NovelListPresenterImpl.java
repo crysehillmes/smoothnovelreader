@@ -3,6 +3,7 @@ package org.cryse.novelreader.presenter.impl;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelListPresenter;
+import org.cryse.novelreader.util.LDSort;
 import org.cryse.novelreader.util.SubscriptionUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 import org.cryse.novelreader.view.NovelOnlineListView;
@@ -92,6 +93,7 @@ public class NovelListPresenterImpl implements NovelListPresenter {
                 .subscribe(
                         result -> {
                             if (mView != null) {
+                                LDSort.sortNovel(result, query);
                                 mView.getNovelListSuccess(result, append);
                             }
                         },

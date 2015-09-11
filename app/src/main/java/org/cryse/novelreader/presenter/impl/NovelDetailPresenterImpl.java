@@ -53,7 +53,7 @@ public class NovelDetailPresenterImpl implements NovelDetailPresenter {
     @Override
     public void loadNovelDetail(NovelModel novelModel) {
         SubscriptionUtils.checkAndUnsubscribe(mLoadDetailSubscription);
-        mLoadDetailSubscription = dataService.getNovelDetail(novelModel.getNovelId(), novelModel.getSource())
+        mLoadDetailSubscription = dataService.getNovelDetail(novelModel, novelModel.getSource())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

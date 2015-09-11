@@ -5,15 +5,18 @@ import android.text.TextPaint;
 import org.cryse.novelreader.model.BookmarkModel;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
+import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.common.BaseFragmentPresenter;
 import org.cryse.novelreader.view.NovelChapterContentView;
 
 import java.util.List;
 
 public interface NovelChapterContentPresenter extends BaseFragmentPresenter<NovelChapterContentView> {
-    void loadChapter(ChapterModel novelChapterModel, boolean forceUpdate);
-    void loadNextChapter(ChapterModel novelChapterModel);
-    void loadPrevChapter(ChapterModel novelChapterModel, boolean jumpToLast);
+    void loadChapter(NovelModel novelModel, ChapterModel novelChapterModel, boolean forceUpdate);
+
+    void loadNextChapter(NovelModel novelModel, ChapterModel novelChapterModel);
+
+    void loadPrevChapter(NovelModel novelModel, ChapterModel novelChapterModel, boolean jumpToLast);
     void splitChapterAndDisplay(String title, String content);
     void addBookMark(BookmarkModel bookMarkModel);
     void saveLastReadBookMark(BookmarkModel bookMarkModel);
@@ -25,8 +28,9 @@ public interface NovelChapterContentPresenter extends BaseFragmentPresenter<Nove
 
     void setSplitParams(TextSplitParam splitParams);
 
-    void getOtherSrc(ChapterModel novelChapterModel);
-    void changeSrc(ChapterModel novelChapterModel, NovelChangeSrcModel changeSrcModel);
+    void getOtherSrc(NovelModel novelModel, ChapterModel novelChapterModel);
+
+    void changeSrc(NovelModel novelModel, ChapterModel novelChapterModel, NovelChangeSrcModel changeSrcModel);
 
     class TextSplitParam {
         private int displayWidth;

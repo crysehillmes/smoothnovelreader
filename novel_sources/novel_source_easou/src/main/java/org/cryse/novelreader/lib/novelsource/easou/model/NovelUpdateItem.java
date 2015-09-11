@@ -10,23 +10,13 @@ public class NovelUpdateItem {
     private long nId;
 
     @SerializedName("last_sort")
-    private int chapterIndex;
-
-    @SerializedName("last_sort")
     private int chapterId;
 
     @SerializedName("last_chapter_name")
     private String latestChapterTitle;
 
-    @SerializedName("last_sort")
-    private String chapterNumber;
-
-    public String getChapterNumber() {
-        return chapterNumber;
-    }
-
-    public void setChapterNumber(String chapterNumber) {
-        this.chapterNumber = chapterNumber;
+    public int getChapterNumber() {
+        return chapterId;
     }
 
     public long getGId() {
@@ -46,11 +36,7 @@ public class NovelUpdateItem {
     }
 
     public int getChapterIndex() {
-        return chapterIndex;
-    }
-
-    public void setChapterIndex(int chapterIndex) {
-        this.chapterIndex = chapterIndex;
+        return chapterId;
     }
 
     public int getChapterId() {

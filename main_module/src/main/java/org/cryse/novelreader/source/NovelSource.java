@@ -1,5 +1,7 @@
 package org.cryse.novelreader.source;
 
+import android.content.Context;
+
 import org.cryse.novelreader.model.ChapterContentModel;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
@@ -13,6 +15,10 @@ import java.util.List;
 import rx.Observable;
 
 public interface NovelSource {
+    int getNovelType();
+
+    String getNovelSourceName();
+
     Observable<List<NovelModel>> getCategories(String query, String subQuery, int page, int status, boolean isByTag);
 
     Observable<List<NovelModel>> getRanks(String cid, int page);
@@ -29,7 +35,11 @@ public interface NovelSource {
 
     List<NovelSyncBookShelfModel> getNovelUpdatesSync(UpdateRequestInfo... requestInfos);
 
+    List<NovelSyncBookShelfModel> getNovelUpdatesSync(List<UpdateRequestInfo> requestInfos);
+
     Observable<NovelDetailModel> getNovelDetail(String id, String src);
 
     Observable<List<NovelChangeSrcModel>> getOtherChapterSrc(String novelId, String chapterSrc, String title);
+
+    String getCopyRightStatement(Context context);
 }

@@ -39,6 +39,7 @@ import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.application.module.DetailActivityModule;
 import org.cryse.novelreader.constant.DataContract;
+import org.cryse.novelreader.logic.impl.NovelSourceManager;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelDetailPresenter;
@@ -134,6 +135,9 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
     ProgressBar mLoadingProgress;
     @Inject
     NovelDetailPresenter mPresenter;
+    @Inject
+    NovelSourceManager mSourceManager;
+
     MenuItem mStartReadingMenuItem;
     ServiceConnection mBackgroundServiceConnection;
     private float mMaxHeaderElevation;
@@ -492,6 +496,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
 
     private void showNovelDetailInformation() {
         setDetailSectionHeaderColor();
+        String copyRightStatement = mSourceManager.getCopyRightStatement(this, mNovel.getType());
         // TODO: mStatusTextView.setText(getString(R.string.novel_detail_status_fomat, mNovel.getStatus()));
         if(mNovelDetail.getChapterNumber() <= 0) {
             mChapterCountTextView.setText(getString(R.string.novel_detail_chapter_count_unknown));
@@ -503,7 +508,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         final String detailAbstract = mNovelDetail.getSummary().replace("\t","");
         if (!TextUtils.isEmpty(detailAbstract)) {
             UIUtils.setTextMaybeHtml(mAbstractTextView, UIUtils.addIndentToStart(detailAbstract));
-            SpannableString copyRightString = new SpannableString(getString(R.string.copyright_statement));
+            SpannableString copyRightString = new SpannableString(copyRightStatement);
             copyRightString.setSpan(new ForegroundColorSpan(mDetailPrimaryColor), 0, copyRightString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             mAbstractTextView.append("\n\n");
             mAbstractTextView.append(copyRightString);

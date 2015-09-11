@@ -19,6 +19,7 @@ import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.event.ImportChapterContentEvent;
 import org.cryse.novelreader.event.RxEventBus;
+import org.cryse.novelreader.logic.impl.NovelSourceManager;
 import org.cryse.novelreader.model.ChapterContentModel;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
@@ -41,7 +42,7 @@ public class ChapterContentsCacheService extends Service {
     @Inject
     NovelDatabaseAccessLayer mNovelDatabase;
     @Inject
-    NovelSource novelSource;
+    NovelSourceManager mNovelSourceManager;
     @Inject
     NovelTextFilter novelTextFilter;
     RxEventBus mEventBus = RxEventBus.getInstance();
@@ -90,8 +91,9 @@ public class ChapterContentsCacheService extends Service {
         return new ChapterContentsCacheBinder();
     }
 
-    private ChapterContentModel loadChapterContentFromWeb(String id, String secondId, String title, String src) {
-        return novelSource.getChapterContentSync(id, secondId, title, src);
+    private ChapterContentModel loadChapterContentFromWeb(NovelModel novel, String secondId, String title, String src) {
+        NovelSource novelSource = mNovelSourceManager.getNovelSource(novel.getType());
+        return novelSource.getChapterContentSync(novel.getNovelId(), secondId, title, src);
     }
 
     @Override
@@ -153,7 +155,7 @@ public class ChapterContentsCacheService extends Service {
                     successCount++;
                     continue;
                 }
-                ChapterContentModel chapterContentModel = loadChapterContentFromWeb(cacheTask.getNovelId(), chapterModel.getChapterId(), chapterModel.getTitle(), chapterModel.getSource());
+                ChapterContentModel chapterContentModel = loadChapterContentFromWeb(cacheTask.getNovelModel(), chapterModel.getChapterId(), chapterModel.getTitle(), chapterModel.getSource());
                 if (chapterContentModel != null) {
                     chapterContentModel.setContent(novelTextFilter.filter(chapterContentModel.getContent()));
                     mNovelDatabase.updateChapterContent(chapterContentModel);

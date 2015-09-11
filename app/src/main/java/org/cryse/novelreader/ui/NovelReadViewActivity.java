@@ -152,7 +152,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         public void onReloadClick() {
             closeBottomPanel(() -> {
                 if (!checkIfLocal())
-                    getPresenter().loadChapter(mNovelChapters.get(chapterIndex), true);
+                    getPresenter().loadChapter(mNovel, mNovelChapters.get(chapterIndex), true);
             });
         }
 
@@ -375,7 +375,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                         chapterIndex = 0;
                         chapterOffset = 0;
                     }
-                    getPresenter().loadChapter(mNovelChapters.get(chapterIndex), false);
+                    getPresenter().loadChapter(mNovel, mNovelChapters.get(chapterIndex), false);
                 }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     obs.removeOnGlobalLayoutListener(this);
@@ -640,7 +640,13 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                 .title(R.string.bottom_sheet_item_change_src)
                 .items(srcs)
                 .theme(isNightMode() ? Theme.DARK : Theme.LIGHT)
-                .itemsCallback((materialDialog, view, selection, charSequence) -> getPresenter().changeSrc(mNovelChapters.get(chapterIndex), otherSrc.get(selection)));
+                .itemsCallback((materialDialog, view, selection, charSequence) ->
+                                getPresenter().changeSrc(
+                                        mNovel,
+                                        mNovelChapters.get(chapterIndex),
+                                        otherSrc.get(selection)
+                                )
+                );
         MaterialDialog dialog = dialogBuilder.build();
         dialog.setOnDismissListener(dialogInterface -> hideSystemUI());
         dialog.show();
@@ -679,13 +685,13 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     private void goNextChapter() {
         if(chapterIndex + 1 >= mNovelChapters.size())
             return;
-        getPresenter().loadNextChapter(mNovelChapters.get(chapterIndex + 1));
+        getPresenter().loadNextChapter(mNovel, mNovelChapters.get(chapterIndex + 1));
     }
 
     private void goPrevChapter() {
         if(chapterIndex - 1 < 0)
             return;
-        getPresenter().loadPrevChapter(mNovelChapters.get(chapterIndex - 1), true);
+        getPresenter().loadPrevChapter(mNovel, mNovelChapters.get(chapterIndex - 1), true);
     }
 
     private void goNextPage() {
@@ -730,7 +736,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
 
     public void onMenuItemChangeSrcClick() {
         if (checkIfLocal())
-            getPresenter().getOtherSrc(mNovelChapters.get(chapterIndex));
+            getPresenter().getOtherSrc(mNovel, mNovelChapters.get(chapterIndex));
     }
 
     public void onMenuItemNightModeClick() {
