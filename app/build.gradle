@@ -70,7 +70,7 @@ dependencies {
     compile "com.android.support:support-annotations:$supportlibraryVersion"
     compile "com.android.support:cardview-v7:$supportlibraryVersion"
     compile "com.android.support:recyclerview-v7:$supportlibraryVersion"
-    compile 'com.google.android.gms:play-services-analytics:7.3.0'
+    compile 'com.google.android.gms:play-services-analytics:7.8.0'
 
     // ReactiveX
     compile 'io.reactivex:rxandroid:1.0.1'
