@@ -5,10 +5,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,51 +16,58 @@ import android.widget.TextView;
 
 import com.quentindommerc.superlistview.SuperListview;
 
-import org.cryse.novelreader.application.SmoothReaderApplication;
-import org.cryse.novelreader.model.NovelBookMarkModel;
-import org.cryse.novelreader.service.ChapterContentsCacheService;
-import org.cryse.novelreader.util.ColorUtils;
-
 import org.cryse.novelreader.R;
-import org.cryse.novelreader.model.NovelChapterModel;
+import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.application.module.ChaptersActivityModule;
+import org.cryse.novelreader.application.qualifier.PrefsHideRedundantChapterTitle;
+import org.cryse.novelreader.constant.DataContract;
+import org.cryse.novelreader.event.AbstractEvent;
+import org.cryse.novelreader.event.ImportChapterContentEvent;
+import org.cryse.novelreader.model.BookmarkModel;
+import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelModel;
+import org.cryse.novelreader.presenter.NovelChaptersPresenter;
+import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.ui.adapter.NovelChapterListAdapter;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
-import org.cryse.novelreader.presenter.NovelChaptersPresenter;
+import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.SimpleSnackbarType;
-import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
+import org.cryse.novelreader.util.prefs.BooleanPreference;
 import org.cryse.novelreader.view.NovelChaptersView;
-import org.cryse.novelreader.util.DataContract;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class NovelChapterListActivity extends AbstractThemeableActivity implements NovelChaptersView{
     private static final String LOG_TAG = NovelChapterListActivity.class.getName();
     @Inject
     NovelChaptersPresenter mPresenter;
+    @Inject
+    @PrefsHideRedundantChapterTitle
+    BooleanPreference mHideRedundantChapterTitle;
 
-    @InjectView(R.id.novel_chapter_list_listview)
+    @Bind(R.id.my_awesome_toolbar)
+    Toolbar mToolbar;
+    @Bind(R.id.novel_chapter_list_listview)
     SuperListview mListView;
 
-    @InjectView(R.id.empty_view_text_prompt)
+    @Bind(R.id.empty_view_text_prompt)
     TextView mEmptyViewText;
 
     NovelModel mNovel;
-    ArrayList<NovelChapterModel> mNovelChapterList;
+    ArrayList<ChapterModel> mNovelChapterList;
 
     NovelChapterListAdapter mChapterListAdapter;
+    ServiceConnection mBackgroundServiceConnection;
     private MenuItem mMenuItemCacheChapters;
     private MenuItem mMenuItemDetail;
     private MenuItem mMenuItemRefresh;
-
-    ServiceConnection mBackgroundServiceConnection;
     private ChapterContentsCacheService.ChapterContentsCacheBinder mServiceBinder;
 
     @Override
@@ -68,8 +75,8 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         injectThis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chapter_list);
-        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
+        setUpToolbar(mToolbar);
         mEmptyViewText.setText(getString(R.string.empty_view_prompt));
         if(savedInstanceState != null) {
             mNovel = savedInstanceState.getParcelable(DataContract.NOVEL_OBJECT_NAME);
@@ -80,7 +87,10 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
         // UIUtils.setInsets(this, getToolbar(), false);
         initListView();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         setTitle(mNovel.getTitle());
 
         mBackgroundServiceConnection = new ServiceConnection() {
@@ -99,7 +109,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     @SuppressLint("ResourceAsColor")
     private void initListView() {
         if(mNovelChapterList == null)
-            mNovelChapterList = new ArrayList<NovelChapterModel>();
+            mNovelChapterList = new ArrayList<ChapterModel>();
         mChapterListAdapter = new NovelChapterListAdapter(this, mNovelChapterList);
         mListView.setAdapter(mChapterListAdapter);
         mListView.getSwipeToRefresh().setColorSchemeResources(
@@ -113,8 +123,8 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
             if(truePosition == mChapterListAdapter.getLastReadIndicator())
                 getPresenter().readLastPosition(mNovel, mNovelChapterList);
             else {
-                NovelChapterModel item = mChapterListAdapter.getItem(truePosition);
-                getPresenter().readChapter(mNovel, item.getSecondId(), mNovelChapterList);
+                ChapterModel item = mChapterListAdapter.getItem(truePosition);
+                getPresenter().readChapter(mNovel, item.getChapterId(), mNovelChapterList);
             }
         });
         mListView.getList().setFastScrollEnabled(true);
@@ -136,7 +146,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         if(mNovelChapterList.size() == 0) {
             mListView.getSwipeToRefresh().measure(1,1);
             mListView.getSwipeToRefresh().setRefreshing(true);
-            getPresenter().loadChapters(mNovel);
+            getPresenter().loadChapters(mNovel, mHideRedundantChapterTitle.get(), true);
         }
         if(index != -1) {
             mListView.getList().setSelectionFromTop(index, top);
@@ -148,6 +158,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
         super.onStart();
         getPresenter().bindView(this);
         Intent service = new Intent(this.getApplicationContext(), ChapterContentsCacheService.class);
+        startService(service);
         this.bindService(service, mBackgroundServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -162,7 +173,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     protected void onResume() {
         super.onResume();
         getPresenter().checkNovelFavoriteStatus(mNovel);
-        getPresenter().loadChapters(mNovel);
+        getPresenter().loadChapters(mNovel, mHideRedundantChapterTitle.get(), true);
     }
 
     @Override
@@ -173,7 +184,9 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     @Override
     protected void injectThis() {
-        SmoothReaderApplication.get(this).inject(this);
+        SmoothReaderApplication.get(this).getAppComponent().plus(
+                new ChaptersActivityModule(this)
+        ).inject(this);
     }
 
     @Override
@@ -198,7 +211,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean isLocalBook = mNovel.getSrc().startsWith(DataContract.LOCAL_FILE_PREFIX);
+        boolean isLocalBook = mNovel.getSource().startsWith(DataContract.LOCAL_FILE_PREFIX);
         if(mMenuItemRefresh != null) {
             mMenuItemRefresh.setVisible(!isLocalBook);
         }
@@ -251,22 +264,32 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
     }
 
     @Override
-    public void showChapterList(List<NovelChapterModel> chapterList) {
+    protected void onEvent(AbstractEvent event) {
+        super.onEvent(event);
+        if(event instanceof ImportChapterContentEvent) {
+            if(((ImportChapterContentEvent) event).getNovelId().equals(mNovel.getNovelId()))
+                getPresenter().loadChapters(mNovel, mHideRedundantChapterTitle.get(), false);
+        }
+    }
+
+    @Override
+    public void showChapterList(List<ChapterModel> chapterList, boolean scrollToLastRead) {
         mNovelChapterList.clear();
         mNovelChapterList.addAll(chapterList);
         mChapterListAdapter.notifyDataSetChanged();
-        if(mNovelChapterList.size() > 0)
+        if(mNovelChapterList.size() > 0 && scrollToLastRead)
             getPresenter().checkLastReadState(mNovel);
     }
 
     @Override
-    public void canGoToLastRead(NovelBookMarkModel bookMark) {
+    public void canGoToLastRead(BookmarkModel bookMark) {
         if (bookMark != null) {
             int index = findChapterIndex(bookMark.getChapterId());
             if (index >= 0 && index < mNovelChapterList.size()) {
                 mChapterListAdapter.setLastReadIndicator(index);
                 mChapterListAdapter.notifyDataSetChanged();
-                if(index < mListView.getList().getFirstVisiblePosition()) {
+                mListView.getList().setSelection(index);
+                /*if(index < mListView.getList().getFirstVisiblePosition()) {
                     int distance = mListView.getList().getFirstVisiblePosition() - index;
                     if(distance > 50) {
                         distance = 50;
@@ -280,7 +303,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
                     }
                     mListView.getList().setSelection(index - distance);
                     mListView.getList().smoothScrollToPosition(index);
-                }
+                }*/
             }
         } else {
             mChapterListAdapter.clearLastReadIndicator();
@@ -320,7 +343,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     private void refreshChapters() {
         mListView.getSwipeToRefresh().setRefreshing(true);
-        getPresenter().loadChapters(mNovel, true);
+        getPresenter().loadChapters(mNovel, true, false);
     }
 
     private void chaptersOfflineCache() {
@@ -332,17 +355,11 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
 
     private int findChapterIndex(String chapterId) {
         for (int i = 0; i < mNovelChapterList.size(); i++) {
-            NovelChapterModel chapterModel = mNovelChapterList.get(i);
-            if (chapterModel.getSecondId().equals(chapterId)) {
+            ChapterModel chapterModel = mNovelChapterList.get(i);
+            if (chapterModel.getChapterId().equals(chapterId)) {
                 return i;
             }
         }
         throw new IllegalStateException("ChapterIndex not found.");
-    }
-
-    @Override
-    public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
-        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, type, Snackbar.LENGTH_SHORT);
-        snackbar.show();
     }
 }

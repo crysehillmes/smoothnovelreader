@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+    <item android:drawable="@drawable/ic_notification_download_anim00" android:duration="160" />
+    <item android:drawable="@drawable/ic_notification_download_anim01" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim02" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim03" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim04" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim05" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim06" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim07" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim08" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim09" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim10" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim11" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim12" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim13" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim14" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim15" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim16" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim17" android:duration="80" />
+    <item android:drawable="@drawable/ic_notification_download_anim18" android:duration="80" />
+</animation-list>

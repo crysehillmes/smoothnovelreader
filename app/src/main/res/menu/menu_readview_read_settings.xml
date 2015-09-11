@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menu_bottomsheet_textsize" android:title="@string/bottom_sheet_item_font_size" android:icon="@drawable/ic_menu_text_font_size"/>
-    <item android:id="@+id/menu_bottomsheet_pagecurl_mode" android:title="@string/bottom_sheet_item_page_curl_mode" android:icon="@drawable/ic_menu_page_curl_mode"/>
-    <item android:id="@+id/menu_bottomsheet_background_color" android:title="@string/bottom_sheet_item_read_background" android:icon="@drawable/ic_menu_color_palette"/>
-</menu>

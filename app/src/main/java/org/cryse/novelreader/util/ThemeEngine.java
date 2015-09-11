@@ -1,14 +1,14 @@
 package org.cryse.novelreader.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import org.cryse.novelreader.R;
-import org.cryse.novelreader.qualifier.PrefsNightMode;
-import org.cryse.novelreader.qualifier.PrefsThemeColor;
+import org.cryse.novelreader.constant.PreferenceConstant;
 import org.cryse.novelreader.util.prefs.BooleanPreference;
 import org.cryse.novelreader.util.prefs.IntegerPreference;
-
-import javax.inject.Inject;
 
 public class ThemeEngine {
     IntegerPreference mPrefColorIndex;
@@ -58,10 +58,14 @@ public class ThemeEngine {
             R.color.md_blue_grey_700
     };
 
-    @Inject
-    public ThemeEngine(@PrefsNightMode BooleanPreference nightModePrefs, @PrefsThemeColor IntegerPreference themeColorPrefs) {
-        mPrefNightMode = nightModePrefs;
-        mPrefColorIndex = themeColorPrefs;
+    private ThemeEngine(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        mPrefNightMode = new BooleanPreference(sharedPreferences, PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE, PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE_VALUE);
+        mPrefColorIndex = new IntegerPreference(sharedPreferences, PreferenceConstant.SHARED_PREFERENCE_THEME_COLOR, PreferenceConstant.SHARED_PREFERENCE_THEME_COLOR_VALUE);
+    }
+
+    public static ThemeEngine get(Activity activity) {
+        return new ThemeEngine(activity);
     }
 
     public int getPrimaryColor(Context context) {

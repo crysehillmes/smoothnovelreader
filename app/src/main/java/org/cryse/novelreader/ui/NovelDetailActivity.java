@@ -14,8 +14,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -37,15 +37,16 @@ import android.widget.TextView;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.application.module.DetailActivityModule;
+import org.cryse.novelreader.constant.DataContract;
+import org.cryse.novelreader.logic.impl.NovelSourceManager;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelDetailPresenter;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ColorUtils;
-import org.cryse.novelreader.util.DataContract;
 import org.cryse.novelreader.util.SimpleSnackbarType;
-import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.view.NovelDetailView;
@@ -54,8 +55,8 @@ import org.cryse.widget.ObservableScrollView;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import timber.log.Timber;
 
 
@@ -67,98 +68,102 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
 
 
     // View field
-    @InjectView(R.id.scroll_view)
+    @Bind(R.id.my_awesome_toolbar)
+    Toolbar mToolbar;
+
+    @Bind(R.id.scroll_view)
     ObservableScrollView mScrollView;
 
-    @InjectView(R.id.scroll_view_child)
+    @Bind(R.id.scroll_view_child)
     FrameLayout mScrollViewChild;
 
-    @InjectView(R.id.session_photo_container)
+    @Bind(R.id.session_photo_container)
     FrameLayout mPhotoViewContainer;
 
-    @InjectView(R.id.session_photo)
+    @Bind(R.id.session_photo)
     ImageView mPhotoView;
 
-    @InjectView(R.id.details_container)
+    @Bind(R.id.details_container)
     LinearLayout mDetailsContainer;
 
-    @InjectView(R.id.novel_brief_info_layout)
+    @Bind(R.id.novel_brief_info_layout)
     LinearLayout mBriefInfoLayout;
 
-    @InjectView(R.id.detail_status_textview)
+    @Bind(R.id.detail_status_textview)
     TextView mStatusTextView;
 
-    @InjectView(R.id.detail_chapter_count_textview)
+    @Bind(R.id.detail_chapter_count_textview)
     TextView mChapterCountTextView;
 
-    @InjectView(R.id.detail_latest_chapter_textview)
+    @Bind(R.id.detail_latest_chapter_textview)
     TextView mLatestChapterTextView;
 
-    @InjectView(R.id.detail_abstract_header)
+    @Bind(R.id.detail_abstract_header)
     TextView mAbstractHeaderTextView;
 
-    @InjectView(R.id.novel_abstract)
+    @Bind(R.id.novel_abstract)
     TextView mAbstractTextView;
 
-    @InjectView(R.id.novel_tags_scrollview)
+    @Bind(R.id.novel_tags_scrollview)
     HorizontalScrollView mTagsScrollView;
 
-    @InjectView(R.id.novel_tags_container)
+    @Bind(R.id.novel_tags_container)
     LinearLayout mTagsContainer;
 
-    @InjectView(R.id.detail_achieve_block)
+    @Bind(R.id.detail_achieve_block)
     LinearLayout mAchieveLayout;
 
-    @InjectView(R.id.detail_achieve_header)
+    @Bind(R.id.detail_achieve_header)
     TextView mAchieveHeaderTextView;
 
-    @InjectView(R.id.detail_achieves_container)
+    @Bind(R.id.detail_achieves_container)
     LinearLayout mAchievesContainer;
 
-    @InjectView(R.id.header_novel)
+    @Bind(R.id.header_novel)
     LinearLayout mHeaderBox;
 
-    @InjectView(R.id.novel_title)
+    @Bind(R.id.novel_title)
     TextView mTitleTextView;
 
-    @InjectView(R.id.novel_subtitle)
+    @Bind(R.id.novel_subtitle)
     TextView mSubtitleTextView;
 
-    @InjectView(R.id.add_novel_button)
+    @Bind(R.id.add_novel_button)
     CheckableFrameLayout mAddNovelButton;
 
-    @InjectView(R.id.detail_loading_progress)
+    @Bind(R.id.detail_loading_progress)
     ProgressBar mLoadingProgress;
+    @Inject
+    NovelDetailPresenter mPresenter;
+    @Inject
+    NovelSourceManager mSourceManager;
 
+    MenuItem mStartReadingMenuItem;
+    ServiceConnection mBackgroundServiceConnection;
     private float mMaxHeaderElevation;
     private float mFABElevation;
-
     private int mTagColorDotSize;
-
     private Handler mHandler;
-
     private int mPhotoHeightPixels;
     private int mHeaderHeightPixels;
     private int mAddNovelButtonHeightPixels;
-
     private boolean mHasPhoto;
-
     private String mTitleString;
     private int mDetailPrimaryColor;
     private boolean mHasSummaryContent = false;
-
-    @Inject
-    NovelDetailPresenter mPresenter;
-
-    MenuItem mStartReadingMenuItem;
-
     private NovelModel mNovel;
     private NovelDetailModel mNovelDetail;
     private boolean mIsFavorited = false;
     private boolean mShowStartReadingButton = true;
-
-    ServiceConnection mBackgroundServiceConnection;
     private ChapterContentsCacheService.ChapterContentsCacheBinder mServiceBinder;
+    private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener
+            = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            mAddNovelButtonHeightPixels = mAddNovelButton.getHeight();
+            recomputePhotoAndScrollingMetrics();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,8 +178,8 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_novel_detail);
-        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
+        setUpToolbar(mToolbar);
 
         mBackgroundServiceConnection = new ServiceConnection() {
             @Override
@@ -192,9 +197,8 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         if(shouldBeFloatingWindow()) {
-            getToolbar().setNavigationIcon(R.drawable.ic_ab_close);
+            mToolbar.setNavigationIcon(R.drawable.ic_ab_close);
         }
-        setPreLShadowVisibility(false);
         if (savedInstanceState == null) {
             Uri sessionUri = getIntent().getData();
             /*BeamUtils.setBeamSessionUri(this, sessionUri);*/
@@ -228,13 +232,13 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
             public void onClick(View view) {
                 if(mServiceBinder != null && mServiceBinder.isCaching() && mServiceBinder.getCurrentCachingNovelId() != null) {
                     String currentCachingNovelId = mServiceBinder.getCurrentCachingNovelId();
-                    if(mIsFavorited && currentCachingNovelId.compareTo(mNovel.getId()) == 0) {
+                    if(mIsFavorited && currentCachingNovelId.compareTo(mNovel.getNovelId()) == 0) {
                         showSnackbar(getString(R.string.toast_chapter_contents_caching_cannot_delete, mNovel.getTitle()), SimpleSnackbarType.WARNING);
                         return;
                     }
                 }
                 if(mIsFavorited && mServiceBinder != null) {
-                   if(mServiceBinder.removeFromQueueIfExist(mNovel.getId())) {
+                   if(mServiceBinder.removeFromQueueIfExist(mNovel.getNovelId())) {
                        showSnackbar(getString(R.string.notification_action_chapter_contents_cancel_novel, mNovel.getTitle()), SimpleSnackbarType.INFO);
                    }
                 }
@@ -251,18 +255,18 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         });
     }
 
+    /*@Override
+    public Intent getParentActivityIntent() {
+        // TODO: make this Activity navigate up to the right screen depending on how it was launched
+        return new Intent(this, MyScheduleActivity.class);
+    }*/
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if(mNovelDetail != null)
             outState.putParcelable("novel_detail_object", mNovelDetail);
     }
-
-    /*@Override
-    public Intent getParentActivityIntent() {
-        // TODO: make this Activity navigate up to the right screen depending on how it was launched
-        return new Intent(this, MyScheduleActivity.class);
-    }*/
 
     private void setupFloatingWindow() {
         // configure this Activity as a floating window, dimming the background
@@ -318,6 +322,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         super.onStart();
         getPresenter().bindView(this);
         Intent service = new Intent(this.getApplicationContext(), ChapterContentsCacheService.class);
+        startService(service);
         this.bindService(service, mBackgroundServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -344,7 +349,9 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
 
     @Override
     protected void injectThis() {
-        SmoothReaderApplication.get(this).inject(this);
+        SmoothReaderApplication.get(this).getAppComponent().plus(
+                new DetailActivityModule(this)
+        ).inject(this);
     }
 
     @Override
@@ -356,15 +363,6 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
     protected void analyticsTrackExit() {
         AnalyticsUtils.trackActivityExit(this, LOG_TAG);
     }
-
-    private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener
-            = new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-            mAddNovelButtonHeightPixels = mAddNovelButton.getHeight();
-            recomputePhotoAndScrollingMetrics();
-        }
-    };
 
     @Override
     public void onScrollChanged(int deltaX, int deltaY) {
@@ -434,7 +432,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
     }
 
     private void showNovelInformation() {
-        mDetailPrimaryColor = ColorUtils.getPreDefinedColorFromId(getThemedContext(), mNovel.getId(), mNovel.getTitle().length());
+        mDetailPrimaryColor = ColorUtils.getPreDefinedColorFromId(getThemedContext().getResources(), mNovel.getNovelId(), mNovel.getTitle().length());
         mTitleString = mNovel.getTitle();
 
         if (mDetailPrimaryColor == 0) {
@@ -498,7 +496,8 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
 
     private void showNovelDetailInformation() {
         setDetailSectionHeaderColor();
-        mStatusTextView.setText(getString(R.string.novel_detail_status_fomat, mNovel.getStatus()));
+        String copyRightStatement = mSourceManager.getCopyRightStatement(this, mNovel.getType());
+        // TODO: mStatusTextView.setText(getString(R.string.novel_detail_status_fomat, mNovel.getStatus()));
         if(mNovelDetail.getChapterNumber() <= 0) {
             mChapterCountTextView.setText(getString(R.string.novel_detail_chapter_count_unknown));
         } else {
@@ -509,7 +508,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         final String detailAbstract = mNovelDetail.getSummary().replace("\t","");
         if (!TextUtils.isEmpty(detailAbstract)) {
             UIUtils.setTextMaybeHtml(mAbstractTextView, UIUtils.addIndentToStart(detailAbstract));
-            SpannableString copyRightString = new SpannableString(getString(R.string.copyright_statement));
+            SpannableString copyRightString = new SpannableString(copyRightStatement);
             copyRightString.setSpan(new ForegroundColorSpan(mDetailPrimaryColor), 0, copyRightString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             mAbstractTextView.append("\n\n");
             mAbstractTextView.append(copyRightString);
@@ -578,7 +577,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
                 colorDrawable.getPaint().setStyle(Paint.Style.FILL);
                 chipView.setCompoundDrawablesWithIntrinsicBounds(colorDrawable,
                         null, null, null);
-                colorDrawable.getPaint().setColor(ColorUtils.getRandomPreDefinedColor(getThemedContext()));
+                colorDrawable.getPaint().setColor(ColorUtils.getRandomPreDefinedColor(getThemedContext().getResources()));
 
                 mTagsContainer.addView(chipView);
             }
@@ -673,11 +672,5 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
     @Override
     public Boolean isLoading() {
         return null;
-    }
-
-    @Override
-    public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
-        Snackbar snackbar = SnackbarUtils.makeSimple(getSnackbarRootView(), text, type, Snackbar.LENGTH_SHORT);
-        snackbar.show();
     }
 }

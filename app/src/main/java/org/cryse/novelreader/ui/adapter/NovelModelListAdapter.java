@@ -2,6 +2,7 @@ package org.cryse.novelreader.ui.adapter;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +17,8 @@ import org.cryse.widget.recyclerview.RecyclerViewBaseAdapter;
 
 import java.util.List;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.Optional;
 
 public abstract class NovelModelListAdapter extends RecyclerViewBaseAdapter<NovelModelListAdapter.ViewHolder>
     implements ContentAdapter<NovelModel>{
@@ -90,38 +90,12 @@ public abstract class NovelModelListAdapter extends RecyclerViewBaseAdapter<Nove
         return new ViewHolder(v);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
-
-        @InjectView(R.id.listview_item_novel_title_textview)
-        public TextView mNovelTitleTextView;
-        @InjectView(R.id.listview_item_novel_info1_textview)
-        public TextView mNovelInfo1TextView;
-        @Optional
-        @InjectView(R.id.listview_item_novel_info2_textview)
-        public TextView mNovelInfo2TextView;
-        /*@InjectView(R.id.listview_item_novel_info3_textview)
-        public TextView mNovelInfo3TextView;*/
-        @Optional
-        @InjectView(R.id.listview_item_novel_image_imageview)
-        public ImageView mNovelImageImageView;
-
-        @Optional
-        @InjectView(R.id.listview_item_novel_bg_view)
-        public LinearLayout mBackCoverLayout;
-
-        @Optional
-        @InjectView(R.id.listview_item_novel_unread_textview)
-        public TextView mUnreadTextView;
-
-        public ViewHolder(View v) {
-            super(v);
-            ButterKnife.inject(this, v);
-        }
-    }
-
     public String getCurrentCategory() {
         return mCurrentCategory;
+    }
+
+    public void setCurrentCategory(String currentCategory) {
+        this.mCurrentCategory = currentCategory;
     }
 
     public String getString(int resId) {
@@ -144,11 +118,38 @@ public abstract class NovelModelListAdapter extends RecyclerViewBaseAdapter<Nove
         this.mNovelList = mNovelList;
     }
 
-    public void setCurrentCategory(String currentCategory) {
-        this.mCurrentCategory = currentCategory;
-    }
-
     public abstract int getLayoutId();
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        // each data item is just a string in this case
+
+        @Bind(R.id.listview_item_novel_title_textview)
+        public TextView mNovelTitleTextView;
+        @Bind(R.id.listview_item_novel_info1_textview)
+        public TextView mNovelInfo1TextView;
+        @Nullable
+        @Bind(R.id.listview_item_novel_info2_textview)
+        public TextView mNovelInfo2TextView;
+        /*@Nullable
+        @Bind(R.id.listview_item_novel_info3_textview)
+        public TextView mNovelInfo3TextView;*/
+        @Nullable
+        @Bind(R.id.listview_item_novel_image_imageview)
+        public ImageView mNovelImageImageView;
+
+        @Nullable
+        @Bind(R.id.listview_item_novel_bg_view)
+        public LinearLayout mBackCoverLayout;
+
+        @Nullable
+        @Bind(R.id.listview_item_novel_unread_textview)
+        public TextView mUnreadTextView;
+
+        public ViewHolder(View v) {
+            super(v);
+            ButterKnife.bind(this, v);
+        }
+    }
 
 
 }

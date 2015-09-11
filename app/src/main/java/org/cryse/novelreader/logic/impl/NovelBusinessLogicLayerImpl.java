@@ -1,29 +1,26 @@
 package org.cryse.novelreader.logic.impl;
 
+import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
-import android.util.Log;
 
-import org.cryse.chaptersplitter.LocalTextReader;
-import org.cryse.chaptersplitter.TextChapter;
+import org.cryse.novelreader.constant.DataContract;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
-import org.cryse.novelreader.model.NovelBookMarkModel;
+import org.cryse.novelreader.model.BookmarkModel;
+import org.cryse.novelreader.model.ChapterContentModel;
+import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
-import org.cryse.novelreader.model.NovelChapterContentModel;
-import org.cryse.novelreader.model.NovelChapterModel;
 import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.model.NovelSyncBookShelfModel;
+import org.cryse.novelreader.model.UpdateRequestInfo;
 import org.cryse.novelreader.source.NovelSource;
-import org.cryse.novelreader.util.DataContract;
-import org.cryse.novelreader.util.HashUtils;
+import org.cryse.novelreader.util.ChapterTitleUtils;
 import org.cryse.novelreader.util.NovelTextFilter;
+import org.cryse.novelreader.util.comparator.NovelSortKeyComparator;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -31,10 +28,11 @@ import javax.inject.Inject;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.functions.FuncN;
 
 public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     public static final String LOCAL_FILE_PREFIX = DataContract.LOCAL_FILE_PREFIX;
-    NovelSource novelSource;
+    NovelSourceManager mNovelSourceManager;
 
     NovelDatabaseAccessLayer novelDataBase;
 
@@ -42,11 +40,11 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
 
     @Inject
     public NovelBusinessLogicLayerImpl(
-            NovelSource novelSource,
+            NovelSourceManager novelSourceManager,
             NovelDatabaseAccessLayer novelDataBase,
             NovelTextFilter novelTextFilter
     ) {
-        this.novelSource = novelSource;
+        this.mNovelSourceManager = novelSourceManager;
         this.novelDataBase = novelDataBase;
         this.novelTextFilter = novelTextFilter;
     }
@@ -74,7 +72,7 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                     result[1] = false;
                 } else {
                     result[0] = true;
-                    result[1] = novelModel.getSrc().startsWith(LOCAL_FILE_PREFIX + ":");
+                    result[1] = novelModel.getSource().startsWith(LOCAL_FILE_PREFIX + ":");
                 }
                 subscriber.onNext(result);
                 subscriber.onCompleted();
@@ -124,36 +122,39 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
 
     @Override
     public Observable<List<NovelModel>> getCategories(String cid, String subcate, int page, int status, boolean isByTag) {
-        return novelSource.getCategories(cid, subcate, page, status, isByTag);
+        return mNovelSourceManager.getDefault().getCategories(cid, subcate, page, status, isByTag);
     }
 
     @Override
     public Observable<List<NovelModel>> getRanks(String cid, int page) {
-        return novelSource.getRanks(cid, page);
+        return mNovelSourceManager.getDefault().getRanks(cid, page);
     }
 
     @Override
-    public Observable<List<NovelChapterModel>> getChapterList(final NovelModel novel, final boolean forceUpdate) {
-        return Observable.create((Subscriber<? super List<NovelChapterModel>> subscriber) -> {
+    public Observable<List<ChapterModel>> getChapterList(final NovelModel novel, final boolean forceUpdate, final boolean hideRedundantTitle) {
+        NovelSource novelSource = mNovelSourceManager.getNovelSource(novel.getType());
+        return Observable.create((Subscriber<? super List<ChapterModel>> subscriber) -> {
             try {
-                List<NovelChapterModel> chapterList;
-                if (novelDataBase.isFavorite(novel.getId())) {
-                    if (forceUpdate || novel.getLatestUpdateCount() != 0) {
-                        chapterList = novelSource.getChapterListSync(novel.getId(), novel.getSrc());
-                        novelDataBase.updateChapters(novel.getId(), chapterList);
-                        chapterList = novelDataBase.loadChapters(novel.getId());
+                List<ChapterModel> chapterList;
+                if (novelDataBase.isFavorite(novel.getNovelId())) {
+                    if (forceUpdate || novel.getLatestUpdateChapterCount() != 0) {
+                        chapterList = novelSource.getChapterListSync(novel.getNovelId(), novel.getSource());
+                        novelDataBase.updateChapters(novel.getNovelId(), chapterList);
+                        chapterList = novelDataBase.loadChapters(novel.getNovelId());
                     } else {
-                        chapterList = novelDataBase.loadChapters(novel.getId());
+                        chapterList = novelDataBase.loadChapters(novel.getNovelId());
                         if (chapterList.size() == 0) {
-                            chapterList = novelSource.getChapterListSync(novel.getId(), novel.getSrc());
-                            novelDataBase.updateChapters(novel.getId(), chapterList);
-                            chapterList = novelDataBase.loadChapters(novel.getId());
+                            chapterList = novelSource.getChapterListSync(novel.getNovelId(), novel.getSource());
+                            novelDataBase.updateChapters(novel.getNovelId(), chapterList);
+                            chapterList = novelDataBase.loadChapters(novel.getNovelId());
                         }
                     }
+                    ChapterTitleUtils.shrinkTitles(chapterList);
                     subscriber.onNext(chapterList);
                     subscriber.onCompleted();
                 } else {
-                    chapterList = novelSource.getChapterListSync(novel.getId(), novel.getSrc());
+                    chapterList = novelSource.getChapterListSync(novel.getNovelId(), novel.getSource());
+                    ChapterTitleUtils.shrinkTitles(chapterList);
                     subscriber.onNext(chapterList);
                     subscriber.onCompleted();
                 }
@@ -163,12 +164,13 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
         });
     }
 
-    public Observable<Boolean> preloadChapterContents(NovelModel novel, List<NovelChapterModel> chapterModels) {
+    public Observable<Boolean> preloadChapterContents(NovelModel novel, List<ChapterModel> chapterModels) {
+        NovelSource novelSource = mNovelSourceManager.getNovelSource(novel.getType());
         return Observable.create((Subscriber<? super Boolean> subscriber) -> {
             try {
-                if (novelDataBase.isFavorite(novel.getId())) {
-                    for (NovelChapterModel chapterModel : chapterModels) {
-                        NovelChapterContentModel chapterContentModel = novelSource.getChapterContentSync(novel.getId(), chapterModel.getSecondId(), chapterModel.getSrc());
+                if (novelDataBase.isFavorite(novel.getNovelId())) {
+                    for (ChapterModel chapterModel : chapterModels) {
+                        ChapterContentModel chapterContentModel = novelSource.getChapterContentSync(novel.getNovelId(), chapterModel.getChapterId(), chapterModel.getTitle(), chapterModel.getSource());
                         if (chapterContentModel != null) {
                             novelDataBase.updateChapterContent(chapterContentModel);
                             subscriber.onNext(true);
@@ -185,22 +187,23 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     }
 
     @Override
-    public Observable<NovelChapterContentModel> getChapterContent(final NovelChapterModel novelChapter, boolean forceUpdate) {
-        return Observable.create((Subscriber<? super NovelChapterContentModel> subscriber) -> {
+    public Observable<ChapterContentModel> getChapterContent(NovelModel novelModel, final ChapterModel novelChapter, boolean forceUpdate) {
+        NovelSource novelSource = mNovelSourceManager.getNovelSource(novelModel.getType());
+        return Observable.create((Subscriber<? super ChapterContentModel> subscriber) -> {
             try {
-                NovelChapterContentModel chapterContent;
-                Boolean isFavorite = novelDataBase.isFavorite(novelChapter.getId());
+                ChapterContentModel chapterContent;
+                Boolean isFavorite = novelDataBase.isFavorite(novelChapter.getNovelId());
                 if (isFavorite && !forceUpdate) {
-                    chapterContent = novelDataBase.loadChapterContent(novelChapter.getSecondId());
+                    chapterContent = novelDataBase.loadChapterContent(novelChapter.getChapterId());
                     if (chapterContent == null) {
-                        chapterContent = novelSource.getChapterContentSync(novelChapter.getId(), novelChapter.getSecondId(), novelChapter.getSrc());
+                        chapterContent = novelSource.getChapterContentSync(novelChapter.getNovelId(), novelChapter.getChapterId(), novelChapter.getTitle(), novelChapter.getSource());
                         chapterContent.setContent(novelTextFilter.filter(chapterContent.getContent()));
                         novelDataBase.updateChapterContent(chapterContent);
                     }
                     subscriber.onNext(chapterContent);
                     subscriber.onCompleted();
                 } else {
-                    chapterContent = novelSource.getChapterContentSync(novelChapter.getId(), novelChapter.getSecondId(), novelChapter.getSrc());
+                    chapterContent = novelSource.getChapterContentSync(novelChapter.getNovelId(), novelChapter.getChapterId(), novelChapter.getTitle(), novelChapter.getSource());
                     chapterContent.setContent(novelTextFilter.filter(chapterContent.getContent()));
                     // if(isFavorited) updateChapterContentInDB(novelChapter.getSecondId(), novelChapter.getSrc(), chapterContent);
                     subscriber.onNext(chapterContent);
@@ -214,7 +217,25 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
 
     @Override
     public Observable<List<NovelModel>> search(String queryString, int page) {
-        return novelSource.search(queryString, page);
+        Observable<List<NovelModel>> result = Observable.empty();
+        List<Observable<List<NovelModel>>> observables = new ArrayList<>();
+        for (int i = 0; i < mNovelSourceManager.getNovelSourceCount(); i++) {
+            NovelSource novelSource = mNovelSourceManager.getNovelSourceAt(i);
+            Observable<List<NovelModel>> searchObservable = novelSource.search(queryString, page);
+            observables.add(searchObservable);
+        }
+        return Observable.zip(observables, new FuncN<List<NovelModel>>() {
+            @Override
+            public List<NovelModel> call(Object... args) {
+                List<NovelModel> result = new ArrayList<NovelModel>();
+                for (int i = 0; i < args.length; i++) {
+                    if (args[i] instanceof List) {
+                        result.addAll((List<? extends NovelModel>) args[i]);
+                    }
+                }
+                return result;
+            }
+        });
     }
 
     @Override
@@ -222,33 +243,65 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
         return Observable.create((Subscriber<? super List<NovelModel>> subscriber) -> {
             try {
                 List<NovelModel> novelModels = novelDataBase.loadAllFavorites();
-                List<String> novelIds = new ArrayList<String>(novelModels.size());
+                List<UpdateRequestInfo> novelIds = new ArrayList<UpdateRequestInfo>(novelModels.size());
                 Hashtable<String, NovelModel> hashtable = new Hashtable<String, NovelModel>();
 
                 for (int i = 0; i < novelModels.size(); i++) {
                     NovelModel novelModel = novelModels.get(i);
-                    if(novelModel.getSrc().startsWith(LOCAL_FILE_PREFIX + ":"))
+                    if (novelModel.getSource().startsWith(LOCAL_FILE_PREFIX + ":"))
                         continue;
-                    String id = novelModel.getId();
-                    novelIds.add(id);
+                    String id = novelModel.getNovelId();
+                    novelIds.add(
+                            new UpdateRequestInfo(
+                                    novelModel.getType(),
+                                    id,
+                                    TextUtils.isEmpty(novelModel.getLatestChapterId()) ? id + "_1" : novelModel.getLatestChapterId()
+                            )
+                    );
                     hashtable.put(id, novelModel);
                 }
-                if(novelIds.size() == 0) {
+                if (novelIds.size() == 0) {
+                    Collections.sort(novelModels, new NovelSortKeyComparator());
                     subscriber.onNext(novelModels);
                     subscriber.onCompleted();
                 }
-                List<NovelSyncBookShelfModel> syncShelfItems = novelSource.getNovelUpdatesSync(novelIds.toArray(new String[novelIds.size()]));
+                ArrayMap<Integer, List<UpdateRequestInfo>> updateRequestsMap = new ArrayMap<Integer, List<UpdateRequestInfo>>(mNovelSourceManager.getNovelSourceCount());
+
+                UpdateRequestInfo[] updateRequests = new UpdateRequestInfo[novelIds.size()];
+                for (int i = 0; i < novelIds.size(); i++) {
+                    UpdateRequestInfo requestInfo = novelIds.get(i);
+                    updateRequests[i] = requestInfo;
+                    if (!updateRequestsMap.containsKey(requestInfo.getNovelType())) {
+                        updateRequestsMap.put(requestInfo.getNovelType(), new ArrayList<UpdateRequestInfo>());
+                    }
+                    List<UpdateRequestInfo> requests = updateRequestsMap.get(requestInfo.getNovelType());
+                    requests.add(requestInfo);
+                }
+
+
+                List<NovelSyncBookShelfModel> syncShelfItems = new ArrayList<NovelSyncBookShelfModel>();
+                for (int i = 0; i < updateRequestsMap.size(); i++) {
+                    NovelSource novelSource = mNovelSourceManager.getNovelSource(updateRequestsMap.keyAt(i));
+                    List<NovelSyncBookShelfModel> items = novelSource.getNovelUpdatesSync(updateRequestsMap.valueAt(i));
+                    syncShelfItems.addAll(items);
+                }
 
                 for (NovelSyncBookShelfModel syncBookShelfModel : syncShelfItems) {
                     String gid = syncBookShelfModel.getId();
                     NovelModel novelModel = hashtable.get(gid);
-                    if (novelModel.getLatestUpdateCount() == 0 && novelModel.getLatestChapterTitle().compareTo(syncBookShelfModel.getLastChapterTitle()) != 0)
-                        novelModel.setLatestUpdateCount(1);
+                    if (
+                            novelModel.getLatestUpdateChapterCount() == 0 &&
+                                    novelModel.getLatestChapterTitle() != null &&
+                                    novelModel.getLatestChapterTitle().compareTo(syncBookShelfModel.getLastChapterTitle()) != 0
+                            )
+                        novelModel.setLatestUpdateChapterCount(1);
+                    novelModel.setLatestChapterId(syncBookShelfModel.getLastChapterId());
                     novelModel.setLatestChapterTitle(syncBookShelfModel.getLastChapterTitle());
                 }
                 novelDataBase.updateFavoritesStatus(hashtable.values());
-
-                subscriber.onNext(novelDataBase.loadAllFavorites());
+                List<NovelModel> novelModel = novelDataBase.loadAllFavorites();
+                Collections.sort(novelModel, new NovelSortKeyComparator());
+                subscriber.onNext(novelModel);
                 hashtable.clear();
                 subscriber.onCompleted();
             } catch (Exception ex) {
@@ -258,7 +311,7 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     }
 
     @Override
-    public Observable<Void> addBookMark(final NovelBookMarkModel model) {
+    public Observable<Void> addBookMark(final BookmarkModel model) {
         return Observable.create((Subscriber<? super Void> subscriber) -> {
             try {
                 novelDataBase.addBookMark(model);
@@ -271,7 +324,7 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     }
 
     @Override
-    public Observable<Void> saveLastReadBookMark(final NovelBookMarkModel bookMarkModel) {
+    public Observable<Void> saveLastReadBookMark(final BookmarkModel bookMarkModel) {
         return Observable.create((Subscriber<? super Void> subscriber) -> {
             try {
                 novelDataBase.insertOrUpdateLastReadBookMark(bookMarkModel);
@@ -284,8 +337,8 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     }
 
     @Override
-    public Observable<NovelBookMarkModel> getLastReadBookMark(final String novelId) {
-        return Observable.create((Subscriber<? super NovelBookMarkModel> subscriber) -> {
+    public Observable<BookmarkModel> getLastReadBookMark(final String novelId) {
+        return Observable.create((Subscriber<? super BookmarkModel> subscriber) -> {
             try {
                 subscriber.onNext(novelDataBase.loadLastReadBookMark(novelId));
                 subscriber.onCompleted();
@@ -296,8 +349,8 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     }
 
     @Override
-    public Observable<List<NovelBookMarkModel>> getBookMarks(final String novelId) {
-        return Observable.create((Subscriber<? super List<NovelBookMarkModel>> subscriber) -> {
+    public Observable<List<BookmarkModel>> getBookMarks(final String novelId) {
+        return Observable.create((Subscriber<? super List<BookmarkModel>> subscriber) -> {
             try {
                 subscriber.onNext(novelDataBase.loadBookMarks(novelId));
                 subscriber.onCompleted();
@@ -308,8 +361,8 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     }
 
     @Override
-    public Observable<NovelBookMarkModel> checkLastReadBookMarkState(final String novelId) {
-        return Observable.create((Subscriber<? super NovelBookMarkModel> subscriber) -> {
+    public Observable<BookmarkModel> checkLastReadBookMarkState(final String novelId) {
+        return Observable.create((Subscriber<? super BookmarkModel> subscriber) -> {
             try {
                 subscriber.onNext(novelDataBase.checkLastReadBookMarkState(novelId));
                 subscriber.onCompleted();
@@ -320,18 +373,20 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
     }
 
     @Override
-    public Observable<NovelDetailModel> getNovelDetail(String id, String src) {
-        return novelSource.getNovelDetail(id, src);
+    public Observable<NovelDetailModel> getNovelDetail(NovelModel novel, String src) {
+        NovelSource novelSource = mNovelSourceManager.getNovelSource(novel.getType());
+        return novelSource.getNovelDetail(novel.getNovelId(), src);
     }
 
     @Override
-    public Observable<List<NovelChangeSrcModel>> getOtherChapterSrc(String novelId, String currentChapterSrc, String chapterTitle) {
-        return novelSource.getOtherChapterSrc(novelId, currentChapterSrc, chapterTitle);
+    public Observable<List<NovelChangeSrcModel>> getOtherChapterSrc(NovelModel novel, String currentChapterSrc, String chapterTitle) {
+        NovelSource novelSource = mNovelSourceManager.getNovelSource(novel.getType());
+        return novelSource.getOtherChapterSrc(novel.getNovelId(), currentChapterSrc, chapterTitle);
     }
 
     @Override
-    public Observable<NovelChapterModel> changeChapterSrc(NovelChapterModel chapterModel, NovelChangeSrcModel changeSrcModel) {
-        return Observable.create((Subscriber<? super NovelChapterModel> subscriber) -> {
+    public Observable<ChapterModel> changeChapterSrc(ChapterModel chapterModel, NovelChangeSrcModel changeSrcModel) {
+        return Observable.create((Subscriber<? super ChapterModel> subscriber) -> {
             try {
                 subscriber.onNext(novelDataBase.changeChapterSource(chapterModel, changeSrcModel));
                 subscriber.onCompleted();

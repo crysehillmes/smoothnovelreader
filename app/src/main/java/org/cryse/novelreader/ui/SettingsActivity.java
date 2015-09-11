@@ -3,27 +3,34 @@ package org.cryse.novelreader.ui;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import org.cryse.novelreader.R;
-import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
-import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class SettingsActivity extends AbstractThemeableActivity {
     private static final String LOG_TAG = SettingsActivity.class.getName();
+    @Bind(R.id.my_awesome_toolbar)
+    Toolbar mToolbar;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         injectThis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-
-        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        ButterKnife.bind(this);
+        setUpToolbar(mToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(true);
+        }
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction =
@@ -46,7 +53,6 @@ public class SettingsActivity extends AbstractThemeableActivity {
 
     @Override
     protected void injectThis() {
-        SmoothReaderApplication.get(this).inject(this);
     }
 
     @Override

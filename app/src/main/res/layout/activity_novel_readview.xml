@@ -1,27 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_chapter_read_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipChildren="false"
     android:orientation="vertical">
 
-    <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
-        android:id="@+id/activity_chapter_read_progressbar"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:indeterminate="true"
-        app:spb_speed="1.5"
-        style="@style/LoadChapterContentProgressBar"
-        android:visibility="invisible"/>
-
     <FrameLayout
         android:id="@+id/activity_read_view_widget_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/activity_chapter_read_progressbar"
-        android:layout_above="@+id/activity_chapter_read_status_layout">
+        android:layout_above="@+id/activity_chapter_read_status_layout"
+        android:layout_marginTop="8dp">
 
         </FrameLayout>
 
@@ -60,4 +50,21 @@
             android:textColor="?attr/smooth_theme_read_text_color"
             android:textSize="@dimen/text_size_bottom_status" />
     </RelativeLayout>
+
+    <org.cryse.widget.MaterialProgressBar
+        android:id="@+id/activity_chapter_read_progressbar"
+        style="@style/Widget.MaterialProgressBar.ProgressBar.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:alpha="0.0"
+        android:indeterminate="true" />
+
+    <FrameLayout
+        android:id="@+id/activity_chapter_read_options_panel_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:elevation="4dp"
+        android:visibility="invisible" />
 </RelativeLayout>

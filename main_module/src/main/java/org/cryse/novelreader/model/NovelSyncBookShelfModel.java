@@ -5,11 +5,13 @@ import android.os.Parcelable;
 
 public class NovelSyncBookShelfModel implements Parcelable {
     private String id;
+    private String lastChapterId;
     private String lastChapterTitle;
     private String lastUpdate;
 
-    public NovelSyncBookShelfModel(String id, String lastChapterTitle, String lastUpdate) {
+    public NovelSyncBookShelfModel(String id, String lastChapterId, String lastChapterTitle, String lastUpdate) {
         this.id = id;
+        this.lastChapterId = lastChapterId;
         this.lastChapterTitle = lastChapterTitle;
         this.lastUpdate = lastUpdate;
     }
@@ -20,6 +22,14 @@ public class NovelSyncBookShelfModel implements Parcelable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getLastChapterId() {
+        return lastChapterId;
+    }
+
+    public void setLastChapterId(String lastChapterId) {
+        this.lastChapterId = lastChapterId;
     }
 
     public String getLastChapterTitle() {
@@ -38,6 +48,8 @@ public class NovelSyncBookShelfModel implements Parcelable {
         this.lastUpdate = lastUpdate;
     }
 
+    public NovelSyncBookShelfModel() {
+    }
 
     @Override
     public int describeContents() {
@@ -47,20 +59,19 @@ public class NovelSyncBookShelfModel implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.id);
+        dest.writeString(this.lastChapterId);
         dest.writeString(this.lastChapterTitle);
         dest.writeString(this.lastUpdate);
     }
 
-    public NovelSyncBookShelfModel() {
-    }
-
-    private NovelSyncBookShelfModel(Parcel in) {
+    protected NovelSyncBookShelfModel(Parcel in) {
         this.id = in.readString();
+        this.lastChapterId = in.readString();
         this.lastChapterTitle = in.readString();
         this.lastUpdate = in.readString();
     }
 
-    public static final Parcelable.Creator<NovelSyncBookShelfModel> CREATOR = new Parcelable.Creator<NovelSyncBookShelfModel>() {
+    public static final Creator<NovelSyncBookShelfModel> CREATOR = new Creator<NovelSyncBookShelfModel>() {
         public NovelSyncBookShelfModel createFromParcel(Parcel source) {
             return new NovelSyncBookShelfModel(source);
         }

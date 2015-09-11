@@ -58,6 +58,7 @@
         <item name="smooth_theme_spinner_style">@style/SmoothTheme.Dark.Spinner</item>
         <item name="smooth_theme_spinner_foreground">@color/spinner_dropdown_foreground_color_dark</item>
         <item name="smooth_theme_search_close">@drawable/ic_action_close_dark</item>
+        <item name="bottomSheetStyle">@style/BottomSheet.ReadViewSettings.Dark</item>
     </style>
 
     <style name="SmoothTheme.Dark.Spinner" parent="FrameworkRoot.Dark.Spinner">

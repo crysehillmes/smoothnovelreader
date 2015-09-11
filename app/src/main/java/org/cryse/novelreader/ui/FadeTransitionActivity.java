@@ -11,22 +11,19 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import org.cryse.novelreader.R;
-import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.application.factory.StaticRunTimeStoreFactory;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.RunTimeStore;
 
-import javax.inject.Inject;
-
 public class FadeTransitionActivity extends Activity{
+    RunTimeStore mRunTimeStore;
     private Bitmap mScreenShot;
 
-    @Inject
-    RunTimeStore mRunTimeStore;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        SmoothReaderApplication.get(this).inject(this);
+        mRunTimeStore = StaticRunTimeStoreFactory.getInstance();
         setContentView(R.layout.dialog_fade_transition);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             getWindow().setStatusBarColor(ColorUtils.getColorFromAttr(this, R.attr.colorPrimaryDark));

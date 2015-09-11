@@ -9,5 +9,5 @@ public interface NovelBookShelfPresenter extends BaseFragmentPresenter<NovelBook
     void getNovelUpdates();
     void removeFromFavorite(String... novelIds);
     void showNovelChapterList(NovelModel novelModel);
-    void goSearch();
+    void showNovelDetail(NovelModel novelModel);
 }

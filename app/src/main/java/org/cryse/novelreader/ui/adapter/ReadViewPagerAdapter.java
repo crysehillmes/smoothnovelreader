@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.ui.widget.ReadWidgetAdapter;
+import org.cryse.novelreader.util.colorschema.ColorSchema;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,14 +20,20 @@ public class ReadViewPagerAdapter extends PagerAdapter implements ReadWidgetAdap
     private Context mContext;
     private LayoutInflater mLayoutInflater;
     private float mFontSize;
-    private int mBackgroundColor;
+    private ColorSchema mDisplaySchema;
+    private float mLineSpacingMultiplier;
 
-    public ReadViewPagerAdapter(Context context, float fontSize, int backgroundColor) {
+    public ReadViewPagerAdapter(
+            Context context,
+            float fontSize,
+            float lineSpacingMultiplier,
+            ColorSchema displaySchema) {
         this.mContext = context;
         this.mFontSize = fontSize;
+        this.mLineSpacingMultiplier = lineSpacingMultiplier;
         this.mContentList = new ArrayList<CharSequence>();
         this.mLayoutInflater = LayoutInflater.from(mContext);
-        this.mBackgroundColor = backgroundColor;
+        this.mDisplaySchema = displaySchema;
     }
 
     @Override
@@ -44,9 +51,10 @@ public class ReadViewPagerAdapter extends PagerAdapter implements ReadWidgetAdap
         View view = mLayoutInflater.inflate(R.layout.layout_chapter_content_textview, null);
         container.addView(view);
         TextView textView = (TextView)view;
-        textView.setText(mContentList.get(position));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mFontSize);
-        textView.setLineSpacing(0f, 1.3f);
+        textView.setTextColor(mDisplaySchema.getTextColor());
+        textView.setLineSpacing(0f, mLineSpacingMultiplier);
+        textView.setText(mContentList.get(position));
         return view;
     }
 
@@ -65,13 +73,18 @@ public class ReadViewPagerAdapter extends PagerAdapter implements ReadWidgetAdap
     }
 
     @Override
-    public void setBackgroundColor(int backgroundColor) {
-        this.mBackgroundColor = backgroundColor;
+    public void setDisplaySchema(ColorSchema displaySchema) {
+        this.mDisplaySchema = displaySchema;
     }
 
     @Override
     public void setFontSize(float fontSize) {
         this.mFontSize = fontSize;
+    }
+
+    @Override
+    public void setLineSpacing(float lineSpacingMultiplier) {
+        this.mLineSpacingMultiplier = lineSpacingMultiplier;
     }
 
     @Override

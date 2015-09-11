@@ -50,29 +50,15 @@
         <attr name="fab_shadowColor" format="integer"/>
     </declare-styleable>
 
-    <declare-styleable name="superrecyclerview">
-        <attr name='srv_columns' format="integer|reference"/>
-        <attr name="srv_listSelector" format="reference"/>
-        <attr name="srv_empty" format="reference"/>
-        <attr name="srv_moreProgress" format="reference"/>
-        <attr name="srv_progress" format="reference"/>
-        <attr name="srv_listDivider" format="reference"/>
-        <attr name="srv_listDividerHeight" format="dimension"/>
-        <attr name="srv_listClipToPadding" format="boolean"/>
-        <attr name="srv_listPadding" format="dimension"/>
-        <attr name="srv_listPaddingTop" format="dimension"/>
-        <attr name="srv_listPaddingBottom" format="dimension"/>
-        <attr name="srv_listPaddingLeft" format="dimension"/>
-        <attr name="srv_listPaddingRight" format="dimension"/>
-        <attr name="srv_scrollbarStyle">
-            <flag name="insideOverlay" value="0x0"/>
-            <flag name="insideInset" value="0x01000000"/>
-            <flag name="outsideOverlay" value="0x02000000"/>
-            <flag name="outsideInset" value="0x03000000"/>
-        </attr>
-
-        <!-- Layout to build a superList. Default values are  @layout/widget_superrecyclerview for a list and
-         @layout/view_progress_gridview for a grid-->
-        <attr name="srv_mainLayoutID" format="reference"/>
+    <declare-styleable name="NumberPicker">
+        <attr name="np_max" format="integer" />
+        <attr name="np_min" format="integer" />
+        <attr name="np_step" format="integer" />
+        <attr name="np_textSize" format="dimension" />
+        <attr name="np_textColor" format="color" />
+        <attr name="np_buttonColor" format="color" />
+        <attr name="np_buttonWidth" format="dimension" />
+        <attr name="np_buttonDecreaseIcon" format="reference" />
+        <attr name="np_buttonIncreaseIcon" format="reference" />
     </declare-styleable>
 </resources>

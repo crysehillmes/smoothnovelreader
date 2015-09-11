@@ -4,12 +4,9 @@ import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelBookShelfPresenter;
 import org.cryse.novelreader.util.SimpleSnackbarType;
-import org.cryse.novelreader.view.NovelBookShelfView;
 import org.cryse.novelreader.util.SubscriptionUtils;
-import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
-
-import java.util.List;
+import org.cryse.novelreader.view.NovelBookShelfView;
 
 import javax.inject.Inject;
 
@@ -28,14 +25,11 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
 
     AndroidNavigation mDisplay;
 
-    SnackbarUtils mToastUtil;
-
     @Inject
-    public NovelBookShelfPresenterImpl(NovelBusinessLogicLayer mNovelBusinessLogicLayer, AndroidNavigation display, SnackbarUtils snackbarUtils) {
+    public NovelBookShelfPresenterImpl(NovelBusinessLogicLayer mNovelBusinessLogicLayer, AndroidNavigation display) {
         this.mNovelBusinessLogicLayer = mNovelBusinessLogicLayer;
         this.mDisplay = display;
-        this.mToastUtil = snackbarUtils;
-        this.mView = new EmptyBookShelfView();
+        this.mView = null;
     }
 
     @Override
@@ -46,15 +40,22 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            mView.showBooksOnShelf(result);
+                            if (mView != null) {
+                                mView.showBooksOnShelf(result);
+                            }
                         },
                         error -> {
-                            mView.setLoading(false);
+                            if (mView != null) {
+                                mView.setLoading(false);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
+                            }
                             Timber.e(error, error.getMessage(), LOG_TAG);
-                            mToastUtil.showExceptionToast(mView, error);
                         },
                         () -> {
-                            mView.setLoading(false);
+                            if (mView != null) {
+                                mView.setLoading(false);
+                            }
                             Timber.d("Load completed!", LOG_TAG);
                         }
                 );
@@ -68,15 +69,22 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            mView.showBooksOnShelf(result);
+                            if (mView != null) {
+                                mView.showBooksOnShelf(result);
+                            }
                         },
                         error -> {
-                            mView.setLoading(false);
                             Timber.e(error, error.getMessage(), LOG_TAG);
-                            mToastUtil.showExceptionToast(mView, error);
+                            if (mView != null) {
+                                mView.setLoading(false);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
+                            }
                         },
                         () -> {
-                            mView.setLoading(false);
+                            if (mView != null) {
+                                mView.setLoading(false);
+                            }
                             Timber.d("Load completed!", LOG_TAG);
                         }
                 );
@@ -92,12 +100,17 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
                         result -> {
                         },
                         error -> {
-                            mView.setLoading(false);
+                            if (mView != null) {
+                                mView.setLoading(false);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
+                            }
                             Timber.e(error, error.getMessage(), LOG_TAG);
-                            mToastUtil.showExceptionToast(mView, error);
                         },
                         () -> {
-                            mView.setLoading(false);
+                            if (mView != null) {
+                                mView.setLoading(false);
+                            }
                             Timber.d("Load completed!", LOG_TAG);
                         }
                 );
@@ -109,8 +122,12 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
     }
 
     @Override
-    public void goSearch() {
-        mDisplay.showSearchActivity(mView);
+    public void showNovelDetail(NovelModel novelModel) {
+        mDisplay.showNovelDetailView(
+                mView,
+                novelModel,
+                true
+        );
     }
 
     @Override
@@ -122,39 +139,11 @@ public class NovelBookShelfPresenterImpl implements NovelBookShelfPresenter {
     @Override
     public void unbindView() {
         Timber.d("unbindView", LOG_TAG);
-        bindView(new EmptyBookShelfView());
+        mView = null;
     }
 
     @Override
     public void destroy() {
         SubscriptionUtils.checkAndUnsubscribe(subscription);
-    }
-
-    private class EmptyBookShelfView implements NovelBookShelfView {
-
-        @Override
-        public void showBooksOnShelf(List<NovelModel> books) {
-
-        }
-
-        @Override
-        public void showAddLocalBookProgressDialog(boolean show) {
-
-        }
-
-        @Override
-        public void setLoading(Boolean isLoading) {
-
-        }
-
-        @Override
-        public Boolean isLoading() {
-            return null;
-        }
-
-        @Override
-        public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
-
-        }
     }
 }

@@ -19,7 +19,8 @@
         tools:replace="android:icon">
         <activity
             android:name=".ui.MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,16 +37,6 @@
             android:name=".ui.NovelDetailActivity"
             android:label="@string/app_name"/>
         <activity
-            android:name=".ui.SearchActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
-        </activity>
-        <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/app_name"/>
         <activity
@@ -53,8 +44,12 @@
             android:label="@string/app_name"
             android:theme="@style/TransparentActivity"/>
 
+        <provider
+            android:name="org.cryse.novelreader.data.provider.NovelReaderContentProvider"
+            android:authorities="org.cryse.novelreader.data.provider"
+            android:exported="false" />
         <service android:name=".service.ChapterContentsCacheService"/>
-        <service android:name=".service.LoadLocalTextService"/>
+        <service android:name=".service.LocalFileImportService" />
         <service
             android:name="com.umeng.update.net.DownloadingService"
             android:process=":DownloadingService" >
@@ -63,7 +58,9 @@
             android:name="com.umeng.update.UpdateDialogActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
-        <meta-data android:value="Test" android:name="UMENG_CHANNEL"/>
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="Test" />
     </application>
 
 </manifest>

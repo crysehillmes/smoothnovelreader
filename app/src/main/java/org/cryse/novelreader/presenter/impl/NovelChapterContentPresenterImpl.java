@@ -1,18 +1,16 @@
 package org.cryse.novelreader.presenter.impl;
 
-import android.text.TextPaint;
-
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
-import org.cryse.novelreader.model.NovelBookMarkModel;
+import org.cryse.novelreader.model.BookmarkModel;
+import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
-import org.cryse.novelreader.model.NovelChapterModel;
+import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelChapterContentPresenter;
 import org.cryse.novelreader.util.SimpleSnackbarType;
-import org.cryse.novelreader.view.NovelChapterContentView;
 import org.cryse.novelreader.util.SubscriptionUtils;
-import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 import org.cryse.novelreader.util.textsplitter.PageSplitter;
+import org.cryse.novelreader.view.NovelChapterContentView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,50 +26,45 @@ import timber.log.Timber;
 
 public class NovelChapterContentPresenterImpl implements NovelChapterContentPresenter {
     private static final String LOG_TAG = NovelChapterContentPresenterImpl.class.getSimpleName();
+    private static final int PREV = 0;
+    private static final int CURRENT = 1;
+    private static final int NEXT = 2;
     NovelChapterContentView mView;
     Subscription mSubscription;
     Subscription mSplitSubscription;
     Subscription mGetOtherSrcSubscription;
     NovelBusinessLogicLayer mNovelBusinessLogicLayer;
-
     AndroidNavigation mDisplay;
-
-    SnackbarUtils mSnackbarUtils;
+    TextSplitParam mTextSplitParams;
 
     @Inject
     public NovelChapterContentPresenterImpl(
             NovelBusinessLogicLayer mNovelBusinessLogicLayer,
-            AndroidNavigation display,
-            SnackbarUtils snackbarUtils) {
+            AndroidNavigation display) {
         this.mNovelBusinessLogicLayer = mNovelBusinessLogicLayer;
         this.mDisplay = display;
-        this.mSnackbarUtils = snackbarUtils;
-        this.mView = new EmptyNovelChapterContentView();
+        this.mView = null;
     }
 
     @Override
-    public void loadChapter(NovelChapterModel novelChapterModel, boolean forceUpdate) {
-        loadChapter(novelChapterModel, CURRENT, forceUpdate, null);
+    public void loadChapter(NovelModel novel, ChapterModel novelChapterModel, boolean forceUpdate) {
+        loadChapter(novel, novelChapterModel, CURRENT, forceUpdate, null);
     }
 
     @Override
-    public void loadNextChapter(NovelChapterModel novelChapterModel) {
-        loadChapter(novelChapterModel, NEXT, false, null);
+    public void loadNextChapter(NovelModel novel, ChapterModel novelChapterModel) {
+        loadChapter(novel, novelChapterModel, NEXT, false, null);
     }
 
     @Override
-    public void loadPrevChapter(NovelChapterModel novelChapterModel, boolean jumpToLast) {
-        loadChapter(novelChapterModel, PREV, false, jumpToLast);
+    public void loadPrevChapter(NovelModel novel, ChapterModel novelChapterModel, boolean jumpToLast) {
+        loadChapter(novel, novelChapterModel, PREV, false, jumpToLast);
     }
 
-    private static final int PREV = 0;
-    private static final int CURRENT = 1;
-    private static final int NEXT = 2;
-
-    private void loadChapter(final NovelChapterModel novelChapterModel, final int type, boolean forceUpdate, Boolean autoJump) {
+    private void loadChapter(NovelModel novel, final ChapterModel novelChapterModel, final int type, boolean forceUpdate, Boolean autoJump) {
         mView.setLoading(true);
         SubscriptionUtils.checkAndUnsubscribe(mSubscription);
-        mSubscription = mNovelBusinessLogicLayer.getChapterContent(novelChapterModel, forceUpdate)
+        mSubscription = mNovelBusinessLogicLayer.getChapterContent(novel, novelChapterModel, forceUpdate)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -79,13 +72,19 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                             splitChapterAndDisplay(novelChapterModel.getTitle(), result.getContent(), type, autoJump);
                         },
                         error -> {
-                            mView.setLoading(false);
                             Timber.e(error, error.getMessage(), LOG_TAG);
-                            mSnackbarUtils.showExceptionToast(mView, error);
-                            showEmptyContent(type, generateEmptyString(novelChapterModel.getTitle(), mSnackbarUtils.getEmptyContentText()));
+                            if (mView != null) {
+                                mView.setLoading(false);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
+                            }
+                            showEmptyContent(type, generateEmptyString(novelChapterModel.getTitle(), ""));
+
                         },
                         () -> {
-                            mView.setLoading(false);
+                            if (mView != null) {
+                                mView.setLoading(false);
+                            }
                         }
                 );
     }
@@ -100,36 +99,48 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            switch (type) {
-                                case PREV:
-                                    mView.showPrevChapter(content, result, autoJump);
-                                    break;
-                                case CURRENT:
-                                    mView.showChapter(content, result);
-                                    break;
-                                case NEXT:
-                                    mView.showNextChapter(content, result);
-                                    break;
+                            if (mView != null) {
+                                switch (type) {
+                                    case PREV:
+                                        mView.showPrevChapter(content, result, autoJump);
+                                        break;
+                                    case CURRENT:
+                                        mView.showChapter(content, result);
+                                        break;
+                                    case NEXT:
+                                        mView.showNextChapter(content, result);
+                                        break;
+                                }
                             }
                         },
                         error -> {
-                            mView.setLoading(false);
                             Timber.e(error, error.getMessage(), LOG_TAG);
-                            if( content == null || error instanceof NullPointerException)
-                                mSnackbarUtils.showEmptyContentToast(mView);
-                            else
-                                mSnackbarUtils.showExceptionToast(mView, error);
-                            showEmptyContent(type, generateEmptyString(title, mSnackbarUtils.getEmptyContentText()));
+                            if (mView != null) {
+                                mView.setLoading(false);
+                                if (content == null || error instanceof NullPointerException) {
+                                    // TODO: return errorCode here
+                                    // mSnackbarUtils.showEmptyContentToast(mView);
+                                    mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
+                                } else {
+                                    // TODO: return errorCode here
+                                    // mSnackbarUtils.showExceptionToast(mView, error);
+                                    mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
+                                }
+                            }
+                            // TODO: return empty content here
+                            showEmptyContent(type, generateEmptyString(title, ""));
                         },
                         () -> {
-                            mView.setLoading(false);
+
+                            if (mView != null) {
+                                mView.setLoading(false);
+                            }
                         }
                 );
     }
 
-
     @Override
-    public void addBookMark(NovelBookMarkModel bookMarkModel) {
+    public void addBookMark(BookmarkModel bookMarkModel) {
         SubscriptionUtils.checkAndUnsubscribe(mSubscription);
         mSubscription = mNovelBusinessLogicLayer.addBookMark(bookMarkModel)
                 .subscribeOn(Schedulers.newThread())
@@ -138,17 +149,24 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                         result -> {
                         },
                         error -> {
-                            mView.onBookMarkSaved(NovelBookMarkModel.BOOKMARK_TYPE_NORMAL, false);
-                            mSnackbarUtils.showExceptionToast(mView, error);
+
+                            if (mView != null) {
+                                mView.onBookMarkSaved(BookmarkModel.BOOKMARK_TYPE_NORMAL, false);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
+                            }
                         },
                         () -> {
-                            mView.onBookMarkSaved(NovelBookMarkModel.BOOKMARK_TYPE_NORMAL, true);
+
+                            if (mView != null) {
+                                mView.onBookMarkSaved(BookmarkModel.BOOKMARK_TYPE_NORMAL, true);
+                            }
                         }
                 );
     }
 
     @Override
-    public void saveLastReadBookMark(NovelBookMarkModel bookMarkModel) {
+    public void saveLastReadBookMark(BookmarkModel bookMarkModel) {
         SubscriptionUtils.checkAndUnsubscribe(mSubscription);
         mSubscription = mNovelBusinessLogicLayer.saveLastReadBookMark(bookMarkModel)
                 .subscribeOn(Schedulers.newThread())
@@ -157,17 +175,22 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                         result -> {
                         },
                         error -> {
-                            mView.onBookMarkSaved(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD, false);
-                            mSnackbarUtils.showExceptionToast(mView, error);
+                            if (mView != null) {
+                                mView.onBookMarkSaved(BookmarkModel.BOOKMARK_TYPE_LASTREAD, false);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
+                            }
                         },
                         () -> {
-                            mView.onBookMarkSaved(NovelBookMarkModel.BOOKMARK_TYPE_LASTREAD, true);
+                            if (mView != null) {
+                                mView.onBookMarkSaved(BookmarkModel.BOOKMARK_TYPE_LASTREAD, true);
+                            }
                         }
                 );
     }
 
     @Override
-    public List<NovelChapterModel> getChaptersState() {
+    public List<ChapterModel> getChaptersState() {
         return mDisplay.getChaptersInRunTimeStore();
     }
 
@@ -177,7 +200,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     }
 
     @Override
-    public void saveChaptersState(List<NovelChapterModel> chapters) {
+    public void saveChaptersState(List<ChapterModel> chapters) {
         mDisplay.saveChaptersInRunTimeStore(chapters);
     }
 
@@ -188,7 +211,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
 
     @Override
     public void unbindView() {
-        bindView(new EmptyNovelChapterContentView());
+        this.mView = null;
     }
 
     @Override
@@ -201,49 +224,53 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     }
 
     private List<CharSequence> splitNovelChapter(String title, String content) {
-        if (mWidth == 0 || mHeight == 0 || mTextPaint == null)
+        if (mTextSplitParams == null ||
+                mTextSplitParams.getDisplayWidth() == 0 ||
+                mTextSplitParams.getDisplayHeight() == 0 ||
+                mTextSplitParams.getTextPaint() == null
+                )
             throw new IllegalStateException("setSplitParams must be called before splitNovelChapter");
-        PageSplitter pageSplitter = new PageSplitter(mWidth, mHeight, mLineSpacingMultiplier, mLineSpacingExtra);
+        PageSplitter pageSplitter = new PageSplitter(
+                mTextSplitParams.getDisplayWidth(),
+                mTextSplitParams.getDisplayHeight(),
+                mTextSplitParams.getLineSpacingMultiplier(),
+                mTextSplitParams.getLineSpacingExtra()
+        );
         pageSplitter.append(title + "\n");
         pageSplitter.append(content);
-        pageSplitter.split(mTextPaint);
+        pageSplitter.split(mTextSplitParams.getTextPaint());
         return pageSplitter.getPages();
     }
 
-    int mWidth;
-    int mHeight;
-    float mLineSpacingMultiplier;
-    float mLineSpacingExtra;
-    TextPaint mTextPaint;
+    @Override
+    public TextSplitParam getSplitParams() {
+        return mTextSplitParams;
+    }
 
-    public void setSplitParams(int width, int height, float lineSpacingMultiplier, float lineSpacingExtra, TextPaint textPaint) {
-        this.mWidth = width;
-        this.mHeight = height;
-        this.mLineSpacingMultiplier = lineSpacingMultiplier;
-        this.mLineSpacingExtra = lineSpacingExtra;
-        this.mTextPaint = textPaint;
+    public void setSplitParams(TextSplitParam splitParams) {
+        this.mTextSplitParams = splitParams;
     }
 
     @Override
-    public TextPaint getSplitTextPainter() {
-        return mTextPaint;
-    }
-
-    @Override
-    public void getOtherSrc(NovelChapterModel novelChapterModel) {
+    public void getOtherSrc(NovelModel novel, ChapterModel novelChapterModel) {
         SubscriptionUtils.checkAndUnsubscribe(mGetOtherSrcSubscription);
         mGetOtherSrcSubscription = mNovelBusinessLogicLayer.getOtherChapterSrc(
-                novelChapterModel.getId(),
-                novelChapterModel.getSrc(),
+                novel,
+                novelChapterModel.getSource(),
                 novelChapterModel.getTitle()).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            mView.onGetOtherSrcFinished(result);
+                            if (mView != null) {
+                                mView.onGetOtherSrcFinished(result);
+                            }
                         },
                         error -> {
                             Timber.e(error, error.getMessage(), LOG_TAG);
-                            mSnackbarUtils.showExceptionToast(mView, error);
+                            if (mView != null) {
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
+                            }
                         },
                         () -> {
 
@@ -252,7 +279,7 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     }
 
     @Override
-    public void changeSrc(NovelChapterModel novelChapterModel, NovelChangeSrcModel changeSrcModel) {
+    public void changeSrc(NovelModel novelModel, ChapterModel novelChapterModel, NovelChangeSrcModel changeSrcModel) {
         mView.setLoading(true);
         SubscriptionUtils.checkAndUnsubscribe(mGetOtherSrcSubscription);
         mGetOtherSrcSubscription = mNovelBusinessLogicLayer.changeChapterSrc(novelChapterModel, changeSrcModel)
@@ -260,13 +287,18 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            mView.onChangeSrc(result);
-                            loadChapter(result, true);
+                            if (mView != null) {
+                                mView.onChangeSrc(result);
+                                loadChapter(novelModel, result, true);
+                            }
                         },
                         error -> {
-                            mView.setLoading(false);
                             Timber.e(error, error.getMessage(), LOG_TAG);
-                            mSnackbarUtils.showExceptionToast(mView, error);
+                            if (mView != null) {
+                                mView.setLoading(false);
+                                // TODO: return errorCode here
+                                mView.showSnackbar(0, SimpleSnackbarType.ERROR, error);
+                            }
                         },
                         () -> {
                             Timber.d("changeSrc onCompleted.", LOG_TAG);
@@ -275,8 +307,10 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     }
 
     private void showEmptyContent(int type, String title) {
+        if (mView == null) return;
         List<CharSequence> charSequences = new ArrayList<>(1);
         charSequences.add(title);
+
         switch (type) {
             case PREV:
                 mView.showPrevChapter(title, charSequences, true);
@@ -292,53 +326,5 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
 
     private String generateEmptyString(String title, String promptText) {
         return title + "\n" + promptText;
-    }
-
-    private class EmptyNovelChapterContentView implements NovelChapterContentView {
-
-        @Override
-        public void showChapter(String content, List<CharSequence> splitedContent) {
-
-        }
-
-        @Override
-        public void showNextChapter(String content, List<CharSequence> splitedContent) {
-
-        }
-
-        @Override
-        public void showPrevChapter(String content, List<CharSequence> splitedContent, boolean jumpToLast) {
-
-        }
-
-        @Override
-        public void onBookMarkSaved(int type, boolean isSuccess) {
-
-        }
-
-        @Override
-        public void onGetOtherSrcFinished(List<NovelChangeSrcModel> otherSrc) {
-
-        }
-
-        @Override
-        public void onChangeSrc(NovelChapterModel chapterModel) {
-
-        }
-
-        @Override
-        public void setLoading(Boolean isLoading) {
-
-        }
-
-        @Override
-        public Boolean isLoading() {
-            return null;
-        }
-
-        @Override
-        public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
-
-        }
     }
 }

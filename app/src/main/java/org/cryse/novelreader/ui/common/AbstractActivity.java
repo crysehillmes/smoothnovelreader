@@ -7,85 +7,27 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
 import com.example.android.systemuivis.SystemUiHelper;
 
+import org.cryse.novelreader.R;
 import org.cryse.novelreader.event.AbstractEvent;
 import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.util.LUtils;
 import org.cryse.novelreader.util.SubscriptionUtils;
-
-import javax.inject.Inject;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public abstract class AbstractActivity extends AppCompatActivity {
+    RxEventBus mEventBus = RxEventBus.getInstance();
     private LUtils mLUtils;
     private SystemUiHelper mSystemUiHelper;
-    private Toolbar mToolbar;
-    private View mPreLShadow;
+    private View mSnackbarRootView;
     private ActionMode mActionMode;
     private Subscription mEventBusSubscription;
-    private View mSnackbarRootView;
-    @Inject
-    RxEventBus mEventBus;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mLUtils = LUtils.getInstance(this);
-        mEventBusSubscription = mEventBus.toObservable()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onEvent);
-    }
-
-    @Override
-    public void setContentView(int layoutResID) {
-        super.setContentView(layoutResID);
-        mSnackbarRootView =  findViewById(android.R.id.content);
-    }
-
-    protected void setUpToolbar(int toolbarLayoutId, int customToolbarShadowId) {
-        if (mToolbar == null) {
-            mToolbar = (Toolbar) findViewById(toolbarLayoutId);
-            mPreLShadow = findViewById(customToolbarShadowId);
-            if (mToolbar != null) {
-                //UIUtils.setInsets(this, mToolbar, false);
-                if(Build.VERSION.SDK_INT < 21 && mPreLShadow != null) {
-                    mPreLShadow.setVisibility(View.VISIBLE);
-                } else if(Build.VERSION.SDK_INT >= 21 && mPreLShadow != null) {
-                    mPreLShadow.setVisibility(View.GONE);
-                }
-                setSupportActionBar(mToolbar);
-            } else {
-                Log.e("AbstractActivity", "Toolbar is null");
-            }
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        analyticsTrackEnter();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        analyticsTrackExit();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        SubscriptionUtils.checkAndUnsubscribe(mEventBusSubscription);
-    }
 
     /**
      * Converts an intent into a {@link Bundle} suitable for use as fragment arguments.
@@ -128,6 +70,40 @@ public abstract class AbstractActivity extends AppCompatActivity {
         return intent;
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mLUtils = LUtils.getInstance(this);
+        mEventBusSubscription = mEventBus.toObservable()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onEvent);
+    }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        mSnackbarRootView = findViewById(android.R.id.content);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        analyticsTrackEnter();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        analyticsTrackExit();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SubscriptionUtils.checkAndUnsubscribe(mEventBusSubscription);
+    }
+
     public LUtils getLUtils() {
         return mLUtils;
     }
@@ -158,44 +134,8 @@ public abstract class AbstractActivity extends AppCompatActivity {
 
     protected abstract void injectThis();
 
-    public Toolbar getToolbar() {
-        return mToolbar;
-    }
-
     public Context getThemedContext() {
         return getSupportActionBar().getThemedContext();
-    }
-
-    public ActionMode getActionMode() {
-        Log.d("WWW", String.format("getActionMode: mActionMode == null = %b", mActionMode == null));
-        return mActionMode;
-    }
-
-    public void setActionMode(ActionMode actionMode) {
-        Log.d("WWW", String.format("setActionMode: mActionMode == null = %b", actionMode == null));
-        this.mActionMode = actionMode;
-    }
-
-    @Override
-    public ActionMode startSupportActionMode(final ActionMode.Callback callback) {
-        // Fix for bug https://code.google.com/p/android/issues/detail?id=159527
-        final ActionMode mode = super.startSupportActionMode(callback);
-        if (mode != null) {
-            mode.invalidate();
-        }
-        return mode;
-    }
-
-    public void setPreLShadowVisibility(boolean visibility) {
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && mPreLShadow != null)
-            mPreLShadow.setVisibility(visibility ? View.VISIBLE : View.GONE);
-    }
-
-    public void finishCompat() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            this.finishAfterTransition();
-        else
-            this.finish();
     }
 
     protected abstract void analyticsTrackEnter();
@@ -209,6 +149,10 @@ public abstract class AbstractActivity extends AppCompatActivity {
 
     protected RxEventBus getEventBus() {
         return mEventBus;
+    }
+
+    public boolean isTablet() {
+        return getResources().getBoolean(R.bool.isTablet);
     }
 
     protected View getSnackbarRootView() {

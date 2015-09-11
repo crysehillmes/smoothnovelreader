@@ -2,7 +2,6 @@ package org.cryse.novelreader.application;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -10,25 +9,20 @@ import com.umeng.update.UmengUpdateAgent;
 
 import org.cryse.novelreader.BuildConfig;
 import org.cryse.novelreader.R;
-import org.cryse.novelreader.event.RxEventBus;
-import org.cryse.novelreader.modules.ModulesList;
-import org.cryse.novelreader.service.ChapterContentsCacheService;
-import org.cryse.novelreader.service.LoadLocalTextService;
+import org.cryse.novelreader.application.component.AppComponent;
+import org.cryse.novelreader.application.component.DaggerAppComponent;
+import org.cryse.novelreader.application.module.AppModule;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
-import org.cryse.novelreader.util.store.HashTableRunTimeStore;
-import org.cryse.novelreader.util.RunTimeStore;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
-import dagger.ObjectGraph;
+import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
 public class SmoothReaderApplication extends Application {
     private static final String TAG = SmoothReaderApplication.class.getCanonicalName();
 
     private static final long CACHE_MAX_SIZE = 20l * 1024l * 1024l;
-    private ObjectGraph objectGraph;
-    private RxEventBus mEventBus;
-    private RunTimeStore mRunTimeStore;
+    private AppComponent appComponent;
     private AndroidNavigation mAndroidNavigation;
     public static SmoothReaderApplication get(Context context) {
         return (SmoothReaderApplication) context.getApplicationContext();
@@ -46,62 +40,30 @@ public class SmoothReaderApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        AnalyticsUtils.init(getString(R.string.UMENG_APPKEY_VALUE));
-        Crashlytics.start(this);
+        AnalyticsUtils.init(this, getString(R.string.UMENG_APPKEY_VALUE));
+        Fabric.with(this, new Crashlytics());
         Timber.plant(new CrashReportingTree());
-        mEventBus = new RxEventBus();
         UmengUpdateAgent.setAppkey(getString(R.string.UMENG_APPKEY_VALUE));
         UmengUpdateAgent.update(this);
-        buildObjectGraphAndInject();
 
-        mRunTimeStore = new HashTableRunTimeStore();
-        mAndroidNavigation = new AndroidNavigation(mRunTimeStore);
+        mAndroidNavigation = new AndroidNavigation();
+        appComponent = DaggerAppComponent
+                .builder()
+                .appModule(new AppModule(this, mAndroidNavigation))
+                .build();
 
-        Intent chapterContentCacheServiceIntent = new Intent(this, ChapterContentsCacheService.class);
+        /*Intent chapterContentCacheServiceIntent = new Intent(this, ChapterContentsCacheService.class);
         startService(chapterContentCacheServiceIntent);
-        Intent loadLocalTextServiceIntent = new Intent(this, LoadLocalTextService.class);
-        startService(loadLocalTextServiceIntent);
+        Intent loadLocalTextServiceIntent = new Intent(this, LocalFileImportService.class);
+        startService(loadLocalTextServiceIntent);*/
     }
 
-
-    /**
-     * Used by Activities to create a scoped graph
-     */
-    public ObjectGraph createScopedGraph(Object... modules) {
-        return objectGraph.plus(modules);
+    public AppComponent getAppComponent() {
+        return appComponent;
     }
 
-    public ObjectGraph getObjectGraph() {
-        return objectGraph;
-    }
-
-    public void buildObjectGraphAndInject() {
-        objectGraph = ObjectGraph.create(ModulesList.list(this));
-        inject(this);
-    }
-
-
-    public void inject(Object object) {
-
-        objectGraph.inject(object);
-    }
-
-
-    public ObjectGraph getApplicationGraph() {
-
-        return objectGraph;
-    }
-
-    public RunTimeStore getRunTimeStore() {
-        return mRunTimeStore;
-    }
-
-    public AndroidNavigation getAndroidDisplay() {
+    public AndroidNavigation getAndroidNavigation() {
         return mAndroidNavigation;
-    }
-
-    public RxEventBus getEventBus() {
-        return mEventBus;
     }
 
     /** A tree which logs important information for crash reporting. */

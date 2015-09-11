@@ -3,10 +3,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_item_add_book"
+        android:id="@+id/menu_item_add_online_book"
         android:icon="@drawable/ic_action_add_novel"
         app:showAsAction="ifRoom"
-        android:title="@string/action_bar_add_novel_tip"/>
+        android:title="@string/action_add_novel_tip"/>
+    <item
+        android:id="@+id/menu_item_add_local_text_book"
+        app:showAsAction="never"
+        android:title="@string/action_add_local_text_file"/>
     <item
         android:id="@+id/menu_item_change_theme"
         app:showAsAction="never"

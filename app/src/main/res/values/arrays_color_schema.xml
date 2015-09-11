@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="read_background_from_colors">
+        <item>#FFFFFFFF</item>
+        <item>#FFFAF9DE</item>
+        <item>#FFFFF2E2</item>
+        <item>#FFFDE6E0</item>
+        <item>#FFE3EDCD</item>
+        <item>#FFDCE2F1</item>
+        <item>#FFE9EBFE</item>
+        <item>#FFEAEAEF</item>
+    </array>
+    <array name="read_text_color_from_colors">
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+    </array>
+    <string-array name="read_background_from_drawables">
+        <item>@drawable/read_bg_00</item>
+        <item>@drawable/read_bg_01</item>
+        <item>@drawable/read_bg_02</item>
+        <item>@drawable/read_bg_03</item>
+    </string-array>
+    <array name="read_text_color_from_drawables">
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+        <item>@color/text_color_primary</item>
+    </array>
+</resources>

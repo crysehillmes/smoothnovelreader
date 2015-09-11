@@ -3,13 +3,10 @@ package org.cryse.novelreader.presenter.impl;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelListPresenter;
-import org.cryse.novelreader.util.SimpleSnackbarType;
-import org.cryse.novelreader.view.NovelOnlineListView;
+import org.cryse.novelreader.util.LDSort;
 import org.cryse.novelreader.util.SubscriptionUtils;
-import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
-
-import java.util.List;
+import org.cryse.novelreader.view.NovelOnlineListView;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -25,13 +22,10 @@ public class NovelListPresenterImpl implements NovelListPresenter {
 
     AndroidNavigation mDisplay;
 
-    SnackbarUtils mSnackbarUtils;
-
-    public NovelListPresenterImpl(NovelBusinessLogicLayer novelBusinessLogicLayer, AndroidNavigation display, SnackbarUtils snackbarUtils) {
+    public NovelListPresenterImpl(NovelBusinessLogicLayer novelBusinessLogicLayer, AndroidNavigation display) {
         this.novelBusinessLogicLayer = novelBusinessLogicLayer;
         this.mDisplay = display;
-        this.mSnackbarUtils = snackbarUtils;
-        this.mView = new EmptyNovelListView();
+        this.mView = null;
     }
 
     @Override
@@ -43,13 +37,16 @@ public class NovelListPresenterImpl implements NovelListPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            mView.getNovelListSuccess(result, append);
+                            if (mView != null) {
+                                mView.getNovelListSuccess(result, append);
+                            }
                         },
                         error -> {
-                            setLoadingStatus(append, false);
-                            mView.getNovelListFailure(error);
                             Timber.e(error, error.getMessage(), getLogTag());
-                            /*mToastUtil.showExceptionToast(mView, error);*/
+                            setLoadingStatus(append, false);
+                            if (mView != null) {
+                                mView.getNovelListFailure(error);
+                            }
                         },
                         () -> {
                             setLoadingStatus(append, false);
@@ -67,12 +64,16 @@ public class NovelListPresenterImpl implements NovelListPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            mView.getNovelListSuccess(result, append);
+                            if (mView != null) {
+                                mView.getNovelListSuccess(result, append);
+                            }
                         },
                         error -> {
-                            setLoadingStatus(append, false);
-                            mView.getNovelListFailure(error);
                             Timber.e(error, error.getMessage(), getLogTag());
+                            setLoadingStatus(append, false);
+                            if (mView != null) {
+                                mView.getNovelListFailure(error);
+                            }
                             /*mToastUtil.showExceptionToast(mView, error);*/
                         },
                         () -> {
@@ -91,12 +92,17 @@ public class NovelListPresenterImpl implements NovelListPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            mView.getNovelListSuccess(result, append);
+                            if (mView != null) {
+                                LDSort.sortNovel(result, query);
+                                mView.getNovelListSuccess(result, append);
+                            }
                         },
                         error -> {
-                            setLoadingStatus(append, false);
-                            mView.getNovelListFailure(error);
                             Timber.e(error, error.getMessage(), getLogTag());
+                            setLoadingStatus(append, false);
+                            if (mView != null) {
+                                mView.getNovelListFailure(error);
+                            }
                             /*mToastUtil.showExceptionToast(mView, error);*/
                         },
                         () -> {
@@ -108,8 +114,7 @@ public class NovelListPresenterImpl implements NovelListPresenter {
 
     @Override
     public void showNovelIntroduction(
-            NovelModel novelModel)
-    {
+            NovelModel novelModel) {
         mDisplay.showNovelDetailView(
                 mView,
                 novelModel,
@@ -124,7 +129,7 @@ public class NovelListPresenterImpl implements NovelListPresenter {
 
     @Override
     public void unbindView() {
-        bindView(new EmptyNovelListView());
+        this.mView = null;
     }
 
     @Override
@@ -137,47 +142,10 @@ public class NovelListPresenterImpl implements NovelListPresenter {
     }
 
     private void setLoadingStatus(boolean append, boolean isLoading) {
-        if(append)
+        if (mView == null) return;
+        if (append)
             mView.setLoadingMore(isLoading);
         else
             mView.setLoading(isLoading);
-    }
-
-    private class EmptyNovelListView implements NovelOnlineListView {
-
-        @Override
-        public void getNovelListSuccess(List<NovelModel> novels, boolean append) {
-
-        }
-
-        @Override
-        public void getNovelListFailure(Throwable e, Object... extras) {
-
-        }
-
-        @Override
-        public void setLoading(Boolean isLoading) {
-
-        }
-
-        @Override
-        public Boolean isLoading() {
-            return null;
-        }
-
-        @Override
-        public boolean isLoadingMore() {
-            return false;
-        }
-
-        @Override
-        public void setLoadingMore(boolean value) {
-
-        }
-
-        @Override
-        public void showSnackbar(CharSequence text, SimpleSnackbarType type) {
-
-        }
     }
 }

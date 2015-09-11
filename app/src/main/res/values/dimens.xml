@@ -55,6 +55,10 @@
     <dimen name="text_size_body2">14sp</dimen><!-- Medium -->
     <dimen name="text_size_body1">14sp</dimen><!-- Regular -->
     <dimen name="text_size_caption">12sp</dimen><!-- Regular -->
+    <dimen name="text_size_mini">10sp</dimen>
+    <!-- Regular -->
+    <dimen name="text_size_tiny">8sp</dimen>
+    <!-- Regular -->
     <dimen name="text_size_menu">14sp</dimen><!-- Medium -->
     <dimen name="text_size_button">14sp</dimen><!-- MEDIUM(ALL CAPS) -->
 
@@ -106,4 +110,7 @@
     <dimen name="toolbar_elevation">8dp</dimen>
     <dimen name="content_default_elevation">2dp</dimen>
     <dimen name="navigation_drawer_elevation">12dp</dimen>
+
+    <dimen name="search_toolbar_height">56dp</dimen>
+    <dimen name="read_options_height">400dp</dimen>
 </resources>

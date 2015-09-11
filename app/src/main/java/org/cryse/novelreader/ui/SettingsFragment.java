@@ -13,28 +13,23 @@ import com.afollestad.materialdialogs.Theme;
 
 import org.cryse.changelog.ChangeLogUtils;
 import org.cryse.novelreader.R;
-import org.cryse.novelreader.application.SmoothReaderApplication;
+import org.cryse.novelreader.constant.PreferenceConstant;
 import org.cryse.novelreader.event.RxEventBus;
 import org.cryse.novelreader.event.ThemeColorChangedEvent;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ThemeEngine;
 import org.cryse.novelreader.util.prefs.IntegerPreference;
-import org.cryse.novelreader.util.prefs.PreferenceConstant;
-
-import javax.inject.Inject;
 
 import timber.log.Timber;
 
 public class SettingsFragment extends PreferenceFragment {
     private static final String LOG_TAG = SettingsFragment.class.getName();
-    @Inject
-    RxEventBus mEventBus;
+    RxEventBus mEventBus = RxEventBus.getInstance();
     private OnConcisePreferenceChangedListener mOnConcisePreferenceChangedListener = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        injectThis();
         mOnConcisePreferenceChangedListener = new OnConcisePreferenceChangedListener();
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preference_settings);
@@ -90,10 +85,6 @@ public class SettingsFragment extends PreferenceFragment {
         });
     }
 
-    private void injectThis() {
-        SmoothReaderApplication.get(getActivity()).inject(this);
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -104,6 +95,28 @@ public class SettingsFragment extends PreferenceFragment {
     public void onPause() {
         super.onPause();
         getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(mOnConcisePreferenceChangedListener);
+    }
+
+    private void setUpThemeColorPreference() {
+        Preference themeColorPreference = findPreference("prefs_theme_color");
+        IntegerPreference themeColorPrefsValue = new IntegerPreference(getPreferenceManager().getSharedPreferences(), PreferenceConstant.SHARED_PREFERENCE_THEME_COLOR, PreferenceConstant.SHARED_PREFERENCE_THEME_COLOR_VALUE);
+        Boolean isNightMode = getPreferenceManager().getSharedPreferences().getBoolean(PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE, false);
+
+        themeColorPreference.setOnPreferenceClickListener(preference -> {
+            new SimpleDrawableChooserDialog()
+                    .setTheme(isNightMode ? Theme.DARK : Theme.LIGHT)
+                    .setColorDrawables(getActivity(), R.array.primaryColors)
+                    .show((AppCompatActivity) getActivity(), themeColorPrefsValue.get(), (index, color, darker) -> {
+                        themeColorPrefsValue.set(index);
+                        ThemeEngine themeEngine = ((AbstractThemeableActivity) getActivity()).getThemeEngine();
+                        mEventBus.sendEvent(new ThemeColorChangedEvent(
+                                themeEngine.getPrimaryColor(getActivity()),
+                                themeEngine.getPrimaryDarkColor(getActivity()),
+                                themeEngine.getPrimaryColorResId(),
+                                themeEngine.getPrimaryDarkColorResId()));
+                    });
+            return true;
+        });
     }
 
     public class OnConcisePreferenceChangedListener implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -117,25 +130,5 @@ public class SettingsFragment extends PreferenceFragment {
                 }
             }
         }
-    }
-
-    private void setUpThemeColorPreference() {
-        Preference themeColorPreference = findPreference("prefs_theme_color");
-        IntegerPreference themeColorPrefsValue = new IntegerPreference(getPreferenceManager().getSharedPreferences(), PreferenceConstant.SHARED_PREFERENCE_THEME_COLOR, PreferenceConstant.SHARED_PREFERENCE_THEME_COLOR_VALUE);
-
-        themeColorPreference.setOnPreferenceClickListener(preference -> {
-            new ColorChooserDialog()
-                    .setColors(getActivity(), R.array.primaryColors)
-                    .show((AppCompatActivity)getActivity(), themeColorPrefsValue.get(), (index, color, darker) -> {
-                themeColorPrefsValue.set(index);
-                ThemeEngine themeEngine = ((AbstractThemeableActivity)getActivity()).getThemeEngine();
-                mEventBus.sendEvent(new ThemeColorChangedEvent(
-                        themeEngine.getPrimaryColor(getActivity()),
-                        themeEngine.getPrimaryDarkColor(getActivity()),
-                        themeEngine.getPrimaryColorResId(),
-                        themeEngine.getPrimaryDarkColorResId()));
-            });
-            return true;
-        });
     }
 }

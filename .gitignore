@@ -55,3 +55,4 @@ app/signing.properties
 
 # UMeng
 umeng_properties.xml
+google-services.json

@@ -1,9 +1,9 @@
 package org.cryse.novelreader.data;
 
-import org.cryse.novelreader.model.NovelBookMarkModel;
+import org.cryse.novelreader.model.BookmarkModel;
+import org.cryse.novelreader.model.ChapterContentModel;
+import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
-import org.cryse.novelreader.model.NovelChapterContentModel;
-import org.cryse.novelreader.model.NovelChapterModel;
 import org.cryse.novelreader.model.NovelModel;
 
 import java.util.Collection;
@@ -19,23 +19,24 @@ public interface NovelDatabaseAccessLayer {
     List<NovelModel> loadAllFavorites();
 
     // Chapter list operation
-    List<NovelChapterModel> loadChapters(String novelId);
-    void insertChapter(String novelId, NovelChapterModel chapter);
-    void insertChapters(String novelId, List<NovelChapterModel> chapters);
-    void updateChapters(String novelId, List<NovelChapterModel> chapters);
+    List<ChapterModel> loadChapters(String novelId);
+    void insertChapter(String novelId, ChapterModel chapter);
+    void insertChapters(String novelId, List<ChapterModel> chapters);
+    void updateChapters(String novelId, List<ChapterModel> chapters);
 
     // Chapter content operation
-    NovelChapterContentModel loadChapterContent(String chapterId);
+    ChapterContentModel loadChapterContent(String chapterId);
     void removeChapterContent(String chapterId);
-    void updateChapterContent(NovelChapterContentModel chapterContent);
+    void updateChapterContent(ChapterContentModel chapterContent);
+    void updateChapterContents(List<ChapterContentModel> chapterContent);
 
     // Bookmark operation
-    void addBookMark(NovelBookMarkModel bookMark);
-    void insertOrUpdateLastReadBookMark(NovelBookMarkModel bookMark);
-    NovelBookMarkModel loadLastReadBookMark(String novelId);
-    List<NovelBookMarkModel> loadBookMarks(String novelId);
-    NovelBookMarkModel checkLastReadBookMarkState(String novelId);
+    void addBookMark(BookmarkModel bookMark);
+    void insertOrUpdateLastReadBookMark(BookmarkModel bookMark);
+    BookmarkModel loadLastReadBookMark(String novelId);
+    List<BookmarkModel> loadBookMarks(String novelId);
+    BookmarkModel checkLastReadBookMarkState(String novelId);
 
     // Change chapter source
-    public NovelChapterModel changeChapterSource(NovelChapterModel chapterModel, NovelChangeSrcModel changeSrcModel);
+    ChapterModel changeChapterSource(ChapterModel chapterModel, NovelChangeSrcModel changeSrcModel);
 }

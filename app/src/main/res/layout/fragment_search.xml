@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <com.malinskiy.superrecyclerview.SuperRecyclerView
+        android:id="@+id/novel_searchlistview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:colorBackground"
+        app:layout_empty="@layout/layout_empty_view"
+        app:layout_moreProgress="@layout/layout_more_progressbar"
+        app:mainLayoutId="@layout/layout_recyclerview_verticalscroll"
+        app:recyclerClipToPadding="false"
+        app:recyclerPaddingLeft="2dp"
+        app:recyclerPaddingRight="2dp"
+        app:recyclerPaddingTop="@dimen/search_toolbar_height"
+        app:scrollbarStyle="outsideOverlay" />
+</FrameLayout>

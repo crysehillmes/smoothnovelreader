@@ -1,30 +1,31 @@
 package org.cryse.novelreader.ui.common;
 
-import android.content.Intent;
+import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.View;
+import android.os.Handler;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 
 import org.cryse.novelreader.R;
+import org.cryse.novelreader.application.factory.StaticRunTimeStoreFactory;
 import org.cryse.novelreader.event.AbstractEvent;
 import org.cryse.novelreader.event.ThemeColorChangedEvent;
-import org.cryse.novelreader.ui.FadeTransitionActivity;
 import org.cryse.novelreader.util.RunTimeStore;
+import org.cryse.novelreader.util.SimpleSnackbarType;
+import org.cryse.novelreader.util.SnackbarSupport;
+import org.cryse.novelreader.util.SnackbarUtils;
 import org.cryse.novelreader.util.ThemeEngine;
-import org.cryse.novelreader.util.UIUtils;
+import org.cryse.novelreader.util.ToastErrorConstant;
 
-import javax.inject.Inject;
-
-public abstract class AbstractThemeableActivity extends AbstractActivity {
-    @Inject
+public abstract class AbstractThemeableActivity extends AbstractActivity implements SnackbarSupport {
+    protected Handler mMainThreadHandler;
     ThemeEngine mThemeEngine;
-
-    @Inject
     RunTimeStore mRunTimeStore;
-
     private int mDarkTheme = R.style.SmoothTheme_Dark;
     private int mLightTheme = R.style.SmoothTheme_Light;
     private int mTheme;
@@ -33,23 +34,40 @@ public abstract class AbstractThemeableActivity extends AbstractActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mThemeEngine = ThemeEngine.get(this);
         mTheme = getAppTheme();
         setTheme(mTheme);
         super.onCreate(savedInstanceState);
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int width = displaymetrics.widthPixels;
+        mRunTimeStore = StaticRunTimeStoreFactory.getInstance();
+        mMainThreadHandler = new Handler();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            updateTaskDescription();
     }
 
-    @Override
-    protected void setUpToolbar(int toolbarLayoutId, int customToolbarShadowId) {
-        super.setUpToolbar(toolbarLayoutId, customToolbarShadowId);
-        if(getSupportActionBar() != null && mIsOverrideToolbarColor)
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(mThemeEngine.getPrimaryColor(this)));
 
+    protected boolean hasSwipeBackLayout() {
+        return true;
+    }
+
+    protected void setUpToolbar(Toolbar toolbar) {
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            if (mIsOverrideToolbarColor)
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getToolbarColor()));
+
+        }
+        if (mIsOverrideStatusBarColor) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                setStatusBarColor(getStatusBarColor());
+            }
+        }
+    }
+
+    public void setStatusBarColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if(mIsOverrideStatusBarColor)
-                getWindow().setStatusBarColor(mThemeEngine.getPrimaryDarkColor(this));
+            getWindow().setStatusBarColor(mThemeEngine.getPrimaryDarkColor(this));
         }
     }
 
@@ -64,32 +82,8 @@ public abstract class AbstractThemeableActivity extends AbstractActivity {
     }
 
     protected void reload() {
-        // Style中定义的动画用于平滑recreate(), 而这里则是用于防止返回时的闪烁，
-        // 目前不清楚如何直接处理 recreate 的动画，只能用这种方法了
-        // overridePendingTransition(0,0);
-        // recreate() 不能在 onResume() 或 onCreate() 中调用，因为 recreate() 时先会结束当前的生命周期。
-
-        View view = getWindow().getDecorView();
-        view.setDrawingCacheEnabled(true);
-        view.buildDrawingCache();
-        Bitmap drawingCache = view.getDrawingCache();
-
-        int statusHeight = UIUtils.calculateStatusBarSize(this);
-        Bitmap screenShot = Bitmap.createBitmap(drawingCache,0,statusHeight,drawingCache.getWidth(),drawingCache.getHeight() - statusHeight);
-
-        Intent intent = new Intent(this, FadeTransitionActivity.class);
-        /*ByteArrayOutputStream bs = new ByteArrayOutputStream();
-        screenShot.compress(Bitmap.CompressFormat.PNG, 50, bs);
-        intent.putExtra("screen_shot", bs.toByteArray());
-        *//*intent.putExtra("screen_shot", screenShot);*/
-        mRunTimeStore.put("screen_shot", screenShot);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
         recreate();
     }
-
-
-
 
     @Override
     protected void onResume() {
@@ -130,19 +124,19 @@ public abstract class AbstractThemeableActivity extends AbstractActivity {
         return mThemeEngine.isNightMode();
     }
 
+    public void setNightMode(boolean isNightMode) {
+        if (isNightMode != isNightMode()) {
+            mThemeEngine.setNightMode(isNightMode);
+            //mTheme = getAppTheme();
+            reloadTheme();
+        }
+    }
+
     protected int getAppTheme() {
         if(isNightMode())
             return mDarkTheme;
         else
             return mLightTheme;
-    }
-
-    public void setNightMode(boolean isNightMode) {
-        if(isNightMode != isNightMode()) {
-            mThemeEngine.setNightMode(isNightMode);
-            //mTheme = getAppTheme();
-            reloadTheme();
-        }
     }
 
     public void setIsOverrideStatusBarColor(boolean isOverrideStatusBarColor) {
@@ -160,13 +154,61 @@ public abstract class AbstractThemeableActivity extends AbstractActivity {
     @Override
     protected void onEvent(AbstractEvent event) {
         super.onEvent(event);
-        if(event instanceof ThemeColorChangedEvent) {
+        if (event instanceof ThemeColorChangedEvent) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                if(mIsOverrideStatusBarColor)
-                    getWindow().setStatusBarColor(mThemeEngine.getPrimaryDarkColor(this));
+                if (mIsOverrideStatusBarColor)
+                    setStatusBarColor(getStatusBarColor());
+                updateTaskDescription();
             }
-            if(getSupportActionBar() != null)
-                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(mThemeEngine.getPrimaryColor(this)));
+            if (getSupportActionBar() != null)
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getToolbarColor()));
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    protected void updateTaskDescription() {
+        Bitmap iconBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        setTaskDescription(
+                new ActivityManager.TaskDescription(
+                        getTitle().toString(),
+                        iconBitmap,
+                        mThemeEngine.getPrimaryColor(this)
+                )
+        );
+        iconBitmap.recycle();
+    }
+
+    @Override
+    public void showSnackbar(CharSequence text, SimpleSnackbarType type, Object... args) {
+        SnackbarUtils.makeSimple(
+                getSnackbarRootView(),
+                text,
+                type,
+                SimpleSnackbarType.LENGTH_SHORT
+        ).show();
+    }
+
+    @Override
+    public void showSnackbar(int errorCode, SimpleSnackbarType type, Object... args) {
+        SnackbarUtils.makeSimple(
+                getSnackbarRootView(),
+                getString(ToastErrorConstant.errorCodeToStringRes(errorCode)),
+                type,
+                SimpleSnackbarType.LENGTH_SHORT
+        ).show();
+    }
+
+    public int getStatusBarColor() {
+        return mThemeEngine.getPrimaryDarkColor(this);
+    }
+
+    public void setStatusBarColor(int color) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(color);
+        }
+    }
+
+    public int getToolbarColor() {
+        return mThemeEngine.getPrimaryColor(this);
     }
 }

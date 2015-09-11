@@ -7,37 +7,35 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
-import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
 import com.squareup.picasso.Picasso;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.event.AbstractEvent;
 import org.cryse.novelreader.event.ThemeColorChangedEvent;
-import org.cryse.novelreader.service.LoadLocalTextService;
+import org.cryse.novelreader.service.LocalFileImportService;
 import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
 import java.util.concurrent.Executors;
 
-import javax.inject.Inject;
-
 public class MainActivity extends AbstractThemeableActivity {
     private static final String LOG_TAG = MainActivity.class.getName();
-    @Inject
     AndroidNavigation mNavigation;
 
     AccountHeader mAccountHeader;
@@ -47,24 +45,21 @@ public class MainActivity extends AbstractThemeableActivity {
 
     int mCurrentSelection = 0;
     boolean mIsRestorePosition = false;
+    ServiceConnection mBackgroundServiceConnection;
     /**
      * Used to post delay navigation action to improve UX
      */
     private Handler mHandler = new Handler();
     private Runnable mPendingRunnable = null;
-
-    ServiceConnection mBackgroundServiceConnection;
-    private LoadLocalTextService.ReadLocalTextFileBinder mServiceBinder;
+    private LocalFileImportService.ReadLocalTextFileBinder mServiceBinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         injectThis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setUpToolbar(R.id.my_awesome_toolbar, R.id.toolbar_shadow);
         mPicasso = new Picasso.Builder(this).executor(Executors.newSingleThreadExecutor()).build();
         setIsOverrideStatusBarColor(false);
-        mNavigation.attachMainActivity(this);
         /*setDrawerLayoutBackground(isNightMode());
         getDrawerLayout().setStatusBarBackgroundColor(getThemeEngine().getPrimaryDarkColor(this));*/
         if(savedInstanceState!=null && savedInstanceState.containsKey("selection_item_position")) {
@@ -78,7 +73,7 @@ public class MainActivity extends AbstractThemeableActivity {
         mBackgroundServiceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                mServiceBinder = (LoadLocalTextService.ReadLocalTextFileBinder) service;
+                mServiceBinder = (LocalFileImportService.ReadLocalTextFileBinder) service;
             }
 
             @Override
@@ -96,15 +91,12 @@ public class MainActivity extends AbstractThemeableActivity {
         mAccountHeader = accountHeaderBuilder.build();
         mNaviagtionDrawer = new DrawerBuilder()
                 .withActivity(this)
-                .withToolbar(getToolbar())
                 .withAccountHeader(mAccountHeader)
                 .withStatusBarColor(getThemeEngine().getPrimaryDarkColor(this))
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(R.string.drawer_bookshelf).withIcon(R.drawable.ic_drawer_novel).withIdentifier(1001),
-                        new PrimaryDrawerItem().withName(R.string.drawer_rank).withIcon(R.drawable.ic_drawer_rank).withIdentifier(1002),
-                        new PrimaryDrawerItem().withName(R.string.drawer_category).withIcon(R.drawable.ic_drawer_category).withIdentifier(1003),
                         new DividerDrawerItem(),
-                        new SecondaryDrawerItem().withName(R.string.drawer_settings).withIdentifier(1101).withIcon(R.drawable.ic_drawer_settings).withCheckable(false)
+                        new SecondaryDrawerItem().withName(R.string.drawer_settings).withIdentifier(1101).withIcon(R.drawable.ic_drawer_settings).withSelectable(false)
 
                 )
                 .withOnDrawerNavigationListener(view -> getSupportFragmentManager().popBackStackImmediate())
@@ -129,19 +121,18 @@ public class MainActivity extends AbstractThemeableActivity {
 
                     }
                 })
-                .withOnDrawerItemClickListener((parent, view, position, id, drawerItem) -> {
-                    // do something with the clicked item :D
-                    if (drawerItem.getType().equalsIgnoreCase("PRIMARY_ITEM"))
-                        mCurrentSelection = drawerItem.getIdentifier();
-                    mPendingRunnable = () ->  onNavigationSelected(drawerItem);
+                .withOnDrawerItemClickListener((view, i, iDrawerItem) -> {
+                    if (iDrawerItem instanceof PrimaryDrawerItem)
+                        mCurrentSelection = iDrawerItem.getIdentifier();
+                    mPendingRunnable = () -> onNavigationSelected(iDrawerItem);
                     return false;
                 })
                 .build();
         if(mCurrentSelection == 1001 && !mIsRestorePosition) {
-            mNaviagtionDrawer.setSelectionByIdentifier(1001, false);
-            mNavigation.navigateToBookShelfFragment();
+            mNaviagtionDrawer.setSelection(1001, false);
+            navigateToBookShelfFragment();
         } else if(mIsRestorePosition) {
-            mNaviagtionDrawer.setSelectionByIdentifier(mCurrentSelection, false);
+            mNaviagtionDrawer.setSelection(mCurrentSelection, false);
         }
 
     }
@@ -149,13 +140,7 @@ public class MainActivity extends AbstractThemeableActivity {
     private void onNavigationSelected(IDrawerItem drawerItem) {
         switch (drawerItem.getIdentifier()) {
             case 1001:
-                mNavigation.navigateToBookShelfFragment();
-                break;
-            case 1002:
-                mNavigation.navigateToRankFragment();
-                break;
-            case 1003:
-                mNavigation.navigateToCategoryListFragment();
+                navigateToBookShelfFragment();
                 break;
             case 1101:
                 mNavigation.navigateToSettingsActivity(MainActivity.this);
@@ -174,7 +159,8 @@ public class MainActivity extends AbstractThemeableActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Intent service = new Intent(this.getApplicationContext(), LoadLocalTextService.class);
+        Intent service = new Intent(this.getApplicationContext(), LocalFileImportService.class);
+        startService(service);
         this.bindService(service, mBackgroundServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -192,7 +178,7 @@ public class MainActivity extends AbstractThemeableActivity {
 
     @Override
     protected void injectThis() {
-        SmoothReaderApplication.get(this).inject(this);
+        mNavigation = SmoothReaderApplication.get(this).getAndroidNavigation();
     }
 
     @Override
@@ -230,11 +216,6 @@ public class MainActivity extends AbstractThemeableActivity {
             return;
         }
 
-        if (getActionMode() != null) {
-            getActionMode().finish();
-            return;
-        }
-
         if(mNaviagtionDrawer != null && mNaviagtionDrawer.isDrawerOpen()) {
             mNaviagtionDrawer.closeDrawer();
             return;
@@ -266,7 +247,26 @@ public class MainActivity extends AbstractThemeableActivity {
                 .show();
     }
 
-    public LoadLocalTextService.ReadLocalTextFileBinder getReadLocalTextFileBinder() {
+    public LocalFileImportService.ReadLocalTextFileBinder getReadLocalTextFileBinder() {
         return mServiceBinder;
+    }
+
+    public Drawer getNavigationDrawer() {
+        return mNaviagtionDrawer;
+    }
+
+    public void navigateToBookShelfFragment() {
+        switchContentFragment(NovelBookShelfFragment.newInstance(null), null);
+    }
+
+    public void switchContentFragment(Fragment targetFragment, String backStackTag) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager()
+                .beginTransaction();
+        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                android.R.anim.fade_out);
+        if (backStackTag != null)
+            fragmentTransaction.addToBackStack(backStackTag);
+        fragmentTransaction.replace(R.id.container, targetFragment);
+        fragmentTransaction.commit();
     }
 }

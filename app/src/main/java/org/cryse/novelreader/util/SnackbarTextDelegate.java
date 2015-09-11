@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import org.cryse.novelreader.R;
-import org.cryse.novelreader.qualifier.ApplicationContext;
+import org.cryse.novelreader.application.qualifier.ApplicationContext;
 
 import javax.inject.Inject;
 

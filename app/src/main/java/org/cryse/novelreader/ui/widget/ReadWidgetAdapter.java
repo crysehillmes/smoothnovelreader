@@ -1,18 +1,30 @@
 package org.cryse.novelreader.ui.widget;
 
+import org.cryse.novelreader.util.colorschema.ColorSchema;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public interface ReadWidgetAdapter {
-    public static final int CURRENT = 0;
-    public static final int PREVIOUS = -1;
-    public static final int NEXT = 1;
-    public void replaceContent(List<CharSequence> newContents);
-    public void setBackgroundColor(int backgroundColor);
-    public void setFontSize(float fontSize);
-    public int getPageFromStringOffset(int offset);
-    public int getStringOffsetFromPage(int page);
-    public ArrayList<CharSequence> getContent();
-    public int getCount();
-    public void notifyDataSetChanged();
+    int CURRENT = 0;
+    int PREVIOUS = -1;
+    int NEXT = 1;
+
+    void replaceContent(List<CharSequence> newContents);
+
+    void setDisplaySchema(ColorSchema displaySchema);
+
+    void setFontSize(float fontSize);
+
+    void setLineSpacing(float lineSpacingMultiplier);
+
+    int getPageFromStringOffset(int offset);
+
+    int getStringOffsetFromPage(int page);
+
+    ArrayList<CharSequence> getContent();
+
+    int getCount();
+
+    void notifyDataSetChanged();
 }

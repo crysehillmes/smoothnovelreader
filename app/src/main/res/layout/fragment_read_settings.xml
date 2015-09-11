@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_above="@+id/panel"
+        android:background="@drawable/top_shadow" />
+
+    <LinearLayout
+        android:id="@+id/panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="?attr/smooth_theme_card_bg_color"
+        android:clickable="true"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="72dp"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageview_fragment_read_options_text_size"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:scaleType="center"
+                android:src="@drawable/ic_label_text_size"
+                android:tint="?smooth_theme_text_color_primary" />
+
+            <org.cryse.widget.NumberPicker
+                android:id="@+id/numberpicker_fragment_read_options_text_size"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                app:np_buttonDecreaseIcon="@drawable/ic_button_decrease"
+                app:np_buttonIncreaseIcon="@drawable/ic_button_increase"
+                app:np_textColor="?smooth_theme_text_color_primary"
+                app:np_textSize="@dimen/text_size_subhead" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="72dp"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageview_fragment_read_options_line_spacing"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:scaleType="center"
+                android:src="@drawable/ic_label_linespacing"
+                android:tint="?smooth_theme_text_color_primary" />
+
+            <org.cryse.widget.NumberPicker
+                android:id="@+id/numberpicker_fragment_read_options_line_spacing"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                app:np_buttonDecreaseIcon="@drawable/ic_button_decrease"
+                app:np_buttonIncreaseIcon="@drawable/ic_button_increase"
+                app:np_textColor="?smooth_theme_text_color_primary"
+                app:np_textSize="@dimen/text_size_subhead" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="72dp"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageview_fragment_read_options_color_schema"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:scaleType="center"
+                android:src="@drawable/ic_label_color_schema"
+                android:tint="?smooth_theme_text_color_primary" />
+
+            <ImageView
+                android:id="@+id/imageview_fragment_read_options_color_schema_value"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:paddingBottom="6dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="6dp" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

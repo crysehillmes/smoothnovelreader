@@ -2,26 +2,92 @@ package org.cryse.novelreader.presenter;
 
 import android.text.TextPaint;
 
-import org.cryse.novelreader.model.NovelBookMarkModel;
+import org.cryse.novelreader.model.BookmarkModel;
+import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
-import org.cryse.novelreader.model.NovelChapterModel;
+import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.common.BaseFragmentPresenter;
 import org.cryse.novelreader.view.NovelChapterContentView;
 
 import java.util.List;
 
 public interface NovelChapterContentPresenter extends BaseFragmentPresenter<NovelChapterContentView> {
-    public void loadChapter(NovelChapterModel novelChapterModel, boolean forceUpdate);
-    public void loadNextChapter(NovelChapterModel novelChapterModel);
-    public void loadPrevChapter(NovelChapterModel novelChapterModel, boolean jumpToLast);
-    public void splitChapterAndDisplay(String title, String content);
-    public void addBookMark(NovelBookMarkModel bookMarkModel);
-    public void saveLastReadBookMark(NovelBookMarkModel bookMarkModel);
-    public List<NovelChapterModel> getChaptersState();
-    public void removeChaptersState();
-    public void saveChaptersState(List<NovelChapterModel> chapters);
-    public void setSplitParams(int width, int height, float lineSpacingMultiplier, float lineSpacingExtra, TextPaint textPaint);
-    public TextPaint getSplitTextPainter();
-    public void getOtherSrc(NovelChapterModel novelChapterModel);
-    public void changeSrc(NovelChapterModel novelChapterModel, NovelChangeSrcModel changeSrcModel);
+    void loadChapter(NovelModel novelModel, ChapterModel novelChapterModel, boolean forceUpdate);
+
+    void loadNextChapter(NovelModel novelModel, ChapterModel novelChapterModel);
+
+    void loadPrevChapter(NovelModel novelModel, ChapterModel novelChapterModel, boolean jumpToLast);
+    void splitChapterAndDisplay(String title, String content);
+    void addBookMark(BookmarkModel bookMarkModel);
+    void saveLastReadBookMark(BookmarkModel bookMarkModel);
+    List<ChapterModel> getChaptersState();
+    void removeChaptersState();
+    void saveChaptersState(List<ChapterModel> chapters);
+
+    TextSplitParam getSplitParams();
+
+    void setSplitParams(TextSplitParam splitParams);
+
+    void getOtherSrc(NovelModel novelModel, ChapterModel novelChapterModel);
+
+    void changeSrc(NovelModel novelModel, ChapterModel novelChapterModel, NovelChangeSrcModel changeSrcModel);
+
+    class TextSplitParam {
+        private int displayWidth;
+        private int displayHeight;
+        private float lineSpacingMultiplier;
+        private float lineSpacingExtra;
+        private TextPaint textPaint;
+
+        public TextSplitParam() {
+        }
+
+        public TextSplitParam(int displayWidth, int displayHeight, float lineSpacingMultiplier, float lineSpacingExtra, TextPaint textPaint) {
+            this.displayWidth = displayWidth;
+            this.displayHeight = displayHeight;
+            this.lineSpacingMultiplier = lineSpacingMultiplier;
+            this.lineSpacingExtra = lineSpacingExtra;
+            this.textPaint = textPaint;
+        }
+
+        public int getDisplayWidth() {
+            return displayWidth;
+        }
+
+        public void setDisplayWidth(int displayWidth) {
+            this.displayWidth = displayWidth;
+        }
+
+        public int getDisplayHeight() {
+            return displayHeight;
+        }
+
+        public void setDisplayHeight(int displayHeight) {
+            this.displayHeight = displayHeight;
+        }
+
+        public float getLineSpacingMultiplier() {
+            return lineSpacingMultiplier;
+        }
+
+        public void setLineSpacingMultiplier(float lineSpacingMultiplier) {
+            this.lineSpacingMultiplier = lineSpacingMultiplier;
+        }
+
+        public float getLineSpacingExtra() {
+            return lineSpacingExtra;
+        }
+
+        public void setLineSpacingExtra(float lineSpacingExtra) {
+            this.lineSpacingExtra = lineSpacingExtra;
+        }
+
+        public TextPaint getTextPaint() {
+            return textPaint;
+        }
+
+        public void setTextPaint(TextPaint textPaint) {
+            this.textPaint = textPaint;
+        }
+    }
 }

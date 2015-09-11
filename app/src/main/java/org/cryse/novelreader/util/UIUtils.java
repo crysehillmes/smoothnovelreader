@@ -8,7 +8,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
-import android.text.*;
+import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
 public class UIUtils {
-    private static String sNavBarOverride;
     public static final float SESSION_BG_COLOR_SCALE_FACTOR = 0.65f;
     private static final int[] RES_IDS_ACTION_BAR_SIZE = { android.R.attr.actionBarSize };
     /**
@@ -32,6 +31,7 @@ public class UIUtils {
      * semicolon. (Example: &amp;amp;)
      */
     private static final Pattern REGEX_HTML_ESCAPE = Pattern.compile(".*&\\S;.*");
+    private static String sNavBarOverride;
 
     static {
         if(Build.VERSION.SDK_INT >= 19) {
@@ -150,6 +150,11 @@ public class UIUtils {
     public static int dp2px(Context context, float dp){
         float scale = context.getResources().getDisplayMetrics().density;
         return (int)(dp * scale + 0.5f);
+    }
+
+    public static float sp2px(Context context, float sp) {
+        float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
+        return sp * scaledDensity;
     }
 
     public static class SystemBarConfig {

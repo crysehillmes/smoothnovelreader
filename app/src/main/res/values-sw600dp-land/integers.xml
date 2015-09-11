@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="boolshelf_list_col">3</integer>
+    <integer name="search_column_count">8</integer>
     <integer name="online_list_col">7</integer>
     <integer name="category_tag_list_col">6</integer>
     <integer name="rank_tag_list_col">4</integer>

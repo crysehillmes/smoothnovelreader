@@ -1,10 +1,9 @@
 package org.cryse.novelreader.ui.adapter;
 
 import android.content.Context;
-import android.text.TextUtils;
-import android.view.View;
 
 import org.cryse.novelreader.R;
+import org.cryse.novelreader.model.Novel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.PicassoHelper;
@@ -25,7 +24,7 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
     @Override
     public int getLayoutId() {
         if(mIsShowCoverImage)
-            return R.layout.listview_item_online_novel_with_coverimg;
+            return R.layout.listview_item_online_novel_with_coverimg_card;
         else
             return R.layout.listview_item_online_novel;
     }
@@ -34,7 +33,10 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
         super.onBindViewHolder(viewHolder, position);
         NovelModel item = getItem(position);
-
+        Novel novel = null;
+        if (item instanceof Novel) {
+            novel = (Novel) item;
+        }
         if(viewHolder.mNovelTitleTextView != null) {
             viewHolder.mNovelTitleTextView.setText(item.getTitle());
             if(!mIsShowCoverImage) {
@@ -45,20 +47,20 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
         if(viewHolder.mNovelInfo1TextView != null) {
             viewHolder.mNovelInfo1TextView.setText(item.getAuthor());
             if(!mIsShowCoverImage) {
-                viewHolder.mNovelInfo1TextView.setTextColor(getContext().getResources().getColor(R.color.white_54_percent));
+                viewHolder.mNovelInfo1TextView.setTextColor(getContext().getResources().getColor(R.color.white_54_percent, null));
             }
         }
 
-        if(viewHolder.mNovelInfo2TextView != null && item.getStatus() != null && !TextUtils.isEmpty(item.getStatus())) {
-            viewHolder.mNovelInfo2TextView.setText(item.getStatus());
-            viewHolder.mNovelInfo2TextView.setVisibility(View.GONE);
-        }
+        /*if (viewHolder.mNovelInfo2TextView != null && novel != null && !TextUtils.isEmpty(novel.getCategory())) {
+            viewHolder.mNovelInfo2TextView.setText(novel.getSummary());
+            viewHolder.mNovelInfo2TextView.setVisibility(View.VISIBLE);
+        }*/
 
         if(viewHolder.mBackCoverLayout != null && !(mIsNightMode && mGrayScale))
-            viewHolder.mBackCoverLayout.setBackgroundColor(ColorUtils.getPreDefinedColorFromId(getContext(), item.getId(), item.getTitle().length()));
+            viewHolder.mBackCoverLayout.setBackgroundColor(ColorUtils.getPreDefinedColorFromId(getContext().getResources(), item.getNovelId(), item.getTitle().length()));
 
         if(viewHolder.mNovelImageImageView != null) {
-            PicassoHelper.load(getContext(), item.getImageUrl(), viewHolder.mNovelImageImageView, mIsNightMode && mGrayScale);
+            PicassoHelper.load(getContext(), item.getCoverImage(), viewHolder.mNovelImageImageView, mIsNightMode && mGrayScale);
         }
     }
 }
