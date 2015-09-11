@@ -6,7 +6,7 @@ import android.content.Context;
 import org.cryse.novelreader.application.qualifier.ApplicationContext;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayer;
 import org.cryse.novelreader.data.NovelDatabaseAccessLayerImpl;
-import org.cryse.novelreader.lib.novelsource.baidubrowser.BaiduBrowserNovelSourceImpl;
+import org.cryse.novelreader.lib.novelsource.easou.EasouNovelSourceImpl;
 import org.cryse.novelreader.logic.NovelBusinessLogicLayer;
 import org.cryse.novelreader.logic.impl.NovelBusinessLogicLayerImpl;
 import org.cryse.novelreader.source.NovelSource;
@@ -29,7 +29,7 @@ public class NovelApiModule {
     @Provides
     @Singleton
     NovelSource provideNovelSource() {
-        return new BaiduBrowserNovelSourceImpl();
+        return new EasouNovelSourceImpl();
     }
 
     @Provides

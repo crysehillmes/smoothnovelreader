@@ -90,8 +90,8 @@ public class ChapterContentsCacheService extends Service {
         return new ChapterContentsCacheBinder();
     }
 
-    private ChapterContentModel loadChapterContentFromWeb(String id, String secondId, String src) {
-        return novelSource.getChapterContentSync(id, secondId, src);
+    private ChapterContentModel loadChapterContentFromWeb(String id, String secondId, String title, String src) {
+        return novelSource.getChapterContentSync(id, secondId, title, src);
     }
 
     @Override
@@ -153,7 +153,7 @@ public class ChapterContentsCacheService extends Service {
                     successCount++;
                     continue;
                 }
-                ChapterContentModel chapterContentModel = loadChapterContentFromWeb(cacheTask.getNovelId(), chapterModel.getChapterId(), chapterModel.getSource());
+                ChapterContentModel chapterContentModel = loadChapterContentFromWeb(cacheTask.getNovelId(), chapterModel.getChapterId(), chapterModel.getTitle(), chapterModel.getSource());
                 if (chapterContentModel != null) {
                     chapterContentModel.setContent(novelTextFilter.filter(chapterContentModel.getContent()));
                     mNovelDatabase.updateChapterContent(chapterContentModel);
