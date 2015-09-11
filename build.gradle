@@ -121,9 +121,9 @@ allprojects {
     ext.appMinSdkVersion = 14
     ext.appTargetSdkVersion = 23
     ext.appCompileSdkVersion = 23
-    ext.appBuildToolsVersion = '23'
+    ext.appBuildToolsVersion = '23.0.1'
 
-    ext.supportlibraryVersion = '23.0.0'
+    ext.supportlibraryVersion = '23.0.1'
     ext.retrolambdaVersion = '2.0.5'
     ext.okhttpVersion = '2.4.0'
     ext.rxJavaVersion = '1.0.14'
