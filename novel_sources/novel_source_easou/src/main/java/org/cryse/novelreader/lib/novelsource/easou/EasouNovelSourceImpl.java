@@ -23,9 +23,9 @@ import org.cryse.novelreader.model.UpdateRequestInfo;
 import org.cryse.novelreader.source.NovelSource;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
@@ -40,22 +40,34 @@ public class EasouNovelSourceImpl implements NovelSource {
     private static final String CONST_OS = "android";
     private static final String CONST_VERSION = "002";
 
-    private OkHttpClient mOkHttpClient;
+    /*private OkHttpClient mOkHttpClient;*/
     private EasouNovelSource mNovelSource;
 
-    public EasouNovelSourceImpl() {
-        this.mOkHttpClient = new OkHttpClient();
+    public EasouNovelSourceImpl(OkHttpClient okHttpClient) {
+        /*this.mOkHttpClient = new OkHttpClient();
         this.mOkHttpClient.setConnectTimeout(20, TimeUnit.SECONDS);
         this.mOkHttpClient.setWriteTimeout(20, TimeUnit.SECONDS);
-        this.mOkHttpClient.setReadTimeout(20, TimeUnit.SECONDS);
+        this.mOkHttpClient.setReadTimeout(20, TimeUnit.SECONDS);*/
         this.mNovelSource = new RestAdapter.Builder()
                 .setRequestInterceptor(request -> {
                     request.addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19");
                     request.addHeader("Accept", "application/json,text/html");
                 })
+                .setClient(new OkClient(okHttpClient))
                 .setEndpoint(EasouNovelSource.EASOU_NOVEL_URL)
-                .setClient(new OkClient(mOkHttpClient)).setConverter(new CustomGsonConverter(new Gson())).build().create(EasouNovelSource.class);
+                .setConverter(new CustomGsonConverter(new Gson()))
+                .build()
+                .create(EasouNovelSource.class);
+    }
 
+    @Override
+    public int getNovelType() {
+        return Consts.TYPE_EASOU_SOURCE;
+    }
+
+    @Override
+    public String getNovelSourceName() {
+        return Consts.TYPE_EASOU_SOURCE_NAME;
     }
 
     @Override
@@ -191,7 +203,12 @@ public class EasouNovelSourceImpl implements NovelSource {
 
     @Override
     public List<NovelSyncBookShelfModel> getNovelUpdatesSync(UpdateRequestInfo... requestInfos) {
-        List<NovelSyncBookShelfModel> result = new ArrayList<>(requestInfos.length);
+        return getNovelUpdatesSync(Arrays.asList(requestInfos));
+    }
+
+    @Override
+    public List<NovelSyncBookShelfModel> getNovelUpdatesSync(List<UpdateRequestInfo> requestInfos) {
+        List<NovelSyncBookShelfModel> result = new ArrayList<>(requestInfos.size());
         ToNovelUpdate converter = new ToNovelUpdate();
         for (UpdateRequestInfo info : requestInfos) {
             long gid = EasouNovelId.fromNovelIdToGid(info.getNovelId());

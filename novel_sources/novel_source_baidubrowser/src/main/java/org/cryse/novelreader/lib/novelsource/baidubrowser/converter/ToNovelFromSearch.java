@@ -1,5 +1,6 @@
 package org.cryse.novelreader.lib.novelsource.baidubrowser.converter;
 
+import org.cryse.novelreader.lib.novelsource.baidubrowser.Consts;
 import org.cryse.novelreader.lib.novelsource.baidubrowser.model.SearchNovelItem;
 import org.cryse.novelreader.model.Novel;
 import org.cryse.novelreader.model.NovelModel;
@@ -19,7 +20,7 @@ public class ToNovelFromSearch implements Func1<SearchNovelItem[], List<NovelMod
                     item.getNovelId(),
                     item.getTitle(),
                     item.getAuthor(),
-                    NovelModel.TYPE_BAIDU_BROWSER_SOURCE,
+                    Consts.TYPE_BAIDU_BROWSER_SOURCE,
                     item.getSource(),
                     item.getCoverImage()
             );

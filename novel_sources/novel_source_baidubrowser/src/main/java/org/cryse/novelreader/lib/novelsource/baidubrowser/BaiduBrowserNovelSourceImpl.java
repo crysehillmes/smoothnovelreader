@@ -28,7 +28,6 @@ import org.json.JSONObject;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
@@ -37,22 +36,34 @@ import rx.Subscriber;
 
 public class BaiduBrowserNovelSourceImpl implements NovelSource {
     private static final String LOG_TAG = BaiduBrowserNovelSourceImpl.class.getSimpleName();
-    private OkHttpClient mOkHttpClient;
+    /*private OkHttpClient mOkHttpClient;*/
     private BaiduBrowserNovelSource mNovelSource;
 
-    public BaiduBrowserNovelSourceImpl() {
-        this.mOkHttpClient = new OkHttpClient();
+    public BaiduBrowserNovelSourceImpl(OkHttpClient okHttpClient) {
+        /*this.mOkHttpClient = new OkHttpClient();
         this.mOkHttpClient.setConnectTimeout(20, TimeUnit.SECONDS);
         this.mOkHttpClient.setWriteTimeout(20, TimeUnit.SECONDS);
-        this.mOkHttpClient.setReadTimeout(20, TimeUnit.SECONDS);
+        this.mOkHttpClient.setReadTimeout(20, TimeUnit.SECONDS);*/
         this.mNovelSource = new RestAdapter.Builder()
                 .setRequestInterceptor(request -> {
                     request.addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19");
                     request.addHeader("Accept", "application/json,text/html");
                 })
                 .setEndpoint(BaiduBrowserNovelSource.BAIDU_BROWSER_NOVEL_URL)
-                .setClient(new OkClient(mOkHttpClient)).setConverter(new CustomGsonConverter(new Gson())).build().create(BaiduBrowserNovelSource.class);
+                .setClient(new OkClient(okHttpClient))
+                .setConverter(new CustomGsonConverter(new Gson()))
+                .build()
+                .create(BaiduBrowserNovelSource.class);
+    }
 
+    @Override
+    public int getNovelType() {
+        return Consts.TYPE_BAIDU_BROWSER_SOURCE;
+    }
+
+    @Override
+    public String getNovelSourceName() {
+        return Consts.TYPE_BAIDU_BROWSER_SOURCE_NAME;
     }
 
     @Override
@@ -141,6 +152,11 @@ public class BaiduBrowserNovelSourceImpl implements NovelSource {
             Log.e(LOG_TAG, e.getMessage(), e);
         }
         return Collections.<NovelSyncBookShelfModel>emptyList();
+    }
+
+    @Override
+    public List<NovelSyncBookShelfModel> getNovelUpdatesSync(List<UpdateRequestInfo> requestInfos) {
+        return getNovelUpdatesSync(requestInfos.toArray(new UpdateRequestInfo[requestInfos.size()]));
     }
 
     @Override

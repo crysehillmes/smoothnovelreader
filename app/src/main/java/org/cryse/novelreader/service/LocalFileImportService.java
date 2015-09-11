@@ -30,7 +30,6 @@ import org.cryse.novelreader.model.ChapterContentModel;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.Novel;
 import org.cryse.novelreader.model.NovelModel;
-import org.cryse.novelreader.source.NovelSource;
 import org.cryse.novelreader.ui.NovelChapterListActivity;
 import org.cryse.novelreader.util.HashUtils;
 import org.cryse.novelreader.util.NovelTextFilter;
@@ -53,8 +52,6 @@ public class LocalFileImportService extends Service {
     public int notification_count = 0;
     @Inject
     NovelDatabaseAccessLayer mNovelDatabase;
-    @Inject
-    NovelSource novelSource;
     @Inject
     NovelTextFilter novelTextFilter;
     RxEventBus mEventBus = RxEventBus.getInstance();

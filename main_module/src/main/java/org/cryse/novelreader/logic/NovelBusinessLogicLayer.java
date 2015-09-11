@@ -89,7 +89,7 @@ public interface NovelBusinessLogicLayer {
      * @param novel       the novel
      * @return the chapter content
      */
-    Observable<ChapterContentModel> getChapterContent(ChapterModel novel, boolean forceUpdate);
+    Observable<ChapterContentModel> getChapterContent(NovelModel novel, ChapterModel chapter, boolean forceUpdate);
 
     /**
      * Search observable.
@@ -113,9 +113,9 @@ public interface NovelBusinessLogicLayer {
 
     Observable<BookmarkModel> checkLastReadBookMarkState(String novelId);
 
-    Observable<NovelDetailModel> getNovelDetail(String id, String src);
+    Observable<NovelDetailModel> getNovelDetail(NovelModel novel, String src);
 
-    Observable<List<NovelChangeSrcModel>> getOtherChapterSrc(String novelId, String currentChapterSrc, String chapterTitle);
+    Observable<List<NovelChangeSrcModel>> getOtherChapterSrc(NovelModel novel, String currentChapterSrc, String chapterTitle);
 
     Observable<ChapterModel> changeChapterSrc(ChapterModel chapterModel, NovelChangeSrcModel changeSrcModel);
 }

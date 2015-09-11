@@ -1,12 +1,22 @@
 package org.cryse.novelreader.model;
 
 public class UpdateRequestInfo {
+    private int novelType;
     private String novelId;
     private String chapterId;
 
-    public UpdateRequestInfo(String novelId, String chapterId) {
+    public UpdateRequestInfo(int novelType, String novelId, String chapterId) {
+        this.novelType = novelType;
         this.novelId = novelId;
         this.chapterId = chapterId;
+    }
+
+    public int getNovelType() {
+        return novelType;
+    }
+
+    public void setNovelType(int novelType) {
+        this.novelType = novelType;
     }
 
     public String getNovelId() {

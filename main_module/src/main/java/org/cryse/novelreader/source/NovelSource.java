@@ -13,6 +13,10 @@ import java.util.List;
 import rx.Observable;
 
 public interface NovelSource {
+    int getNovelType();
+
+    String getNovelSourceName();
+
     Observable<List<NovelModel>> getCategories(String query, String subQuery, int page, int status, boolean isByTag);
 
     Observable<List<NovelModel>> getRanks(String cid, int page);
@@ -28,6 +32,8 @@ public interface NovelSource {
     List<ChapterModel> getChapterListSync(String id, String src);
 
     List<NovelSyncBookShelfModel> getNovelUpdatesSync(UpdateRequestInfo... requestInfos);
+
+    List<NovelSyncBookShelfModel> getNovelUpdatesSync(List<UpdateRequestInfo> requestInfos);
 
     Observable<NovelDetailModel> getNovelDetail(String id, String src);
 
