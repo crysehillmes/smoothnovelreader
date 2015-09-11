@@ -112,3 +112,45 @@
 -dontwarn org.osgi.**
 # For gradle-retrolambda
 -dontwarn java.lang.invoke.*
+-keep class org.apache.tika.** { *; }
+# Tika's optional deps
+-dontwarn aQute.**
+-dontwarn org.osgi.**
+
+-keepclassmembers class * {
+   public <init>(org.json.JSONObject);
+}
+-keep class org.apache.** { *; }
+-keep class com.malinskiy.** { *; }
+-dontwarn com.malinskiy.**
+-keep public class * implements com.bumptech.glide.module.GlideModule
+
+-keep public class org.jsoup.** {
+public *;
+}
+
+-dontwarn org.apache.http.**
+-dontwarn android.net.http.AndroidHttpClient
+-keep public class * extends com.umeng.**
+-keep class com.umeng.** { *; }
+-dontwarn com.umeng.update.**
+-dontwarn com.handmark.pulltorefresh.**
+
+-keep class butterknife.** { *; }
+-dontwarn butterknife.internal.**
+-keep class **$$ViewBinder { *; }
+-keepclasseswithmembernames class * { @butterknife.* <fields>;}
+-keepclasseswithmembernames class * { @butterknife.* <methods>;}
+
+-keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
+    long producerIndex;
+    long consumerIndex;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+    long producerNode;
+    long consumerNode;
+}
+# LeakCanary
+-keep class org.eclipse.mat.** { *; }
+-keep class com.squareup.leakcanary.** { *; }
+-dontwarn com.google.android.gms.**
