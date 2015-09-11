@@ -1,5 +1,6 @@
 package org.cryse.novelreader.lib.novelsource.baidubrowser;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -129,7 +130,7 @@ public class BaiduBrowserNovelSource implements NovelSource {
 
     @Override
     public Observable<List<NovelModel>> search(String queryString, int page) {
-        return mNovelSource.search(queryString,page).map(new ToNovelFromSearch());
+        return mNovelSource.search(queryString, page).map(new ToNovelFromSearch());
     }
 
     @Override
@@ -202,5 +203,10 @@ public class BaiduBrowserNovelSource implements NovelSource {
             jsonArray.put(item);
         }
         return jsonArray.toString();
+    }
+
+    @Override
+    public String getCopyRightStatement(Context context) {
+        return context.getString(R.string.copyright_statement_baidu_browser);
     }
 }

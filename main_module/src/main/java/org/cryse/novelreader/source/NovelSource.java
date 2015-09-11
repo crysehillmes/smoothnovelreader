@@ -1,5 +1,7 @@
 package org.cryse.novelreader.source;
 
+import android.content.Context;
+
 import org.cryse.novelreader.model.ChapterContentModel;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.model.NovelChangeSrcModel;
@@ -38,4 +40,6 @@ public interface NovelSource {
     Observable<NovelDetailModel> getNovelDetail(String id, String src);
 
     Observable<List<NovelChangeSrcModel>> getOtherChapterSrc(String novelId, String chapterSrc, String title);
+
+    String getCopyRightStatement(Context context);
 }

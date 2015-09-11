@@ -1,5 +1,7 @@
 package org.cryse.novelreader.lib.novelsource.easou;
 
+import android.content.Context;
+
 import com.google.gson.Gson;
 import com.squareup.okhttp.OkHttpClient;
 
@@ -267,5 +269,10 @@ public class EasouNovelSource implements NovelSource {
             return result;
         });*/
         return null;
+    }
+
+    @Override
+    public String getCopyRightStatement(Context context) {
+        return context.getString(R.string.copyright_statement_easou);
     }
 }

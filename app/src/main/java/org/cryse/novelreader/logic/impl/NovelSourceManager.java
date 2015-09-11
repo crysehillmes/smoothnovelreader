@@ -1,5 +1,6 @@
 package org.cryse.novelreader.logic.impl;
 
+import android.content.Context;
 import android.support.v4.util.ArrayMap;
 
 import org.cryse.novelreader.source.NovelSource;
@@ -37,5 +38,10 @@ public class NovelSourceManager {
 
     public int getNovelSourceCount() {
         return mNovelSourceMap.size();
+    }
+
+    public String getCopyRightStatement(Context context, int typeCode) {
+        NovelSource novelSource = this.mNovelSourceMap.get(typeCode);
+        return novelSource.getCopyRightStatement(context);
     }
 }

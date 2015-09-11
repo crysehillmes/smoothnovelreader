@@ -181,7 +181,6 @@
     <string name="settings_item_version">版本</string>
     <string name="settings_item_change_log_summary">最近各個版本的改進</string>
     <string name="settings_item_change_log_title">Changelog</string>
-    <string name="copyright_statement">[聲明：本應用内小説來自於網頁解析，本應用本身不提供任何小説内容]</string>
 
     <string name="settings_category_chapter_list_title">章節列表</string>
     <string name="settings_item_hide_redundant_chapter_title_title">简化章节标题</string>
