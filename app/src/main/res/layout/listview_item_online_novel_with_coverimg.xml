@@ -10,30 +10,26 @@
     app:cardElevation="2dp"
     app:cardUseCompatPadding="true">
 
+    <ImageView
+        android:id="@+id/listview_item_novel_image_imageview"
+        android:layout_width="96dp"
+        android:layout_height="128dp"
+        android:layout_gravity="left|center_vertical"
+        android:layout_margin="0dp"
+        android:scaleType="fitXY" />
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/listview_item_novel_image_imageview"
-            android:layout_width="72dp"
-            android:layout_height="96dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:scaleType="fitXY" />
-
+        android:layout_height="match_parent"
+        android:layout_marginLeft="96dp"
+        android:padding="16dp">
         <TextView
             android:id="@+id/listview_item_novel_title_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="32dp"
-            android:layout_marginTop="8dp"
-            android:layout_toRightOf="@+id/listview_item_novel_image_imageview"
             android:ellipsize="end"
             android:maxLines="2"
             android:textColor="?attr/smooth_theme_text_color_primary"
-            android:textSize="18sp">
+            android:textSize="@dimen/text_size_subhead">
 
         </TextView>
 
@@ -42,27 +38,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/listview_item_novel_title_textview"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_toRightOf="@+id/listview_item_novel_image_imageview"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="?attr/smooth_theme_text_color_secondary"
-            android:textSize="@dimen/text_size_body1" />
+            android:textSize="@dimen/text_size_caption" />
 
         <TextView
             android:id="@+id/listview_item_novel_info2_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/listview_item_novel_info1_textview"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_toRightOf="@+id/listview_item_novel_image_imageview"
+            android:layout_marginTop="8dp"
             android:ellipsize="end"
-            android:maxLines="2"
-            android:textColor="?attr/smooth_theme_text_color_secondary"
-            android:textSize="@dimen/text_size_body1"
+            android:maxLines="3"
+            android:textColor="?attr/smooth_theme_text_color_tint"
+            android:textSize="@dimen/text_size_caption"
             android:visibility="gone" />
 
     </RelativeLayout>

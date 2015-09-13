@@ -1,6 +1,8 @@
 package org.cryse.novelreader.ui.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.view.View;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.model.Novel;
@@ -24,7 +26,7 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
     @Override
     public int getLayoutId() {
         if(mIsShowCoverImage)
-            return R.layout.listview_item_online_novel_with_coverimg_card;
+            return R.layout.listview_item_online_novel_with_coverimg;
         else
             return R.layout.listview_item_online_novel;
     }
@@ -51,10 +53,10 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
             }
         }
 
-        /*if (viewHolder.mNovelInfo2TextView != null && novel != null && !TextUtils.isEmpty(novel.getCategory())) {
+        if (viewHolder.mNovelInfo2TextView != null && novel != null && !TextUtils.isEmpty(novel.getCategory())) {
             viewHolder.mNovelInfo2TextView.setText(novel.getSummary());
             viewHolder.mNovelInfo2TextView.setVisibility(View.VISIBLE);
-        }*/
+        }
 
         if(viewHolder.mBackCoverLayout != null && !(mIsNightMode && mGrayScale))
             viewHolder.mBackCoverLayout.setBackgroundColor(ColorUtils.getPreDefinedColorFromId(getContext().getResources(), item.getNovelId(), item.getTitle().length()));
