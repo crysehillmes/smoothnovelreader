@@ -88,7 +88,7 @@ dependencies {
 
     // Utils
     compile 'com.jakewharton.timber:timber:3.1.0'
-    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.github.bumptech.glide:glide:3.6.1'
 
     retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:$retrolambdaVersion"
 

@@ -1,26 +1,28 @@
 package org.cryse.novelreader.util;
 
 
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
+
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 
 import static android.graphics.Bitmap.createBitmap;
 import static android.graphics.Paint.ANTI_ALIAS_FLAG;
 
-public class GrayscaleTransformation implements Transformation {
-    public GrayscaleTransformation() {
+public class GrayscaleTransformation extends BitmapTransformation {
+    public GrayscaleTransformation(Context context) {
+        super(context);
     }
 
-    @Override public Bitmap transform(Bitmap source) {
-        Bitmap result = createBitmap(source.getWidth(), source.getHeight(), source.getConfig());
+
+    @Override
+    protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
+        Bitmap result = createBitmap(toTransform.getWidth(), toTransform.getHeight(), toTransform.getConfig());
 
         ColorMatrix colorMatrix = new ColorMatrix();
         colorMatrix.setSaturation(0);
@@ -30,14 +32,15 @@ public class GrayscaleTransformation implements Transformation {
         paint.setColorFilter(filter);
 
         Canvas canvas = new Canvas(result);
-        canvas.drawBitmap(source, 0, 0, paint);
+        canvas.drawBitmap(toTransform, 0, 0, paint);
 
-        source.recycle();
+        toTransform.recycle();
 
         return result;
     }
 
-    @Override public String key() {
-        return "grayscaleTransformation()";
+    @Override
+    public String getId() {
+        return getClass().getName();
     }
 }

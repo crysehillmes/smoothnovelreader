@@ -21,7 +21,6 @@ import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.squareup.picasso.Picasso;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
@@ -32,16 +31,12 @@ import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
-import java.util.concurrent.Executors;
-
 public class MainActivity extends AbstractThemeableActivity {
     private static final String LOG_TAG = MainActivity.class.getName();
     AndroidNavigation mNavigation;
 
     AccountHeader mAccountHeader;
     Drawer mNaviagtionDrawer;
-
-    Picasso mPicasso;
 
     int mCurrentSelection = 0;
     boolean mIsRestorePosition = false;
@@ -58,7 +53,6 @@ public class MainActivity extends AbstractThemeableActivity {
         injectThis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mPicasso = new Picasso.Builder(this).executor(Executors.newSingleThreadExecutor()).build();
         setIsOverrideStatusBarColor(false);
         /*setDrawerLayoutBackground(isNightMode());
         getDrawerLayout().setStatusBarBackgroundColor(getThemeEngine().getPrimaryDarkColor(this));*/
@@ -173,7 +167,6 @@ public class MainActivity extends AbstractThemeableActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mPicasso.shutdown();
     }
 
     @Override

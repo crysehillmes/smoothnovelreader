@@ -4,11 +4,14 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.bumptech.glide.DrawableRequestBuilder;
+import com.bumptech.glide.Glide;
+
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.model.Novel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.util.ColorUtils;
-import org.cryse.novelreader.util.PicassoHelper;
+import org.cryse.novelreader.util.GrayscaleTransformation;
 
 import java.util.List;
 
@@ -16,11 +19,13 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
     private boolean mIsShowCoverImage = true;
     private boolean mIsNightMode = false;
     private boolean mGrayScale = false;
+    private GrayscaleTransformation mGrayScaleTransformation;
     public NovelOnlineListAdapter(Context context, List<NovelModel> novelList, boolean isShowCoverImage, boolean isNightMode, boolean grayScale) {
         super(context, novelList);
         mIsShowCoverImage = isShowCoverImage;
         mIsNightMode = isNightMode;
         mGrayScale = grayScale;
+        mGrayScaleTransformation = new GrayscaleTransformation(context);
     }
 
     @Override
@@ -62,7 +67,16 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
             viewHolder.mBackCoverLayout.setBackgroundColor(ColorUtils.getPreDefinedColorFromId(getContext().getResources(), item.getNovelId(), item.getTitle().length()));
 
         if(viewHolder.mNovelImageImageView != null) {
-            PicassoHelper.load(getContext(), item.getCoverImage(), viewHolder.mNovelImageImageView, mIsNightMode && mGrayScale);
+
+            DrawableRequestBuilder builder = Glide
+                    .with(getContext())
+                    .load(item.getCoverImage())
+                    .error(R.drawable.image_placeholder)
+                    .placeholder(R.drawable.image_placeholder);
+            if (mIsNightMode && mGrayScale) {
+                builder.transform(mGrayScaleTransformation);
+            }
+            builder.into(viewHolder.mNovelImageImageView);
         }
     }
 }
