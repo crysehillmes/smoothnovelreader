@@ -193,6 +193,7 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
             cursor.moveToFirst();
             chapterContent = new ChapterContent(cursor);
         }
+        cursor.close();
         return chapterContent;
     }
 
@@ -253,8 +254,8 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
         if(cursor.getCount() > 0) {
             cursor.moveToFirst();
             bookmark = new Bookmark(cursor);
-            cursor.close();
         }
+        cursor.close();
         return bookmark;
     }
 
@@ -284,6 +285,7 @@ public class NovelDatabaseAccessLayerImpl implements NovelDatabaseAccessLayer {
             cursor.moveToFirst();
             bookmark = new Bookmark(cursor);
         }
+        cursor.close();
         return bookmark;
     }
 
