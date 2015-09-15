@@ -290,13 +290,15 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                     String gid = syncBookShelfModel.getId();
                     NovelModel novelModel = hashtable.get(gid);
                     if (
+                            novelModel != null &&
                             novelModel.getLatestUpdateChapterCount() == 0 &&
                                     novelModel.getLatestChapterTitle() != null &&
                                     novelModel.getLatestChapterTitle().compareTo(syncBookShelfModel.getLastChapterTitle()) != 0
-                            )
+                            ) {
                         novelModel.setLatestUpdateChapterCount(1);
-                    novelModel.setLatestChapterId(syncBookShelfModel.getLastChapterId());
-                    novelModel.setLatestChapterTitle(syncBookShelfModel.getLastChapterTitle());
+                        novelModel.setLatestChapterId(syncBookShelfModel.getLastChapterId());
+                        novelModel.setLatestChapterTitle(syncBookShelfModel.getLastChapterTitle());
+                    }
                 }
                 novelDataBase.updateFavoritesStatus(hashtable.values());
                 List<NovelModel> novelModel = novelDataBase.loadAllFavorites();
