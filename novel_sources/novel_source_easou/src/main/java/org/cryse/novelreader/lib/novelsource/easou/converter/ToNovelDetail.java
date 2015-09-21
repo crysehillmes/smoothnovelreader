@@ -12,7 +12,7 @@ public class ToNovelDetail implements Func1<DetailItem, NovelDetailModel> {
     @Override
     public NovelDetailModel call(DetailItem detailItem) {
         return new NovelDetailModel(
-                EasouNovelId.toNovelId(detailItem.getGId(), detailItem.getNId()),
+                EasouNovelId.toNovelId(detailItem.getGId(), detailItem.getNId(), detailItem.getTitle(), detailItem.getAuthor()),
                 detailItem.getSource(),
                 TextUtils.isDigitsOnly(detailItem.getChapterNumber()) ? Integer.valueOf(detailItem.getChapterNumber()) : 0,
                 detailItem.getLastChapterTitle(),
