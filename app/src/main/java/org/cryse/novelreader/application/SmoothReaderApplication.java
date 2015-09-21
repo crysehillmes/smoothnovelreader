@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.squareup.leakcanary.LeakCanary;
 import com.umeng.update.UmengUpdateAgent;
 
 import org.cryse.novelreader.BuildConfig;
@@ -16,6 +17,7 @@ import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
 import io.fabric.sdk.android.Fabric;
+import me.drakeet.library.CrashWoodpecker;
 import timber.log.Timber;
 
 public class SmoothReaderApplication extends Application {
@@ -40,6 +42,8 @@ public class SmoothReaderApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        LeakCanary.install(this);
+        CrashWoodpecker.fly().to(this);
         AnalyticsUtils.init(this, getString(R.string.UMENG_APPKEY_VALUE));
         Fabric.with(this, new Crashlytics());
         Timber.plant(new CrashReportingTree());
