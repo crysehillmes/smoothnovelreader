@@ -21,7 +21,6 @@ import org.cryse.novelreader.util.comparator.NovelSortKeyComparator;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -244,7 +243,6 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
             try {
                 List<NovelModel> novelModels = novelDataBase.loadAllFavorites();
                 List<UpdateRequestInfo> novelIds = new ArrayList<UpdateRequestInfo>(novelModels.size());
-                Hashtable<String, NovelModel> hashtable = new Hashtable<String, NovelModel>();
 
                 for (int i = 0; i < novelModels.size(); i++) {
                     NovelModel novelModel = novelModels.get(i);
@@ -258,7 +256,6 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                                     TextUtils.isEmpty(novelModel.getLatestChapterId()) ? id + "_1" : novelModel.getLatestChapterId()
                             )
                     );
-                    hashtable.put(id, novelModel);
                 }
                 if (novelIds.size() == 0) {
                     Collections.sort(novelModels, new NovelSortKeyComparator());
@@ -286,9 +283,10 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                     syncShelfItems.addAll(items);
                 }
 
+                List<NovelModel> updatedNovels = new ArrayList<NovelModel>(syncShelfItems.size());
                 for (NovelSyncBookShelfModel syncBookShelfModel : syncShelfItems) {
-                    String gid = syncBookShelfModel.getId();
-                    NovelModel novelModel = hashtable.get(gid);
+                    String novelId = syncBookShelfModel.getId();
+                    NovelModel novelModel = novelDataBase.loadFavorite(novelId);
                     if (
                             novelModel != null &&
                             novelModel.getLatestUpdateChapterCount() == 0 &&
@@ -298,13 +296,13 @@ public class NovelBusinessLogicLayerImpl implements NovelBusinessLogicLayer {
                         novelModel.setLatestUpdateChapterCount(1);
                         novelModel.setLatestChapterId(syncBookShelfModel.getLastChapterId());
                         novelModel.setLatestChapterTitle(syncBookShelfModel.getLastChapterTitle());
+                        updatedNovels.add(novelModel);
                     }
                 }
-                novelDataBase.updateFavoritesStatus(hashtable.values());
+                novelDataBase.updateFavoritesStatus(updatedNovels);
                 List<NovelModel> novelModel = novelDataBase.loadAllFavorites();
                 Collections.sort(novelModel, new NovelSortKeyComparator());
                 subscriber.onNext(novelModel);
-                hashtable.clear();
                 subscriber.onCompleted();
             } catch (Exception ex) {
                 subscriber.onError(ex);
