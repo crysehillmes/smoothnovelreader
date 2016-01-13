@@ -18,8 +18,8 @@ public class NovelBookShelfListAdapter extends NovelModelListAdapter {
     private SparseBooleanArray mSelectedItems = new SparseBooleanArray();
     private int mTagColorDotSize;
     private boolean mAllowSelection = false;
-    public NovelBookShelfListAdapter(Context context, List<NovelModel> items) {
-        super(context, items);
+    public NovelBookShelfListAdapter(Context context, String ateKey, List<NovelModel> items) {
+        super(context, ateKey, items);
         mTagColorDotSize = UIUtils.dp2px(context, 40f);
     }
 
@@ -58,14 +58,14 @@ public class NovelBookShelfListAdapter extends NovelModelListAdapter {
         }
 
         if(mSelectedItems.get(position, false)) {
-            TextDrawable textDrawable = TextDrawable.builder()
+            TextDrawable textDrawable = TextDrawable.builder(getContext())
                     .buildRoundRect("\u2713",
                             Color.DKGRAY,
                             mTagColorDotSize
                     ); // radius in px
             viewHolder.mNovelImageImageView.setImageDrawable(textDrawable);
         } else {
-            TextDrawable textDrawable = TextDrawable.builder()
+            TextDrawable textDrawable = TextDrawable.builder(getContext())
                     .buildRoundRect( item.getTitle().length() > 0 ? item.getTitle().substring(0,1) : "",
                             ColorUtils.getSortedPreDefinedColor(getContext().getResources(), position),
                             mTagColorDotSize

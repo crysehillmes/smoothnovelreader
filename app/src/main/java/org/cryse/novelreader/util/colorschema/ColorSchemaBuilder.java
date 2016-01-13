@@ -222,7 +222,7 @@ public class ColorSchemaBuilder {
     }
 
     private Drawable displayDrawableFromColor(int textColor, int bgColor, int width, int height) {
-        return TextDrawable.builder()
+        return TextDrawable.builder(mContext)
                 .beginConfig()
                 .textColor(textColor)
                 .fontSize(mTextSize)
@@ -234,7 +234,7 @@ public class ColorSchemaBuilder {
     }
 
     private Drawable displayDrawableFromDrawable(int textColor, Drawable bgDrawable, int width, int height) {
-        Drawable textDrawable = TextDrawable.builder()
+        Drawable textDrawable = TextDrawable.builder(mContext)
                 .beginConfig()
                 .textColor(textColor)
                 .fontSize(mTextSize)

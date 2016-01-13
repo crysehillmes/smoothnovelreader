@@ -20,8 +20,8 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
     private boolean mIsNightMode = false;
     private boolean mGrayScale = false;
     private GrayscaleTransformation mGrayScaleTransformation;
-    public NovelOnlineListAdapter(Context context, List<NovelModel> novelList, boolean isShowCoverImage, boolean isNightMode, boolean grayScale) {
-        super(context, novelList);
+    public NovelOnlineListAdapter(Context context, String ateKey, List<NovelModel> novelList, boolean isShowCoverImage, boolean isNightMode, boolean grayScale) {
+        super(context, ateKey, novelList);
         mIsShowCoverImage = isShowCoverImage;
         mIsNightMode = isNightMode;
         mGrayScale = grayScale;
@@ -46,16 +46,16 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
         }
         if(viewHolder.mNovelTitleTextView != null) {
             viewHolder.mNovelTitleTextView.setText(item.getTitle());
-            if(!mIsShowCoverImage) {
+            /*if(!mIsShowCoverImage) {
                 viewHolder.mNovelTitleTextView.setTextColor(getContext().getResources().getColor(R.color.white_87_percent));
-            }
+            }*/
         }
 
         if(viewHolder.mNovelInfo1TextView != null) {
             viewHolder.mNovelInfo1TextView.setText(item.getAuthor());
-            if(!mIsShowCoverImage) {
+            /*if(!mIsShowCoverImage) {
                 viewHolder.mNovelInfo1TextView.setTextColor(getContext().getResources().getColor(R.color.white_54_percent, null));
-            }
+            }*/
         }
 
         if (viewHolder.mNovelInfo2TextView != null && novel != null && !TextUtils.isEmpty(novel.getCategory())) {

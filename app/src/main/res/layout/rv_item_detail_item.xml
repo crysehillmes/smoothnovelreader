@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/text1"
-    style="@style/TextBody"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
+    android:layout_height="wrap_content"
+    android:textSize="@dimen/text_size_body2"
+    android:lineSpacingMultiplier="1.1"
+    android:layout_gravity="start"
+    android:tag="text_primary"/>

@@ -16,10 +16,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="?attr/smooth_theme_card_bg_color"
         android:clickable="true"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:background="?android:attr/windowBackground">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,7 +35,7 @@
                 android:layout_height="48dp"
                 android:scaleType="center"
                 android:src="@drawable/ic_label_text_size"
-                android:tint="?smooth_theme_text_color_primary" />
+                android:tag="tint_text_primary" />
 
             <org.cryse.widget.NumberPicker
                 android:id="@+id/numberpicker_fragment_read_options_text_size"
@@ -43,7 +43,7 @@
                 android:layout_height="48dp"
                 app:np_buttonDecreaseIcon="@drawable/ic_button_decrease"
                 app:np_buttonIncreaseIcon="@drawable/ic_button_increase"
-                app:np_textColor="?smooth_theme_text_color_primary"
+                app:np_textColor="@android:color/darker_gray"
                 app:np_textSize="@dimen/text_size_subhead" />
         </LinearLayout>
 
@@ -61,7 +61,7 @@
                 android:layout_height="48dp"
                 android:scaleType="center"
                 android:src="@drawable/ic_label_linespacing"
-                android:tint="?smooth_theme_text_color_primary" />
+                android:tag="tint_text_primary" />
 
             <org.cryse.widget.NumberPicker
                 android:id="@+id/numberpicker_fragment_read_options_line_spacing"
@@ -69,7 +69,7 @@
                 android:layout_height="48dp"
                 app:np_buttonDecreaseIcon="@drawable/ic_button_decrease"
                 app:np_buttonIncreaseIcon="@drawable/ic_button_increase"
-                app:np_textColor="?smooth_theme_text_color_primary"
+                app:np_textColor="@android:color/darker_gray"
                 app:np_textSize="@dimen/text_size_subhead" />
         </LinearLayout>
 
@@ -88,7 +88,7 @@
                 android:layout_height="48dp"
                 android:scaleType="center"
                 android:src="@drawable/ic_label_color_schema"
-                android:tint="?smooth_theme_text_color_primary" />
+                android:tag="tint_text_primary" />
 
             <ImageView
                 android:id="@+id/imageview_fragment_read_options_color_schema_value"

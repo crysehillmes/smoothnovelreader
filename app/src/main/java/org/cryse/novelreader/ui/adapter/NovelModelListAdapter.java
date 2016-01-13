@@ -3,6 +3,7 @@ package org.cryse.novelreader.ui.adapter;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.afollestad.appthemeengine.ATE;
+import com.afollestad.appthemeengine.Config;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.model.NovelModel;
@@ -26,13 +30,15 @@ public abstract class NovelModelListAdapter extends RecyclerViewBaseAdapter<Nove
 
     private Context mContext;
     private Resources mResouces;
+    private String mATEKey;
     private List<NovelModel> mNovelList;
     private String mCurrentCategory;
 
 
-    public NovelModelListAdapter(Context context, List<NovelModel> novelList) {
+    public NovelModelListAdapter(Context context, String ateKey, List<NovelModel> novelList) {
         mContext = context;
         mResouces = context.getResources();
+        mATEKey = ateKey;
         mNovelList = novelList;
     }
 
@@ -87,7 +93,7 @@ public abstract class NovelModelListAdapter extends RecyclerViewBaseAdapter<Nove
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(getLayoutId(), parent, false);
-        return new ViewHolder(v);
+        return new ViewHolder(v, mATEKey);
     }
 
     public String getCurrentCategory() {
@@ -123,6 +129,9 @@ public abstract class NovelModelListAdapter extends RecyclerViewBaseAdapter<Nove
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
 
+        @Nullable
+        @Bind(R.id.card_view)
+        public CardView mRootCardView;
         @Bind(R.id.listview_item_novel_title_textview)
         public TextView mNovelTitleTextView;
         @Bind(R.id.listview_item_novel_info1_textview)
@@ -145,9 +154,12 @@ public abstract class NovelModelListAdapter extends RecyclerViewBaseAdapter<Nove
         @Bind(R.id.listview_item_novel_unread_textview)
         public TextView mUnreadTextView;
 
-        public ViewHolder(View v) {
+        public ViewHolder(View v, String ateKey) {
             super(v);
             ButterKnife.bind(this, v);
+            ATE.apply(itemView, ateKey);
+            if(mRootCardView != null)
+                mRootCardView.setCardBackgroundColor(Config.textColorPrimaryInverse(itemView.getContext(), ateKey));
         }
     }
 

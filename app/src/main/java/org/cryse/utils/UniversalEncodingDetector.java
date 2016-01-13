@@ -1,4 +1,4 @@
-package org.cryse.util;
+package org.cryse.utils;
 
 import org.apache.tika.detect.EncodingDetector;
 import org.apache.tika.metadata.Metadata;

@@ -23,9 +23,9 @@
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:layout_alignParentBottom="true"
-        android:background="?attr/smooth_theme_card_bg_color"
         android:clickable="true"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="?android:attr/windowBackground">
 
         <ImageButton
             android:id="@+id/fragment_read_bottom_panel_button_previous"
@@ -34,7 +34,7 @@
             android:layout_weight="1"
             android:background="?selectableItemBackground"
             android:src="@drawable/ic_action_chapter_previous"
-            android:tint="?smooth_theme_text_color_primary" />
+            android:tag="tint_text_primary"/>
 
         <ImageButton
             android:id="@+id/fragment_read_bottom_panel_button_dark_mode"
@@ -43,7 +43,7 @@
             android:layout_weight="1"
             android:background="?selectableItemBackground"
             android:src="@drawable/ic_action_dark_mode"
-            android:tint="?smooth_theme_text_color_primary" />
+            android:tag="tint_text_primary"/>
 
         <ImageButton
             android:id="@+id/fragment_read_bottom_panel_button_reload"
@@ -52,7 +52,7 @@
             android:layout_weight="1"
             android:background="?selectableItemBackground"
             android:src="@drawable/ic_action_reload"
-            android:tint="?smooth_theme_text_color_primary" />
+            android:tag="tint_text_primary"/>
 
         <ImageButton
             android:id="@+id/fragment_read_bottom_panel_button_read_options"
@@ -61,7 +61,7 @@
             android:layout_weight="1"
             android:background="?selectableItemBackground"
             android:src="@drawable/ic_action_read_options"
-            android:tint="?smooth_theme_text_color_primary" />
+            android:tag="tint_text_primary"/>
 
         <ImageButton
             android:id="@+id/fragment_read_bottom_panel_button_next"
@@ -70,7 +70,7 @@
             android:layout_weight="1"
             android:background="?selectableItemBackground"
             android:src="@drawable/ic_action_chapter_next"
-            android:tint="?smooth_theme_text_color_primary" />
+            android:tag="tint_text_primary"/>
 
     </LinearLayout>
 </RelativeLayout>

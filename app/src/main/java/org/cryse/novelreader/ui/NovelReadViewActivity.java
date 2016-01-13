@@ -41,7 +41,7 @@ import org.cryse.novelreader.model.NovelChangeSrcModel;
 import org.cryse.novelreader.presenter.NovelChapterContentPresenter;
 import org.cryse.novelreader.ui.adapter.ReadViewFlipAdapter;
 import org.cryse.novelreader.ui.adapter.ReadViewPagerAdapter;
-import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
+import org.cryse.novelreader.ui.common.AbstractActivity;
 import org.cryse.novelreader.ui.widget.ReadWidget;
 import org.cryse.novelreader.ui.widget.ReadWidgetAdapter;
 import org.cryse.novelreader.util.PreferenceConverter;
@@ -65,7 +65,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class NovelReadViewActivity extends AbstractThemeableActivity implements NovelChapterContentView {
+public class NovelReadViewActivity extends AbstractActivity implements NovelChapterContentView {
     private static final String LOG_TAG = NovelReadViewActivity.class.getName();
     private static final String READ_BOTTOM_FRAGMENT_TAG = "read_bottom_fragment_tag";
 
@@ -145,7 +145,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
 
         @Override
         public void onDarkModeClick() {
-            closeBottomPanel(() -> setNightMode(!isNightMode()));
+            closeBottomPanel(() -> toggleNightMode());
         }
 
         @Override
@@ -203,7 +203,6 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
         setContentView(R.layout.activity_novel_readview);
         requestSystemUiHelper(SystemUiHelper.LEVEL_IMMERSIVE, SystemUiHelper.FLAG_IMMERSIVE_STICKY);
         ButterKnife.bind(this);
-        setStatusBarColor(getThemeEngine().getPrimaryColor(this));
         mHandler = new Handler();
         createReadWidget();
         mReadWidget.setOnContentRequestListener(new ReadWidget.OnContentRequestListener() {
@@ -740,7 +739,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
     }
 
     public void onMenuItemNightModeClick() {
-        setNightMode(!isNightMode());
+        toggleNightMode();
     }
 
     public void onMenuItemFontSizeClick(){
@@ -779,7 +778,7 @@ public class NovelReadViewActivity extends AbstractThemeableActivity implements 
                     if(selection == index) return false;
                     mScrollMode.set(pageCurlModeValues[selection]);
                     mReadWidgetContainer.removeAllViews();
-                    reloadTheme(true);
+                    recreate();
                     return true;
                 })
                 .positiveText(R.string.dialog_choose);

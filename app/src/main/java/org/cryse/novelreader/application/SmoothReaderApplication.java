@@ -15,6 +15,7 @@ import org.cryse.novelreader.application.component.DaggerAppComponent;
 import org.cryse.novelreader.application.module.AppModule;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
+import org.cryse.utils.preference.Prefs;
 
 import io.fabric.sdk.android.Fabric;
 import me.drakeet.library.CrashWoodpecker;
@@ -47,6 +48,7 @@ public class SmoothReaderApplication extends Application {
         AnalyticsUtils.init(this, getString(R.string.UMENG_APPKEY_VALUE));
         Fabric.with(this, new Crashlytics());
         Timber.plant(new CrashReportingTree());
+        Prefs.with(this).useDefault().init();
         UmengUpdateAgent.setAppkey(getString(R.string.UMENG_APPKEY_VALUE));
         UmengUpdateAgent.update(this);
 

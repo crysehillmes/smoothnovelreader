@@ -19,6 +19,6 @@
         app:contentInsetStart="72dp"
         app:contentInsetLeft="72dp"
         app:contentInsetEnd="0dp"
-        app:popupTheme="?smooth_theme_toolbar_popup_theme"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 </FrameLayout>

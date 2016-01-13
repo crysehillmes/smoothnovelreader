@@ -198,7 +198,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     @SuppressLint("ResourceAsColor")
     private void initListView() {
         mNovelList = new ArrayList<NovelModel>();
-        mCollectionAdapter = new NovelBookShelfListAdapter(getActivity(), mNovelList);
+        mCollectionAdapter = new NovelBookShelfListAdapter(getActivity(), mATEKey, mNovelList);
         int columnCount = getResources().getInteger(R.integer.boolshelf_list_col);
         RecyclerView.LayoutManager layoutManager;
         if (columnCount == 1) {
@@ -370,7 +370,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                     return false;
                 }
             case R.id.menu_item_change_theme:
-                getThemedActivity().setNightMode(!isNightMode());
+                toggleNightMode();
                 return true;
             case R.id.menu_item_add_online_book:
                 if (mSearchMenuItem != null) {

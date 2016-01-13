@@ -124,7 +124,7 @@ public class SearchFragment extends AbstractFragment implements NovelOnlineListV
     public void onResume() {
         super.onResume();
         if (mIsShowCoverImage.get() != showCoverImage || mGrayScaleInNight.get() != grayScaleInNight) {
-            mSearchListAdapter = new NovelOnlineListAdapter(getContext(), mSearchNovelList, mIsShowCoverImage.get(), isNightMode(), mGrayScaleInNight.get());
+            mSearchListAdapter = new NovelOnlineListAdapter(getContext(), mATEKey, mSearchNovelList, mIsShowCoverImage.get(), isNightMode(), mGrayScaleInNight.get());
             mCollectionView.setAdapter(mSearchListAdapter);
             mSearchListAdapter.notifyDataSetChanged();
             showCoverImage = mIsShowCoverImage.get();
@@ -167,7 +167,7 @@ public class SearchFragment extends AbstractFragment implements NovelOnlineListV
             layoutManager = new GridLayoutManager(getContext(), columnCount);
         }
         mCollectionView.setLayoutManager(layoutManager);
-        mSearchListAdapter = new NovelOnlineListAdapter(getContext(), mSearchNovelList, mIsShowCoverImage.get(), isNightMode(), mGrayScaleInNight.get());
+        mSearchListAdapter = new NovelOnlineListAdapter(getContext(), mATEKey, mSearchNovelList, mIsShowCoverImage.get(), isNightMode(), mGrayScaleInNight.get());
         mCollectionView.setAdapter(mSearchListAdapter);
 
         mCollectionView.setOnMoreListener((numberOfItems, numberBeforeMore, currentItemPos) -> {

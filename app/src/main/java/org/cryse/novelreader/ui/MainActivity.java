@@ -27,11 +27,11 @@ import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.event.AbstractEvent;
 import org.cryse.novelreader.event.ThemeColorChangedEvent;
 import org.cryse.novelreader.service.LocalFileImportService;
-import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
+import org.cryse.novelreader.ui.common.AbstractActivity;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
-public class MainActivity extends AbstractThemeableActivity {
+public class MainActivity extends AbstractActivity {
     private static final String LOG_TAG = MainActivity.class.getName();
     AndroidNavigation mNavigation;
 
@@ -53,7 +53,6 @@ public class MainActivity extends AbstractThemeableActivity {
         injectThis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setIsOverrideStatusBarColor(false);
         /*setDrawerLayoutBackground(isNightMode());
         getDrawerLayout().setStatusBarBackgroundColor(getThemeEngine().getPrimaryDarkColor(this));*/
         if(savedInstanceState!=null && savedInstanceState.containsKey("selection_item_position")) {
@@ -86,7 +85,7 @@ public class MainActivity extends AbstractThemeableActivity {
         mNaviagtionDrawer = new DrawerBuilder()
                 .withActivity(this)
                 .withAccountHeader(mAccountHeader)
-                .withStatusBarColor(getThemeEngine().getPrimaryDarkColor(this))
+                .withStatusBarColor(getPrimaryDarkColor())
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(R.string.drawer_bookshelf).withIcon(R.drawable.ic_drawer_novel).withIdentifier(1001),
                         new DividerDrawerItem(),

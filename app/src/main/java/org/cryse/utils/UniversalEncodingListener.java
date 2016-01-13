@@ -1,4 +1,4 @@
-package org.cryse.util;
+package org.cryse.utils;
 
 import org.apache.tika.detect.TextStatistics;
 import org.apache.tika.metadata.Metadata;

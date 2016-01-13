@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="colorPrimaryLightDefault">#2196F3</color>
+    <color name="colorAccentLightDefault">#4CAF50</color>
+
+    <color name="colorPrimaryDarkDefault">#37474F</color>
+    <color name="colorAccentDarkDefault">#2196F3</color>
+
     <color name="actionbar_text_color">#FFFFFFFF</color>
 
     <color name="refresh_progress_1">@color/theme_accent_2</color>

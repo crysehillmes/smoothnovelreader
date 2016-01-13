@@ -3,6 +3,5 @@
     android:id="@+id/layout_chapter_content_textview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:textColor="?attr/smooth_theme_read_text_color"
     android:paddingLeft="@dimen/read_textview_padding"
     android:paddingRight="@dimen/read_textview_padding"/>

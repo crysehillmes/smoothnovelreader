@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -38,7 +39,7 @@ import org.cryse.novelreader.presenter.NovelDetailPresenter;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.ui.adapter.NovelDetailAdapter;
 import org.cryse.novelreader.ui.adapter.item.NovelDetailItem;
-import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
+import org.cryse.novelreader.ui.common.AbstractActivity;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.LUtils;
 import org.cryse.novelreader.util.SimpleSnackbarType;
@@ -55,7 +56,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class NovelDetailActivity extends AbstractThemeableActivity implements NovelDetailView/*, ObservableScrollView.Callbacks*/ {
+public class NovelDetailActivity extends AbstractActivity implements NovelDetailView/*, ObservableScrollView.Callbacks*/ {
     private static final String LOG_TAG = NovelDetailActivity.class.getName();
     // Constant
 
@@ -175,6 +176,14 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
                 }
             }
         });
+    }
+
+    protected void setUpToolbar(Toolbar toolbar) {
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     /*@Override
@@ -361,7 +370,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
     }
 
     private void showNovelInformation() {
-        mDetailPrimaryColor = ColorUtils.getPreDefinedColorFromId(getThemedContext().getResources(), mNovel.getNovelId(), mNovel.getTitle().length());
+        mDetailPrimaryColor = ColorUtils.getPreDefinedColorFromId(getResources(), mNovel.getNovelId(), mNovel.getTitle().length());
         if (mDetailPrimaryColor == 0) {
             // no color -- use default
             mDetailPrimaryColor = ColorUtils.getColor(getResources(), R.color.primary_color);
@@ -369,7 +378,6 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
             // make sure it's opaque
             mDetailPrimaryColor = UIUtils.setColorAlpha(mDetailPrimaryColor, 255);
         }
-        setStatusBarColor(mDetailPrimaryColor);
         mAppBarLayout.setBackgroundColor(mDetailPrimaryColor);
 
         mTitleTextView.setText(mNovel.getTitle());
