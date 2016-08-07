@@ -28,7 +28,7 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:textSize="@dimen/text_size_subhead"
-            android:tag="tint_text_primary">
+            android:textColor="@color/text_color_primary">
 
         </TextView>
 
@@ -40,7 +40,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textSize="@dimen/text_size_caption"
-            android:tag="tint_text_primary"/>
+            android:textColor="@color/text_color_primary"/>
 
         <TextView
             android:id="@+id/listview_item_novel_info2_textview"
@@ -52,7 +52,7 @@
             android:maxLines="3"
             android:textSize="@dimen/text_size_caption"
             android:visibility="gone"
-            android:tag="tint_text_primary"/>
+            android:textColor="@color/text_color_primary"/>
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>

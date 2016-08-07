@@ -20,8 +20,8 @@ public class NovelOnlineListAdapter extends NovelModelListAdapter {
     private boolean mIsNightMode = false;
     private boolean mGrayScale = false;
     private GrayscaleTransformation mGrayScaleTransformation;
-    public NovelOnlineListAdapter(Context context, String ateKey, List<NovelModel> novelList, boolean isShowCoverImage, boolean isNightMode, boolean grayScale) {
-        super(context, ateKey, novelList);
+    public NovelOnlineListAdapter(Context context, List<NovelModel> novelList, boolean isShowCoverImage, boolean isNightMode, boolean grayScale) {
+        super(context, novelList);
         mIsShowCoverImage = isShowCoverImage;
         mIsNightMode = isNightMode;
         mGrayScale = grayScale;

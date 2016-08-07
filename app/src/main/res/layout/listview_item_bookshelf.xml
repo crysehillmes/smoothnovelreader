@@ -24,7 +24,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textSize="@dimen/text_size_subhead"
-            android:tag="text_primary">
+            android:textColor="@color/text_color_primary">
 
         </TextView>
 
@@ -40,7 +40,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textSize="@dimen/text_size_body1"
-            android:tag="text_secondary">
+            android:textColor="@color/text_color_secondary">
 
         </TextView>
 
@@ -57,7 +57,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textSize="@dimen/text_size_body1"
-            android:tag="text_secondary">
+            android:textColor="@color/text_color_secondary">
 
         </TextView>
 
@@ -71,6 +71,5 @@
         android:layout_margin="16dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textColor="?colorAccent"
-        android:textSize="@dimen/text_size_caption" />
+        android:textColor="?colorAccent"/>
 </RelativeLayout>

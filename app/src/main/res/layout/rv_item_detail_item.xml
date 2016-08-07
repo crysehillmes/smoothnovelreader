@@ -6,4 +6,4 @@
     android:textSize="@dimen/text_size_body2"
     android:lineSpacingMultiplier="1.1"
     android:layout_gravity="start"
-    android:tag="text_primary"/>
+    android:textColor="@color/text_color_primary"/>

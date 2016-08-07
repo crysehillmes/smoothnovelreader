@@ -14,8 +14,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.ATE;
-
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.model.ChapterModel;
 import org.cryse.novelreader.util.ColorUtils;
@@ -28,7 +26,6 @@ import butterknife.ButterKnife;
 
 public class NovelChapterListAdapter extends BaseAdapter {
     private Context mContext = null;
-    private String mATEKey;
     private List<ChapterModel> mContentList = null;
     private LayoutInflater mInflater = null;
     private int mTagColorDotSize;
@@ -40,10 +37,8 @@ public class NovelChapterListAdapter extends BaseAdapter {
     private int mLastReadPosition = -1;
     private int mColorAccent = 0;
 
-    public NovelChapterListAdapter(Context context, String ateKey,
-                                   List<ChapterModel> novelContents) {
+    public NovelChapterListAdapter(Context context, List<ChapterModel> novelContents) {
         this.mContext = context;
-        this.mATEKey = ateKey;
         this.mContentList = novelContents;
         mInflater = LayoutInflater.from(this.mContext);
         mTagColorDotSize = UIUtils.dp2px(mContext, 12f);
@@ -98,7 +93,6 @@ public class NovelChapterListAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.listview_item_novel_chapter, null);
             viewHolder = new NovelIntroItemViewHolder(convertView);
             convertView.setTag(viewHolder);
-            ATE.apply(convertView, mATEKey);
         } else {
             viewHolder = (NovelIntroItemViewHolder) convertView.getTag();
         }

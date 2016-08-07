@@ -76,4 +76,19 @@
                 </intent>
         </Preference>
     </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_category_debug_title">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="prefs_debug_enable_leak_canary"
+            android:summary="@string/settings_item_leak_canary_summary"
+            android:title="@string/settings_item_leak_canary_title"
+            android:widgetLayout="@layout/layout_switch_preference_compat"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="prefs_debug_enable_crash_woodpecker"
+            android:summary="@string/settings_item_crash_woodpecker_summary"
+            android:title="@string/settings_item_crash_woodpecker_title"
+            android:widgetLayout="@layout/layout_switch_preference_compat"/>
+    </PreferenceCategory>
 </PreferenceScreen>

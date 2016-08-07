@@ -6,11 +6,11 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.0'
-        classpath 'me.tatarka:gradle-retrolambda:3.3.0-beta3'
+        classpath 'com.android.tools.build:gradle:2.1.2'
+        // classpath 'com.google.gms:google-services:2.1.2'
+        classpath 'me.tatarka:gradle-retrolambda:3.3.0-beta4'
         classpath 'io.fabric.tools:gradle:1.+'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-        classpath 'com.google.gms:google-services:1.5.0-beta2'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -33,5 +33,5 @@ allprojects {
     ext.appMinSdkVersion = 14
     ext.appTargetSdkVersion = 23
     ext.appCompileSdkVersion = 23
-    ext.appBuildToolsVersion = '23.0.2'
+    ext.appBuildToolsVersion = '24.0.1'
 }

@@ -4,19 +4,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.afollestad.appthemeengine.ATE;
-import com.afollestad.appthemeengine.ATEActivity;
-import com.afollestad.appthemeengine.Config;
 import com.example.android.systemuivis.SystemUiHelper;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.constant.PreferenceConstant;
 import org.cryse.novelreader.event.AbstractEvent;
 import org.cryse.novelreader.event.RxEventBus;
+import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.SnackbarSupport;
 import org.cryse.novelreader.util.SnackbarUtils;
@@ -29,7 +26,7 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public abstract class AbstractActivity extends ATEActivity implements SnackbarSupport {
+public abstract class AbstractActivity extends AppCompatActivity implements SnackbarSupport {
     private View mSnackbarRootView;
     private SystemUiHelper mSystemUiHelper;
     private Subscription mEventBusSubscription;
@@ -37,36 +34,11 @@ public abstract class AbstractActivity extends ATEActivity implements SnackbarSu
     private int mPrimaryColor;
     private int mPrimaryDarkColor;
     private int mAccentColor;
-    protected String mATEKey;
     protected BooleanPrefs mIsNightMode;
     RxEventBus mEventBus = RxEventBus.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Default config
-        if (!ATE.config(this, "light_theme").isConfigured(1)) {
-            ATE.config(this, "light_theme")
-                    .activityTheme(R.style.AppTheme)
-                    .primaryColorRes(R.color.colorPrimaryLightDefault)
-                    .accentColorRes(R.color.colorAccentLightDefault)
-                    .lightToolbarMode(Config.LIGHT_TOOLBAR_AUTO)
-                    .coloredActionBar(true)
-                    .coloredNavigationBar(false)
-                    .usingMaterialDialogs(true)
-                    .commit();
-        }
-        if (!ATE.config(this, "dark_theme").isConfigured(1)) {
-            ATE.config(this, "dark_theme")
-                    .activityTheme(R.style.AppThemeDark)
-                    .primaryColorRes(R.color.colorPrimaryDarkDefault)
-                    .accentColorRes(R.color.colorAccentDarkDefault)
-                    .lightToolbarMode(Config.LIGHT_TOOLBAR_AUTO)
-                    .coloredActionBar(true)
-                    .coloredNavigationBar(true)
-                    .usingMaterialDialogs(true)
-                    .commit();
-        }
-        mATEKey = getATEKey();
         super.onCreate(savedInstanceState);
         mEventBusSubscription = mEventBus.toObservable()
                 .subscribeOn(Schedulers.newThread())
@@ -76,16 +48,12 @@ public abstract class AbstractActivity extends ATEActivity implements SnackbarSu
                 PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE,
                 PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE_VALUE
         );
-        mPrimaryColor = Config.primaryColor(this, mATEKey);
+        mPrimaryColor = ColorUtils.getColorFromAttr(this, R.attr.colorPrimary);
+        mPrimaryDarkColor = ColorUtils.getColorFromAttr(this, R.attr.colorPrimaryDark);
+        mAccentColor = ColorUtils.getColorFromAttr(this, R.attr.colorAccent);
+        /*mPrimaryColor = Config.primaryColor(this, mATEKey);
         mPrimaryDarkColor = Config.primaryColorDark(this, mATEKey);
-        mAccentColor = Config.accentColor(this, mATEKey);
-    }
-
-    @Nullable
-    @Override
-    protected final String getATEKey() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", false) ?
-                "dark_theme" : "light_theme";
+        mAccentColor = Config.accentColor(this, mATEKey);*/
     }
 
     @Override
@@ -119,8 +87,8 @@ public abstract class AbstractActivity extends ATEActivity implements SnackbarSu
 
     public void toggleNightMode() {
         mIsNightMode.set(!mIsNightMode.get());
-        Config.markChanged(this, "light_theme");
-        Config.markChanged(this, "dark_theme");
+        /*Config.markChanged(this, "light_theme");
+        Config.markChanged(this, "dark_theme");*/
         recreate();
     }
 

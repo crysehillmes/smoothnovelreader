@@ -15,6 +15,7 @@ import org.cryse.novelreader.application.component.DaggerAppComponent;
 import org.cryse.novelreader.application.module.AppModule;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
+import org.cryse.utils.preference.BooleanPrefs;
 import org.cryse.utils.preference.Prefs;
 
 import io.fabric.sdk.android.Fabric;
@@ -43,12 +44,16 @@ public class SmoothReaderApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        LeakCanary.install(this);
-        CrashWoodpecker.fly().to(this);
+        Prefs.with(this).useDefault().init();
+        boolean enableLeakCanary = Prefs.getBoolean("prefs_debug_enable_leak_canary", true);
+        boolean enableCrashWoodpecker = Prefs.getBoolean("prefs_debug_enable_crash_woodpecker", true);
+        if(enableLeakCanary)
+            LeakCanary.install(this);
+        if(enableCrashWoodpecker)
+            CrashWoodpecker.fly().to(this);
         AnalyticsUtils.init(this, getString(R.string.UMENG_APPKEY_VALUE));
         Fabric.with(this, new Crashlytics());
         Timber.plant(new CrashReportingTree());
-        Prefs.with(this).useDefault().init();
         UmengUpdateAgent.setAppkey(getString(R.string.UMENG_APPKEY_VALUE));
         UmengUpdateAgent.update(this);
 

@@ -28,8 +28,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:textSize="@dimen/text_size_bottom_status"
-            android:tag="text_secondary"/>
+            android:textSize="@dimen/text_size_bottom_status"/>
 
         <TextView
             android:id="@+id/activity_chapter_read_status_current_chapter_textview"
@@ -37,8 +36,7 @@
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:textSize="@dimen/text_size_bottom_status"
-            android:tag="text_secondary" />
+            android:textSize="@dimen/text_size_bottom_status"/>
 
         <TextView
             android:id="@+id/activity_chapter_read_status_chapter_pos_textview"
@@ -47,8 +45,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:textSize="@dimen/text_size_bottom_status"
-            android:tag="text_secondary"/>
+            android:textSize="@dimen/text_size_bottom_status"/>
     </RelativeLayout>
 
     <org.cryse.widget.MaterialProgressBar
@@ -65,6 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
+        android:fitsSystemWindows="true"
         android:elevation="4dp"
         android:visibility="invisible" />
 </RelativeLayout>

@@ -12,9 +12,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.ATE;
-import com.afollestad.appthemeengine.Config;
-
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.widget.recyclerview.RecyclerViewBaseAdapter;
@@ -30,15 +27,13 @@ public abstract class NovelModelListAdapter extends RecyclerViewBaseAdapter<Nove
 
     private Context mContext;
     private Resources mResouces;
-    private String mATEKey;
     private List<NovelModel> mNovelList;
     private String mCurrentCategory;
 
 
-    public NovelModelListAdapter(Context context, String ateKey, List<NovelModel> novelList) {
+    public NovelModelListAdapter(Context context, List<NovelModel> novelList) {
         mContext = context;
         mResouces = context.getResources();
-        mATEKey = ateKey;
         mNovelList = novelList;
     }
 
@@ -93,7 +88,7 @@ public abstract class NovelModelListAdapter extends RecyclerViewBaseAdapter<Nove
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(getLayoutId(), parent, false);
-        return new ViewHolder(v, mATEKey);
+        return new ViewHolder(v);
     }
 
     public String getCurrentCategory() {
@@ -154,12 +149,11 @@ public abstract class NovelModelListAdapter extends RecyclerViewBaseAdapter<Nove
         @Bind(R.id.listview_item_novel_unread_textview)
         public TextView mUnreadTextView;
 
-        public ViewHolder(View v, String ateKey) {
+        public ViewHolder(View v) {
             super(v);
             ButterKnife.bind(this, v);
-            ATE.apply(itemView, ateKey);
-            if(mRootCardView != null)
-                mRootCardView.setCardBackgroundColor(Config.textColorPrimaryInverse(itemView.getContext(), ateKey));
+            /*if(mRootCardView != null)
+                mRootCardView.setCardBackgroundColor(Config.textColorPrimaryInverse(itemView.getContext(), ateKey));*/
         }
     }
 

@@ -9,9 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.afollestad.appthemeengine.ATE;
-import com.afollestad.appthemeengine.Config;
-
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.event.AbstractEvent;
 import org.cryse.novelreader.event.RxEventBus;
@@ -33,7 +30,6 @@ public abstract class AbstractFragment extends Fragment implements SnackbarSuppo
     private int mPrimaryColor;
     private int mPrimaryDarkColor;
     private int mAccentColor;
-    protected String mATEKey;
 
     private List<Runnable> mDeferredUiOperations = new ArrayList<Runnable>();
 
@@ -43,20 +39,18 @@ public abstract class AbstractFragment extends Fragment implements SnackbarSuppo
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mATEKey = getATEKey();
         mEventBusSubscription = mEventBus.toObservable()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onEvent);
+        mPrimaryColor = ColorUtils.getColorFromAttr(getActivity(), R.attr.colorPrimary);
+        mPrimaryDarkColor = ColorUtils.getColorFromAttr(getActivity(), R.attr.colorPrimaryDark);
+        mAccentColor = ColorUtils.getColorFromAttr(getActivity(), R.attr.colorAccent);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ATE.apply(this, mATEKey);
-        mPrimaryColor = Config.primaryColor(getContext(), mATEKey);
-        mPrimaryDarkColor = Config.primaryColorDark(getContext(), mATEKey);
-        mAccentColor = Config.accentColor(getContext(), mATEKey);
     }
 
     @Nullable

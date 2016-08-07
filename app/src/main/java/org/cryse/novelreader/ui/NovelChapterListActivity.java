@@ -118,7 +118,7 @@ public class NovelChapterListActivity extends AbstractActivity implements NovelC
     private void initListView() {
         if(mNovelChapterList == null)
             mNovelChapterList = new ArrayList<ChapterModel>();
-        mChapterListAdapter = new NovelChapterListAdapter(this, mATEKey, mNovelChapterList);
+        mChapterListAdapter = new NovelChapterListAdapter(this, mNovelChapterList);
         mListView.setAdapter(mChapterListAdapter);
         mListView.getSwipeToRefresh().setColorSchemeResources(
                 ColorUtils.getRefreshProgressBarColors()[0],

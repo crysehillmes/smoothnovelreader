@@ -18,8 +18,8 @@ public class NovelBookShelfListAdapter extends NovelModelListAdapter {
     private SparseBooleanArray mSelectedItems = new SparseBooleanArray();
     private int mTagColorDotSize;
     private boolean mAllowSelection = false;
-    public NovelBookShelfListAdapter(Context context, String ateKey, List<NovelModel> items) {
-        super(context, ateKey, items);
+    public NovelBookShelfListAdapter(Context context, List<NovelModel> items) {
+        super(context, items);
         mTagColorDotSize = UIUtils.dp2px(context, 40f);
     }
 

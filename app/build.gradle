@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.neenbedankt.android-apt'
-apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'com.google.gms.google-services'
 
 
 android {
@@ -69,7 +69,7 @@ dependencies {
     compile libDependencies.design
     compile libDependencies.cardview
     compile libDependencies.recyclerview
-    compile libDependencies.play_services_analytics
+    // compile libDependencies.play_services_analytics
 
     // ReactiveX
     compile libDependencies.rxjava
@@ -77,6 +77,8 @@ dependencies {
 
     // REST Client
     // compile 'com.squareup.retrofit:retrofit:1.7.0'
+
+    compile libDependencies.easypermission
 
     compile libDependencies.umeng_analytics
 
@@ -106,16 +108,15 @@ dependencies {
         transitive = true
     }
 
+    compile(libDependencies.materialdialog_commons) {
+        transitive = true
+    }
+
     compile(libDependencies.materialdrawer) {
         transitive = true
         exclude module: 'appcompat-v7'
     }
 
-    compile(libDependencies.theme_engine) {
-        transitive = true
-    }
-
-    compile libDependencies.textdrawable
     compile libDependencies.materialprogressbar
 
     compile libDependencies.tika

@@ -198,7 +198,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
     @SuppressLint("ResourceAsColor")
     private void initListView() {
         mNovelList = new ArrayList<NovelModel>();
-        mCollectionAdapter = new NovelBookShelfListAdapter(getActivity(), mATEKey, mNovelList);
+        mCollectionAdapter = new NovelBookShelfListAdapter(getActivity(), mNovelList);
         int columnCount = getResources().getInteger(R.integer.boolshelf_list_col);
         RecyclerView.LayoutManager layoutManager;
         if (columnCount == 1) {
