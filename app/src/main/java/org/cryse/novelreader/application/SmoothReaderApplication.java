@@ -2,6 +2,7 @@ package org.cryse.novelreader.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -13,6 +14,7 @@ import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.component.AppComponent;
 import org.cryse.novelreader.application.component.DaggerAppComponent;
 import org.cryse.novelreader.application.module.AppModule;
+import org.cryse.novelreader.constant.PreferenceConstant;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 import org.cryse.utils.preference.BooleanPrefs;
@@ -26,6 +28,11 @@ public class SmoothReaderApplication extends Application {
     private static final String TAG = SmoothReaderApplication.class.getCanonicalName();
 
     private static final long CACHE_MAX_SIZE = 20l * 1024l * 1024l;
+
+    static {
+        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+    }
+
     private AppComponent appComponent;
     private AndroidNavigation mAndroidNavigation;
     public static SmoothReaderApplication get(Context context) {
@@ -51,6 +58,14 @@ public class SmoothReaderApplication extends Application {
             LeakCanary.install(this);
         if(enableCrashWoodpecker)
             CrashWoodpecker.fly().to(this);
+        boolean isNightMode = Prefs.getBoolean(PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE, false);
+
+        if(isNightMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+
         AnalyticsUtils.init(this, getString(R.string.UMENG_APPKEY_VALUE));
         Fabric.with(this, new Crashlytics());
         Timber.plant(new CrashReportingTree());

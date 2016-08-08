@@ -141,7 +141,7 @@ public class ColorSchemaBuilder {
     }
 
     public ColorSchema darkMode() {
-        int bgColor = ColorUtils.getColor(mContext.getResources(), R.color.theme_read_bg_color_white);
+        int bgColor = ColorUtils.getColor(mContext.getResources(), R.color.theme_read_bg_color);
         int textColor = ColorUtils.getColor(mContext.getResources(), R.color.text_color_night_read);
         return new ColorSchema(
                 textColor,

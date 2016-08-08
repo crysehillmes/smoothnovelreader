@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.View;
 
 import com.example.android.systemuivis.SystemUiHelper;
@@ -86,9 +87,13 @@ public abstract class AbstractActivity extends AppCompatActivity implements Snac
     }
 
     public void toggleNightMode() {
-        mIsNightMode.set(!mIsNightMode.get());
+        boolean isNightMode = !mIsNightMode.get();
+        mIsNightMode.set(isNightMode);
         /*Config.markChanged(this, "light_theme");
         Config.markChanged(this, "dark_theme");*/
+        AppCompatDelegate.setDefaultNightMode(isNightMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+        // getDelegate().setLocalNightMode(isNightMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+        getDelegate().applyDayNight(); // (isNightMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
         recreate();
     }
 

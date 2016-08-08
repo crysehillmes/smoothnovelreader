@@ -92,8 +92,14 @@ public class MainActivity extends AbstractActivity implements EasyPermissions.Pe
                 .withActivity(this)
                 .withAccountHeader(mAccountHeader)
                 .withStatusBarColor(getPrimaryDarkColor())
+                .withSliderBackgroundColorRes(R.color.theme_navigation_drawer_bg)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName(R.string.drawer_bookshelf).withIcon(R.drawable.ic_drawer_novel).withIdentifier(1001),
+                        new PrimaryDrawerItem()
+                                .withName(R.string.drawer_bookshelf)
+                                .withIcon(R.drawable.ic_drawer_novel)
+                                .withSelectedColorRes(R.color.theme_bg_color)
+                                .withTextColorRes(R.color.text_color_primary)
+                                .withIdentifier(1001),
                         new DividerDrawerItem(),
                         new SecondaryDrawerItem().withName(R.string.drawer_settings).withIdentifier(1101).withIcon(R.drawable.ic_drawer_settings).withSelectable(false)
 

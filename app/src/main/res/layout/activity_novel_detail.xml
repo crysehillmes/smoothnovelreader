@@ -36,13 +36,13 @@
                 android:id="@+id/page_novel_detail_textview_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/text_color_body1_white"
+                android:textColor="@color/white_87_percent"
                 android:textSize="@dimen/text_size_large" />
             <TextView
                 android:id="@+id/page_novel_detail_textview_author"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/text_color_caption_white"
+                android:textColor="@color/white_54_percent"
                 android:textSize="16sp" />
         </LinearLayout>
     </android.support.design.widget.AppBarLayout>

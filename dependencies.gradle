@@ -1,6 +1,6 @@
 ext {
     junitVersion = '4.12'
-    supportLibraryVersion = '23.1.1'
+    supportLibraryVersion = '24.1.1'
     multidexVersion='1.0.0'
     gsonVersion = '2.4'
     rxVersion = '1.1.0'

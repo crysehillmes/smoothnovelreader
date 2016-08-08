@@ -4,7 +4,7 @@ package org.cryse.novelreader.constant;
 import android.graphics.Color;
 
 public class PreferenceConstant {
-    public static final String SHARED_PREFERENCE_IS_NIGHT_MODE = "dark_theme";
+    public static final String SHARED_PREFERENCE_IS_NIGHT_MODE = "prefs_is_night_mode";
     public static final String SHARED_PREFERENCE_READ_FONT_SIZE = "prefs_read_font_size";
     public static final String SHARED_PREFERENCE_READ_FONT_SIZE_VALUE = "16";
     public static final String SHARED_PREFERENCE_READ_LINE_SPACING = "prefs_read_line_spacing";

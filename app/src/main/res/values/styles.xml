@@ -55,28 +55,14 @@
         <item name="android:dividerHeight">0dp</item>
     </style>
 
-    <style name="AppTheme.ActionBar" parent="Theme.AppCompat.Light">
+    <style name="AppTheme.ActionBar" parent="Theme.AppCompat.DayNight">
         <item name="windowActionModeOverlay">true</item>
         <item name="colorPrimary">@color/md_blue_500</item>
         <item name="colorPrimaryDark">@color/md_blue_700</item>
         <item name="colorAccent">@color/md_pink_500</item>
     </style>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="windowActionModeOverlay">true</item>
-        <item name="colorPrimary">@color/md_blue_500</item>
-        <item name="colorPrimaryDark">@color/md_blue_700</item>
-        <item name="colorAccent">@color/md_pink_500</item>
-    </style>
-
-    <style name="AppThemeDark.ActionBar" parent="Theme.AppCompat">
-        <item name="windowActionModeOverlay">true</item>
-        <item name="colorPrimary">@color/md_blue_500</item>
-        <item name="colorPrimaryDark">@color/md_blue_700</item>
-        <item name="colorAccent">@color/md_pink_500</item>
-    </style>
-
-    <style name="AppThemeDark" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="windowActionModeOverlay">true</item>
         <item name="colorPrimary">@color/md_blue_500</item>
         <item name="colorPrimaryDark">@color/md_blue_700</item>
