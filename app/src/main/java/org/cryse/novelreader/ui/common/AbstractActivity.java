@@ -1,6 +1,7 @@
 package org.cryse.novelreader.ui.common;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,6 +37,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements Snac
     private int mPrimaryDarkColor;
     private int mAccentColor;
     protected BooleanPrefs mIsNightMode;
+    protected boolean mCurrentNightMode;
     RxEventBus mEventBus = RxEventBus.getInstance();
 
     @Override
@@ -49,6 +51,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements Snac
                 PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE,
                 PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE_VALUE
         );
+        mCurrentNightMode = mIsNightMode.get();
         mPrimaryColor = ColorUtils.getColorFromAttr(this, R.attr.colorPrimary);
         mPrimaryDarkColor = ColorUtils.getColorFromAttr(this, R.attr.colorPrimaryDark);
         mAccentColor = ColorUtils.getColorFromAttr(this, R.attr.colorAccent);
@@ -67,6 +70,13 @@ public abstract class AbstractActivity extends AppCompatActivity implements Snac
     protected void onResume() {
         super.onResume();
         analyticsTrackEnter();
+        if(mCurrentNightMode != mIsNightMode.get()) {
+            recreate();
+        }
+        /*boolean appliedDayNight = isDelegateNightMode();
+        if(appliedDayNight != mIsNightMode.get()) {
+            recreate();
+        }*/
     }
 
     @Override
@@ -225,5 +235,23 @@ public abstract class AbstractActivity extends AppCompatActivity implements Snac
 
     public boolean isSystemUiHelperAvailable() {
         return !(mSystemUiHelper == null);
+    }
+
+    private boolean isDelegateNightMode() {
+        int currentNightMode = getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK;
+        switch (currentNightMode) {
+            case Configuration.UI_MODE_NIGHT_NO:
+                return false;
+                // Night mode is not active, we're in day time
+            case Configuration.UI_MODE_NIGHT_YES:
+                return true;
+                // Night mode is active, we're at night!
+            case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                return false;
+                // We don't know what mode we're in, assume notnight
+            default:
+                return false;
+        }
     }
 }
