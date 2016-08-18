@@ -1,0 +1,104 @@
+ext {
+    junitVersion = '4.12'
+    supportLibraryVersion = '24.1.1'
+    multidexVersion='1.0.0'
+    gsonVersion = '2.4'
+    rxVersion = '1.1.0'
+    butterknifeVersion = '7.0.1'
+    materialDrawerVersion = '4.6.1'
+    materialDialogVersion = '0.8.6.2'
+    easyPermissionVersion = '0.1.0'
+    rxPermissionsVersion = '0.7.0'
+    okhttpVersion = '2.5.0'
+    retrofitVersion = '1.9.0'
+    commonsioVersion = '2.4'
+    commonslang3Version = '3.4'
+    tikaVersion = '1.10'
+    timberVersion = '3.1.0'
+    playServiceVersion = '8.3.0'
+    umengAnalyticsVersion = '5.5.3'
+    retroLambdaVersion = '2.1.0'
+    daggerVersion = '2.0.1'
+    glideVersion = '3.7.0'
+    jsoupVersion = '1.8.3'
+    fabVersion = '1.3.0'
+    crashlyticsVersion = '2.5.1'
+    persistentsearchviewVersion = '1.0.3'
+    pulltorefreshVersion = '3.2.3'
+    superlistviewVersion = '1.5.2'
+    superrecyclerviewVersion = '1.1.1'
+    textdrawableVersion = 'c32bc48d86'
+    materialprogressVersion = '1.0.2'
+    juniversalchardetVersion = '1.0.3'
+    re2jVersion = '1.0'
+    bottomSheetVersion = '1.3.0'
+    leakcanaryVersion = '1.3.1'
+    crashwoodpeckerVersion = '0.9.7'
+
+    libDependencies = [
+            // Test
+            junit: "junit:junit:$junitVersion",
+
+            // Support Library
+            support_v13: "com.android.support:support-v13:$supportLibraryVersion",
+            appcompat: "com.android.support:appcompat-v7:$supportLibraryVersion",
+            cardview: "com.android.support:cardview-v7:$supportLibraryVersion",
+            recyclerview: "com.android.support:recyclerview-v7:$supportLibraryVersion",
+            design: "com.android.support:design:$supportLibraryVersion",
+            gridlayout_v7: "com.android.support:gridlayout-v7:$supportLibraryVersion",
+            multidex: "com.android.support:multidex:$multidexVersion",
+
+            // Permissions
+            easypermission: "pub.devrel:easypermissions:$easyPermissionVersion",
+
+            // Serialize and Deserialize
+            gson: "com.google.code.gson:gson:$gsonVersion",
+
+            // RX
+            rxjava: "io.reactivex:rxjava:$rxVersion",
+            rxandroid: "io.reactivex:rxandroid:$rxVersion",
+
+            // Network
+            okhttp: "com.squareup.okhttp:okhttp:$okhttpVersion",
+            retrofit: "com.squareup.retrofit:retrofit:$retrofitVersion",
+            tika: "org.apache.tika:tika-core:$tikaVersion",
+
+            // Log
+            timber: "com.jakewharton.timber:timber:$timberVersion",
+
+            // Injection
+            butterknife: "com.jakewharton:butterknife:$butterknifeVersion",
+
+            juniversalchardet: "com.googlecode.juniversalchardet:juniversalchardet:$juniversalchardetVersion",
+
+            re2j: "com.google.re2j:re2j:$re2jVersion",
+
+            // UI Elements
+            materialprogressbar: "me.zhanghai.android.materialprogressbar:library:$materialprogressVersion",
+            superlistview: "com.quentindommerc.superlistview:library:$superlistviewVersion",
+            superrecyclerview: "com.malinskiy:superrecyclerview:$superrecyclerviewVersion",
+            materialdrawer: "com.mikepenz:materialdrawer:$materialDrawerVersion@aar",
+            materialdialog: "com.github.afollestad.material-dialogs:core:$materialDialogVersion@aar",
+            materialdialog_commons: "com.github.afollestad.material-dialogs:commons:$materialDialogVersion@aar",
+            bottomsheet: "com.flipboard:bottomsheet-core:$bottomSheetVersion",
+
+            play_services_analytics: "com.google.android.gms:play-services-analytics:$playServiceVersion",
+            // compile fileTree(dir: 'libs', include: ['*.jar'])
+            umeng_analytics: "com.umeng.analytics:analytics:$umengAnalyticsVersion",
+            retrolambda: "net.orfjackal.retrolambda:retrolambda:$retroLambdaVersion",
+            dagger: "com.google.dagger:dagger:$daggerVersion",
+            dagger_compiler: "com.google.dagger:dagger-compiler:$daggerVersion",
+
+            glide: "com.github.bumptech.glide:glide:$glideVersion",
+            jsoup: "org.jsoup:jsoup:$jsoupVersion",
+            fab: "com.melnykov:floatingactionbutton:$fabVersion",
+            crashlytics: "com.crashlytics.sdk.android:crashlytics:$crashlyticsVersion@aar",
+            persistentsearchview: "org.cryse.widget:persistentsearchview:$persistentsearchviewVersion@aar",
+            pulltorefresh: "com.navercorp.pulltorefresh:library:$pulltorefreshVersion@aar",
+            pulltorefresh_viewpager: "com.navercorp.pulltorefresh:extra-viewpager:$pulltorefreshVersion@aar",
+            leakcanary: "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion",
+            leakcanary_noop: "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion",
+            crashwoodpecker: "me.drakeet.library:crashwoodpecker:$crashwoodpeckerVersion",
+            crashwoodpecker_noop: "me.drakeet.library:crashwoodpecker:$crashwoodpeckerVersion",
+    ]
+}

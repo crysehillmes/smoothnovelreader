@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="BaseTheme">
-        <attr name="actionBarIconColor" format="color" />
-        <attr name="actionBarInsetStart" format="dimension" />
-        <attr name="spinnerBarInsetStart" format="dimension" />
-        <attr name="popupItemBackground" format="reference" />
-        <attr name="photoItemForeground" format="reference" />
-        <attr name="photoItemForegroundBorderless" format="reference" />
-    </declare-styleable>
-
     <declare-styleable name="FixedAspectRatioAttr">
         <attr name="far_fixed_orientation" format="enum">
             <enum name="vertical" value="0" />
@@ -33,12 +24,6 @@
 
     <declare-styleable name="ThemeAttributes">
         <attr name="isFloatingWindow" format="boolean" />
-    </declare-styleable>
-
-    <declare-styleable name="BottomSheetItemAttributes">
-        <attr name="bsi_textColor" format="reference|color" />
-        <attr name="bsi_text" format="string" />
-        <attr name="bsi_icon" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="FloatingActionButton">

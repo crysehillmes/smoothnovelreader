@@ -10,7 +10,7 @@ public class ToNovelUpdate implements Func1<NovelUpdateItem, NovelSyncBookShelfM
     @Override
     public NovelSyncBookShelfModel call(NovelUpdateItem item) {
         return new NovelSyncBookShelfModel(
-                EasouNovelId.toNovelId(item.getGId(), item.getNId()),
+                EasouNovelId.toNovelId(item.getGId(), item.getNId(), item.getTitle(), item.getAuthor()),
                 Integer.toString(item.getChapterId()),
                 item.getLatestChapterTitle(),
                 Integer.toString(item.getChapterNumber())

@@ -1,0 +1,81 @@
+def gitCurrentShortHash = { ->
+    return 'git rev-parse --short HEAD'.execute().text.trim()
+}
+
+def gitCurrentBranch = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+def getBranchPrefix = { ->
+    def branchName = gitCurrentBranch()
+    if(branchName.startsWith("master")) {
+        return "master"
+    } else if (branchName.startsWith("develop")) {
+        return "develop"
+    } else if (branchName.startsWith("feature")) {
+        return "feature"
+    } else if (branchName.startsWith("release")) {
+        return "release"
+    } else if (branchName.startsWith("hotfix")) {
+        return "hotfix"
+    } else if (branchName.startsWith("support")) {
+        return "support"
+    } else {
+        return "temp"
+    }
+}
+
+def getLatestRelateReleaseTag = { ->
+    def commonMergeBaseCommit = 'git merge-base HEAD master'.execute().text.trim()
+    def releaseTagDescribe = ('git describe --tags --abbrev=0 --contains ' + commonMergeBaseCommit).execute().text.trim()
+    def endIndex = releaseTagDescribe.indexOf("^")
+    if(endIndex > 0)
+        return releaseTagDescribe.substring(0, endIndex)
+    else
+        return releaseTagDescribe
+}
+
+def getRCOrdinal = { ->
+
+    def parentCommitHash = 'git merge-base HEAD develop'.execute().text.trim()
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-list', parentCommitHash + '..HEAD', '--count'
+        standardOutput = stdout
+    }
+    return (stdout.toString().trim().toInteger() + 1)
+}
+
+ext.generateVersionName = { ->
+    def versionTag = getLatestRelateReleaseTag()
+    def branchType = getBranchPrefix();
+    if(branchType.equalsIgnoreCase("master")) {
+        return versionTag
+    } else if(branchType.equalsIgnoreCase("release")) {
+        def branchName = gitCurrentBranch()
+        def slashPosition = branchName.indexOf("/");
+        def newReleaseVersion = branchName.substring(slashPosition + 1)
+        return newReleaseVersion + '-rc' + getRCOrdinal()
+    } else {
+        return versionTag + '-dev+' + gitCurrentShortHash()
+    }
+}
+
+ext.generateVersionCode = { ->
+    def branchType = getBranchPrefix();
+    def tagName;
+    if(branchType.equalsIgnoreCase("release")) {
+        def branchName = gitCurrentBranch()
+        def slashPosition = branchName.indexOf("/");
+        tagName = branchName.substring(slashPosition + 1)
+    } else {
+        tagName = getLatestRelateReleaseTag();
+    }
+    def (major, minor, patch) = tagName.tokenize('.')
+    return major.toInteger() * 10000 + minor.toInteger() * 100 + patch.toInteger()
+}

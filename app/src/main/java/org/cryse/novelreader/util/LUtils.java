@@ -6,6 +6,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -13,9 +14,10 @@ import android.graphics.drawable.AnimatedStateListDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.cryse.novelreader.R;
@@ -40,6 +42,89 @@ public class LUtils {
 
     private static boolean hasL() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
+    public static void setOrAnimatePlusCheckIcon(final Context context, final FloatingActionButton imageView, boolean isCheck,
+                                                 boolean allowAnimate) {
+        if (!hasL()) {
+            compatSetOrAnimatePlusCheckIcon(context, imageView, isCheck, allowAnimate);
+            return;
+        }
+
+        Drawable drawable = imageView.getDrawable();
+        if (!(drawable instanceof AnimatedStateListDrawable)) {
+            drawable = ResourcesCompat.getDrawable(
+                    context.getResources(),
+                    R.drawable.add_schedule_fab_icon_anim,
+                    null
+            );
+            imageView.setImageDrawable(drawable);
+        }
+        imageView.setColorFilter(Color.WHITE);
+        if (allowAnimate) {
+            imageView.setImageState(isCheck ? STATE_UNCHECKED : STATE_CHECKED, false);
+            drawable.jumpToCurrentState();
+            imageView.setImageState(isCheck ? STATE_CHECKED : STATE_UNCHECKED, false);
+        } else {
+            imageView.setImageState(isCheck ? STATE_CHECKED : STATE_UNCHECKED, false);
+            drawable.jumpToCurrentState();
+        }
+    }
+
+    public static void compatSetOrAnimatePlusCheckIcon(final Context context, final FloatingActionButton imageView, boolean isCheck,
+                                                       boolean allowAnimate) {
+
+        final int imageResId = isCheck
+                ? R.drawable.ic_action_checked
+                : R.drawable.add_button_icon_unchecked;
+
+        if (imageView.getTag() != null) {
+            if (imageView.getTag() instanceof Animator) {
+                Animator anim = (Animator) imageView.getTag();
+                anim.end();
+                imageView.setAlpha(1f);
+            }
+        }
+
+        if (allowAnimate && isCheck) {
+            int duration = context.getResources().getInteger(
+                    android.R.integer.config_shortAnimTime);
+
+            Animator outAnimator = ObjectAnimator.ofFloat(imageView, View.ALPHA, 0f);
+            outAnimator.setDuration(duration / 2);
+            outAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    imageView.setImageResource(imageResId);
+                }
+            });
+
+            AnimatorSet inAnimator = new AnimatorSet();
+            outAnimator.setDuration(duration);
+            inAnimator.playTogether(
+                    ObjectAnimator.ofFloat(imageView, View.ALPHA, 1f),
+                    ObjectAnimator.ofFloat(imageView, View.SCALE_X, 0f, 1f),
+                    ObjectAnimator.ofFloat(imageView, View.SCALE_Y, 0f, 1f)
+            );
+
+            AnimatorSet set = new AnimatorSet();
+            set.playSequentially(outAnimator, inAnimator);
+            set.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    imageView.setTag(null);
+                }
+            });
+            imageView.setTag(set);
+            set.start();
+        } else {
+            imageView.post(new Runnable() {
+                @Override
+                public void run() {
+                    imageView.setImageResource(imageResId);
+                }
+            });
+        }
     }
 
     public void startActivityWithTransition(Intent intent, final View clickedView,
@@ -80,85 +165,5 @@ public class LUtils {
         }
 
         mActivity.getWindow().setStatusBarColor(color);
-    }
-
-    public void setOrAnimatePlusCheckIcon(final ImageView imageView, boolean isCheck,
-                                          boolean allowAnimate) {
-        if (!hasL()) {
-            compatSetOrAnimatePlusCheckIcon(imageView, isCheck, allowAnimate);
-            return;
-        }
-
-        Drawable drawable = imageView.getDrawable();
-        if (!(drawable instanceof AnimatedStateListDrawable)) {
-            drawable = mActivity.getResources().getDrawable(R.drawable.add_schedule_fab_icon_anim);
-            imageView.setImageDrawable(drawable);
-        }
-        imageView.setColorFilter(isCheck ?
-                mActivity.getResources().getColor(R.color.theme_accent_1) : Color.WHITE);
-        if (allowAnimate) {
-            imageView.setImageState(isCheck ? STATE_UNCHECKED : STATE_CHECKED, false);
-            drawable.jumpToCurrentState();
-            imageView.setImageState(isCheck ? STATE_CHECKED : STATE_UNCHECKED, false);
-        } else {
-            imageView.setImageState(isCheck ? STATE_CHECKED : STATE_UNCHECKED, false);
-            drawable.jumpToCurrentState();
-        }
-    }
-
-    public void compatSetOrAnimatePlusCheckIcon(final ImageView imageView, boolean isCheck,
-                                                boolean allowAnimate) {
-
-        final int imageResId = isCheck
-                ? R.drawable.add_button_icon_checked
-                : R.drawable.add_button_icon_unchecked;
-
-        if (imageView.getTag() != null) {
-            if (imageView.getTag() instanceof Animator) {
-                Animator anim = (Animator) imageView.getTag();
-                anim.end();
-                imageView.setAlpha(1f);
-            }
-        }
-
-        if (allowAnimate && isCheck) {
-            int duration = mActivity.getResources().getInteger(
-                    android.R.integer.config_shortAnimTime);
-
-            Animator outAnimator = ObjectAnimator.ofFloat(imageView, View.ALPHA, 0f);
-            outAnimator.setDuration(duration / 2);
-            outAnimator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    imageView.setImageResource(imageResId);
-                }
-            });
-
-            AnimatorSet inAnimator = new AnimatorSet();
-            outAnimator.setDuration(duration);
-            inAnimator.playTogether(
-                    ObjectAnimator.ofFloat(imageView, View.ALPHA, 1f),
-                    ObjectAnimator.ofFloat(imageView, View.SCALE_X, 0f, 1f),
-                    ObjectAnimator.ofFloat(imageView, View.SCALE_Y, 0f, 1f)
-            );
-
-            AnimatorSet set = new AnimatorSet();
-            set.playSequentially(outAnimator, inAnimator);
-            set.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    imageView.setTag(null);
-                }
-            });
-            imageView.setTag(set);
-            set.start();
-        } else {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    imageView.setImageResource(imageResId);
-                }
-            });
-        }
     }
 }

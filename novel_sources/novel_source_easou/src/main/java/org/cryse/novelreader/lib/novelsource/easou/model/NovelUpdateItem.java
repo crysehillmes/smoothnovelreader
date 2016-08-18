@@ -9,6 +9,12 @@ public class NovelUpdateItem {
     @SerializedName("nid")
     private long nId;
 
+    @SerializedName("name")
+    private String title;
+
+    @SerializedName("author")
+    private String author;
+
     @SerializedName("last_sort")
     private int chapterId;
 
@@ -35,8 +41,20 @@ public class NovelUpdateItem {
         this.nId = nId;
     }
 
-    public int getChapterIndex() {
-        return chapterId;
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public int getChapterId() {

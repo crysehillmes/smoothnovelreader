@@ -370,7 +370,7 @@ public class NovelBookShelfFragment extends AbstractFragment implements NovelBoo
                     return false;
                 }
             case R.id.menu_item_change_theme:
-                getThemedActivity().setNightMode(!isNightMode());
+                toggleNightMode();
                 return true;
             case R.id.menu_item_add_online_book:
                 if (mSearchMenuItem != null) {

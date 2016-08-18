@@ -21,27 +21,27 @@ import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.squareup.picasso.Picasso;
 
 import org.cryse.novelreader.R;
+import org.cryse.novelreader.application.AppPermissions;
 import org.cryse.novelreader.application.SmoothReaderApplication;
 import org.cryse.novelreader.event.AbstractEvent;
 import org.cryse.novelreader.event.ThemeColorChangedEvent;
 import org.cryse.novelreader.service.LocalFileImportService;
-import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
+import org.cryse.novelreader.ui.common.AbstractActivity;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
 
-import java.util.concurrent.Executors;
+import java.util.List;
 
-public class MainActivity extends AbstractThemeableActivity {
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class MainActivity extends AbstractActivity implements EasyPermissions.PermissionCallbacks {
     private static final String LOG_TAG = MainActivity.class.getName();
     AndroidNavigation mNavigation;
 
     AccountHeader mAccountHeader;
     Drawer mNaviagtionDrawer;
-
-    Picasso mPicasso;
 
     int mCurrentSelection = 0;
     boolean mIsRestorePosition = false;
@@ -58,8 +58,6 @@ public class MainActivity extends AbstractThemeableActivity {
         injectThis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mPicasso = new Picasso.Builder(this).executor(Executors.newSingleThreadExecutor()).build();
-        setIsOverrideStatusBarColor(false);
         /*setDrawerLayoutBackground(isNightMode());
         getDrawerLayout().setStatusBarBackgroundColor(getThemeEngine().getPrimaryDarkColor(this));*/
         if(savedInstanceState!=null && savedInstanceState.containsKey("selection_item_position")) {
@@ -81,6 +79,7 @@ public class MainActivity extends AbstractThemeableActivity {
                 mServiceBinder = null;
             }
         };
+        checkStoragePermissions();
     }
 
     private void initDrawer() {
@@ -92,9 +91,15 @@ public class MainActivity extends AbstractThemeableActivity {
         mNaviagtionDrawer = new DrawerBuilder()
                 .withActivity(this)
                 .withAccountHeader(mAccountHeader)
-                .withStatusBarColor(getThemeEngine().getPrimaryDarkColor(this))
+                .withStatusBarColor(getPrimaryDarkColor())
+                .withSliderBackgroundColorRes(R.color.theme_navigation_drawer_bg)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName(R.string.drawer_bookshelf).withIcon(R.drawable.ic_drawer_novel).withIdentifier(1001),
+                        new PrimaryDrawerItem()
+                                .withName(R.string.drawer_bookshelf)
+                                .withIcon(R.drawable.ic_drawer_novel)
+                                .withSelectedColorRes(R.color.theme_bg_color)
+                                .withTextColorRes(R.color.text_color_primary)
+                                .withIdentifier(1001),
                         new DividerDrawerItem(),
                         new SecondaryDrawerItem().withName(R.string.drawer_settings).withIdentifier(1101).withIcon(R.drawable.ic_drawer_settings).withSelectable(false)
 
@@ -173,7 +178,6 @@ public class MainActivity extends AbstractThemeableActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mPicasso.shutdown();
     }
 
     @Override
@@ -268,5 +272,46 @@ public class MainActivity extends AbstractThemeableActivity {
             fragmentTransaction.addToBackStack(backStackTag);
         fragmentTransaction.replace(R.id.container, targetFragment);
         fragmentTransaction.commit();
+    } @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    private void checkStoragePermissions() {
+        if (EasyPermissions.hasPermissions(this, AppPermissions.PERMISSIONS)) {
+            // Already have permission, do the thing
+            // ...
+        } else {
+            // Do not have permissions, request them now
+            EasyPermissions.requestPermissions(this, getString(R.string.dialog_title_permission_storage),
+                    AppPermissions.RC_PERMISSION_STORAGE, AppPermissions.PERMISSIONS);
+        }
+    }
+
+    @Override
+    public void onPermissionsGranted(List<String> permissions) {
+        if (AppPermissions.PERMISSIONS_SET.containsAll(permissions)) {
+            // Restarting application
+            // Schedule start after 1 second
+            /*PendingIntent pi = PendingIntent.getActivity(
+                    this,
+                    0,
+                    new Intent(this, MainActivity.class),
+                    PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            am.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pi);
+
+            // Stop now
+            finish();
+            System.exit(0);*/
+        } else {
+            finish();
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(List<String> perms) {
+        finish();
     }
 }

@@ -141,7 +141,7 @@ public class ColorSchemaBuilder {
     }
 
     public ColorSchema darkMode() {
-        int bgColor = ColorUtils.getColor(mContext.getResources(), R.color.theme_read_bg_color_white);
+        int bgColor = ColorUtils.getColor(mContext.getResources(), R.color.theme_read_bg_color);
         int textColor = ColorUtils.getColor(mContext.getResources(), R.color.text_color_night_read);
         return new ColorSchema(
                 textColor,
@@ -222,7 +222,7 @@ public class ColorSchemaBuilder {
     }
 
     private Drawable displayDrawableFromColor(int textColor, int bgColor, int width, int height) {
-        return TextDrawable.builder()
+        return TextDrawable.builder(mContext)
                 .beginConfig()
                 .textColor(textColor)
                 .fontSize(mTextSize)
@@ -234,7 +234,7 @@ public class ColorSchemaBuilder {
     }
 
     private Drawable displayDrawableFromDrawable(int textColor, Drawable bgDrawable, int width, int height) {
-        Drawable textDrawable = TextDrawable.builder()
+        Drawable textDrawable = TextDrawable.builder(mContext)
                 .beginConfig()
                 .textColor(textColor)
                 .fontSize(mTextSize)

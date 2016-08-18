@@ -2,8 +2,10 @@ package org.cryse.novelreader.ui.common;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -24,9 +26,15 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public abstract class AbstractFragment extends android.support.v4.app.Fragment implements SnackbarSupport {
-    RxEventBus mEventBus = RxEventBus.getInstance();
+public abstract class AbstractFragment extends Fragment implements SnackbarSupport {
+    private int mPrimaryColor;
+    private int mPrimaryDarkColor;
+    private int mAccentColor;
+
     private List<Runnable> mDeferredUiOperations = new ArrayList<Runnable>();
+
+    RxEventBus mEventBus = RxEventBus.getInstance();
+
     private Subscription mEventBusSubscription;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,6 +43,20 @@ public abstract class AbstractFragment extends android.support.v4.app.Fragment i
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onEvent);
+        mPrimaryColor = ColorUtils.getColorFromAttr(getActivity(), R.attr.colorPrimary);
+        mPrimaryDarkColor = ColorUtils.getColorFromAttr(getActivity(), R.attr.colorPrimaryDark);
+        mAccentColor = ColorUtils.getColorFromAttr(getActivity(), R.attr.colorAccent);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Nullable
+    protected final String getATEKey() {
+        return PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("dark_theme", false) ?
+                "dark_theme" : "light_theme";
     }
 
     protected List<Runnable> getDeferredUiOperations() {
@@ -77,8 +99,8 @@ public abstract class AbstractFragment extends android.support.v4.app.Fragment i
         return (AppCompatActivity)getActivity();
     }
 
-    public AbstractThemeableActivity getThemedActivity() {
-        return (AbstractThemeableActivity)getActivity();
+    public AbstractActivity getThemedActivity() {
+        return (AbstractActivity)getActivity();
     }
 
     protected String getFragmentName() {
@@ -93,10 +115,26 @@ public abstract class AbstractFragment extends android.support.v4.app.Fragment i
 
     public Boolean isNightMode() {
         if(isAdded())
-            return ((AbstractThemeableActivity)getAppCompatActivity()).isNightMode();
+            return getThemedActivity().isNightMode();
         else
             return null;
+    }
 
+    public void toggleNightMode() {
+        if(getThemedActivity() != null)
+            getThemedActivity().toggleNightMode();
+    }
+
+    protected int getPrimaryColor() {
+        return mPrimaryColor;
+    }
+
+    protected int getPrimaryDarkColor() {
+        return mPrimaryDarkColor;
+    }
+
+    protected int getAccentColor() {
+        return mAccentColor;
     }
 
     protected abstract void analyticsTrackEnter();
@@ -105,22 +143,6 @@ public abstract class AbstractFragment extends android.support.v4.app.Fragment i
 
     protected void onEvent(AbstractEvent event) {
 
-    }
-
-    protected int getPrimaryColor() {
-        if (getThemedActivity() != null) {
-            return getThemedActivity().getThemeEngine().getPrimaryColor(getActivity());
-        } else {
-            return ColorUtils.getColorFromAttr(getActivity(), R.attr.colorPrimary);
-        }
-    }
-
-    protected int getPrimaryDarkColor() {
-        if (getThemedActivity() != null) {
-            return getThemedActivity().getThemeEngine().getPrimaryDarkColor(getActivity());
-        } else {
-            return ColorUtils.getColorFromAttr(getActivity(), R.attr.colorPrimaryDark);
-        }
     }
 
     protected View getSnackbarRootView() {

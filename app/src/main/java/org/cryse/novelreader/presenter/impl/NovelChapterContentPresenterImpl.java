@@ -18,10 +18,10 @@ import java.util.List;
 import javax.inject.Inject;
 
 import rx.Observable;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import rx.util.async.Async;
 import timber.log.Timber;
 
 public class NovelChapterContentPresenterImpl implements NovelChapterContentPresenter {
@@ -220,7 +220,10 @@ public class NovelChapterContentPresenterImpl implements NovelChapterContentPres
     }
 
     private Observable<List<CharSequence>> splitNovelChapterAsync(final String title, final String content) {
-        return Async.start(() -> splitNovelChapter(title, content));
+        return Observable.create((Subscriber<? super List<CharSequence>> subscriber) -> {
+                subscriber.onNext(splitNovelChapter(title, content));
+                subscriber.onCompleted();
+        });
     }
 
     private List<CharSequence> splitNovelChapter(String title, String content) {

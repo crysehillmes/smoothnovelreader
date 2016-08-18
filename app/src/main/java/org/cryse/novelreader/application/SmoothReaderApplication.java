@@ -2,9 +2,11 @@ package org.cryse.novelreader.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.squareup.leakcanary.LeakCanary;
 import com.umeng.update.UmengUpdateAgent;
 
 import org.cryse.novelreader.BuildConfig;
@@ -12,16 +14,25 @@ import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.component.AppComponent;
 import org.cryse.novelreader.application.component.DaggerAppComponent;
 import org.cryse.novelreader.application.module.AppModule;
+import org.cryse.novelreader.constant.PreferenceConstant;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.util.navidrawer.AndroidNavigation;
+import org.cryse.utils.preference.BooleanPrefs;
+import org.cryse.utils.preference.Prefs;
 
 import io.fabric.sdk.android.Fabric;
+import me.drakeet.library.CrashWoodpecker;
 import timber.log.Timber;
 
 public class SmoothReaderApplication extends Application {
     private static final String TAG = SmoothReaderApplication.class.getCanonicalName();
 
     private static final long CACHE_MAX_SIZE = 20l * 1024l * 1024l;
+
+    static {
+        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+    }
+
     private AppComponent appComponent;
     private AndroidNavigation mAndroidNavigation;
     public static SmoothReaderApplication get(Context context) {
@@ -40,6 +51,21 @@ public class SmoothReaderApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Prefs.with(this).useDefault().init();
+        boolean enableLeakCanary = Prefs.getBoolean("prefs_debug_enable_leak_canary", true);
+        boolean enableCrashWoodpecker = Prefs.getBoolean("prefs_debug_enable_crash_woodpecker", true);
+        if(enableLeakCanary)
+            LeakCanary.install(this);
+        if(enableCrashWoodpecker)
+            CrashWoodpecker.fly().to(this);
+        boolean isNightMode = Prefs.getBoolean(PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE, false);
+
+        if(isNightMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+
         AnalyticsUtils.init(this, getString(R.string.UMENG_APPKEY_VALUE));
         Fabric.with(this, new Crashlytics());
         Timber.plant(new CrashReportingTree());

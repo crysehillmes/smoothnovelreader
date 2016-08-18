@@ -18,7 +18,7 @@ public class ToNovelFromSearch implements Func1<SearchNovelItem[], List<NovelMod
         List<NovelModel> result = new ArrayList<>(searchNovelItems.length);
         for (SearchNovelItem item : searchNovelItems) {
             Novel novel = new Novel(
-                    EasouNovelId.toNovelId(item.getGId(), item.getNId()),
+                    EasouNovelId.toNovelId(item.getGId(), item.getNId(), item.getTitle(), item.getAuthor()),
                     item.getTitle(),
                     item.getAuthor(),
                     Consts.SOURCE_EASOU,

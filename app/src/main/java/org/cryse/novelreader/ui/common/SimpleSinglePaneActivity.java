@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import org.cryse.novelreader.R;
 
-public abstract class SimpleSinglePaneActivity extends AbstractThemeableActivity {
+public abstract class SimpleSinglePaneActivity extends AbstractActivity {
     private Fragment mFragment;
 
     @Override

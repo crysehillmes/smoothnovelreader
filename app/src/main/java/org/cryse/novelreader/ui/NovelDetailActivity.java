@@ -1,39 +1,32 @@
 package org.cryse.novelreader.ui;
 
-import android.animation.ObjectAnimator;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Resources;
-import android.graphics.Paint;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.view.ViewCompat;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.application.SmoothReaderApplication;
@@ -44,95 +37,49 @@ import org.cryse.novelreader.model.NovelDetailModel;
 import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelDetailPresenter;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
-import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
+import org.cryse.novelreader.ui.adapter.NovelDetailAdapter;
+import org.cryse.novelreader.ui.adapter.item.NovelDetailItem;
+import org.cryse.novelreader.ui.common.AbstractActivity;
 import org.cryse.novelreader.util.ColorUtils;
+import org.cryse.novelreader.util.LUtils;
 import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.UIUtils;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 import org.cryse.novelreader.view.NovelDetailView;
-import org.cryse.widget.CheckableFrameLayout;
-import org.cryse.widget.ObservableScrollView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 
-public class NovelDetailActivity extends AbstractThemeableActivity implements NovelDetailView, ObservableScrollView.Callbacks {
+public class NovelDetailActivity extends AbstractActivity implements NovelDetailView/*, ObservableScrollView.Callbacks*/ {
     private static final String LOG_TAG = NovelDetailActivity.class.getName();
     // Constant
-    private static final float PHOTO_ASPECT_RATIO = 1.7777777f;
-    private static final float GAP_FILL_DISTANCE_MULTIPLIER = 1.5f;
 
 
     // View field
-    @Bind(R.id.my_awesome_toolbar)
+    @Bind(R.id.appbarlayout)
+    AppBarLayout mAppBarLayout;
+
+    @Bind(R.id.toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.scroll_view)
-    ObservableScrollView mScrollView;
-
-    @Bind(R.id.scroll_view_child)
-    FrameLayout mScrollViewChild;
-
-    @Bind(R.id.session_photo_container)
-    FrameLayout mPhotoViewContainer;
-
-    @Bind(R.id.session_photo)
-    ImageView mPhotoView;
-
-    @Bind(R.id.details_container)
-    LinearLayout mDetailsContainer;
-
-    @Bind(R.id.novel_brief_info_layout)
-    LinearLayout mBriefInfoLayout;
-
-    @Bind(R.id.detail_status_textview)
-    TextView mStatusTextView;
-
-    @Bind(R.id.detail_chapter_count_textview)
-    TextView mChapterCountTextView;
-
-    @Bind(R.id.detail_latest_chapter_textview)
-    TextView mLatestChapterTextView;
-
-    @Bind(R.id.detail_abstract_header)
-    TextView mAbstractHeaderTextView;
-
-    @Bind(R.id.novel_abstract)
-    TextView mAbstractTextView;
-
-    @Bind(R.id.novel_tags_scrollview)
-    HorizontalScrollView mTagsScrollView;
-
-    @Bind(R.id.novel_tags_container)
-    LinearLayout mTagsContainer;
-
-    @Bind(R.id.detail_achieve_block)
-    LinearLayout mAchieveLayout;
-
-    @Bind(R.id.detail_achieve_header)
-    TextView mAchieveHeaderTextView;
-
-    @Bind(R.id.detail_achieves_container)
-    LinearLayout mAchievesContainer;
-
-    @Bind(R.id.header_novel)
-    LinearLayout mHeaderBox;
-
-    @Bind(R.id.novel_title)
+    @Bind(R.id.page_novel_detail_textview_title)
     TextView mTitleTextView;
 
-    @Bind(R.id.novel_subtitle)
-    TextView mSubtitleTextView;
+    @Bind(R.id.page_novel_detail_textview_author)
+    TextView mAuthorTextView;
 
-    @Bind(R.id.add_novel_button)
-    CheckableFrameLayout mAddNovelButton;
+    @Bind(R.id.page_novel_detail_recyclerview)
+    SuperRecyclerView mCollectionView;
 
-    @Bind(R.id.detail_loading_progress)
-    ProgressBar mLoadingProgress;
+    @Bind(R.id.page_novel_detail_fab_add)
+    FloatingActionButton mAddFAB;
+
     @Inject
     NovelDetailPresenter mPresenter;
     @Inject
@@ -140,30 +87,13 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
 
     MenuItem mStartReadingMenuItem;
     ServiceConnection mBackgroundServiceConnection;
-    private float mMaxHeaderElevation;
-    private float mFABElevation;
-    private int mTagColorDotSize;
-    private Handler mHandler;
-    private int mPhotoHeightPixels;
-    private int mHeaderHeightPixels;
-    private int mAddNovelButtonHeightPixels;
-    private boolean mHasPhoto;
-    private String mTitleString;
     private int mDetailPrimaryColor;
-    private boolean mHasSummaryContent = false;
     private NovelModel mNovel;
     private NovelDetailModel mNovelDetail;
     private boolean mIsFavorited = false;
     private boolean mShowStartReadingButton = true;
     private ChapterContentsCacheService.ChapterContentsCacheBinder mServiceBinder;
-    private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener
-            = new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-            mAddNovelButtonHeightPixels = mAddNovelButton.getHeight();
-            recomputePhotoAndScrollingMetrics();
-        }
-    };
+    private NovelDetailAdapter mDetailAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,20 +144,13 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
             mNovelDetail = savedInstanceState.getParcelable("novel_detail_object");
             setLoading(false);
         }
-        mFABElevation = getResources().getDimensionPixelSize(R.dimen.fab_elevation);
-        mMaxHeaderElevation = getResources().getDimensionPixelSize(
-                R.dimen.novel_detail_max_header_elevation);
-
-        mTagColorDotSize = getResources().getDimensionPixelSize(R.dimen.tag_color_dot_size);
-
-        mHandler = new Handler();
-
-        mScrollView.addCallbacks(this);
+        setupRecyclerView();
+        /*mScrollView.addCallbacks(this);
         ViewTreeObserver vto = mScrollView.getViewTreeObserver();
         if (vto.isAlive()) {
             vto.addOnGlobalLayoutListener(mGlobalLayoutListener);
-        }
-        mAddNovelButton.setOnClickListener(new View.OnClickListener() {
+        }*/
+        mAddFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(mServiceBinder != null && mServiceBinder.isCaching() && mServiceBinder.getCurrentCachingNovelId() != null) {
@@ -247,7 +170,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
                 getPresenter().addOrRemoveFavorite(mNovel, isFavorite);
                 //helper.setSessionStarred(mSessionUri, starred, mTitleString);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    mAddNovelButton.announceForAccessibility(isFavorite ?
+                    mAddFAB.announceForAccessibility(isFavorite ?
                             getString(R.string.novel_details_a11y_novel_added) :
                             getString(R.string.novel_details_a11y_novel_removed));
                 }
@@ -255,11 +178,26 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         });
     }
 
+    protected void setUpToolbar(Toolbar toolbar) {
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
     /*@Override
     public Intent getParentActivityIntent() {
         // TODO: make this Activity navigate up to the right screen depending on how it was launched
         return new Intent(this, MyScheduleActivity.class);
     }*/
+
+    private void setupRecyclerView() {
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        mCollectionView.setLayoutManager(layoutManager);
+        mDetailAdapter = new NovelDetailAdapter(this, null);
+        mCollectionView.setAdapter(mDetailAdapter);
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -289,7 +227,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         return (floatingWindowFlag.data != 0);
     }
 
-    private void recomputePhotoAndScrollingMetrics() {
+    /*private void recomputePhotoAndScrollingMetrics() {
         final int actionBarSize = UIUtils.calculateActionBarSize(getThemedContext());
         final int statusBarSize = UIUtils.calculateStatusBarSize(getThemedContext());
         mHeaderHeightPixels = mHeaderBox.getHeight();
@@ -315,7 +253,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         }
 
         onScrollChanged(0, 0); // trigger scroll handling
-    }
+    }*/
 
     @Override
     public void onStart() {
@@ -337,14 +275,14 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
     public void onDestroy() {
         super.onDestroy();
         getPresenter().destroy();
-        if (mScrollView == null) {
+        /*if (mScrollView == null) {
             return;
         }
 
         ViewTreeObserver vto = mScrollView.getViewTreeObserver();
         if (vto.isAlive()) {
             vto.removeGlobalOnLayoutListener(mGlobalLayoutListener);
-        }
+        }*/
     }
 
     @Override
@@ -364,7 +302,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         AnalyticsUtils.trackActivityExit(this, LOG_TAG);
     }
 
-    @Override
+    /*@Override
     public void onScrollChanged(int deltaX, int deltaY) {
 // Reposition the header bar -- it's normally anchored to the top of the content,
         // but locks to the top of the screen on scroll
@@ -390,7 +328,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
 
         // Move background photo (parallax effect)
         mPhotoViewContainer.setTranslationY(scrollY * 0.5f);
-    }
+    }*/
 
     @Override
     public void onResume() {
@@ -432,33 +370,18 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
     }
 
     private void showNovelInformation() {
-        mDetailPrimaryColor = ColorUtils.getPreDefinedColorFromId(getThemedContext().getResources(), mNovel.getNovelId(), mNovel.getTitle().length());
-        mTitleString = mNovel.getTitle();
-
+        mDetailPrimaryColor = ColorUtils.getPreDefinedColorFromId(getResources(), mNovel.getNovelId(), mNovel.getTitle().length());
         if (mDetailPrimaryColor == 0) {
             // no color -- use default
-            mDetailPrimaryColor = getResources().getColor(R.color.primary_color);
+            mDetailPrimaryColor = ColorUtils.getColor(getResources(), R.color.primary_color);
         } else {
             // make sure it's opaque
             mDetailPrimaryColor = UIUtils.setColorAlpha(mDetailPrimaryColor, 255);
         }
+        mAppBarLayout.setBackgroundColor(mDetailPrimaryColor);
 
-        mHeaderBox.setBackgroundColor(mDetailPrimaryColor);
-        getLUtils().setStatusBarColor(
-                UIUtils.scaleColor(mDetailPrimaryColor, 0.8f, false));
-
-        String subtitle = mNovel.getAuthor();
-        mTitleTextView.setText(mTitleString);
-        mSubtitleTextView.setText(subtitle);
-
-
-        mPhotoViewContainer.setBackgroundColor(UIUtils.scaleSessionColorToDefaultBG(mDetailPrimaryColor));
-        //mPhotoView.setImageResource(chooseBackgroundPhoto());
-        //PicassoHelper.load(this.getActivity(), "http://www.apache.org/foundation/images/bitcoin_logo.png", mPhotoView);
-        mHasPhoto = false;
-        recomputePhotoAndScrollingMetrics();
-
-        postOnScroll();
+        mTitleTextView.setText(mNovel.getTitle());
+        mAuthorTextView.setText(mNovel.getAuthor());
     }
 
     private void loadNovelDetail() {
@@ -470,7 +393,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         }
     }
 
-    private void postOnScroll() {
+    /*private void postOnScroll() {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -479,23 +402,73 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
                 //mAbstract.setTextIsSelectable(true);
             }
         });
-    }
+    }*/
 
     private void showFavorited(boolean isFavorited, boolean allowAnimate) {
         mIsFavorited = isFavorited;
 
-        mAddNovelButton.setChecked(mIsFavorited, allowAnimate);
+        /*if(isFavorited) {
+            mAddFAB.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_action_checked, null));
+        } else {
+            mAddFAB.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_action_checked, null));
+        }*/
+        //mAddFAB.setChecked(mIsFavorited, allowAnimate);
 
-        ImageView iconView = (ImageView) mAddNovelButton.findViewById(R.id.add_schedule_icon);
-        getLUtils().setOrAnimatePlusCheckIcon(
-                iconView, isFavorited, allowAnimate);
-        mAddNovelButton.setContentDescription(getString(isFavorited
+        LUtils.setOrAnimatePlusCheckIcon(this, mAddFAB, isFavorited, allowAnimate);
+        mAddFAB.setContentDescription(getString(isFavorited
                 ? R.string.remove_from_bookshelf_description
                 : R.string.add_to_bookshelf_description));
     }
 
     private void showNovelDetailInformation() {
-        setDetailSectionHeaderColor();
+        List<NovelDetailItem> detailItems = new ArrayList<>();
+        String detailAbstract = mNovelDetail.getSummary().replace("\t", "");
+
+        if (!TextUtils.isEmpty(detailAbstract)) {
+            //UIUtils.setTextMaybeHtml(mAbstractTextView, UIUtils.addIndentToStart(detailAbstract));
+            SpannableStringBuilder builder = new SpannableStringBuilder();
+            builder.append(detailAbstract);
+            builder.append("\n\n");
+            String copyRight = mSourceManager.getCopyRightStatement(this, mNovel.getType());
+            int start = builder.length();
+            int end = start + copyRight.length();
+            builder.append(copyRight);
+            builder.setSpan(
+                    new ForegroundColorSpan(mDetailPrimaryColor),
+                    start,
+                    end,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
+            builder.append("\n");
+            detailItems.add(new NovelDetailItem(builder));
+            detailItems.add(new NovelDetailItem(
+                            getString(R.string.novel_detail_abstract_header),
+                            NovelDetailItem.TYPE_HEADER
+                    )
+            );
+            if (mNovelDetail.getChapterNumber() <= 0) {
+                detailItems.add(new NovelDetailItem(getString(R.string.novel_detail_chapter_count_unknown)));
+            } else {
+                detailItems.add(new NovelDetailItem(
+                                getString(
+                                        R.string.novel_detail_chapter_count_fomat,
+                                        mNovelDetail.getChapterNumber()
+                                )
+                        )
+                );
+            }
+            detailItems.add(new NovelDetailItem(
+                            getString(
+                                    R.string.novel_detail_latest_chapter_fomat,
+                                    mNovelDetail.getLatestChapter()
+                            )
+                    )
+            );
+            mDetailAdapter.replaceWith(detailItems);
+        }
+
+
+        /*setDetailSectionHeaderColor();
         String copyRightStatement = mSourceManager.getCopyRightStatement(this, mNovel.getType());
         // TODO: mStatusTextView.setText(getString(R.string.novel_detail_status_fomat, mNovel.getStatus()));
         if(mNovelDetail.getChapterNumber() <= 0) {
@@ -520,7 +493,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
             mAbstractTextView.setVisibility(View.GONE);
         }
 
-        /*
+        *//*
         if(mAddNovelButton.getVisibility() != View.VISIBLE) {
             //mLoadingProgress.setVisibility(View.INVISIBLE);
             ObjectAnimator progressAnim = ObjectAnimator.ofFloat(mLoadingProgress, "alpha", 1.0f, 0.0f);
@@ -531,7 +504,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
             ObjectAnimator bgAnim = ObjectAnimator.ofFloat(mAddNovelButton, "alpha", 0f, 1.0f);
             bgAnim.setDuration(450);
             bgAnim.start();
-        }*/
+        }*//*
 
         tryRenderTags();
         showAchieves();
@@ -541,10 +514,10 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         if ( !mHasSummaryContent) {
             //mRootView.findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
         }
-        postOnScroll();
+        postOnScroll();*/
     }
 
-    private void tryRenderTags() {
+    /*private void tryRenderTags() {
         if( mNovelDetail == null || mNovelDetail.getTags() == null) {
             mTagsScrollView.setVisibility(View.GONE);
             return;
@@ -582,9 +555,9 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
                 mTagsContainer.addView(chipView);
             }
         }
-    }
+    }*/
 
-    private void showAchieves() {
+    /*private void showAchieves() {
         if(mNovelDetail.getAchieves() == null)
             return;
 
@@ -618,12 +591,12 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
         }
         mAchieveLayout.setVisibility(hasAchieves ? View.VISIBLE : View.GONE);
 
-    }
+    }*/
 
-    private void setDetailSectionHeaderColor() {
+    /*private void setDetailSectionHeaderColor() {
         mAchieveHeaderTextView.setTextColor(mDetailPrimaryColor);
         mAbstractHeaderTextView.setTextColor(mDetailPrimaryColor);
-    }
+    }*/
 
     protected NovelDetailPresenter getPresenter(){
         return mPresenter;
@@ -643,7 +616,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
     @Override
     public void setLoading(Boolean isLoading) {
         if(isLoading) {
-            if (mAddNovelButton.getVisibility() != View.INVISIBLE) {
+            /*if (mAddNovelButton.getVisibility() != View.INVISIBLE) {
                 //mLoadingProgress.setVisibility(View.INVISIBLE);
                 ObjectAnimator progressAnim = ObjectAnimator.ofFloat(mLoadingProgress, "alpha", 0.0f, 1.0f);
                 progressAnim.setDuration(450);
@@ -653,9 +626,9 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
                 ObjectAnimator bgAnim = ObjectAnimator.ofFloat(mAddNovelButton, "alpha", 1f, 0.0f);
                 bgAnim.setDuration(450);
                 bgAnim.start();
-            }
+            }*/
         } else {
-            if (mAddNovelButton.getVisibility() != View.VISIBLE) {
+            /*if (mAddNovelButton.getVisibility() != View.VISIBLE) {
                 //mLoadingProgress.setVisibility(View.INVISIBLE);
                 ObjectAnimator progressAnim = ObjectAnimator.ofFloat(mLoadingProgress, "alpha", 1.0f, 0.0f);
                 progressAnim.setDuration(450);
@@ -665,7 +638,7 @@ public class NovelDetailActivity extends AbstractThemeableActivity implements No
                 ObjectAnimator bgAnim = ObjectAnimator.ofFloat(mAddNovelButton, "alpha", 0f, 1.0f);
                 bgAnim.setDuration(450);
                 bgAnim.start();
-            }
+            }*/
         }
     }
 

@@ -9,13 +9,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import org.cryse.novelreader.R;
-import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
+import org.cryse.novelreader.ui.common.AbstractActivity;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class SettingsActivity extends AbstractThemeableActivity {
+public class SettingsActivity extends AbstractActivity {
     private static final String LOG_TAG = SettingsActivity.class.getName();
     @Bind(R.id.my_awesome_toolbar)
     Toolbar mToolbar;
@@ -48,7 +48,14 @@ public class SettingsActivity extends AbstractThemeableActivity {
         }
         fragmentTransaction.replace(R.id.content_frame, fragment);
         fragmentTransaction.commit();
+    }
 
+    protected void setUpToolbar(Toolbar toolbar) {
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override

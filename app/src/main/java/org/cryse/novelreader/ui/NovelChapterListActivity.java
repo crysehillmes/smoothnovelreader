@@ -29,7 +29,7 @@ import org.cryse.novelreader.model.NovelModel;
 import org.cryse.novelreader.presenter.NovelChaptersPresenter;
 import org.cryse.novelreader.service.ChapterContentsCacheService;
 import org.cryse.novelreader.ui.adapter.NovelChapterListAdapter;
-import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
+import org.cryse.novelreader.ui.common.AbstractActivity;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.SimpleSnackbarType;
 import org.cryse.novelreader.util.analytics.AnalyticsUtils;
@@ -44,7 +44,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class NovelChapterListActivity extends AbstractThemeableActivity implements NovelChaptersView{
+public class NovelChapterListActivity extends AbstractActivity implements NovelChaptersView{
     private static final String LOG_TAG = NovelChapterListActivity.class.getName();
     @Inject
     NovelChaptersPresenter mPresenter;
@@ -104,6 +104,14 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
                 mServiceBinder = null;
             }
         };
+    }
+
+    protected void setUpToolbar(Toolbar toolbar) {
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @SuppressLint("ResourceAsColor")
@@ -234,7 +242,7 @@ public class NovelChapterListActivity extends AbstractThemeableActivity implemen
                 getPresenter().showNovelIntroduction(mNovel);
                 return true;
             case R.id.menu_item_change_theme:
-                setNightMode(!isNightMode());
+                toggleNightMode();
                 return true;
             case R.id.menu_item_chapters_offline_cache:
                 chaptersOfflineCache();

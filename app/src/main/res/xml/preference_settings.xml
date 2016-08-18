@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/settings_category_dispaly_title">
-        <Preference
+        <!--<Preference
             android:key="prefs_theme_color"
             android:summary="@string/settings_item_theme_color_summary"
-            android:title="@string/settings_item_theme_color_title"/>
+            android:title="@string/settings_item_theme_color_title"/>-->
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="prefs_is_night_mode"
@@ -75,5 +75,20 @@
                 <extra android:name="type" android:value="about" />
                 </intent>
         </Preference>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_category_debug_title">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="prefs_debug_enable_leak_canary"
+            android:summary="@string/settings_item_leak_canary_summary"
+            android:title="@string/settings_item_leak_canary_title"
+            android:widgetLayout="@layout/layout_switch_preference_compat"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="prefs_debug_enable_crash_woodpecker"
+            android:summary="@string/settings_item_crash_woodpecker_summary"
+            android:title="@string/settings_item_crash_woodpecker_title"
+            android:widgetLayout="@layout/layout_switch_preference_compat"/>
     </PreferenceCategory>
 </PreferenceScreen>

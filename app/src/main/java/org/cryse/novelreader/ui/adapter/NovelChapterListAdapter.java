@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.model.ChapterModel;
-import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
 import org.cryse.novelreader.util.ColorUtils;
 import org.cryse.novelreader.util.UIUtils;
 
@@ -38,19 +37,14 @@ public class NovelChapterListAdapter extends BaseAdapter {
     private int mLastReadPosition = -1;
     private int mColorAccent = 0;
 
-    public NovelChapterListAdapter(Context context,
-                                   List<ChapterModel> novelContents) {
+    public NovelChapterListAdapter(Context context, List<ChapterModel> novelContents) {
         this.mContext = context;
         this.mContentList = novelContents;
         mInflater = LayoutInflater.from(this.mContext);
         mTagColorDotSize = UIUtils.dp2px(mContext, 12f);
         mTagColorDotPadding = UIUtils.dp2px(mContext, 4f);
         mLastReadIconSize = UIUtils.dp2px(mContext, 24f);
-        if (context instanceof AbstractThemeableActivity) {
-            mCachedColor = ((AbstractThemeableActivity) context).getThemeEngine().getPrimaryColor(context);
-        } else {
-            mCachedColor = ColorUtils.getColorFromAttr(context, R.attr.colorPrimary);
-        }
+        mCachedColor = ColorUtils.getColorFromAttr(context, R.attr.colorPrimary);
         mColorAccent = ColorUtils.getColorFromAttr(getContext(), R.attr.colorAccent);
         mCachedDotDrawable = makeCachedIndicatorDrawable(mTagColorDotSize, mLastReadIconSize, mCachedColor);
         mNotCachedDotDrawable = makeCachedIndicatorDrawable(mTagColorDotSize, mLastReadIconSize, Color.TRANSPARENT);

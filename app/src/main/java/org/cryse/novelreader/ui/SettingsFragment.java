@@ -5,7 +5,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -15,29 +16,26 @@ import org.cryse.changelog.ChangeLogUtils;
 import org.cryse.novelreader.R;
 import org.cryse.novelreader.constant.PreferenceConstant;
 import org.cryse.novelreader.event.RxEventBus;
-import org.cryse.novelreader.event.ThemeColorChangedEvent;
-import org.cryse.novelreader.ui.common.AbstractThemeableActivity;
-import org.cryse.novelreader.util.ThemeEngine;
-import org.cryse.novelreader.util.prefs.IntegerPreference;
+import org.cryse.novelreader.ui.common.AbstractActivity;
+import org.cryse.utils.preference.Prefs;
 
 import timber.log.Timber;
 
 public class SettingsFragment extends PreferenceFragment {
     private static final String LOG_TAG = SettingsFragment.class.getName();
     RxEventBus mEventBus = RxEventBus.getInstance();
-    private OnConcisePreferenceChangedListener mOnConcisePreferenceChangedListener = null;
+    private OnPreferenceChangedListener mOnPreferenceChangedListener = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mOnConcisePreferenceChangedListener = new OnConcisePreferenceChangedListener();
+        mOnPreferenceChangedListener = new OnPreferenceChangedListener();
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preference_settings);
         Preference isGrayScalePrefs = findPreference(PreferenceConstant.SHARED_PREFERENCE_GRAYSCALE_IN_NIGHT);
 
         Boolean isNightMode = getPreferenceManager().getSharedPreferences().getBoolean(PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE, false);
         isGrayScalePrefs.setEnabled(isNightMode);
-        setUpThemeColorPreference();
         Preference versionPrefs = findPreference("prefs_about_version");
         try {
             versionPrefs
@@ -77,7 +75,7 @@ public class SettingsFragment extends PreferenceFragment {
 
             MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity())
                     .title(R.string.settings_item_change_log_title)
-                    .theme(((AbstractThemeableActivity) getActivity()).isNightMode() ? Theme.DARK : Theme.LIGHT)
+                    .theme(((AbstractActivity) getActivity()).isNightMode() ? Theme.DARK : Theme.LIGHT)
                     .content(reader.toSpannable())
                     .show();
 
@@ -88,46 +86,26 @@ public class SettingsFragment extends PreferenceFragment {
     @Override
     public void onResume() {
         super.onResume();
-        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(mOnConcisePreferenceChangedListener);
+        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(mOnPreferenceChangedListener);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(mOnConcisePreferenceChangedListener);
+        getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(mOnPreferenceChangedListener);
     }
 
-    private void setUpThemeColorPreference() {
-        Preference themeColorPreference = findPreference("prefs_theme_color");
-        IntegerPreference themeColorPrefsValue = new IntegerPreference(getPreferenceManager().getSharedPreferences(), PreferenceConstant.SHARED_PREFERENCE_THEME_COLOR, PreferenceConstant.SHARED_PREFERENCE_THEME_COLOR_VALUE);
-        Boolean isNightMode = getPreferenceManager().getSharedPreferences().getBoolean(PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE, false);
-
-        themeColorPreference.setOnPreferenceClickListener(preference -> {
-            new SimpleDrawableChooserDialog()
-                    .setTheme(isNightMode ? Theme.DARK : Theme.LIGHT)
-                    .setColorDrawables(getActivity(), R.array.primaryColors)
-                    .show((AppCompatActivity) getActivity(), themeColorPrefsValue.get(), (index, color, darker) -> {
-                        themeColorPrefsValue.set(index);
-                        ThemeEngine themeEngine = ((AbstractThemeableActivity) getActivity()).getThemeEngine();
-                        mEventBus.sendEvent(new ThemeColorChangedEvent(
-                                themeEngine.getPrimaryColor(getActivity()),
-                                themeEngine.getPrimaryDarkColor(getActivity()),
-                                themeEngine.getPrimaryColorResId(),
-                                themeEngine.getPrimaryDarkColorResId()));
-                    });
-            return true;
-        });
-    }
-
-    public class OnConcisePreferenceChangedListener implements SharedPreferences.OnSharedPreferenceChangeListener {
+    public class OnPreferenceChangedListener implements SharedPreferences.OnSharedPreferenceChangeListener {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            AbstractThemeableActivity parentActivity = (AbstractThemeableActivity) getActivity();
-            if (parentActivity != null) {
-                if (key.compareTo(PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE) == 0) {
-                    parentActivity.reloadTheme();
-                }
+            switch (key) {
+                case PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE:
+                    boolean isNightMode = Prefs.getBoolean(PreferenceConstant.SHARED_PREFERENCE_IS_NIGHT_MODE, false);
+                    AppCompatDelegate.setDefaultNightMode(isNightMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+                    if(getActivity() != null)
+                        getActivity().recreate();
+                    break;
             }
         }
     }

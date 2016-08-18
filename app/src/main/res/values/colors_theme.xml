@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="theme_bg_color">#FFE8E8E8</color>
+    <color name="theme_navigation_drawer_bg">@color/grey_background</color>
+    <color name="theme_read_bg_color">@color/theme_bg_color</color>
+    <color name="bottom_menu_bg_color">#FFFAFAFA</color>
+
+    <color name="icon_color">#8A000000</color><!-- 54% transparency-->
+
+
+    <color name="text_color_primary">@color/black_87_percent</color><!-- 87% transparency-->
+    <color name="text_color_secondary">@color/black_54_percent</color><!-- 54% transparency-->
+    <color name="text_color_tint">#42000000</color><!-- 26% transparency-->
+    <color name="text_color_divider">#1F000000</color><!-- 12% transparency-->
+
+
+    <color name="text_color_display4">@color/black_54_percent</color><!-- 54% -->
+    <color name="text_color_display3">@color/black_54_percent</color><!-- 54% -->
+    <color name="text_color_display2">@color/black_54_percent</color><!-- 54% -->
+    <color name="text_color_display1">@color/black_54_percent</color><!-- 54% -->
+    <color name="text_color_headline">@color/black_87_percent</color><!-- 87% -->
+    <color name="text_color_title">@color/black_87_percent</color><!-- 87% -->
+    <color name="text_color_subhead">@color/black_87_percent</color><!-- 87% -->
+    <color name="text_color_body2">@color/black_87_percent</color><!-- 87% -->
+    <color name="text_color_body1">@color/black_87_percent</color><!-- 87% -->
+    <color name="text_color_caption">@color/black_54_percent</color><!-- 54% -->
+    <color name="text_color_menu">@color/black_87_percent</color><!-- 87% -->
+    <color name="text_color_button">@color/black_87_percent</color><!-- 87% -->
+</resources>

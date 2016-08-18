@@ -35,14 +35,6 @@
         <item name="android:layout_margin">0.0dip</item>
     </style>
 
-    <style name="TextBody">
-        <item name="android:textSize">@dimen/text_size_body2</item>
-        <item name="android:textColor">?attr/smooth_theme_text_color_body1</item>
-        <item name="android:lineSpacingMultiplier">1.1</item>
-        <!--<item name="android:textAlignment">textStart</item>-->
-        <item name="android:layout_gravity">start</item>
-    </style>
-
     <style name="NovelDetailSectionHeader">
         <item name="android:textSize">@dimen/text_size_title</item>
         <item name="android:textColor">@color/primary_color</item>
@@ -61,5 +53,19 @@
         <item name="android:listSelector">?android:selectableItemBackground</item>
         <item name="android:divider">@null</item>
         <item name="android:dividerHeight">0dp</item>
+    </style>
+
+    <style name="AppTheme.ActionBar" parent="Theme.AppCompat.DayNight">
+        <item name="windowActionModeOverlay">true</item>
+        <item name="colorPrimary">@color/md_blue_500</item>
+        <item name="colorPrimaryDark">@color/md_blue_700</item>
+        <item name="colorAccent">@color/md_pink_500</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="windowActionModeOverlay">true</item>
+        <item name="colorPrimary">@color/md_blue_500</item>
+        <item name="colorPrimaryDark">@color/md_blue_700</item>
+        <item name="colorAccent">@color/md_pink_500</item>
     </style>
 </resources>

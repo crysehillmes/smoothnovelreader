@@ -28,6 +28,8 @@
     <string name="dialog_choose_read_bg_color">选择背景色</string>
     <string name="dialog_choose">选择</string>
 
+    <string name="dialog_title_permission_storage">需要使用存储权限以读取本地小说</string>
+
     <!-- Book introduction format -->
     <string name="format_follower_count">%1$d 人在追</string>
     <string name="format_last_read_chapter">最后阅读: %1$s</string>
@@ -247,4 +249,11 @@
     <string name="placeholder_lorem_ipsum" translatable="false">placeholder</string>
     <string name="placeholder_novel_details_title" translatable="false">placeholder</string>
     <string name="placeholder_novel_details_subtitle" translatable="false">placeholder</string>
+
+
+    <string name="settings_category_debug_title">Debug</string>
+    <string name="settings_item_leak_canary_title">LeakCanary</string>
+    <string name="settings_item_crash_woodpecker_title">CrashWoodpecker</string>
+    <string name="settings_item_leak_canary_summary">Enable LeakCanary(Requires restart app)</string>
+    <string name="settings_item_crash_woodpecker_summary">Enable CrashWoodpecker(Requires restart app)</string>
 </resources>

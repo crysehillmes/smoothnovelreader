@@ -6,7 +6,7 @@ import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
 
 import org.apache.tika.metadata.Metadata;
-import org.cryse.util.UniversalEncodingDetector;
+import org.cryse.utils.UniversalEncodingDetector;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
